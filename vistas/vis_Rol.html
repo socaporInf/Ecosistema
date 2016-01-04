@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="css/cuerpo.css">
+	<link rel="stylesheet" type="text/css" href="css/menu.css">
+	<link rel="stylesheet" type="text/css" href="css/formulario.css">
+</head>
+<body>
+	<div contenedor>
+		
+	</div>
+</body>
+<script type="text/javascript" src='js/constructor.js'></script>
+<script type="text/javascript">
+	var constructor = new Constructor();
+	var botones = ['buscar','nuevo','abrir'];
+	var registros = [
+					{nombre:'cuentasxpagar',id:'2',descripcion:'cuentasxpagar'},
+					{nombre:'administrador',id:'1',descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo'},
+					{nombre:'almacen-facturacion',id:'1',descripcion:'factura en almacen'}
+					]
+	constructor.configure();
+	constructor.elementos.botonera = new Botonera(botones);
+	constructor.elementos.formulario = new Formulario();
+	constructor.elementos.formulario.cargarRegistros(registros);
+	constructor.elementos.botonera.buscarBoton('nuevo').nodo.onclick=function(){
+		console.log('presiono nuevo');
+		var data = {
+			tipo:'nuevo'
+		}
+		var formulario = constructor.elementos.formulario;
+		formulario.construirInterfaz(data);
+	}
+	constructor.elementos.botonera.buscarBoton('buscar').nodo.onclick=function(){
+		console.log('presiono nuevo');
+		constructor.elementos.formulario.nodo.firstChild.getElementsByTagName('input')[0].focus();
+	}
+</script>
+</html>

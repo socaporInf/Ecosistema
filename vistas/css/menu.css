@@ -1,0 +1,41 @@
+div[capaMenu]{
+	height: 100%;
+    width: 250px;
+    top: 0;
+    left: 0;
+    margin-top: 50px;
+    transition: all 0.5s ease-in-out;
+    position: fixed;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    margin-left: -250px;
+    z-index: 999;
+    background-color: white;
+}
+div[capaMenu] div[first]{
+	clear: none;
+	margin-top: 60px
+}
+div[capaMenu] section{
+	width: 194px;
+    height: 14px;
+    padding-left: 34px;
+    background-image: url('../imagenes/extension.png');
+    background-repeat: no-repeat;
+    background-position: 7px 11px;
+    padding-top: 13px;
+    margin-left: 20px;
+    padding-bottom: 10px;
+}
+div[capaMenu] section:not([titulo]):hover{
+	background-color: #26A69A;
+	background-image: url('../imagenes/extension_white.png');
+	color: white;
+}
+div[capaMenu] section[titulo]{
+	margin-left: 0px;
+	color: #009688;
+	font-size: 20px;
+	margin-top: 10px;
+	padding-left:10px; 
+	background-image: none;
+}

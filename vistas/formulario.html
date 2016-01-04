@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Formulario</title>
+	<meta  charset = "utf-8"  /> 
+	<link rel="stylesheet" type="text/css" href="css/cuerpo.css">
+	<link rel="stylesheet" type="text/css" href="css/menu.css">
+	<link rel="stylesheet" type="text/css" href="css/formulario.css">
+</head>
+<body>
+	<div contenedor>
+		<div capaList>
+			<section busqueda>
+				<input type='text' placeHolder='Buscar...'campBusq>
+				<button type='button' btnBusq></button>
+			</section>
+			<section slot='1'>
+				<article title>Opc1</article>
+				<button type='button' btnModificar></button>
+				<button type='button' btnEliminar></button>
+			</section>
+			<section slot='2'>
+				<article title>Opc2</article>
+				<button type='button' btnModificar></button>
+				<button type='button' btnEliminar></button>
+			</section>
+		</div>
+		<div capaForm>
+			<section titulo>Formulario</section>
+			<section sector>
+				<div class="group">      
+			      <input type="text" required>
+			      <span class="highlight"></span>
+			      <span class="bar"></span>
+			      <label>Nombre</label>
+			    </div>
+			      
+			    <div class="group">      
+			      <input type="text" required>
+			      <span class="highlight"></span>
+			      <span class="bar"></span>
+			      <label>Correo</label>
+			    </div>
+			</section>
+			<section sector>
+				<div class="group">      
+			      <input type="text" required>
+			      <span class="highlight"></span>
+			      <span class="bar"></span>
+			      <label>Nombre</label>
+			    </div>
+			      
+			    <div class="group">      
+			      <input type="text" required>
+			      <span class="highlight"></span>
+			      <span class="bar"></span>
+			      <label>Correo</label>
+			    </div>
+			</section>
+			
+			<section sector>
+				<div class="group">      
+			      <input type="text" required>
+			      <span class="highlight"></span>
+			      <span class="bar"></span>
+			      <label>Nombre</label>
+			    </div>
+			      
+			    <div class="group">      
+			      <input type="text" required>
+			      <span class="highlight"></span>
+			      <span class="bar"></span>
+			      <label>Correo</label>
+			    </div>
+			</section>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src='js/constructor.js'></script>
+<script type="text/javascript">
+	var constructor = new Constructor();
+	constructor.configure();
+	var botones = ['nuevo','listar','buscar','redactar','abrir','modificar','eliminar'];
+	constructor.elementos.botonera = new Botonera(botones);
+</script>
+</html>

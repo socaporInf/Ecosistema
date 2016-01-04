@@ -1,0 +1,414 @@
+*{
+    outline: none;
+    overflow: hidden;
+}
+div[clear]{
+  clear:both;
+}
+/*----------------------------------------Capa Formulario-------------------------------*/
+div[capaForm]{
+    transition:all 0.6s ease-in-out;
+    width: 600px;
+    height: 0px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    float: left;
+    margin: 50px 0px 50px 50px;
+}
+div[capaForm] section[titulo]{
+    padding: 10px 0px 0px 50px;
+    font-size: 25px;
+    background-color: #4CAF50;
+    color:white;
+}
+div[capaForm] section[sector]{
+    padding: 30px 0px 0px 0px;
+    margin: 0px auto;
+    max-width: 600px;
+}
+div[capaForm] section[sector] div:not(.group){
+  margin-left: 20px;
+}
+div[capaForm] section[contenedor]{
+    overflow: hidden;
+}
+div[capaForm] article{
+  width: auto;
+  background-color: midnightblue;
+  color:white;
+  padding: 5px;
+  float: left;
+  margin: 3px 0px 3px 5px;
+}
+div[capaForm] article:first-child{
+  margin-left: 10px;
+}
+div[capaForm] article[add]{
+  width: 18px;
+  height: 18px;
+  padding: 1px;
+  background-image: url('../imagenes/plus_16.png');
+  background-repeat: no-repeat;
+  background-position: 2px;
+  background-color: forestgreen;
+  float:left;
+  transform: scale(1.4);
+  margin-top: 7px;
+}
+div[capaForm] article[update]{
+  transition:all 0.5s ease-in-out;
+  width: 24px;
+  height: 24px;
+  padding: 1px;
+  background-image: url('../imagenes/pencil_green_16.png');
+  background-color: white;
+  background-repeat: no-repeat;
+  background-position: 5px;
+  float:left;
+  border-radius: 100px;
+}
+div[capaForm] article[update]:hover{
+  background-image: url('../imagenes/pencil_white_16.png');
+  background-color: #4CAF50;
+}
+div[capaForm] section[titulo] article[update]{
+   background-image: url('../imagenes/pencil_white_16.png');
+  background-color: #4CAF50;
+}
+div[capaForm] section[titulo] article[update]:hover{
+  background-image: url('../imagenes/pencil_green_16.png');
+  background-color: white;
+}
+div[capaform] span{
+  float: left;
+}
+/*----------------------------------------Capa Listado-------------------------------*/
+div[capaList]{
+   width: 300px;
+   background-color: white;
+   height: auto;
+   overflow: hidden;
+   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+   margin: 50px 0px 50px 50px;  
+   float:left;
+}
+div[capaList] section{
+    width: 100%;
+    background-color: white;
+    height: 30px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    padding: 10px 0px 10px 10px;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 1px
+}
+div[capaList] section:hover{
+  background-color: #C8E6C9;
+  color:white;
+}
+div[capaList] section[busqueda]{
+  background-color: #4CAF50;
+}
+div[capaList] section[busqueda] input[campBusq]{
+    border: none;
+    padding: 8px;
+    font-size: 15px;
+    float: left;
+    width: calc(100% - 90px);
+}
+div[capaList] section[busqueda] button[btnBusq]{
+    border: none;
+    /* border-radius: 100px; */
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    background-image: url('../imagenes/search_32.png');
+    background-repeat: no-repeat;
+    background-position: 8px;
+    float: right;
+    margin: -10px 10px;
+    border-left: 1px solid silver;
+}
+div[capaList] section:not([busqueda]) button{
+    background-position: 12px;
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 40px;
+    float: right;
+    margin: -22px 15px 0px 5px;
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
+    border-left: 1px solid silver;
+    display: none;
+    border-radius: 50px;
+    border-left: none;
+}
+div[capaList] section:not([busqueda]){
+  height: 30px;
+}
+div[capaList] section button[btnModificar]{
+    background-color: #4CAF50;
+    background-image: url('../imagenes/pencil_white_16.png');
+}
+div[capaList] section button[btnEliminar]{
+    background-color: #f44336;
+    background-image: url('../imagenes/trash_white_16.png');
+}
+/*------------------------Botonera------------------------------------------------*/
+div[botonera]{
+    right: 20px;
+    position: fixed;
+    bottom: 50px;
+    width: 60px;
+    margin-bottom: 25px;
+    overflow: visible;
+}
+div[botonera] button{
+    transition: all 0.3s ease-in-out;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 60px;
+    z-index: 10;
+    margin-left: 10px;
+    background-repeat: no-repeat;
+    background-position: 12px;
+    float:left;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    overflow: visible;
+}
+div[botonera] button:not([btnAbrir]):hover{
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
+}
+div[botonera] button:hover:before{
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
+}
+div[botonera] button[btnNuevo]{
+    background-color: #3F51B5;
+    background-image: url('../imagenes/file-empty.png');
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnNuevo]:hover:before{
+    content: 'Nuevo';
+    color:white;
+    background-color: #3F51B5;
+    margin-left:-100px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnBuscar]{
+    background-color: #03A9F4;
+    background-image: url('../imagenes/search.png');
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnBuscar]:hover:before{
+    content: 'Buscar';
+    color:white;
+    background-color: #03A9F4;
+    margin-left:-100px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnModificar]{
+    background-color: #4CAF50;
+    background-image: url('../imagenes/pencil_white_16.png');
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnModificar]:hover:before{
+    content: 'Modificar';
+    color:white;
+    background-color: #4CAF50;
+    margin-left:-110px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnEliminar]{
+    background-color: #f44336;
+    background-image: url('../imagenes/trash_white_16.png');
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnEliminar]:hover:before{
+    content: 'Eliminar';
+    color:white;
+    background-color: #f44336;
+    margin-left:-108px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnListar]{
+    background-color: #FFEB3B;
+    background-image: url('../imagenes/list.png');    
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnListar]:hover:before{
+    content: 'Listar';
+    color:white;
+    background-color: #FFEB3B;
+    margin-left:-100px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnRedactar]{
+    background-color: #607D8B;
+    background-image: url('../imagenes/quill.png');    
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnRedactar]:hover:before{
+    content: 'Redactar';
+    color:white;
+    background-color: #607D8B;
+    margin-left:-110px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnAbrir]{
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 60px;
+    background-color: #4CAF50;
+    background-image: url('../imagenes/plus.png');
+    background-position: 14px;
+    z-index: 999;
+    margin-left: 0px;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+    position:absolute;
+}
+.apertura{
+  -webkit-transform: rotate(225deg); /* Chrome, Safari, Opera */
+  transform: rotate(225deg);
+  background-color: #f44336 !important;
+  box-shadow: 0 -19px 38px rgba(0,0,0,0.30), 0 -15px 12px rgba(0,0,0,0.22) !important;
+}
+/*------------------------elemento campo de texto---------------------*/
+.group            { 
+  position:relative; 
+  margin-bottom:45px;
+  margin-left: 15px; 
+  float: left;
+  overflow:visible;
+}
+div[capaForm] input{
+  font-size:18px;
+  padding:10px 10px 10px 5px;
+  display:block;
+  width:200px;
+  border:none;
+  border-bottom:1px solid #757575;
+}
+div[capaForm] input:focus{ outline:none; }
+
+/* LABEL ======================================= */
+label                {
+  color:#999; 
+  font-size:18px;
+  font-weight:normal;
+  position:absolute;
+  pointer-events:none;
+  left:5px;
+  top:10px;
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+}
+
+/* active state */
+div[capaForm] input:focus ~ label, div[capaForm] input:valid ~ label        {
+  top:-20px;
+  font-size:14px;
+  color:#4CAF50;
+}
+
+/* BOTTOM BARS ================================= */
+.bar    { position:relative; display:block; width:215px; }
+.bar:before, .bar:after     {
+  content:'';
+  height:2px; 
+  width:0;
+  bottom:1px; 
+  position:absolute;
+  background:#4CAF50; 
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+}
+.bar:before {
+  left:50%;
+}
+.bar:after {
+  right:50%; 
+}
+
+/* active state */
+div[capaForm] input:focus ~ .bar:before, div[capaForm] input:focus ~ .bar:after {
+  width:50%; 
+}
+
+/* HIGHLIGHTER ================================== */
+.highlight {
+  position:absolute;
+  height:60%; 
+  width:100px; 
+  top:25%; 
+  left:0;
+  pointer-events:none;
+  opacity:0.5;
+}
+
+/* active state */
+input:focus ~ .highlight {
+  -webkit-animation:inputHighlighter 0.3s ease;
+  -moz-animation:inputHighlighter 0.3s ease;
+  animation:inputHighlighter 0.3s ease;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
+/*-----------------------------------Media Query-------------------------------*/
+@media (max-width: 1000px){
+  div[capaList]{
+    width: 85%;
+    margin-bottom: 10px;
+  }
+  div[capaList] section:not([busqueda]) button{
+    display:inline-block;
+  }
+  div[capaform]{
+    width: 85%;
+    margin-top: 10px;
+  }
+  div[botonera] button[btnEliminar], div[botonera] button[btnModificar] {
+    display: none;
+  }
+  div[capaForm] section[sector]{
+    max-width: 560px;
+  }
+  div[capaForm] section[sector] div:not(.grupo){
+    margin-left: 20px;
+  }
+  div[capaForm] section[sector] div.grupo{
+    margin-left: 5%;
+  }
+}

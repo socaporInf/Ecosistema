@@ -1,0 +1,4 @@
+arranque();
+function arranque(){
+	
+}
