@@ -149,8 +149,11 @@ var Botonera = function(estructura){
 	}
 	this.quitarBoton = function(tipo){
 		var eliminar=this.buscarBoton(tipo);
-		if(eliminar!=-1){eliminar.nodo.parentNode.removeChild(eliminar.nodo)};
-		this.botones.splice(this.botones.indexOf(eliminar),1);
+		if(eliminar!=-1){
+			eliminar.nodo.parentNode.removeChild(eliminar.nodo);
+			this.botones.splice(this.botones.indexOf(eliminar),1);
+		};
+		
 	}
 	this.construir();
 }
@@ -292,6 +295,22 @@ function obtenerContenedor(){
 	}
 	return contenedor;
 }
+function normalizarNodo(nodo){
+	var hijo=null;
+	var eliminar;
+	while(hijo!=nodo.lastChild){
+		if(hijo==null){
+			hijo=nodo.firstChild;
+		}
+		if(hijo.nodeName=='#text'){
+			eliminar=hijo;
+			hijo=hijo.nextSibling;
+			eliminar.parentNode.removeChild(eliminar);
+		}else{
+			hijo=hijo.nextSibling;
+		}
+	}
+}
 /*------------------------------Objeto Formulario(lista)-----------------*/
 var Formulario = function(){
 
@@ -328,6 +347,7 @@ var Formulario = function(){
 					    </div>\
 					</section>\
 				</section>';
+				nodo.innerHTML=html;
 				constructor.elementos.botonera.agregarBoton('redactar');
 			}else if(this.tipo='modificar'){
 				constructor.elementos.botonera.quitarBoton('redactar');
@@ -338,16 +358,31 @@ var Formulario = function(){
 					</section>\
 					<section sector>\
 						<div>Privilegios</div>\
-						<section contenedor>\
-							<article >ProbioAgro</article>\
-							<article >SocaServicios</article>\
-							<article add ></article>\
+						<section contenedor id="contenedorPri">\
 						</section>\
 					</section>\
 				</section>';
-			}
 			nodo.innerHTML=html;
+			console.log(nodo.childNodes[2]);
+			normalizarNodo(nodo);
+			console.log(nodo.childNodes[2]);
+			var contenedor =nodo.childNodes[2];
+			//arreglo temporal de privilegios
+				var dataTemp=[
+					{nombre:'ProbioAgro'},{nombre:'SocaServicios'}
+				];
+				this.agregarElementos(contenedor,dataTemp);
+			}
 			this.nodo=nodo;
+		}
+		this.agregarElementos=function(contenedor,elementos){
+			var html="";
+			console.log(elementos);
+			for(var x=0;x<elementos.length;x++){
+				html+="<article>"+elementos[x].nombre+"</article>";
+			}
+			html+='<article add></article>';
+			contenedor.innerHTML=html;
 		}
 		this.reconstruirInterfaz=function(data){
 			if(data.tipo=='nuevo'){
@@ -431,9 +466,10 @@ var Formulario = function(){
 		}
 		this.funcionamiento = function(){
 			var nodo = this.nodo;
-			nodo.onclick=function(){
+			var article =nodo.getElementsByTagName('article')[0];
+			article.onclick=function(){
 				var formulario = constructor.elementos.formulario;
-				formulario.controlLista(this);
+				formulario.controlLista(this.parentNode);
 				var newSelec = formulario.obtenerSeleccionado();
 				var data = {
 						tipo:'modificar',

@@ -133,7 +133,7 @@ div[capaList] section:not([busqueda]) button{
     width: 40px;
     height: 40px;
     float: right;
-    margin: -22px 15px 0px 5px;
+    margin: -34px 15px 0px 5px;
     border-top: none;
     border-bottom: none;
     border-right: none;
@@ -144,6 +144,11 @@ div[capaList] section:not([busqueda]) button{
 }
 div[capaList] section:not([busqueda]){
   height: 30px;
+}
+div[capaList] section[slot] article[title]{
+  width: calc(100% - 60px);
+  height: 100%;
+  margin: 0px;
 }
 div[capaList] section button[btnModificar]{
     background-color: #4CAF50;
