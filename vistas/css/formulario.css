@@ -204,6 +204,21 @@ div[botonera] button[btnBuscar]{
     left:0px;
     position: absolute;
 }
+div[botonera] button[btnNuevo]:hover:before{
+    content: 'Nuevo';
+    color:white;
+    background-color: #3F51B5;
+    margin-left:-100px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnBuscar]{
+    background-color: #03A9F4;
+    background-image: url('../imagenes/search.png');
+    top:0px;
+    left:0px;
+    position: absolute;
+}
 div[botonera] button[btnBuscar]:hover:before{
     content: 'Buscar';
     color:white;

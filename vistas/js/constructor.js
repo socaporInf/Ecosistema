@@ -147,6 +147,11 @@ var Botonera = function(estructura){
 	this.getEstado = function(){
 		console.log(this.estado);
 	}
+	this.quitarBoton = function(tipo){
+		var eliminar=this.buscarBoton(tipo);
+		if(eliminar!=-1){eliminar.nodo.parentNode.removeChild(eliminar.nodo)};
+		this.botones.splice(this.botones.indexOf(eliminar),1);
+	}
 	this.construir();
 }
 /*-------------------------Objeto Menu ----------------------------------------*/
@@ -325,6 +330,7 @@ var Formulario = function(){
 				</section>';
 				constructor.elementos.botonera.agregarBoton('redactar');
 			}else if(this.tipo='modificar'){
+				constructor.elementos.botonera.quitarBoton('redactar');
 				html+='\
 				<section titulo><span>'+data.nombre+'</span><article update></article></section>\
 					<section sector>\
@@ -373,7 +379,7 @@ var Formulario = function(){
 				},600);
 				constructor.elementos.botonera.agregarBoton('redactar');
 			}else if(data.tipo='modificar'){
-
+				constructor.elementos.botonera.quitarBoton('redactar');
 				this.nodo.style.height='0px';		
 				setTimeout(function(){
 					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
@@ -514,10 +520,8 @@ var Formulario = function(){
 	this.construirInterfaz = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
 		if(existeVentana){
-			console.log('existeVentana');
 			this.ventanaForm.reconstruirInterfaz(data)
 		}else{
-			console.log('no existe');
 			this.construirVentanaForm(data);
 			this.agregarVentanaForm();
 		}
