@@ -352,9 +352,9 @@ var Formulario = function(){
 			}else if(this.tipo='modificar'){
 				constructor.elementos.botonera.quitarBoton('redactar');
 				html+='\
-				<section titulo><span>'+data.nombre+'</span><article update></article></section>\
+				<section titulo><textarea ></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
 					<section sector>\
-						<div><span>'+data.descripcion+'</span><article update></article></div>\
+						<div><textarea ></textarea><span>'+data.descripcion+'</span><article update="area"></article></div>\
 					</section>\
 					<section sector>\
 						<div>Privilegios</div>\
@@ -363,26 +363,91 @@ var Formulario = function(){
 					</section>\
 				</section>';
 			nodo.innerHTML=html;
-			console.log(nodo.childNodes[2]);
 			normalizarNodo(nodo);
-			console.log(nodo.childNodes[2]);
-			var contenedor =nodo.childNodes[2];
+			var contenedor=nodo.childNodes[2];
+			this.nodo=nodo;
 			//arreglo temporal de privilegios
 				var dataTemp=[
 					{nombre:'ProbioAgro'},{nombre:'SocaServicios'}
 				];
 				this.agregarElementos(contenedor,dataTemp);
 			}
-			this.nodo=nodo;
 		}
 		this.agregarElementos=function(contenedor,elementos){
 			var html="";
-			console.log(elementos);
 			for(var x=0;x<elementos.length;x++){
 				html+="<article>"+elementos[x].nombre+"</article>";
 			}
-			html+='<article add></article>';
+			html+='<article add="privilegio"></article>';
 			contenedor.innerHTML=html;
+			this.agregarFuncionamiento();
+		}
+		this.agregarFuncionamiento = function(){
+			var nodo=this.nodo;
+			var lista=nodo.getElementsByTagName('article');
+			for(var x=0;x<lista.length;x++){
+				if(lista[x].getAttribute('update')!==null){
+					lista[x].onclick=this.edicion;
+				}else if(lista[x].getAttribute('add')!==null){
+					lista[x].onclick=function(){
+						console.log('agregar');
+					}
+				}
+			}
+		}
+		this.edicion=function(){
+			var nodo=this;
+			var campo=this.previousSibling;
+			var campoEdicion=campo.previousSibling;
+			campoEdicion.value=campo.textContent;
+			campoEdicion.style.display='inline-block';
+			campo.style.width=window.getComputedStyle(campo,null).getPropertyValue("width");
+			campo.style.maxHeight=window.getComputedStyle(campo,null).getPropertyValue("height");
+			setTimeout(function(){
+				campo.style.width='0px';
+				campo.style.opacity='0';
+
+				campoEdicion.style.width='calc(100% - 62px)';
+				campoEdicion.style.padding='5px';
+				campoEdicion.style.opacity='1';
+				if(nodo.getAttribute('update')=='campo'){
+					campoEdicion.style.height="20px";
+				}else if(nodo.getAttribute('update')=='area'){
+					campoEdicion.style.height="40px";
+				}
+			},10);
+			setTimeout(function(){
+				nodo.onclick=constructor.elementos.formulario.ventanaForm.finEdicion;
+				if(nodo.getAttribute('update')=='area'){
+					campoEdicion.style.height="150px";
+				}
+				campoEdicion.focus();
+			},520);
+			setTimeout(function(){
+				campoEdicion.focus();
+			},1010);
+
+		}
+		this.finEdicion = function(){
+			var nodo=this;
+			var campo=this.previousSibling;
+			var campoEdicion=campo.previousSibling;
+			campo.textContent=campoEdicion.value;
+			campo.style.width='calc(100% - 62px)';
+			campo.style.opacity='1';
+
+			campoEdicion.style.width='0px';
+			campoEdicion.style.opacity='0';
+			campoEdicion.style.height='0px';
+			setTimeout(function(){
+				campoEdicion.style.width='auto';
+				campoEdicion.style.display='none';
+				nodo.onclick=constructor.elementos.formulario.ventanaForm.edicion;
+				campoEdicion.style.width=window.getComputedStyle(campoEdicion,null).getPropertyValue("width");
+				campo.style.width=campoEdicion.style.width;
+				campoEdicion.style.width='0px';
+				campoEdicion.value='';
+			},510)
 		}
 		this.reconstruirInterfaz=function(data){
 			if(data.tipo=='nuevo'){
@@ -422,20 +487,24 @@ var Formulario = function(){
 					nodo.style.borderRadius='0px';
 					var html='';
 					html+='\
-				<section titulo><span>'+data.nombre+'</span><article update></article></section>\
+				<section titulo><textarea ></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
 					<section sector>\
-						<div><span>'+data.descripcion+'</span><article update></article></div>\
+						<div><textarea ></textarea><span>'+data.descripcion+'</span><article update="area"></article></div>\
 					</section>\
 					<section sector>\
 						<div>Privilegios</div>\
-						<section contenedor>\
-							<article >ProbioAgro</article>\
-							<article >SocaServicios</article>\
-							<article add ></article>\
+						<section contenedor id="contenedorPri">\
 						</section>\
 					</section>\
 				</section>';
 					nodo.innerHTML=html;
+					normalizarNodo(nodo);
+					var contenedor=nodo.childNodes[2];
+					//arreglo temporal de privilegios
+						var dataTemp=[
+							{nombre:'ProbioAgro'},{nombre:'SocaServicios'}
+						];
+						constructor.elementos.formulario.ventanaForm.agregarElementos(contenedor,dataTemp);
 				},600);
 			}
 		}

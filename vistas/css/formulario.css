@@ -80,6 +80,19 @@ div[capaForm] section[titulo] article[update]:hover{
 }
 div[capaform] span{
   float: left;
+  transition:all 0.5s ease-in-out;
+  max-width: calc(100% - 32px);
+}
+div[capaForm] section textarea{
+  transition:all 0.5s ease-in-out;
+  border:none;
+  padding: 0px;
+  opacity: 0;
+  resize:vertical;
+  width: 0px;
+  height: 0px;
+  font-size: 15px;
+  display: none;
 }
 /*----------------------------------------Capa Listado-------------------------------*/
 div[capaList]{
@@ -319,18 +332,19 @@ div[botonera] button[btnAbrir]{
   float: left;
   overflow:visible;
 }
-div[capaForm] input{
+div[capaForm] div.group input{
   font-size:18px;
   padding:10px 10px 10px 5px;
   display:block;
   width:200px;
   border:none;
   border-bottom:1px solid #757575;
+  background-color: transparent;
 }
-div[capaForm] input:focus{ outline:none; }
+div[capaForm] div.group input:focus{ outline:none; }
 
 /* LABEL ======================================= */
-label                {
+div.group label                {
   color:#999; 
   font-size:18px;
   font-weight:normal;
@@ -344,7 +358,7 @@ label                {
 }
 
 /* active state */
-div[capaForm] input:focus ~ label, div[capaForm] input:valid ~ label        {
+div[capaForm] div.group input:focus ~ label, div[capaForm] div.group input:valid ~ label        {
   top:-20px;
   font-size:14px;
   color:#4CAF50;
