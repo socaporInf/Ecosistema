@@ -53,6 +53,10 @@ var Botonera = function(estructura){
 				case 'redactar':
 					nodo.setAttribute('btnRedactar','');
 				break;
+				case 'guardar':
+					nodo.setAttribute('btnGuardar','');
+					nodo.onclick=guardar;
+				break;
 			}
 			this.nodo = nodo;
 			this.estado = 'enUso';
@@ -93,8 +97,16 @@ var Botonera = function(estructura){
 
 			var boton = new Boton(tipo);
 			botonera.appendChild(boton.nodo);
+			//esta parte es solo para cuando se agrega un boton en un momento posterior a la inicializacion
+			if(this.buscarBoton('abrir')!=-1){
+				if(this.buscarBoton('abrir').nodo.getAttribute('estado')=='visible'){
+					setTimeout(function(){
+						var top=this.botones.length*45;
+						boton.nodo.style.top='-'+top+'px';
+					},10);
+				}
+			}
 			this.botones.push(boton);
-
 		}
 	}
 	this.agregarEfectos = function(){
@@ -150,7 +162,10 @@ var Botonera = function(estructura){
 	this.quitarBoton = function(tipo){
 		var eliminar=this.buscarBoton(tipo);
 		if(eliminar!=-1){
-			eliminar.nodo.parentNode.removeChild(eliminar.nodo);
+			eliminar.nodo.style.top='0px';
+			setTimeout(function(){
+				eliminar.nodo.parentNode.removeChild(eliminar.nodo);
+			},510);
 			this.botones.splice(this.botones.indexOf(eliminar),1);
 		};
 		
@@ -323,6 +338,9 @@ var Formulario = function(){
 
 		this.estado = 'sinConstruir';
 
+		//este es usado cuando se va a editar un registro en especifico
+		this.registroId;
+
 		this.construirNodo = function(data){
 			var nodo = document.createElement('div');
 			nodo.setAttribute('capaForm','');
@@ -333,24 +351,28 @@ var Formulario = function(){
 				html+='\
 				<section titulo>Nuevo Rol</section>\
 					<section sector>\
-						<div class="group">\
-					      <input type="text" required>\
-					      <span class="highlight"></span>\
-					      <span class="bar"></span>\
-					      <label>Nombre</label>\
-					    </div>\
-					    <div class="group">\
-					      <input type="text" required>\
-					      <span class="highlight"></span>\
-					      <span class="bar"></span>\
-					      <label>Descripcion</label>\
-					    </div>\
+						<form name ="formNuevo">\
+							<div class="group">\
+						      <input type="text" name="Nombre" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Nombre</label>\
+						    </div>\
+						    <div class="group">\
+						      <input type="text" name="Descripcion" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Descripcion</label>\
+						    </div>\
+						</form>\
 					</section>\
 				</section>';
 				nodo.innerHTML=html;
-				constructor.elementos.botonera.agregarBoton('redactar');
+				constructor.elementos.botonera.agregarBoton('guardar');
+				this.nodo=nodo;
 			}else if(this.tipo='modificar'){
-				constructor.elementos.botonera.quitarBoton('redactar');
+				this.registroId=data.id;
+				constructor.elementos.botonera.quitarBoton('guardar');
 				html+='\
 				<section titulo><textarea ></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
 					<section sector>\
@@ -367,11 +389,77 @@ var Formulario = function(){
 			var contenedor=nodo.childNodes[2];
 			this.nodo=nodo;
 			//arreglo temporal de privilegios
-				var dataTemp=[
-					{nombre:'ProbioAgro'},{nombre:'SocaServicios'}
-				];
+				dataTemp=buscarPrivilegios(data.id);
 				this.agregarElementos(contenedor,dataTemp);
 			}
+		}
+		this.reconstruirInterfaz=function(data){
+			if(data.tipo=='nuevo'){
+				constructor.elementos.formulario.controlLista();
+				this.nodo.style.height='0px';		
+				setTimeout(function(){
+					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
+					nodo.style.height='250px';
+					nodo.style.borderRadius='0px';
+					var html='';
+					html+='\
+				<section titulo>Nuevo Rol</section>\
+					<section sector>\
+						<form name ="formNuevo">\
+							<div class="group">\
+						      <input type="text" name="Nombre" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Nombre</label>\
+						    </div>\
+						    <div class="group">\
+						      <input type="text" name="Descripcion" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Descripcion</label>\
+						    </div>\
+						</form>\
+					</section>\
+				</section>';
+					nodo.innerHTML=html;
+				},600);
+				constructor.elementos.botonera.agregarBoton('guardar');
+			}else if(data.tipo='modificar'){
+				this.registroId=data.id;
+				constructor.elementos.botonera.quitarBoton('guardar');
+				this.nodo.style.height='0px';		
+				setTimeout(function(){
+					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
+					nodo.style.height='250px';
+					nodo.style.borderRadius='0px';
+					var html='';
+					html+='\
+				<section titulo><textarea ></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
+					<section sector>\
+						<div><textarea ></textarea><span>'+data.descripcion+'</span><article update="area"></article></div>\
+					</section>\
+					<section sector>\
+						<div>Privilegios</div>\
+						<section contenedor id="contenedorPri">\
+						</section>\
+					</section>\
+				</section>';
+					nodo.innerHTML=html;
+					normalizarNodo(nodo);
+					var contenedor=nodo.childNodes[2];
+					//arreglo temporal de privilegios
+						dataTemp=buscarPrivilegios(data.id);
+						constructor.elementos.formulario.ventanaForm.agregarElementos(contenedor,dataTemp);
+				},600);
+			}
+		}
+		this.destruirNodo = function(){
+			this.nodo.style.height='0px';
+			setTimeout(function(){
+				var vf=constructor.elementos.formulario.ventanaForm;
+				vf.nodo.parentNode.removeChild(vf.nodo);
+				vf.estado='sinConstruir';
+			},510);
 		}
 		this.agregarElementos=function(contenedor,elementos){
 			var html="";
@@ -420,8 +508,8 @@ var Formulario = function(){
 				nodo.onclick=constructor.elementos.formulario.ventanaForm.finEdicion;
 				if(nodo.getAttribute('update')=='area'){
 					campoEdicion.style.height="150px";
+					campoEdicion.style.padding="15px";
 				}
-				campoEdicion.focus();
 			},520);
 			setTimeout(function(){
 				campoEdicion.focus();
@@ -429,6 +517,7 @@ var Formulario = function(){
 
 		}
 		this.finEdicion = function(){
+			console.log('se disparo una edicion con id:'+constructor.elementos.formulario.ventanaForm.registroId);
 			var nodo=this;
 			var campo=this.previousSibling;
 			var campoEdicion=campo.previousSibling;
@@ -449,65 +538,7 @@ var Formulario = function(){
 				campoEdicion.value='';
 			},510)
 		}
-		this.reconstruirInterfaz=function(data){
-			if(data.tipo=='nuevo'){
-				constructor.elementos.formulario.controlLista();
-				this.nodo.style.height='0px';		
-				setTimeout(function(){
-					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
-					nodo.style.height='250px';
-					nodo.style.borderRadius='0px';
-					var html='';
-					html+='\
-						<section titulo>Nuevo Rol</section>\
-							<section sector>\
-								<div class="group">\
-							      <input type="text" required>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Nombre</label>\
-							    </div>\
-							    <div class="group">\
-							      <input type="text" required>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Descripcion</label>\
-							    </div>\
-							</section>\
-						</section>';
-					nodo.innerHTML=html;
-				},600);
-				constructor.elementos.botonera.agregarBoton('redactar');
-			}else if(data.tipo='modificar'){
-				constructor.elementos.botonera.quitarBoton('redactar');
-				this.nodo.style.height='0px';		
-				setTimeout(function(){
-					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
-					nodo.style.height='250px';
-					nodo.style.borderRadius='0px';
-					var html='';
-					html+='\
-				<section titulo><textarea ></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
-					<section sector>\
-						<div><textarea ></textarea><span>'+data.descripcion+'</span><article update="area"></article></div>\
-					</section>\
-					<section sector>\
-						<div>Privilegios</div>\
-						<section contenedor id="contenedorPri">\
-						</section>\
-					</section>\
-				</section>';
-					nodo.innerHTML=html;
-					normalizarNodo(nodo);
-					var contenedor=nodo.childNodes[2];
-					//arreglo temporal de privilegios
-						var dataTemp=[
-							{nombre:'ProbioAgro'},{nombre:'SocaServicios'}
-						];
-						constructor.elementos.formulario.ventanaForm.agregarElementos(contenedor,dataTemp);
-				},600);
-			}
-		}
+		
 	}
 	/*------------------------------Objeto VentanaForm------------*/
 	/*------------------------------Objeto Slot-------------------*/
@@ -543,7 +574,8 @@ var Formulario = function(){
 				var data = {
 						tipo:'modificar',
 						nombre:newSelec.atributos.nombre,
-						descripcion:newSelec.atributos.descripcion
+						descripcion:newSelec.atributos.descripcion,
+						id:newSelec.atributos.id
 					}
 				formulario.construirInterfaz(data);
 			}
@@ -592,6 +624,7 @@ var Formulario = function(){
 		var slot = new Slot(data);
 		this.Slots.push(slot);
 		this.nodo.appendChild(slot.nodo);
+		return slot.nodo;
 	}
 	this.cargarRegistros = function(registros){
 		for(var x=0; x<registros.length;x++){
@@ -620,7 +653,8 @@ var Formulario = function(){
 		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);
 		setTimeout(function(){
 			constructor.elementos.formulario.ventanaForm.nodo.style.height='250px';
-		},10);
+		},10);	
+		
 	}
 	this.construirInterfaz = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;

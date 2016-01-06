@@ -2,6 +2,9 @@
     outline: none;
     overflow: hidden;
 }
+form{
+  overflow: visible;
+}
 div[clear]{
   clear:both;
 }
@@ -201,7 +204,7 @@ div[botonera] button:hover:before{
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
 }
 div[botonera] button[btnNuevo]{
-    background-color: #3F51B5;
+    background-color: #00BCD4;
     background-image: url('../imagenes/file-empty.png');
     top:0px;
     left:0px;
@@ -210,22 +213,7 @@ div[botonera] button[btnNuevo]{
 div[botonera] button[btnNuevo]:hover:before{
     content: 'Nuevo';
     color:white;
-    background-color: #3F51B5;
-    margin-left:-100px;
-    border-radius:5px; 
-    padding:5px;
-}
-div[botonera] button[btnBuscar]{
-    background-color: #03A9F4;
-    background-image: url('../imagenes/search.png');
-    top:0px;
-    left:0px;
-    position: absolute;
-}
-div[botonera] button[btnNuevo]:hover:before{
-    content: 'Nuevo';
-    color:white;
-    background-color: #3F51B5;
+    background-color: inherit;
     margin-left:-100px;
     border-radius:5px; 
     padding:5px;
@@ -286,6 +274,22 @@ div[botonera] button[btnListar]:hover:before{
     content: 'Listar';
     color:white;
     background-color: #FFEB3B;
+    margin-left:-100px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnGuardar]{
+    background-position: 8px;
+    background-color: #3F51B5;
+    background-image: url('../imagenes/save.png');    
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnGuardar]:hover:before{
+    content: 'Guardar';
+    color:white;
+    background-color: inherit;
     margin-left:-100px;
     border-radius:5px; 
     padding:5px;
@@ -437,7 +441,7 @@ input:focus ~ .highlight {
     display: none;
   }
   div[capaForm] section[sector]{
-    max-width: 560px;
+    max-width: 830px;
   }
   div[capaForm] section[sector] div:not(.grupo){
     margin-left: 20px;

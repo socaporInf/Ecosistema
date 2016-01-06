@@ -13,28 +13,97 @@
 </body>
 <script type="text/javascript" src='js/constructor.js'></script>
 <script type="text/javascript">
+	//borrar
+	var contId=4;
+	var registros = [
+						{
+							nombre:'cuentasxpagar',
+							id:1,
+							descripcion:'cuentasxpagar',
+							privilegios:[
+									{nombre:'ProbioAgro'},{nombre:'SocaPortuguesa'}
+								]
+						},
+						{
+							nombre:'administrador',
+							id:2,
+							descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo',
+							privilegios:[
+									{nombre:'ProbioAgro'},{nombre:'SocaPortuguesa'},{nombre:'SocaServicios'}
+								]
+						},
+						{
+							nombre:'almacen-facturacion',
+							id:3,
+							descripcion:'factura en almacen',
+							privilegios:[
+									{nombre:'SocaPortuguesa'}
+								]
+						}
+					];
+	
+	//Inicialiazion de formulario
 	var constructor = new Constructor();
 	var botones = ['buscar','nuevo','abrir'];
-	var registros = [
-					{nombre:'cuentasxpagar',id:'2',descripcion:'cuentasxpagar'},
-					{nombre:'administrador',id:'1',descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo'},
-					{nombre:'almacen-facturacion',id:'1',descripcion:'factura en almacen'}
-					]
+	
 	constructor.configure();
 	constructor.elementos.botonera = new Botonera(botones);
 	constructor.elementos.formulario = new Formulario();
 	constructor.elementos.formulario.cargarRegistros(registros);
+	//boton buscar
 	constructor.elementos.botonera.buscarBoton('nuevo').nodo.onclick=function(){
-		console.log('presiono nuevo');
+		console.log('presiono Nuevo');
 		var data = {
 			tipo:'nuevo'
 		}
 		var formulario = constructor.elementos.formulario;
 		formulario.construirInterfaz(data);
 	}
+	//boton nuevo
 	constructor.elementos.botonera.buscarBoton('buscar').nodo.onclick=function(){
-		console.log('presiono nuevo');
+		console.log('presiono Buscar');
 		constructor.elementos.formulario.nodo.firstChild.getElementsByTagName('input')[0].focus();
+	}
+	//funcionamiento exclusivo del formulario
+	function guardar(){
+		var formulario = document.formNuevo;
+		var data = new Array();
+		var elemento;
+		var validacion=false;
+		for(var x=0;x<formulario.elements.length;x++){
+			if(formulario.elements[x].type='text'){
+				if(formulario.elements[x].value==''){
+					validacion=true;
+				}
+				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
+				data.push(elemento);
+			}
+		}
+		if(!validacion){
+			var nuevoRegistro = {
+				nombre : data[0].valor,
+				id : contId++,
+				descripcion : data[1].valor,
+				privilegios : []
+			}
+			registros.push(nuevoRegistro);
+			var nuevoSlot=constructor.elementos.formulario.agregarSlot(nuevoRegistro);
+			nuevoSlot.firstChild.click();
+		}else{
+			console.log('formulario no paso la validacion');
+		}
+	}
+	function buscarPrivilegios(id){
+		console.log('se disparo una busueda con id:'+id);
+		var data = new Array();
+		for(var x=0;x<registros.length;x++){
+			if(registros[x].id==id){
+				for(var y=0;y<registros[x].privilegios.length;y++){
+					data.push(registros[x].privilegios[y]);
+				}
+			}
+		}
+		return data;
 	}
 </script>
 </html>
