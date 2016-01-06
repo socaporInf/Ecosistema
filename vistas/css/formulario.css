@@ -59,6 +59,7 @@ div[capaForm] article[add]{
 }
 div[capaForm] article[update]{
   transition:all 0.5s ease-in-out;
+  transition:background-position 0s;
   width: 24px;
   height: 24px;
   padding: 1px;
@@ -73,6 +74,16 @@ div[capaForm] article[update]:hover{
   background-image: url('../imagenes/pencil_white_16.png');
   background-color: #4CAF50;
 }
+div[capaForm] article[update].edicion{
+  background-image: url('../imagenes/save_green.png');
+  background-color: #fff;
+  background-position: 1px;
+}
+div[capaForm] article[update].edicion:hover{
+  background-image: url('../imagenes/save.png');
+  background-color: #4CAF50;
+  background-position: 1px;
+}
 div[capaForm] section[titulo] article[update]{
    background-image: url('../imagenes/pencil_white_16.png');
   background-color: #4CAF50;
@@ -80,6 +91,16 @@ div[capaForm] section[titulo] article[update]{
 div[capaForm] section[titulo] article[update]:hover{
   background-image: url('../imagenes/pencil_green_16.png');
   background-color: white;
+}
+div[capaForm] section[titulo] article[update].edicion{
+  background-image: url('../imagenes/save.png');
+  background-color: #4CAF50;
+  background-position: 1px;
+}
+div[capaForm] section[titulo] article[update].edicion:hover{
+  background-image: url('../imagenes/save_green.png');
+  background-color: white;
+  background-position: 1px;
 }
 div[capaform] span{
   float: left;

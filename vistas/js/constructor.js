@@ -339,7 +339,7 @@ var Formulario = function(){
 		this.estado = 'sinConstruir';
 
 		//este es usado cuando se va a editar un registro en especifico
-		this.registroId;
+		this.registroId='';
 
 		this.construirNodo = function(data){
 			var nodo = document.createElement('div');
@@ -348,6 +348,7 @@ var Formulario = function(){
 			var html='';
 			this.tipo=data.tipo;
 			if(this.tipo=='nuevo'){
+				this.registroId='';
 				html+='\
 				<section titulo>Nuevo Rol</section>\
 					<section sector>\
@@ -374,16 +375,16 @@ var Formulario = function(){
 				this.registroId=data.id;
 				constructor.elementos.botonera.quitarBoton('guardar');
 				html+='\
-				<section titulo><textarea ></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
-					<section sector>\
-						<div><textarea ></textarea><span>'+data.descripcion+'</span><article update="area"></article></div>\
-					</section>\
-					<section sector>\
-						<div>Privilegios</div>\
-						<section contenedor id="contenedorPri">\
+					<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
+						<section sector>\
+							<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
 						</section>\
-					</section>\
-				</section>';
+						<section sector>\
+							<div>Privilegios</div>\
+							<section contenedor id="contenedorPri">\
+							</section>\
+						</section>\
+					</section>';
 			nodo.innerHTML=html;
 			normalizarNodo(nodo);
 			var contenedor=nodo.childNodes[2];
@@ -394,14 +395,14 @@ var Formulario = function(){
 			}
 		}
 		this.reconstruirInterfaz=function(data){
+			var html='';
 			if(data.tipo=='nuevo'){
+				this.registroId='';
 				constructor.elementos.formulario.controlLista();
 				this.nodo.style.height='0px';		
 				setTimeout(function(){
 					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
 					nodo.style.height='250px';
-					nodo.style.borderRadius='0px';
-					var html='';
 					html+='\
 				<section titulo>Nuevo Rol</section>\
 					<section sector>\
@@ -432,18 +433,17 @@ var Formulario = function(){
 					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
 					nodo.style.height='250px';
 					nodo.style.borderRadius='0px';
-					var html='';
-					html+='\
-				<section titulo><textarea ></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
-					<section sector>\
-						<div><textarea ></textarea><span>'+data.descripcion+'</span><article update="area"></article></div>\
-					</section>\
-					<section sector>\
-						<div>Privilegios</div>\
-						<section contenedor id="contenedorPri">\
+						html+='\
+					<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
+						<section sector>\
+							<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
 						</section>\
-					</section>\
-				</section>';
+						<section sector>\
+							<div>Privilegios</div>\
+							<section contenedor id="contenedorPri">\
+							</section>\
+						</section>\
+					</section>';
 					nodo.innerHTML=html;
 					normalizarNodo(nodo);
 					var contenedor=nodo.childNodes[2];
@@ -454,6 +454,10 @@ var Formulario = function(){
 			}
 		}
 		this.destruirNodo = function(){
+			if(this.registroId!=''){
+				this.registroId='';
+				constructor.elementos.formulario.controlLista();
+			}
 			this.nodo.style.height='0px';
 			setTimeout(function(){
 				var vf=constructor.elementos.formulario.ventanaForm;
@@ -489,8 +493,11 @@ var Formulario = function(){
 			var campoEdicion=campo.previousSibling;
 			campoEdicion.value=campo.textContent;
 			campoEdicion.style.display='inline-block';
+
 			campo.style.width=window.getComputedStyle(campo,null).getPropertyValue("width");
 			campo.style.maxHeight=window.getComputedStyle(campo,null).getPropertyValue("height");
+			nodo.classList.toggle('edicion');
+
 			setTimeout(function(){
 				campo.style.width='0px';
 				campo.style.opacity='0';
@@ -517,11 +524,14 @@ var Formulario = function(){
 
 		}
 		this.finEdicion = function(){
-			console.log('se disparo una edicion con id:'+constructor.elementos.formulario.ventanaForm.registroId);
 			var nodo=this;
 			var campo=this.previousSibling;
 			var campoEdicion=campo.previousSibling;
+
+			console.log('se disparo una edicion con id:'+constructor.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
 			campo.textContent=campoEdicion.value;
+			
+			nodo.classList.toggle('edicion');
 			campo.style.width='calc(100% - 62px)';
 			campo.style.opacity='1';
 
@@ -537,8 +547,7 @@ var Formulario = function(){
 				campoEdicion.style.width='0px';
 				campoEdicion.value='';
 			},510)
-		}
-		
+		}	
 	}
 	/*------------------------------Objeto VentanaForm------------*/
 	/*------------------------------Objeto Slot-------------------*/
