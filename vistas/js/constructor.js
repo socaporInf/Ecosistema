@@ -302,30 +302,6 @@ var Cabecera = function(){
 	}
 	this.construir();
 }
-/*---------------Utilidades---------------------------------------------*/
-function obtenerContenedor(){
-	var contenedor = document.body.firstChild;
-	while(contenedor.nodeName=='#text'){
-		contenedor=contenedor.nextSibling;
-	}
-	return contenedor;
-}
-function normalizarNodo(nodo){
-	var hijo=null;
-	var eliminar;
-	while(hijo!=nodo.lastChild){
-		if(hijo==null){
-			hijo=nodo.firstChild;
-		}
-		if(hijo.nodeName=='#text'){
-			eliminar=hijo;
-			hijo=hijo.nextSibling;
-			eliminar.parentNode.removeChild(eliminar);
-		}else{
-			hijo=hijo.nextSibling;
-		}
-	}
-}
 /*------------------------------Objeto Formulario(lista)-----------------*/
 var Formulario = function(){
 
@@ -482,7 +458,8 @@ var Formulario = function(){
 					lista[x].onclick=this.edicion;
 				}else if(lista[x].getAttribute('add')!==null){
 					lista[x].onclick=function(){
-						console.log('agregar');
+						constructor.elementos.modalWindow=new modalWindow();
+						constructor.elementos.modalWindow.arranque();
 					}
 				}
 			}
@@ -676,6 +653,187 @@ var Formulario = function(){
 	}
 	this.construir();
 }
+/*------------------------------Objeto Ventana Modal-----------------------*/
+var modalWindow = function(){
+
+	var capaContenido = function(){
+
+		var Cabecera = function(){
+
+			this.estado='sinConstruir';
+			this.nodo;
+
+			this.construirNodo = function(){
+				var nodo=document.createElement('section');
+				nodo.setAttribute('cabecera','');
+				this.nodo=nodo;
+			}
+			this.construirNodo()
+		}
+
+		var Cuerpo = function(){
+			this.estado='sinConstruir';
+			this.nodo;
+
+			this.construirNodo = function(){
+				var nodo=document.createElement('section');
+				nodo.setAttribute('cuerpo','');
+				this.nodo=nodo;
+			}
+			this.construirNodo()
+		}
+
+		var Pie = function(){
+			this.estado='sinConstruir';
+			this.nodo;
+
+			this.construirNodo = function(){
+				var nodo=document.createElement('section');
+				nodo.setAttribute('pie','');
+				this.nodo=nodo;
+			}
+			this.construirNodo()
+		}
+
+		this.estado='sinConstruir';
+		this.partes={};
+		this.nodo;
+		this.tipo='contenido';
+
+		this.construirNodo = function(){
+			var nodo=document.createElement('div');
+			var predecesor = constructor.elementos.modalWindow.obtenerUltimaCapa();
+			console.log(predecesor.nodo);
+			nodo.setAttribute('capa','contenido');
+			predecesor.nodo.parentNode.insertBefore(nodo,predecesor.nodo.nextSibling);
+			this.nodo=nodo;
+			this.agregarParte('cabecera');
+			this.agregarParte('cuerpo');
+			this.agregarParte('pie');
+			this.estado='enUso';
+			setTimeout(function(){
+				nodo.style.top=' calc(50% - 300px)';
+			},300);
+		}
+
+		this.agregarParte = function(parte){
+			switch(parte){
+				case 'cabecera':
+					this.partes.cabecera=new Cabecera();
+					this.nodo.appendChild(this.partes.cabecera.nodo);
+				break
+				case 'cuerpo':
+					this.partes.cuerpo=new Cuerpo();
+					this.nodo.appendChild(this.partes.cuerpo.nodo);
+				break
+				case 'pie':
+					this.partes.pie=new Pie();
+					this.nodo.appendChild(this.partes.pie.nodo);
+				break
+			}
+		}
+		this.construirNodo();
+	}
+
+	var capaExterior = function(){
+
+		this.estado='sinConstruir';
+		this.nodo;
+		this.tipo='exterior';
+
+		this.construirNodo = function(){
+			var nodo = document.createElement('div');
+			nodo.setAttribute('capa','exterior');
+			document.body.appendChild(nodo);
+			this.nodo=nodo;
+			this.estado='enUso';
+			setTimeout(function(){
+				nodo.style.opacity='0.8';
+			},10);
+			
+		}
+		this.construirNodo();
+	}
+
+	this.estado='sinConstruir';
+	this.capas=new Array();
+
+	this.arranque = function(){
+		console.log('arranco modalWindow');
+		this.agregarCapa('exterior');
+		this.agregarCapa('contenido');
+		this.manejoDeCapas();
+	}
+	this.agregarCapa = function(tipo){
+		var capaNueva=false;;
+		if(tipo=='exterior'){
+			capaNueva=new capaExterior();
+			this.capas.push(capaNueva);
+		}else if(tipo=='contenido'){
+			if(this.existeExterior()){
+				capaNueva=new capaContenido();
+				this.capas.push(capaNueva);
+			}
+		}
+		return capaNueva;
+	}
+	this.removerCapa = function(){
+		var capaExterior=constructor.elementos.modalWindow.buscarCapa(this);
+		if(capaExterior){
+			var capaContenido= constructor.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+			//los saco de vista con la tansicion
+			//capa contenido
+			capaContenido.nodo.style.top='100%';
+			setTimeout(function(){
+				capaExterior.nodo.style.opacity='0';
+			},300);
+			setTimeout(function(){
+				capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
+				capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
+			},810);
+		}
+	}
+	this.buscarCapa = function(nodo){
+		var capa=false;
+		for(var x=0;x<this.capas.length;x++){
+			if(this.capas[x].nodo==nodo){
+				capa=this.capas[x];
+				break
+			}
+		}
+		return capa;
+	}
+	this.existeExterior = function(){
+		var capas=this.capas;
+		var existe = false;
+		for(var x=0;x<capas.length;x++){
+			if(capas[x].tipo=='exterior'){
+				existe=true;
+				break
+			}
+		}
+		return existe;
+	}
+	this.obtenerUltimaCapa = function(){
+		var ultimaCapa = this.capas[this.capas.length-1];
+		return ultimaCapa;
+	}
+	this.manejoDeCapas = function(){
+		var contenedor=obtenerContenedor();
+		if(this.existeExterior()){
+			console.log(contenedor);
+			contenedor.style.position='fixed';
+			for(var x=0;x<this.capas.length;x++){
+				if(this.capas[x].nodo.getAttribute('capa')=='exterior'){
+					console.log('encontro una exterior');
+					this.capas[x].nodo.onclick=this.removerCapa;
+				}
+			}
+		}else{
+			contenedor.style.position='inherit';	
+		}
+	}
+}
 /*------------------------------Objeto Constructor-----------------------*/
 var Constructor = function(){
 
@@ -693,5 +851,29 @@ var Constructor = function(){
 			 botonera : 'noPosee'
 		}
 		this.estado='inicializado';
+	}
+}
+/*---------------Utilidades---------------------------------------------*/
+function obtenerContenedor(){
+	var contenedor = document.body.firstChild;
+	while(contenedor.nodeName=='#text'){
+		contenedor=contenedor.nextSibling;
+	}
+	return contenedor;
+}
+function normalizarNodo(nodo){
+	var hijo=null;
+	var eliminar;
+	while(hijo!=nodo.lastChild){
+		if(hijo==null){
+			hijo=nodo.firstChild;
+		}
+		if(hijo.nodeName=='#text'){
+			eliminar=hijo;
+			hijo=hijo.nextSibling;
+			eliminar.parentNode.removeChild(eliminar);
+		}else{
+			hijo=hijo.nextSibling;
+		}
 	}
 }

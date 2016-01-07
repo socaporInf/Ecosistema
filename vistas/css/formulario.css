@@ -2,11 +2,53 @@
     outline: none;
     overflow: hidden;
 }
+html{
+  overflow: auto;
+}
 form{
   overflow: visible;
 }
 div[clear]{
   clear:both;
+}
+div[contenedor]{
+  width: 100%;
+}
+/*----------------------------------------Modal Window-------------------------------*/
+div[capa]{
+  transition:all 0.5s ease-in-out;
+}
+div[capa='exterior']{
+  width: calc(100%);
+  height: calc(100%);
+  background-color: black;
+  position: fixed;
+  z-index: 10;
+  opacity: 0;
+}
+div[capa='contenido']{
+  background-color: white;
+  top: 100%;
+  left:calc(50% - 30%);
+  width: 60%;
+  height:auto;
+  position: absolute;
+  z-index: 12;
+}
+div[capa='contenido'] section[cabecera]{
+  width:100%;
+  height: 60px;
+  background-color: #4CAF50;
+  color: white;
+}
+div[capa='contenido'] section[cuerpo]{
+  width: 100%;
+  height: 1000px;
+}
+div[capa='contenido'] section[pie]{
+  width: 100%;
+  height: 60px;
+  background-color: #A5D6A7;
 }
 /*----------------------------------------Capa Formulario-------------------------------*/
 div[capaForm]{
@@ -112,11 +154,14 @@ div[capaForm] section textarea{
   border:none;
   padding: 0px;
   opacity: 0;
-  resize:vertical;
+  resize:none;
   width: 0px;
   height: 0px;
   font-size: 15px;
   display: none;
+  color:inherit;
+  background-color: transparent;
+  font-size: inherit;
 }
 /*----------------------------------------Capa Listado-------------------------------*/
 div[capaList]{
@@ -447,6 +492,17 @@ input:focus ~ .highlight {
 }
 /*-----------------------------------Media Query-------------------------------*/
 @media (max-width: 1000px){
+  /*modal window*/
+  div[capa='contenido']{
+    background-color: white;
+    top: 100%;
+    left:calc(50% - 200px);
+    width: 400px;
+    height:auto;
+    position: absolute;
+    z-index: 12;
+  }
+  /*fin modal*/
   div[capaList]{
     width: 85%;
     margin-bottom: 10px;
