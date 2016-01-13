@@ -94,7 +94,7 @@
 		}
 	}
 	function buscarPrivilegios(id){
-		console.log('se disparo una busueda con id:'+id);
+		console.log('se disparo una busueda de privilegios con id:'+id);
 		var data = new Array();
 		for(var x=0;x<registros.length;x++){
 			if(registros[x].id==id){
@@ -104,6 +104,20 @@
 			}
 		}
 		return data;
+	}
+	function buscarRegistro(id){
+		var registro=false;
+		for(var x=0;x<registros.length;x++){
+			if(registros[x].id==id){
+				registro=registros[x];
+			}
+		}
+		return registro;
+	}
+	function editarCampo(id,campo,valor){
+		var registro=buscarRegistro(id);
+		registro[campo]=valor;
+		return registro;
 	}
 </script>
 </html>

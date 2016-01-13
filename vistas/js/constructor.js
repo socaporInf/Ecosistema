@@ -458,8 +458,15 @@ var Formulario = function(){
 					lista[x].onclick=this.edicion;
 				}else if(lista[x].getAttribute('add')!==null){
 					lista[x].onclick=function(){
+						console.log('agregar');
+						var registro = buscarRegistro(constructor.elementos.formulario.ventanaForm.registroId);
+						var dataTemp = {
+							cabecera:'Agregar Privilegio',
+							cuerpo:'<label>'+registro.nombre+'</label><select></select>',
+							pie:'<section modalButtons><button type="button" cancelar></button><button type="button" aceptar></button></section>'
+						}
 						constructor.elementos.modalWindow=new modalWindow();
-						constructor.elementos.modalWindow.arranque();
+						constructor.elementos.modalWindow.arranque(dataTemp);
 					}
 				}
 			}
@@ -505,7 +512,14 @@ var Formulario = function(){
 			var campo=this.previousSibling;
 			var campoEdicion=campo.previousSibling;
 
+			var id=constructor.elementos.formulario.ventanaForm.registroId;
+			var nombreCampo=campoEdicion.name;
+			var valorCampo=campoEdicion.value;
+
 			console.log('se disparo una edicion con id:'+constructor.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
+			var registro=editarCampo(id,nombreCampo,valorCampo);
+			constructor.elementos.formulario.actualizarLista(registro);
+
 			campo.textContent=campoEdicion.value;
 			
 			nodo.classList.toggle('edicion');
@@ -525,6 +539,7 @@ var Formulario = function(){
 				campoEdicion.value='';
 			},510)
 		}	
+
 	}
 	/*------------------------------Objeto VentanaForm------------*/
 	/*------------------------------Objeto Slot-------------------*/
@@ -565,6 +580,20 @@ var Formulario = function(){
 					}
 				formulario.construirInterfaz(data);
 			}
+		}
+		this.reconstruirNodo = function(){
+			this.nodo.style.marginLeft="120%";
+			var nodo=this.nodo;
+			var slot=this;
+			var html="<article  title>"+this.atributos.nombre+"</article>\
+			<button type='button' btnEliminar></button>";
+			setTimeout(function(){
+				nodo.innerHTML=html;
+				slot.funcionamiento();
+				console.log(slot.estado);
+				constructor.elementos.formulario.controlLista(nodo);
+			},510);
+			
 		}
 		this.construirNodo();
 	}
@@ -651,6 +680,24 @@ var Formulario = function(){
 			this.agregarVentanaForm();
 		}
 	}
+	this.actualizarLista = function(cambios){
+		if(cambios instanceof Array){
+
+		}else{
+			this.actualizarSlot(cambios);
+		}
+	}
+	this.actualizarSlot = function(registro){
+		this.buscarSlot(registro);
+	}
+	this.buscarSlot = function(registro){
+		for(x=0;x<this.Slots.length;x++){
+			if(this.Slots[x].atributos.id==registro.id){
+				this.Slots[x].atributos=registro;
+				this.Slots[x].reconstruirNodo();
+			}
+		}
+	}
 	this.construir();
 }
 /*------------------------------Objeto Ventana Modal-----------------------*/
@@ -703,7 +750,6 @@ var modalWindow = function(){
 		this.construirNodo = function(){
 			var nodo=document.createElement('div');
 			var predecesor = constructor.elementos.modalWindow.obtenerUltimaCapa();
-			console.log(predecesor.nodo);
 			nodo.setAttribute('capa','contenido');
 			predecesor.nodo.parentNode.insertBefore(nodo,predecesor.nodo.nextSibling);
 			this.nodo=nodo;
@@ -712,7 +758,8 @@ var modalWindow = function(){
 			this.agregarParte('pie');
 			this.estado='enUso';
 			setTimeout(function(){
-				nodo.style.top=' calc(50% - 300px)';
+				nodo.style.top=' calc(50% - 250px)';
+				nodo.style.opacity='1';
 			},300);
 		}
 
@@ -731,6 +778,12 @@ var modalWindow = function(){
 					this.nodo.appendChild(this.partes.pie.nodo);
 				break
 			}
+		}
+
+		this.dibujarInterfaz = function(data){
+			this.partes.cabecera.nodo.textContent=data.cabecera;
+			this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
+			this.partes.pie.nodo.innerHTML=data.pie;
 		}
 		this.construirNodo();
 	}
@@ -758,10 +811,11 @@ var modalWindow = function(){
 	this.estado='sinConstruir';
 	this.capas=new Array();
 
-	this.arranque = function(){
+	this.arranque = function(data){
 		console.log('arranco modalWindow');
 		this.agregarCapa('exterior');
-		this.agregarCapa('contenido');
+		var contenido=this.agregarCapa('contenido');
+		contenido.dibujarInterfaz(data);
 		this.manejoDeCapas();
 	}
 	this.agregarCapa = function(tipo){
@@ -783,13 +837,15 @@ var modalWindow = function(){
 			var capaContenido= constructor.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 			//los saco de vista con la tansicion
 			//capa contenido
-			capaContenido.nodo.style.top='100%';
+			capaContenido.nodo.style.top='200%';
+			capaContenido.nodo.style.opacity='0';
 			setTimeout(function(){
 				capaExterior.nodo.style.opacity='0';
 			},300);
 			setTimeout(function(){
 				capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
 				capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
+				obtenerContenedor().style.position='inherit';
 			},810);
 		}
 	}
@@ -821,7 +877,6 @@ var modalWindow = function(){
 	this.manejoDeCapas = function(){
 		var contenedor=obtenerContenedor();
 		if(this.existeExterior()){
-			console.log(contenedor);
 			contenedor.style.position='fixed';
 			for(var x=0;x<this.capas.length;x++){
 				if(this.capas[x].nodo.getAttribute('capa')=='exterior'){
