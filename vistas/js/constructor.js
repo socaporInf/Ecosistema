@@ -1,24 +1,23 @@
 /*---------------------MEDIA QUERY CHANGES-----------------------------------*/
 var handleMediaChange = function (mediaQueryList) {
-    if(constructor.estado=='inicializado'){
-    	var formulario = constructor.elementos.formulario;
-	    if (mediaQueryList.matches) {
-	    	//cambio interfaz Ventana Form
-	        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
-	        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
-	    }
-	    else {
-	    	//cambio interfaz Ventana Form
-	        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'600px':null;
-	        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
-	    }
+	if(interfaz.estado=='inicializado'){
+		var formulario = interfaz.elementos.formulario;
+		if(formulario.ventanaForm!==undefined){
+			if(formulario.ventanaForm.nodo!==undefined){
+				if (mediaQueryList.matches) {
+			    	//cambio interfaz Ventana Form
+			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
+			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
+			    }
+			    else {
+			    	//cambio interfaz Ventana Form
+			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'600px':null;
+			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
+			    }
+			}
+		}
 	}
 }
-
-var mql = window.matchMedia("(max-width: 1000px)");
-mql.addListener(handleMediaChange);
-handleMediaChange(mql);
-
 /*-------------------------Objeto Botonera ----------------------------------------*/
 var Botonera = function(estructura){
 	
@@ -345,11 +344,11 @@ var Formulario = function(){
 					</section>\
 				</section>';
 				nodo.innerHTML=html;
-				constructor.elementos.botonera.agregarBoton('guardar');
+				interfaz.elementos.botonera.agregarBoton('guardar');
 				this.nodo=nodo;
 			}else if(this.tipo='modificar'){
 				this.registroId=data.id;
-				constructor.elementos.botonera.quitarBoton('guardar');
+				interfaz.elementos.botonera.quitarBoton('guardar');
 				html+='\
 					<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
 						<section sector>\
@@ -374,10 +373,10 @@ var Formulario = function(){
 			var html='';
 			if(data.tipo=='nuevo'){
 				this.registroId='';
-				constructor.elementos.formulario.controlLista();
+				interfaz.elementos.formulario.controlLista();
 				this.nodo.style.height='0px';		
 				setTimeout(function(){
-					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
+					var nodo=interfaz.elementos.formulario.ventanaForm.nodo;
 					nodo.style.height='250px';
 					html+='\
 				<section titulo>Nuevo Rol</section>\
@@ -400,13 +399,13 @@ var Formulario = function(){
 				</section>';
 					nodo.innerHTML=html;
 				},600);
-				constructor.elementos.botonera.agregarBoton('guardar');
+				interfaz.elementos.botonera.agregarBoton('guardar');
 			}else if(data.tipo='modificar'){
 				this.registroId=data.id;
-				constructor.elementos.botonera.quitarBoton('guardar');
+				interfaz.elementos.botonera.quitarBoton('guardar');
 				this.nodo.style.height='0px';		
 				setTimeout(function(){
-					var nodo=constructor.elementos.formulario.ventanaForm.nodo;
+					var nodo=interfaz.elementos.formulario.ventanaForm.nodo;
 					nodo.style.height='250px';
 					nodo.style.borderRadius='0px';
 						html+='\
@@ -425,18 +424,18 @@ var Formulario = function(){
 					var contenedor=nodo.childNodes[2];
 					//arreglo temporal de privilegios
 						dataTemp=buscarPrivilegios(data.id);
-						constructor.elementos.formulario.ventanaForm.agregarElementos(contenedor,dataTemp);
+						interfaz.elementos.formulario.ventanaForm.agregarElementos(contenedor,dataTemp);
 				},600);
 			}
 		}
 		this.destruirNodo = function(){
 			if(this.registroId!=''){
 				this.registroId='';
-				constructor.elementos.formulario.controlLista();
+				interfaz.elementos.formulario.controlLista();
 			}
 			this.nodo.style.height='0px';
 			setTimeout(function(){
-				var vf=constructor.elementos.formulario.ventanaForm;
+				var vf=interfaz.elementos.formulario.ventanaForm;
 				vf.nodo.parentNode.removeChild(vf.nodo);
 				vf.estado='sinConstruir';
 			},510);
@@ -459,14 +458,23 @@ var Formulario = function(){
 				}else if(lista[x].getAttribute('add')!==null){
 					lista[x].onclick=function(){
 						console.log('agregar');
-						var registro = buscarRegistro(constructor.elementos.formulario.ventanaForm.registroId);
+						var registro = buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId);
 						var dataTemp = {
 							cabecera:'Agregar Privilegio',
-							cuerpo:'<label>'+registro.nombre+'</label><select></select>',
-							pie:'<section modalButtons><button type="button" cancelar></button><button type="button" aceptar></button></section>'
+							cuerpo:'<label>'+registro.nombre+'</label>\
+									<select>\
+										<option value="1">SocaServicios</option>\
+										<option value="2">SocaPortuguesa</option>\
+										<option value="3">Probioagro</option>\
+										<option value="4">E/S Piedritas Blancas</option>\
+									</select>',
+							pie:'<section modalButtons>\
+									<button type="button" cancelar onclick="interfaz.elementos.modalWindow.elimiarUltimaCapa();"></button>\
+									<button type="button" aceptar></button>\
+								</section>'
 						}
-						constructor.elementos.modalWindow=new modalWindow();
-						constructor.elementos.modalWindow.arranque(dataTemp);
+						interfaz.elementos.modalWindow=new modalWindow();
+						interfaz.elementos.modalWindow.arranque(dataTemp);
 					}
 				}
 			}
@@ -496,7 +504,7 @@ var Formulario = function(){
 				}
 			},10);
 			setTimeout(function(){
-				nodo.onclick=constructor.elementos.formulario.ventanaForm.finEdicion;
+				nodo.onclick=interfaz.elementos.formulario.ventanaForm.finEdicion;
 				if(nodo.getAttribute('update')=='area'){
 					campoEdicion.style.height="150px";
 					campoEdicion.style.padding="15px";
@@ -512,13 +520,13 @@ var Formulario = function(){
 			var campo=this.previousSibling;
 			var campoEdicion=campo.previousSibling;
 
-			var id=constructor.elementos.formulario.ventanaForm.registroId;
+			var id=interfaz.elementos.formulario.ventanaForm.registroId;
 			var nombreCampo=campoEdicion.name;
 			var valorCampo=campoEdicion.value;
 
-			console.log('se disparo una edicion con id:'+constructor.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
+			console.log('se disparo una edicion con id:'+interfaz.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
 			var registro=editarCampo(id,nombreCampo,valorCampo);
-			constructor.elementos.formulario.actualizarLista(registro);
+			interfaz.elementos.formulario.actualizarLista(registro);
 
 			campo.textContent=campoEdicion.value;
 			
@@ -532,7 +540,7 @@ var Formulario = function(){
 			setTimeout(function(){
 				campoEdicion.style.width='auto';
 				campoEdicion.style.display='none';
-				nodo.onclick=constructor.elementos.formulario.ventanaForm.edicion;
+				nodo.onclick=interfaz.elementos.formulario.ventanaForm.edicion;
 				campoEdicion.style.width=window.getComputedStyle(campoEdicion,null).getPropertyValue("width");
 				campo.style.width=campoEdicion.style.width;
 				campoEdicion.style.width='0px';
@@ -569,7 +577,7 @@ var Formulario = function(){
 			var nodo = this.nodo;
 			var article =nodo.getElementsByTagName('article')[0];
 			article.onclick=function(){
-				var formulario = constructor.elementos.formulario;
+				var formulario = interfaz.elementos.formulario;
 				formulario.controlLista(this.parentNode);
 				var newSelec = formulario.obtenerSeleccionado();
 				var data = {
@@ -591,7 +599,7 @@ var Formulario = function(){
 				nodo.innerHTML=html;
 				slot.funcionamiento();
 				console.log(slot.estado);
-				constructor.elementos.formulario.controlLista(nodo);
+				interfaz.elementos.formulario.controlLista(nodo);
 			},510);
 			
 		}
@@ -667,7 +675,7 @@ var Formulario = function(){
 		this.ventanaForm.estado='agregado';
 		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);
 		setTimeout(function(){
-			constructor.elementos.formulario.ventanaForm.nodo.style.height='250px';
+			interfaz.elementos.formulario.ventanaForm.nodo.style.height='250px';
 		},10);	
 		
 	}
@@ -733,7 +741,8 @@ var modalWindow = function(){
 		var Pie = function(){
 			this.estado='sinConstruir';
 			this.nodo;
-
+			//funcion para agregar funcionamiento a los elementos hijos
+			this.funcionamiento;
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('pie','');
@@ -749,7 +758,7 @@ var modalWindow = function(){
 
 		this.construirNodo = function(){
 			var nodo=document.createElement('div');
-			var predecesor = constructor.elementos.modalWindow.obtenerUltimaCapa();
+			var predecesor = interfaz.elementos.modalWindow.obtenerUltimaCapa();
 			nodo.setAttribute('capa','contenido');
 			predecesor.nodo.parentNode.insertBefore(nodo,predecesor.nodo.nextSibling);
 			this.nodo=nodo;
@@ -832,9 +841,9 @@ var modalWindow = function(){
 		return capaNueva;
 	}
 	this.removerCapa = function(){
-		var capaExterior=constructor.elementos.modalWindow.buscarCapa(this);
+		var capaExterior=interfaz.elementos.modalWindow.buscarCapa(this);
 		if(capaExterior){
-			var capaContenido= constructor.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+			var capaContenido= interfaz.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 			//los saco de vista con la tansicion
 			//capa contenido
 			capaContenido.nodo.style.top='200%';
@@ -888,9 +897,17 @@ var modalWindow = function(){
 			contenedor.style.position='inherit';	
 		}
 	}
+	this.elimiarUltimaCapa = function(){
+		var lista = document.getElementsByTagName('div');
+		for(var x=lista.length-1;x>0;x--){
+			if(lista[x].getAttribute('capa')=='exterior'){
+				lista[x].click();
+			}
+		} 
+	}
 }
 /*------------------------------Objeto Constructor-----------------------*/
-var Constructor = function(){
+var Arquitecto = function(){
 
 	this.elementos = new Array();
 
@@ -906,6 +923,9 @@ var Constructor = function(){
 			 botonera : 'noPosee'
 		}
 		this.estado='inicializado';
+		var mql = window.matchMedia("(max-width: 1000px)");
+		mql.addListener(handleMediaChange);
+		handleMediaChange(mql);
 	}
 }
 /*---------------Utilidades---------------------------------------------*/

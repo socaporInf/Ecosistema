@@ -41,28 +41,43 @@
 								]
 						}
 					];
+	var empresas = [
+		{	
+			id:'1',
+			nombre:'SocaServicios'
+		},{
+			id:'2',
+			nombre:'ProbioAgro'
+		},{
+			id:'3',
+			nombre:'SocaPortuguesa'
+		},{
+			id:'4',
+			nombre:'E/S Piedritas Blancas'
+		}
+	]
 	
 	//Inicialiazion de formulario
-	var constructor = new Constructor();
+	var interfaz = new Arquitecto();
 	var botones = ['buscar','nuevo','abrir'];
 	
-	constructor.configure();
-	constructor.elementos.botonera = new Botonera(botones);
-	constructor.elementos.formulario = new Formulario();
-	constructor.elementos.formulario.cargarRegistros(registros);
+	interfaz.configure();
+	interfaz.elementos.botonera = new Botonera(botones);
+	interfaz.elementos.formulario = new Formulario();
+	interfaz.elementos.formulario.cargarRegistros(registros);
 	//boton buscar
-	constructor.elementos.botonera.buscarBoton('nuevo').nodo.onclick=function(){
+	interfaz.elementos.botonera.buscarBoton('nuevo').nodo.onclick=function(){
 		console.log('presiono Nuevo');
 		var data = {
 			tipo:'nuevo'
 		}
-		var formulario = constructor.elementos.formulario;
+		var formulario = interfaz.elementos.formulario;
 		formulario.construirInterfaz(data);
 	}
 	//boton nuevo
-	constructor.elementos.botonera.buscarBoton('buscar').nodo.onclick=function(){
+	interfaz.elementos.botonera.buscarBoton('buscar').nodo.onclick=function(){
 		console.log('presiono Buscar');
-		constructor.elementos.formulario.nodo.firstChild.getElementsByTagName('input')[0].focus();
+		interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('input')[0].focus();
 	}
 	//funcionamiento exclusivo del formulario
 	function guardar(){
@@ -87,7 +102,7 @@
 				privilegios : []
 			}
 			registros.push(nuevoRegistro);
-			var nuevoSlot=constructor.elementos.formulario.agregarSlot(nuevoRegistro);
+			var nuevoSlot=interfaz.elementos.formulario.agregarSlot(nuevoRegistro);
 			nuevoSlot.firstChild.click();
 		}else{
 			console.log('formulario no paso la validacion');
