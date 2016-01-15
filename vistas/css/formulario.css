@@ -1,6 +1,7 @@
 *{
     outline: none;
     overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
 }
 html{
   overflow: auto;
@@ -58,6 +59,15 @@ div[capa='contenido'] section[cuerpo] label{
   font-size: 20px;
   text-transform: capitalize;
 }
+div[capa='contenido'] section[cuerpo] select{
+    box-shadow: 0px 2px 5px 0 rgba(0,0,0,0.26);
+    border: none;
+    padding: 5px;
+    outline: none;
+}
+div[capa='contenido'] section[cuerpo] option{
+
+}
 div[capa='contenido'] section[pie]{
   width: 100%;
   height: 60px;
@@ -81,6 +91,10 @@ div[capa='contenido'] section[pie] section[modalbuttons] button{
     margin-top: 10px;
     background-color: white;
     margin-bottom: 10px;
+    box-shadow: 0px 2px 5px 0 rgba(0,0,0,0.26);
+}
+div[capa='contenido'] section[pie] section[modalbuttons] button:hover{
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 div[capa='contenido'] section[pie] section[modalbuttons] button[aceptar]{
   background-image: url('../imagenes/check-green.png');
@@ -88,10 +102,14 @@ div[capa='contenido'] section[pie] section[modalbuttons] button[aceptar]{
 div[capa='contenido'] section[pie] section[modalbuttons] button[cancelar]{
   background-image: url('../imagenes/close.png'); 
 }
-div[capa='contenido'] section[pie] section[modalbuttons] button:hover{
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+ div[capa='contenido'] section[pie] section[modalbuttons] button[eliminar]{
+  background-image: url('../imagenes/trash_red_16.png'); 
+  background-position: 12px 11px;
 }
- 
+div[capa='contenido'] section[pie] section[modalbuttons] button[modificar]{
+  background-image: url('../imagenes/pencil_green_16.png'); 
+  background-position: 12px 11px;
+}
 /*----------------------------------------Capa Formulario-------------------------------*/
 div[capaForm]{
     transition:all 0.6s ease-in-out;
@@ -103,7 +121,7 @@ div[capaForm]{
 }
 div[capaForm] section[titulo]{
     padding: 10px 0px 0px 50px;
-    font-size: 25px;
+    font-size: 23px;
     background-color: #4CAF50;
     color:white;
 }
@@ -111,6 +129,12 @@ div[capaForm] section[sector]{
     padding: 30px 0px 0px 0px;
     margin: 0px auto;
     max-width: 600px;
+}
+div[capaForm] section[sector] div{
+  padding: 4px;
+}
+div[capaForm] section[sector]:last-child{
+    bottom: 1px;
 }
 div[capaForm] section[sector] div:not(.group){
   margin-left: 20px;
@@ -131,7 +155,7 @@ div[capaForm] article:first-child{
 }
 div[capaForm] article[add]{
   width: 18px;
-  height: 18px;
+  height: 21px;
   padding: 1px;
   background-image: url('../imagenes/plus_16.png');
   background-repeat: no-repeat;
@@ -279,7 +303,7 @@ div[capaList] section button[btnModificar]{
     background-image: url('../imagenes/pencil_white_16.png');
 }
 div[capaList] section button[btnEliminar]{
-    background-color: #f44336;
+    background-color: #e57373;
     background-image: url('../imagenes/trash_white_16.png');
 }
 /*------------------------Botonera------------------------------------------------*/
@@ -312,7 +336,7 @@ div[botonera] button:hover:before{
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
 }
 div[botonera] button[btnNuevo]{
-    background-color: #00BCD4;
+    background-color: #4FC3F7;
     background-image: url('../imagenes/file-empty.png');
     top:0px;
     left:0px;
@@ -357,7 +381,7 @@ div[botonera] button[btnModificar]:hover:before{
     padding:5px;
 }
 div[botonera] button[btnEliminar]{
-    background-color: #f44336;
+    background-color:#e57373;
     background-image: url('../imagenes/trash_white_16.png');
     top:0px;
     left:0px;
@@ -366,7 +390,7 @@ div[botonera] button[btnEliminar]{
 div[botonera] button[btnEliminar]:hover:before{
     content: 'Eliminar';
     color:white;
-    background-color: #f44336;
+    background-color: #e57373;
     margin-left:-108px;
     border-radius:5px; 
     padding:5px;

@@ -355,18 +355,19 @@ var Formulario = function(){
 							<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
 						</section>\
 						<section sector>\
-							<div>Privilegios</div>\
+							<div>Empresas Asignadas</div>\
 							<section contenedor id="contenedorPri">\
 							</section>\
 						</section>\
 					</section>';
 			nodo.innerHTML=html;
 			normalizarNodo(nodo);
-			var contenedor=nodo.childNodes[2];
+			normalizarNodo(nodo.childNodes[2]);
+			var contenedor=nodo.childNodes[2].childNodes[1];
 			this.nodo=nodo;
-			//arreglo temporal de privilegios
-				dataTemp=buscarPrivilegios(data.id);
-				this.agregarElementos(contenedor,dataTemp);
+			//arreglo temporal de empresas
+				dataTemp=buscarEmpresas(data.id);
+				this.agregarEmpresas(contenedor,dataTemp);
 			}
 		}
 		this.reconstruirInterfaz=function(data){
@@ -414,17 +415,19 @@ var Formulario = function(){
 							<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
 						</section>\
 						<section sector>\
-							<div>Privilegios</div>\
+							<div>Empresas</div>\
 							<section contenedor id="contenedorPri">\
 							</section>\
 						</section>\
 					</section>';
 					nodo.innerHTML=html;
 					normalizarNodo(nodo);
-					var contenedor=nodo.childNodes[2];
-					//arreglo temporal de privilegios
-						dataTemp=buscarPrivilegios(data.id);
-						interfaz.elementos.formulario.ventanaForm.agregarElementos(contenedor,dataTemp);
+					normalizarNodo(nodo.childNodes[2]);
+					var contenedor=nodo.childNodes[2].childNodes[1];
+					this.nodo=nodo;
+					//arreglo temporal de empresas
+						dataTemp=buscarEmpresas(data.id);
+						interfaz.elementos.formulario.ventanaForm.agregarEmpresas(contenedor,dataTemp);
 				},600);
 			}
 		}
@@ -440,14 +443,20 @@ var Formulario = function(){
 				vf.estado='sinConstruir';
 			},510);
 		}
-		this.agregarElementos=function(contenedor,elementos){
+		this.agregarEmpresas=function(contenedor,elementos){
 			var html="";
 			for(var x=0;x<elementos.length;x++){
-				html+="<article>"+elementos[x].nombre+"</article>";
+				html+="<article empresa>"+elementos[x].nombre+"</article>";
 			}
-			html+='<article add="privilegio"></article>';
+			html+='<article add="empresa"></article>';
 			contenedor.innerHTML=html;
 			this.agregarFuncionamiento();
+		}
+		this.agregarEmpresa = function(empresa,contenedor){
+			var nodo=document.createElement('article');
+			nodo.textContent = empresa.nombre;
+			nodo.setAttribute('empresa','');
+			contenedor.insertBefore(nodo,contenedor.lastChild);
 		}
 		this.agregarFuncionamiento = function(){
 			var nodo=this.nodo;
@@ -455,26 +464,89 @@ var Formulario = function(){
 			for(var x=0;x<lista.length;x++){
 				if(lista[x].getAttribute('update')!==null){
 					lista[x].onclick=this.edicion;
+				}else if(lista[x].getAttribute('empresa')!==null){
+					lista[x].onclick=function(){
+						var registro = buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId);
+						var dataTemp = {
+							cabecera:'Operaciones Por Empresa',
+							cuerpo:'<label>'+this.textContent+'</label>',
+							pie:'<section modalButtons>\
+									<button type="button" cancelar id="modalButtonCancelar"></button>\
+									<button type="button" modificar  id="modalButtonModificar"></button>\
+									<button type="button" eliminar  id="modalButtonEliminar"></button>\
+								</section>'
+						}
+						interfaz.elementos.modalWindow=new modalWindow();
+						interfaz.elementos.modalWindow.arranque(dataTemp);
+						var btnCancelar = document.getElementById("modalButtonCancelar");
+						var btnModificar= document.getElementById("modalButtonModificar");
+						var btnEliminar = document.getElementById("modalButtonEliminar");
+
+						btnCancelar.onclick= function(){
+							interfaz.elementos.modalWindow.elimiarUltimaCapa();
+						}
+					}
 				}else if(lista[x].getAttribute('add')!==null){
 					lista[x].onclick=function(){
 						console.log('agregar');
 						var registro = buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId);
 						var dataTemp = {
-							cabecera:'Agregar Privilegio',
+							cabecera:'Asignar Empresa',
 							cuerpo:'<label>'+registro.nombre+'</label>\
-									<select>\
+									<select name="listaEmpresas" id="listaEmpresas">\
+										<option value="-">Selecione un Valor</option>\
 										<option value="1">SocaServicios</option>\
 										<option value="2">SocaPortuguesa</option>\
 										<option value="3">Probioagro</option>\
 										<option value="4">E/S Piedritas Blancas</option>\
 									</select>',
 							pie:'<section modalButtons>\
-									<button type="button" cancelar onclick="interfaz.elementos.modalWindow.elimiarUltimaCapa();"></button>\
-									<button type="button" aceptar></button>\
+									<button type="button" cancelar id="modalButtonCancelar"></button>\
+									<button type="button" aceptar  id="modalButtonAceptar"></button>\
 								</section>'
 						}
 						interfaz.elementos.modalWindow=new modalWindow();
 						interfaz.elementos.modalWindow.arranque(dataTemp);
+						//armo la lista de valores no permitidos
+						var empresas=buscarEmpresas(interfaz.elementos.formulario.ventanaForm.registroId);
+						var valoresNoPermitidos= Array();
+						for(var x=0;x<empresas.length;x++){
+							valoresNoPermitidos.push(empresas[x].id);
+						}
+						interfaz.elementos.formulario.validarCombo(valoresNoPermitidos,document.getElementById('listaEmpresas'));
+						//agrego funcionamiento a los botones
+						var btnCancelar = document.getElementById("modalButtonCancelar");
+						var btnAceptar 	= document.getElementById("modalButtonAceptar");
+						
+						btnCancelar.onclick=function(){
+							interfaz.elementos.modalWindow.elimiarUltimaCapa();
+						}
+
+						btnAceptar.onclick=function(){
+							var lista = document.getElementById('listaEmpresas');
+							//guardo el empresa
+							if(lista.value!='-'){
+								if(lista.value!='cerrar'){
+									var empresa= {	
+										id: lista.value,
+										nombre: lista.options[lista.selectedIndex].textContent
+									}
+									var cambios = Array();
+									cambios.push(empresa);
+									guardarEnDetalle(interfaz.elementos.formulario.ventanaForm.registroId,cambios);
+									
+									interfaz.elementos.formulario.ventanaForm.agregarEmpresa(empresa,document.getElementById('contenedorPri'));
+									//cierrocapa
+									interfaz.elementos.modalWindow.elimiarUltimaCapa();
+								}else{
+									interfaz.elementos.modalWindow.elimiarUltimaCapa()
+								}
+								
+							}else{
+								document.getElementById('listaEmpresas').options[document.getElementById('listaEmpresas').selectedIndex].textContent='Debe Elegir un Valor para Continuar';
+							}
+							
+						}
 					}
 				}
 			}
@@ -483,6 +555,10 @@ var Formulario = function(){
 			var nodo=this;
 			var campo=this.previousSibling;
 			var campoEdicion=campo.previousSibling;
+			var contenedor=nodo.parentNode;
+			
+			contenedor.style.maxHeight='1000px';
+
 			campoEdicion.value=campo.textContent;
 			campoEdicion.style.display='inline-block';
 
@@ -519,6 +595,9 @@ var Formulario = function(){
 			var nodo=this;
 			var campo=this.previousSibling;
 			var campoEdicion=campo.previousSibling;
+			var contenedor=nodo.parentNode;
+
+			contenedor.style.maxHeight='150px';
 
 			var id=interfaz.elementos.formulario.ventanaForm.registroId;
 			var nombreCampo=campoEdicion.name;
@@ -704,6 +783,25 @@ var Formulario = function(){
 				this.Slots[x].atributos=registro;
 				this.Slots[x].reconstruirNodo();
 			}
+		}
+	}
+	this.validarCombo = function(valoresNoPermitidos,lista){
+		normalizarNodo(lista);
+		for(var x=0;x<lista.length;x++){
+			lista[x].style.display='block';
+		}
+		for(var x=0;x<lista.length;x++){
+			for(var y=0;y<valoresNoPermitidos.length;y++){
+				if(lista[x].value==valoresNoPermitidos[y]){
+					lista.removeChild(lista[x]);
+					x--;
+				}
+			}
+		}
+		
+		if(lista.length==1){
+			lista.options[0].textContent='No Posee Valores Disponibles';
+			lista.options[0].value='cerrar';
 		}
 	}
 	this.construir();

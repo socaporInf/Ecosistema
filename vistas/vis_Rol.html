@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title></title>
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" type="text/css" href="css/cuerpo.css">
 	<link rel="stylesheet" type="text/css" href="css/menu.css">
 	<link rel="stylesheet" type="text/css" href="css/formulario.css">
@@ -20,24 +21,24 @@
 							nombre:'cuentasxpagar',
 							id:1,
 							descripcion:'cuentasxpagar',
-							privilegios:[
-									{nombre:'ProbioAgro'},{nombre:'SocaPortuguesa'}
+							empresas:[
+									{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'}
 								]
 						},
 						{
 							nombre:'administrador',
 							id:2,
 							descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo',
-							privilegios:[
-									{nombre:'ProbioAgro'},{nombre:'SocaPortuguesa'},{nombre:'SocaServicios'}
+							empresas:[
+									{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'},{id:'1',nombre:'SocaServicios'}
 								]
 						},
 						{
 							nombre:'almacen-facturacion',
 							id:3,
 							descripcion:'factura en almacen',
-							privilegios:[
-									{nombre:'SocaPortuguesa'}
+							empresas:[
+									{id:'2',nombre:'SocaPortuguesa'}
 								]
 						}
 					];
@@ -99,7 +100,7 @@
 				nombre : data[0].valor,
 				id : contId++,
 				descripcion : data[1].valor,
-				privilegios : []
+				empresas : []
 			}
 			registros.push(nuevoRegistro);
 			var nuevoSlot=interfaz.elementos.formulario.agregarSlot(nuevoRegistro);
@@ -108,13 +109,13 @@
 			console.log('formulario no paso la validacion');
 		}
 	}
-	function buscarPrivilegios(id){
-		console.log('se disparo una busueda de privilegios con id:'+id);
+	function buscarEmpresas(id){
+		console.log('se disparo una busueda de empresas con id:'+id);
 		var data = new Array();
 		for(var x=0;x<registros.length;x++){
 			if(registros[x].id==id){
-				for(var y=0;y<registros[x].privilegios.length;y++){
-					data.push(registros[x].privilegios[y]);
+				for(var y=0;y<registros[x].empresas.length;y++){
+					data.push(registros[x].empresas[y]);
 				}
 			}
 		}
@@ -132,6 +133,13 @@
 	function editarCampo(id,campo,valor){
 		var registro=buscarRegistro(id);
 		registro[campo]=valor;
+		return registro;
+	}
+	function guardarEnDetalle(id,cambios){
+		var registro=buscarRegistro(id)
+		for(var x=0;x<cambios.length;x++){
+			registro.empresas.push(cambios[x]);
+		}
 		return registro;
 	}
 </script>
