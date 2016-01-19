@@ -457,6 +457,7 @@ var Formulario = function(){
 			nodo.textContent = empresa.nombre;
 			nodo.setAttribute('empresa','');
 			contenedor.insertBefore(nodo,contenedor.lastChild);
+			this.agregarFuncionamiento();
 		}
 		this.agregarFuncionamiento = function(){
 			var nodo=this.nodo;
