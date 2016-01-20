@@ -2,19 +2,16 @@
 <html>
 <head>
 	<title></title>
-	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" type="text/css" href="css/cuerpo.css">
 	<link rel="stylesheet" type="text/css" href="css/menu.css">
 	<link rel="stylesheet" type="text/css" href="css/formulario.css">
 </head>
 <body>
-	<div contenedor>
-		
-	</div>
+	<div contenedor></div>
 </body>
-<script type="text/javascript" src='js/constructor.js'></script>
 <script type="text/javascript" src='js/motorRegistros.js'></script>
-<script type="text/javascript">
+<script type="text/javascript" src='js/constructor.js'></script>
+<script type="text/javascript" >
 	//objeto propio del formulario
 	/*------------------------------Objeto VentanaForm------------*/
 	var VentanaForm = function(){
@@ -39,6 +36,7 @@
 			}
 			this.reconstruirInterfaz();
 		}
+
 		this.reconstruirInterfaz=function(){
 			var html='';
 			if(this.tipo=='nuevo'){
@@ -68,6 +66,7 @@
 						</section>\
 					</section>';
 					nodo.innerHTML=html;
+					interfaz.elementos.formulario.ventanaForm.agregarFuncionamiento();
 				},600);
 				interfaz.elementos.botonera.agregarBoton('guardar');
 			}else if(this.tipo='modificar'){
@@ -81,22 +80,10 @@
 						html+='\
 					<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
 						<section sector>\
-							<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
-						</section>\
-						<section sector>\
-							<div>Empresas</div>\
-							<section contenedor id="contenedorPri">\
-							</section>\
 						</section>\
 					</section>';
 					nodo.innerHTML=html;
-					normalizarNodo(nodo);
-					normalizarNodo(nodo.childNodes[2]);
-					var contenedor=nodo.childNodes[2].childNodes[1];
-					this.nodo=nodo;
-					//arreglo temporal de empresas
-						dataTemp=torque.buscarDetalle(data.id,'rol');
-						interfaz.elementos.formulario.ventanaForm.agregarEmpresas(contenedor,dataTemp);
+					interfaz.elementos.formulario.ventanaForm.agregarFuncionamiento();
 				},600);
 			}
 		};
@@ -111,22 +98,6 @@
 				vf.nodo.parentNode.removeChild(vf.nodo);
 				vf.estado='sinConstruir';
 			},510);
-		};
-		this.agregarEmpresas=function(contenedor,elementos){
-			var html="";
-			for(var x=0;x<elementos.length;x++){
-				html+="<article empresa>"+elementos[x].nombre+"</article>";
-			}
-			html+='<article add="empresa"></article>';
-			contenedor.innerHTML=html;
-			this.agregarFuncionamiento();
-		};
-		this.agregarEmpresa = function(empresa,contenedor){
-			var nodo=document.createElement('article');
-			nodo.textContent = empresa.nombre;
-			nodo.setAttribute('empresa','');
-			contenedor.insertBefore(nodo,contenedor.lastChild);
-			this.agregarFuncionamiento();
 		};
 		this.agregarFuncionamiento = function(){
 			var nodo=this.nodo;
@@ -155,68 +126,6 @@
 
 						btnCancelar.onclick= function(){
 							interfaz.elementos.modalWindow.elimiarUltimaCapa();
-						}
-					}
-				}else if(lista[x].getAttribute('add')!==null){
-					lista[x].onclick=function(){
-						console.log('agregar');
-						var registro = torque.buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
-						var dataTemp = {
-							cabecera:'Asignar Empresa',
-							cuerpo:'<label>'+registro.nombre+'</label>\
-									<select name="listaEmpresas" id="listaEmpresas">\
-										<option value="-">Selecione un Valor</option>\
-										<option value="1">SocaServicios</option>\
-										<option value="2">SocaPortuguesa</option>\
-										<option value="3">Probioagro</option>\
-										<option value="4">E/S Piedritas Blancas</option>\
-									</select>',
-							pie:'<section modalButtons>\
-									<button type="button" cancelar id="modalButtonCancelar"></button>\
-									<button type="button" aceptar  id="modalButtonAceptar"></button>\
-								</section>'
-						}
-						interfaz.elementos.modalWindow=new modalWindow();
-						interfaz.elementos.modalWindow.arranque(dataTemp);
-						//armo la lista de valores no permitidos
-						var empresas=torque.buscarDetalle(interfaz.elementos.formulario.ventanaForm.registroId,'rol');
-						var valoresNoPermitidos= Array();
-						for(var x=0;x<empresas.length;x++){
-							valoresNoPermitidos.push(empresas[x].id);
-						}
-						interfaz.elementos.formulario.validarCombo(valoresNoPermitidos,document.getElementById('listaEmpresas'));
-						//agrego funcionamiento a los botones
-						var btnCancelar = document.getElementById("modalButtonCancelar");
-						var btnAceptar 	= document.getElementById("modalButtonAceptar");
-						
-						btnCancelar.onclick=function(){
-							interfaz.elementos.modalWindow.elimiarUltimaCapa();
-						}
-
-						btnAceptar.onclick=function(){
-							var lista = document.getElementById('listaEmpresas');
-							//guardo el empresa
-							if(lista.value!='-'){
-								if(lista.value!='cerrar'){
-									var empresa= {	
-										id: lista.value,
-										nombre: lista.options[lista.selectedIndex].textContent
-									}
-									var cambios = Array();
-									cambios.push(empresa);
-									torque.guardarEnDetalle(interfaz.elementos.formulario.ventanaForm.registroId,cambios);
-									
-									interfaz.elementos.formulario.ventanaForm.agregarEmpresa(empresa,document.getElementById('contenedorPri'));
-									//cierrocapa
-									interfaz.elementos.modalWindow.elimiarUltimaCapa();
-								}else{
-									interfaz.elementos.modalWindow.elimiarUltimaCapa()
-								}
-								
-							}else{
-								document.getElementById('listaEmpresas').options[document.getElementById('listaEmpresas').selectedIndex].textContent='Debe Elegir un Valor para Continuar';
-							}
-							
 						}
 					}
 				}
@@ -299,11 +208,9 @@
 		};	
 	}
 	/*------------------------------Objeto VentanaForm------------*/
-
 </script>
 <script type="text/javascript">
-	
-	var torque = new Motor('rol');
+	var torque = new Motor('empresa');
 	//Inicialiazion de formulario
 	var interfaz = new Arquitecto();
 	var botones = ['buscar','nuevo','abrir'];
@@ -326,7 +233,6 @@
 		console.log('presiono Buscar');
 		interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('input')[0].focus();
 	}
-
 	//funcionamiento exclusivo del formulario
 	function guardar(){
 		var formulario = document.formNuevo;
