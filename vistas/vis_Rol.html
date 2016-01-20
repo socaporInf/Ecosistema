@@ -36,6 +36,8 @@
 			this.nodo=nodo;
 			if(data.tipo=='modificar'){
 				this.registroId=data.id;
+			}else if(data.tipo=='nuevo'){
+				this.registroId='';
 			}
 			this.reconstruirInterfaz();
 		}

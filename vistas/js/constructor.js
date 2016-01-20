@@ -436,7 +436,11 @@ var Formulario = function(){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
 		if(existeVentana){
 			if(data.tipo=='modificar'){
+				this.ventanaForm.tipo='modificar';
 				this.ventanaForm.registroId=data.id;
+			}else if(data.tipo=='nuevo'){
+				this.ventanaForm.tipo='nuevo';
+				this.ventanaForm.registroId='';
 			}
 			this.ventanaForm.reconstruirInterfaz();
 		}else{
