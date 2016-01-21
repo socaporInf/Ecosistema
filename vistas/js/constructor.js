@@ -75,6 +75,20 @@ var Botonera = function(estructura){
 		contenedor.parentNode.insertBefore(nodo,contenedor.nextSibling);
 		this.nodo = nodo;
 		this.inicializarBotones();
+		//boton buscar
+		this.buscarBoton('nuevo').nodo.onclick=function(){
+			console.log('presiono Nuevo');
+			var data = {
+				tipo:'nuevo'
+			}
+			var formulario = interfaz.elementos.formulario;
+			formulario.construirInterfaz(data);
+		}
+		//boton nuevo
+		this.buscarBoton('buscar').nodo.onclick=function(){
+			console.log('presiono Buscar');
+			interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('button')[0].click();
+		}
 	}
 	this.inicializarBotones = function(){
 		var botones = this.estructura;
@@ -525,6 +539,8 @@ var Formulario = function(entidad){
 			campoBusqueda.style.padding='8px';
 			campoBusqueda.style.width='calc(100% - 90px)';
 			campoBusqueda.style.height='16px';
+
+			campoBusqueda.focus();
 
 		}
 		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);

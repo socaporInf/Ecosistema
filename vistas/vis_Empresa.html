@@ -22,20 +22,6 @@
 	interfaz.elementos.botonera = new Botonera(botones);
 	interfaz.elementos.formulario = new Formulario(torque.entidadActiva);
 	interfaz.elementos.formulario.cargarRegistros(torque.registrosEntAct);
-	//boton buscar
-	interfaz.elementos.botonera.buscarBoton('nuevo').nodo.onclick=function(){
-		console.log('presiono Nuevo');
-		var data = {
-			tipo:'nuevo'
-		}
-		var formulario = interfaz.elementos.formulario;
-		formulario.construirInterfaz(data);
-	}
-	//boton nuevo
-	interfaz.elementos.botonera.buscarBoton('buscar').nodo.onclick=function(){
-		console.log('presiono Buscar');
-		interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('input')[0].focus();
-	}
 	//funcionamiento exclusivo del formulario
 	function guardar(){
 		var formulario = document.formNuevo;
