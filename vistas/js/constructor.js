@@ -302,9 +302,121 @@ var Cabecera = function(){
 	this.construir();
 }
 /*------------------------------Objeto Formulario(lista)-----------------*/
-var Formulario = function(){
+var Formulario = function(entidad){
 
-	
+	var VentanaForm = function(){
+
+		this.tipo = 'noPosee';
+
+		this.nodo;
+
+		this.estado = 'sinConstruir';
+
+		//este es usado cuando se va a editar un registro en especifico
+		this.registroId='';
+
+		this.construirNodo = function(data){
+			var nodo = document.createElement('div');
+			nodo.setAttribute('capaForm','');
+			nodo.id='VentanaForm';
+			this.tipo=data.tipo;
+			this.nodo=nodo;
+			if(data.tipo=='modificar'){
+				this.registroId=data.id;
+			}else if(data.tipo=='nuevo'){
+				this.registroId='';
+			}
+			this.reconstruirInterfaz();
+		};
+		this.destruirNodo = function(){
+			if(this.registroId!=''){
+				this.registroId='';
+				interfaz.elementos.formulario.controlLista();
+			}
+			this.nodo.style.height='0px';
+			setTimeout(function(){
+				var vf=interfaz.elementos.formulario.ventanaForm;
+				vf.nodo.parentNode.removeChild(vf.nodo);
+				vf.estado='sinConstruir';
+			},510);
+		};
+		this.edicion=function(){
+			var nodo=this;
+			var campo=this.previousSibling;
+			var campoEdicion=campo.previousSibling;
+			var contenedor=nodo.parentNode;
+			
+			contenedor.style.maxHeight='1000px';
+
+			campoEdicion.value=campo.textContent;
+			campoEdicion.style.display='inline-block';
+
+			campo.style.width=window.getComputedStyle(campo,null).getPropertyValue("width");
+			campo.style.maxHeight=window.getComputedStyle(campo,null).getPropertyValue("height");
+			nodo.classList.toggle('edicion');
+
+			setTimeout(function(){
+				campo.style.width='0px';
+				campo.style.opacity='0';
+
+				campoEdicion.style.width='calc(100% - 62px)';
+				campoEdicion.style.opacity='1';
+				if(nodo.getAttribute('update')=='campo'){
+					campoEdicion.style.height="32px";
+				}else if(nodo.getAttribute('update')=='area'){
+					campoEdicion.style.height="40px";
+					campoEdicion.style.padding='5px';
+				}
+			},10);
+			setTimeout(function(){
+				nodo.onclick=interfaz.elementos.formulario.ventanaForm.finEdicion;
+				if(nodo.getAttribute('update')=='area'){
+					campoEdicion.style.height="150px";
+					campoEdicion.style.padding="15px";
+				}
+			},520);
+			setTimeout(function(){
+				campoEdicion.focus();
+			},1010);
+
+		};
+		this.finEdicion = function(){
+			var nodo=this;
+			var campo=this.previousSibling;
+			var campoEdicion=campo.previousSibling;
+			var contenedor=nodo.parentNode;
+
+			contenedor.style.maxHeight='150px';
+
+			var id=interfaz.elementos.formulario.ventanaForm.registroId;
+			var nombreCampo=campoEdicion.name;
+			var valorCampo=campoEdicion.value;
+
+			console.log('se disparo una edicion con id:'+interfaz.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
+			var registro=torque.editarCampo(id,nombreCampo,valorCampo);
+			interfaz.elementos.formulario.actualizarLista(registro);
+
+			campo.textContent=campoEdicion.value;
+			
+			nodo.classList.toggle('edicion');
+			campo.style.width='calc(100% - 62px)';
+			campo.style.opacity='1';
+
+			campoEdicion.style.width='0px';
+			campoEdicion.style.opacity='0';
+			campoEdicion.style.height='0px';
+			setTimeout(function(){
+				campoEdicion.style.width='auto';
+				campoEdicion.style.display='none';
+				nodo.onclick=interfaz.elementos.formulario.ventanaForm.edicion;
+				campoEdicion.style.width=window.getComputedStyle(campoEdicion,null).getPropertyValue("width");
+				campo.style.width=campoEdicion.style.width;
+				campoEdicion.style.width='0px';
+				campoEdicion.value='';
+			},510)
+		};	
+	}
+	/*------------------------------Objeto VentanaForm------------*/
 	/*------------------------------Objeto Slot-------------------*/
 	var Slot = function(data){
 
@@ -365,7 +477,14 @@ var Formulario = function(){
 
 	this.estado = 'sinInicializar';
 
+	this.entidadActiva=entidad;
+
 	this.nodo;
+	
+	//metodo para hacer el objeto ventana form capaz de recibir funciones en forma de herencia
+	this.ventanaForm.prototype = VentanaForm.prototype;
+	this.ventanaForm.prototype.constructor = this.ventanaForm;
+	//----------------------------------------------------------------------------------------
 
 	this.listarSlots = function(){
 		console.log('Slots:');
@@ -387,12 +506,27 @@ var Formulario = function(){
 		var elemento = document.createElement('div');
 		elemento.setAttribute('capaList','');
 		var html='';
-		html+="<section busqueda>\
-					<input type='text' placeHolder='Buscar...'campBusq>\
-					<button type='button' btnBusq></button>\
-				</section>"
+		html+="<section busqueda>";
+		html+=	"<div tituloForm>"+this.entidadActiva.toUpperCase()+"</div>";
+		html+=	"<input type='text' placeHolder='Buscar...'campBusq>";
+		html+=	"<button type='button' btnBusq></button>";
+		html+="</section>";
 		elemento.innerHTML = html;
 		this.nodo=elemento;
+		var botonBusqueda=elemento.getElementsByTagName('button')[0];
+		botonBusqueda.onclick=function(){
+			console.log('presiono buscar');
+			var campoBusqueda=this.previousSibling;
+			var titulo=campoBusqueda.previousSibling;
+
+			titulo.style.padding='0px';
+			titulo.style.width='0px';
+
+			campoBusqueda.style.padding='8px';
+			campoBusqueda.style.width='calc(100% - 90px)';
+			campoBusqueda.style.height='16px';
+
+		}
 		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
 		this.estado='enUso';
 	}

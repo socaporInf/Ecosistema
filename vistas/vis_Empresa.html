@@ -11,206 +11,7 @@
 </body>
 <script type="text/javascript" src='js/motorRegistros.js'></script>
 <script type="text/javascript" src='js/constructor.js'></script>
-<script type="text/javascript" >
-	//objeto propio del formulario
-	/*------------------------------Objeto VentanaForm------------*/
-	var VentanaForm = function(){
 
-		this.tipo = 'noPosee';
-
-		this.nodo;
-
-		this.estado = 'sinConstruir';
-
-		//este es usado cuando se va a editar un registro en especifico
-		this.registroId='';
-
-		this.construirNodo = function(data){
-			var nodo = document.createElement('div');
-			nodo.setAttribute('capaForm','');
-			nodo.id='VentanaForm';
-			this.tipo=data.tipo;
-			this.nodo=nodo;
-			if(data.tipo=='modificar'){
-				this.registroId=data.id;
-			}else if(data.tipo=='nuevo'){
-				this.registroId='';
-			}
-			this.reconstruirInterfaz();
-		}
-
-		this.reconstruirInterfaz=function(){
-			var html='';
-			if(this.tipo=='nuevo'){
-				this.registroId='';
-				interfaz.elementos.formulario.controlLista();
-				this.nodo.style.height='0px';		
-				setTimeout(function(){
-					var nodo=interfaz.elementos.formulario.ventanaForm.nodo;
-					nodo.style.height='250px';
-					html+='\
-					<section titulo>Nuevo Rol</section>\
-						<section sector>\
-							<form name ="formNuevo">\
-								<div class="group">\
-							      <input type="text" name="Nombre" required>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Nombre</label>\
-							    </div>\
-							    <div class="group">\
-							      <input type="text" name="Descripcion" required>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Descripcion</label>\
-							    </div>\
-							</form>\
-						</section>\
-					</section>';
-					nodo.innerHTML=html;
-					interfaz.elementos.formulario.ventanaForm.agregarFuncionamiento();
-				},600);
-				interfaz.elementos.botonera.agregarBoton('guardar');
-			}else if(this.tipo='modificar'){
-				var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
-				interfaz.elementos.botonera.quitarBoton('guardar');
-				this.nodo.style.height='0px';		
-				setTimeout(function(){
-					var nodo=interfaz.elementos.formulario.ventanaForm.nodo;
-					nodo.style.height='250px';
-					nodo.style.borderRadius='0px';
-						html+='\
-					<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
-						<section sector>\
-						</section>\
-					</section>';
-					nodo.innerHTML=html;
-					interfaz.elementos.formulario.ventanaForm.agregarFuncionamiento();
-				},600);
-			}
-		};
-		this.destruirNodo = function(){
-			if(this.registroId!=''){
-				this.registroId='';
-				interfaz.elementos.formulario.controlLista();
-			}
-			this.nodo.style.height='0px';
-			setTimeout(function(){
-				var vf=interfaz.elementos.formulario.ventanaForm;
-				vf.nodo.parentNode.removeChild(vf.nodo);
-				vf.estado='sinConstruir';
-			},510);
-		};
-		this.agregarFuncionamiento = function(){
-			var nodo=this.nodo;
-			var lista=nodo.getElementsByTagName('article');
-			for(var x=0;x<lista.length;x++){
-				lista[x].style.cursor='pointer';
-				if(lista[x].getAttribute('update')!==null){
-					lista[x].onclick=this.edicion;
-				}else if(lista[x].getAttribute('empresa')!==null){
-					lista[x].onclick=function(){
-						var registro = torque.buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
-						var dataTemp = {
-							cabecera:'Operaciones Por Empresa',
-							cuerpo:'<label>'+this.textContent+'</label>',
-							pie:'<section modalButtons>\
-									<button type="button" cancelar id="modalButtonCancelar"></button>\
-									<button type="button" modificar  id="modalButtonModificar"></button>\
-									<button type="button" eliminar  id="modalButtonEliminar"></button>\
-								</section>'
-						}
-						interfaz.elementos.modalWindow=new modalWindow();
-						interfaz.elementos.modalWindow.arranque(dataTemp);
-						var btnCancelar = document.getElementById("modalButtonCancelar");
-						var btnModificar= document.getElementById("modalButtonModificar");
-						var btnEliminar = document.getElementById("modalButtonEliminar");
-
-						btnCancelar.onclick= function(){
-							interfaz.elementos.modalWindow.elimiarUltimaCapa();
-						}
-					}
-				}
-			}
-		};
-		this.edicion=function(){
-			var nodo=this;
-			var campo=this.previousSibling;
-			var campoEdicion=campo.previousSibling;
-			var contenedor=nodo.parentNode;
-			
-			contenedor.style.maxHeight='1000px';
-
-			campoEdicion.value=campo.textContent;
-			campoEdicion.style.display='inline-block';
-
-			campo.style.width=window.getComputedStyle(campo,null).getPropertyValue("width");
-			campo.style.maxHeight=window.getComputedStyle(campo,null).getPropertyValue("height");
-			nodo.classList.toggle('edicion');
-
-			setTimeout(function(){
-				campo.style.width='0px';
-				campo.style.opacity='0';
-
-				campoEdicion.style.width='calc(100% - 62px)';
-				campoEdicion.style.padding='5px';
-				campoEdicion.style.opacity='1';
-				if(nodo.getAttribute('update')=='campo'){
-					campoEdicion.style.height="20px";
-				}else if(nodo.getAttribute('update')=='area'){
-					campoEdicion.style.height="40px";
-				}
-			},10);
-			setTimeout(function(){
-				nodo.onclick=interfaz.elementos.formulario.ventanaForm.finEdicion;
-				if(nodo.getAttribute('update')=='area'){
-					campoEdicion.style.height="150px";
-					campoEdicion.style.padding="15px";
-				}
-			},520);
-			setTimeout(function(){
-				campoEdicion.focus();
-			},1010);
-
-		};
-		this.finEdicion = function(){
-			var nodo=this;
-			var campo=this.previousSibling;
-			var campoEdicion=campo.previousSibling;
-			var contenedor=nodo.parentNode;
-
-			contenedor.style.maxHeight='150px';
-
-			var id=interfaz.elementos.formulario.ventanaForm.registroId;
-			var nombreCampo=campoEdicion.name;
-			var valorCampo=campoEdicion.value;
-
-			console.log('se disparo una edicion con id:'+interfaz.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
-			var registro=torque.editarCampo(id,nombreCampo,valorCampo);
-			interfaz.elementos.formulario.actualizarLista(registro);
-
-			campo.textContent=campoEdicion.value;
-			
-			nodo.classList.toggle('edicion');
-			campo.style.width='calc(100% - 62px)';
-			campo.style.opacity='1';
-
-			campoEdicion.style.width='0px';
-			campoEdicion.style.opacity='0';
-			campoEdicion.style.height='0px';
-			setTimeout(function(){
-				campoEdicion.style.width='auto';
-				campoEdicion.style.display='none';
-				nodo.onclick=interfaz.elementos.formulario.ventanaForm.edicion;
-				campoEdicion.style.width=window.getComputedStyle(campoEdicion,null).getPropertyValue("width");
-				campo.style.width=campoEdicion.style.width;
-				campoEdicion.style.width='0px';
-				campoEdicion.value='';
-			},510)
-		};	
-	}
-	/*------------------------------Objeto VentanaForm------------*/
-</script>
 <script type="text/javascript">
 	var torque = new Motor('empresa');
 	//Inicialiazion de formulario
@@ -219,7 +20,7 @@
 	var empresas = torque.buscarRegistros('empresa');
 	interfaz.configure();
 	interfaz.elementos.botonera = new Botonera(botones);
-	interfaz.elementos.formulario = new Formulario();
+	interfaz.elementos.formulario = new Formulario(torque.entidadActiva);
 	interfaz.elementos.formulario.cargarRegistros(torque.registrosEntAct);
 	//boton buscar
 	interfaz.elementos.botonera.buscarBoton('nuevo').nodo.onclick=function(){
@@ -264,5 +65,120 @@
 			console.log('formulario no paso la validacion');
 		}
 	}
+	//------------------------------------------Funciones Propias de la interfaz de este formulario---------------------------
+	//declaro el objeto donde se encuentra la interfaz del formulario 
+	var objForm=interfaz.elementos.formulario.ventanaForm;
+	objForm.prototype.reconstruirInterfaz=function(){
+		var html='';
+		if(this.tipo=='nuevo'){
+			this.registroId='';
+			interfaz.elementos.formulario.controlLista();
+			this.nodo.style.height='0px';		
+			setTimeout(function(){
+				var nodo=interfaz.elementos.formulario.ventanaForm.nodo;
+				nodo.style.height='450px';
+				html+='\
+				<section titulo>Nueva Empresa</section>\
+					<section sector>\
+						<form name ="formNuevo">\
+							<div class="group">\
+						      <input type="text" name="Nombre" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Nombre</label>\
+						    </div>\
+						    <div class="group">\
+						      <input type="text" name="Descripcion" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Descripcion</label>\
+						    </div>\
+						    <div class="group">\
+						      <input type="text" name="Descripcion" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Descripcion</label>\
+						    </div>\
+						    <div class="group">\
+						      <input type="text" name="Descripcion" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Descripcion</label>\
+						    </div>\
+						    <div class="group">\
+						      <input type="text" name="Descripcion" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Descripcion</label>\
+						    </div>\
+						    <div class="group">\
+						      <input type="text" name="Descripcion" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Descripcion</label>\
+						    </div>\
+						    <div class="group">\
+						      <input type="text" name="Descripcion" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Descripcion</label>\
+						    </div>\
+						</form>\
+					</section>\
+				</section>';
+				nodo.innerHTML=html;
+				interfaz.elementos.formulario.ventanaForm.agregarFuncionamiento();
+			},600);
+			interfaz.elementos.botonera.agregarBoton('guardar');
+		}else if(this.tipo='modificar'){
+			var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
+			interfaz.elementos.botonera.quitarBoton('guardar');
+			this.nodo.style.height='0px';		
+			setTimeout(function(){
+				var nodo=interfaz.elementos.formulario.ventanaForm.nodo;
+				nodo.style.height='250px';
+				nodo.style.borderRadius='0px';
+					html+='\
+				<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
+					<section sector>\
+					</section>\
+				</section>';
+				nodo.innerHTML=html;
+				interfaz.elementos.formulario.ventanaForm.agregarFuncionamiento();
+			},600);
+		}
+	};
+	objForm.agregarFuncionamiento = function(){
+		var nodo=this.nodo;
+		var lista=nodo.getElementsByTagName('article');
+		for(var x=0;x<lista.length;x++){
+			lista[x].style.cursor='pointer';
+			if(lista[x].getAttribute('update')!==null){
+				lista[x].onclick=this.edicion;
+			}else if(lista[x].getAttribute('empresa')!==null){
+				lista[x].onclick=function(){
+					var registro = torque.buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
+					var dataTemp = {
+						cabecera:'Operaciones Por Empresa',
+						cuerpo:'<label>'+this.textContent+'</label>',
+						pie:'<section modalButtons>\
+								<button type="button" cancelar id="modalButtonCancelar"></button>\
+								<button type="button" modificar  id="modalButtonModificar"></button>\
+								<button type="button" eliminar  id="modalButtonEliminar"></button>\
+							</section>'
+					}
+					interfaz.elementos.modalWindow=new modalWindow();
+					interfaz.elementos.modalWindow.arranque(dataTemp);
+					var btnCancelar = document.getElementById("modalButtonCancelar");
+					var btnModificar= document.getElementById("modalButtonModificar");
+					var btnEliminar = document.getElementById("modalButtonEliminar");
+
+					btnCancelar.onclick= function(){
+						interfaz.elementos.modalWindow.elimiarUltimaCapa();
+					}
+				}
+			}
+		}
+	};
 </script>
 </html>

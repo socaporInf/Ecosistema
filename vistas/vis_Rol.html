@@ -14,34 +14,68 @@
 </body>
 <script type="text/javascript" src='js/constructor.js'></script>
 <script type="text/javascript" src='js/motorRegistros.js'></script>
+
 <script type="text/javascript">
-	//objeto propio del formulario
-	/*------------------------------Objeto VentanaForm------------*/
-	var VentanaForm = function(){
-
-		this.tipo = 'noPosee';
-
-		this.nodo;
-
-		this.estado = 'sinConstruir';
-
-		//este es usado cuando se va a editar un registro en especifico
-		this.registroId='';
-
-		this.construirNodo = function(data){
-			var nodo = document.createElement('div');
-			nodo.setAttribute('capaForm','');
-			nodo.id='VentanaForm';
-			this.tipo=data.tipo;
-			this.nodo=nodo;
-			if(data.tipo=='modificar'){
-				this.registroId=data.id;
-			}else if(data.tipo=='nuevo'){
-				this.registroId='';
-			}
-			this.reconstruirInterfaz();
+	
+	var torque = new Motor('rol');
+	//Inicialiazion de formulario
+	var interfaz = new Arquitecto();
+	var botones = ['buscar','nuevo','abrir'];
+	var empresas = torque.buscarRegistros('empresa');
+	interfaz.configure();
+	interfaz.elementos.botonera = new Botonera(botones);
+	interfaz.elementos.formulario = new Formulario(torque.entidadActiva);
+	interfaz.elementos.formulario.cargarRegistros(torque.registrosEntAct);
+	//boton buscar
+	interfaz.elementos.botonera.buscarBoton('nuevo').nodo.onclick=function(){
+		console.log('presiono Nuevo');
+		var data = {
+			tipo:'nuevo'
 		}
-		this.reconstruirInterfaz=function(){
+		var formulario = interfaz.elementos.formulario;
+		formulario.construirInterfaz(data);
+	}
+	//boton nuevo
+	interfaz.elementos.botonera.buscarBoton('buscar').nodo.onclick=function(){
+		console.log('presiono Buscar');
+		interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('input')[0].focus();
+	}
+
+	//funcionamiento exclusivo del formulario
+	function guardar(){
+		var formulario = document.formNuevo;
+		var data = new Array();
+		var elemento;
+		var validacion=false;
+		for(var x=0;x<formulario.elements.length;x++){
+			if(formulario.elements[x].type='text'){
+				if(formulario.elements[x].value==''){
+					validacion=true;
+				}
+				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
+				data.push(elemento);
+			}
+		}
+		if(!validacion){
+			var nuevoRegistro = {
+				nombre : data[0].valor,
+				id : contId++,
+				descripcion : data[1].valor,
+				detalle : []
+			}
+			torque.guardar(nuevoRegistro,'rol');
+			var nuevoSlot=interfaz.elementos.formulario.agregarSlot(nuevoRegistro);
+			nuevoSlot.firstChild.click();
+		}else{
+			console.log('formulario no paso la validacion');
+		}
+	}
+	//------------------------------------------Funciones Propias de la interfaz de este formulario---------------------------
+		
+		//declaro el objeto donde se encuentra la interfaz del formulario 
+		var objForm=interfaz.elementos.formulario.ventanaForm;
+
+		objForm.prototype.reconstruirInterfaz=function(){
 			var html='';
 			if(this.tipo=='nuevo'){
 				this.registroId='';
@@ -102,19 +136,7 @@
 				},600);
 			}
 		};
-		this.destruirNodo = function(){
-			if(this.registroId!=''){
-				this.registroId='';
-				interfaz.elementos.formulario.controlLista();
-			}
-			this.nodo.style.height='0px';
-			setTimeout(function(){
-				var vf=interfaz.elementos.formulario.ventanaForm;
-				vf.nodo.parentNode.removeChild(vf.nodo);
-				vf.estado='sinConstruir';
-			},510);
-		};
-		this.agregarEmpresas=function(contenedor,elementos){
+		objForm.prototype.agregarEmpresas=function(contenedor,elementos){
 			var html="";
 			for(var x=0;x<elementos.length;x++){
 				html+="<article empresa>"+elementos[x].nombre+"</article>";
@@ -123,14 +145,14 @@
 			contenedor.innerHTML=html;
 			this.agregarFuncionamiento();
 		};
-		this.agregarEmpresa = function(empresa,contenedor){
+		objForm.prototype.agregarEmpresa = function(empresa,contenedor){
 			var nodo=document.createElement('article');
 			nodo.textContent = empresa.nombre;
 			nodo.setAttribute('empresa','');
 			contenedor.insertBefore(nodo,contenedor.lastChild);
 			this.agregarFuncionamiento();
 		};
-		this.agregarFuncionamiento = function(){
+		objForm.prototype.agregarFuncionamiento = function(){
 			var nodo=this.nodo;
 			var lista=nodo.getElementsByTagName('article');
 			for(var x=0;x<lista.length;x++){
@@ -224,139 +246,5 @@
 				}
 			}
 		};
-		this.edicion=function(){
-			var nodo=this;
-			var campo=this.previousSibling;
-			var campoEdicion=campo.previousSibling;
-			var contenedor=nodo.parentNode;
-			
-			contenedor.style.maxHeight='1000px';
-
-			campoEdicion.value=campo.textContent;
-			campoEdicion.style.display='inline-block';
-
-			campo.style.width=window.getComputedStyle(campo,null).getPropertyValue("width");
-			campo.style.maxHeight=window.getComputedStyle(campo,null).getPropertyValue("height");
-			nodo.classList.toggle('edicion');
-
-			setTimeout(function(){
-				campo.style.width='0px';
-				campo.style.opacity='0';
-
-				campoEdicion.style.width='calc(100% - 62px)';
-				campoEdicion.style.padding='5px';
-				campoEdicion.style.opacity='1';
-				if(nodo.getAttribute('update')=='campo'){
-					campoEdicion.style.height="20px";
-				}else if(nodo.getAttribute('update')=='area'){
-					campoEdicion.style.height="40px";
-				}
-			},10);
-			setTimeout(function(){
-				nodo.onclick=interfaz.elementos.formulario.ventanaForm.finEdicion;
-				if(nodo.getAttribute('update')=='area'){
-					campoEdicion.style.height="150px";
-					campoEdicion.style.padding="15px";
-				}
-			},520);
-			setTimeout(function(){
-				campoEdicion.focus();
-			},1010);
-
-		};
-		this.finEdicion = function(){
-			var nodo=this;
-			var campo=this.previousSibling;
-			var campoEdicion=campo.previousSibling;
-			var contenedor=nodo.parentNode;
-
-			contenedor.style.maxHeight='150px';
-
-			var id=interfaz.elementos.formulario.ventanaForm.registroId;
-			var nombreCampo=campoEdicion.name;
-			var valorCampo=campoEdicion.value;
-
-			console.log('se disparo una edicion con id:'+interfaz.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
-			var registro=torque.editarCampo(id,nombreCampo,valorCampo);
-			interfaz.elementos.formulario.actualizarLista(registro);
-
-			campo.textContent=campoEdicion.value;
-			
-			nodo.classList.toggle('edicion');
-			campo.style.width='calc(100% - 62px)';
-			campo.style.opacity='1';
-
-			campoEdicion.style.width='0px';
-			campoEdicion.style.opacity='0';
-			campoEdicion.style.height='0px';
-			setTimeout(function(){
-				campoEdicion.style.width='auto';
-				campoEdicion.style.display='none';
-				nodo.onclick=interfaz.elementos.formulario.ventanaForm.edicion;
-				campoEdicion.style.width=window.getComputedStyle(campoEdicion,null).getPropertyValue("width");
-				campo.style.width=campoEdicion.style.width;
-				campoEdicion.style.width='0px';
-				campoEdicion.value='';
-			},510)
-		};	
-	}
-	/*------------------------------Objeto VentanaForm------------*/
-
-</script>
-<script type="text/javascript">
-	
-	var torque = new Motor('rol');
-	//Inicialiazion de formulario
-	var interfaz = new Arquitecto();
-	var botones = ['buscar','nuevo','abrir'];
-	var empresas = torque.buscarRegistros('empresa');
-	interfaz.configure();
-	interfaz.elementos.botonera = new Botonera(botones);
-	interfaz.elementos.formulario = new Formulario();
-	interfaz.elementos.formulario.cargarRegistros(torque.registrosEntAct);
-	//boton buscar
-	interfaz.elementos.botonera.buscarBoton('nuevo').nodo.onclick=function(){
-		console.log('presiono Nuevo');
-		var data = {
-			tipo:'nuevo'
-		}
-		var formulario = interfaz.elementos.formulario;
-		formulario.construirInterfaz(data);
-	}
-	//boton nuevo
-	interfaz.elementos.botonera.buscarBoton('buscar').nodo.onclick=function(){
-		console.log('presiono Buscar');
-		interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('input')[0].focus();
-	}
-
-	//funcionamiento exclusivo del formulario
-	function guardar(){
-		var formulario = document.formNuevo;
-		var data = new Array();
-		var elemento;
-		var validacion=false;
-		for(var x=0;x<formulario.elements.length;x++){
-			if(formulario.elements[x].type='text'){
-				if(formulario.elements[x].value==''){
-					validacion=true;
-				}
-				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
-				data.push(elemento);
-			}
-		}
-		if(!validacion){
-			var nuevoRegistro = {
-				nombre : data[0].valor,
-				id : contId++,
-				descripcion : data[1].valor,
-				detalle : []
-			}
-			torque.guardar(nuevoRegistro,'rol');
-			var nuevoSlot=interfaz.elementos.formulario.agregarSlot(nuevoRegistro);
-			nuevoSlot.firstChild.click();
-		}else{
-			console.log('formulario no paso la validacion');
-		}
-	}
 </script>
 </html>

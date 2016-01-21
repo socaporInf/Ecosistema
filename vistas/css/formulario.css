@@ -255,12 +255,24 @@ div[capaList] section:hover{
 div[capaList] section[busqueda]{
   background-color: #4CAF50;
 }
-div[capaList] section[busqueda] input[campBusq]{
+div[capaList] section[busqueda] div[tituloForm]{
+    transition:all 0.3s ease-in-out;
     border: none;
-    padding: 8px;
+    padding: 3px 3px 3px 30px;
+    font-size: 20px;
+    float: left;
+    width: calc(100% - 103px);
+    color:white;
+    height: 26px;
+}
+div[capaList] section[busqueda] input[campBusq]{
+
+    transition:all 0.3s ease-in-out;
+    border: none;
+    padding: 0px;
     font-size: 15px;
     float: left;
-    width: calc(100% - 90px);
+    width: 0px;
 }
 div[capaList] section[busqueda] button[btnBusq]{
     border: none;
@@ -331,6 +343,15 @@ div[botonera] button{
 }
 div[botonera] button:not([btnAbrir]):hover{
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
+}
+div[botonera] button:not([btnAbrir]):before{
+  transition:inherit;
+  margin-left: 0px;
+  opacity: 0;
+  content: '';
+}
+div[botonera] button:not([btnAbrir]):hover:before{
+  opacity: 1;
 }
 div[botonera] button:hover:before{
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
@@ -422,7 +443,7 @@ div[botonera] button[btnGuardar]:hover:before{
     content: 'Guardar';
     color:white;
     background-color: inherit;
-    margin-left:-100px;
+    margin-left:-111px;
     border-radius:5px; 
     padding:5px;
 }
