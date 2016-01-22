@@ -62,6 +62,7 @@
 
 		objForm.prototype.reconstruirInterfaz=function(){
 			var html='';
+			var tiempo = (this.estado=='agregado')?600:0;
 			if(this.tipo=='nuevo'){
 				this.registroId='';
 				interfaz.elementos.formulario.controlLista();
@@ -89,7 +90,7 @@
 						</section>\
 					</section>';
 					nodo.innerHTML=html;
-				},600);
+				},tiempo);
 				interfaz.elementos.botonera.agregarBoton('guardar');
 			}else if(this.tipo='modificar'){
 				var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
@@ -118,7 +119,7 @@
 					//arreglo temporal de empresas
 						dataTemp=torque.buscarDetalle(data.id,'rol');
 						interfaz.elementos.formulario.ventanaForm.agregarEmpresas(contenedor,dataTemp);
-				},600);
+				},tiempo);
 			}
 		};
 		objForm.prototype.agregarEmpresas=function(contenedor,elementos){
