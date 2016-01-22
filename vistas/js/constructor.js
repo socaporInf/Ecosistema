@@ -86,8 +86,7 @@ var Botonera = function(estructura){
 		}
 		//boton nuevo
 		this.buscarBoton('buscar').nodo.onclick=function(){
-			console.log('presiono Buscar');
-			interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('button')[0].click();
+			interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('button')[1].click();
 		}
 	}
 	this.inicializarBotones = function(){
@@ -318,6 +317,7 @@ var Cabecera = function(){
 /*------------------------------Objeto Formulario(lista)-----------------*/
 var Formulario = function(entidad){
 
+	//----------------------------------Objeto Ventana Formulario-------------------
 	var VentanaForm = function(){
 
 		this.tipo = 'noPosee';
@@ -522,12 +522,18 @@ var Formulario = function(entidad){
 		var html='';
 		html+="<section busqueda>";
 		html+=	"<div tituloForm>"+this.entidadActiva.toUpperCase()+"</div>";
-		html+=	"<input type='text' placeHolder='Buscar...'campBusq>";
+		html+=	"<div listBuscar>";
+		html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
+		html+=		"<button type='button' cerrarBusq></button>";
+		html+=	"</div>";
 		html+=	"<button type='button' btnBusq></button>";
 		html+="</section>";
 		elemento.innerHTML = html;
 		this.nodo=elemento;
-		var botonBusqueda=elemento.getElementsByTagName('button')[0];
+
+		var botonBusqueda=elemento.getElementsByTagName('button')[1];
+		var botonCerrarBusq=elemento.getElementsByTagName('button')[0];
+
 		botonBusqueda.onclick=function(){
 			console.log('presiono buscar');
 			var campoBusqueda=this.previousSibling;
@@ -536,11 +542,23 @@ var Formulario = function(entidad){
 			titulo.style.padding='0px';
 			titulo.style.width='0px';
 
-			campoBusqueda.style.padding='8px';
-			campoBusqueda.style.width='calc(100% - 90px)';
-			campoBusqueda.style.height='16px';
+			campoBusqueda.style.width='calc(100% - 70px)';
+			campoBusqueda.style.height='40px';
 
 			campoBusqueda.focus();
+
+		}
+		botonCerrarBusq.onclick=function(){
+			console.log('presiono Cerrar buscar');
+
+			var campoBusqueda=this.parentNode;
+			var titulo=campoBusqueda.previousSibling;
+
+			titulo.style.padding='3px 3px 3px 30px';
+			titulo.style.width='calc(100% - 103px)';
+
+			campoBusqueda.style.width='0px';
+			campoBusqueda.style.height='0px';
 
 		}
 		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);

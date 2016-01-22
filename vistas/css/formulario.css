@@ -255,6 +255,12 @@ div[capaList] section:hover{
 div[capaList] section[busqueda]{
   background-color: #4CAF50;
 }
+div[capaList] section[busqueda] div[listBuscar]{
+  transition:all 0.3s ease-in-out;
+  float: left;
+  width: 0px;
+  height: 0px;
+}
 div[capaList] section[busqueda] div[tituloForm]{
     transition:all 0.3s ease-in-out;
     border: none;
@@ -263,16 +269,32 @@ div[capaList] section[busqueda] div[tituloForm]{
     float: left;
     width: calc(100% - 103px);
     color:white;
-    height: 26px;
+    height: 32px;
 }
 div[capaList] section[busqueda] input[campBusq]{
-
     transition:all 0.3s ease-in-out;
     border: none;
-    padding: 0px;
+    padding: 8px;
     font-size: 15px;
     float: left;
-    width: 0px;
+    width: 100%;
+    height: 20px;
+}
+div[capaList] section[busqueda] button[cerrarBusq]{
+  transition:inherit;
+  border:none;
+  border-radius: 100px;
+  width: 32px;
+  height:32px;
+  background-image: url('../imagenes/close.png');
+  background-position: 4px;
+  float: right;
+  margin-top: -34px;
+  background-color: transparent;
+  margin-right: 3px
+}
+div[capaList] section[busqueda] button[cerrarBusq]:hover{
+  box-shadow: 0px 2px 5px 0 rgba(0,0,0,0.26);
 }
 div[capaList] section[busqueda] button[btnBusq]{
     border: none;
