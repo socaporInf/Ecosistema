@@ -69,7 +69,7 @@
 				this.nodo.style.height='0px';		
 				setTimeout(function(){
 					var nodo=interfaz.elementos.formulario.ventanaForm.nodo;
-					nodo.style.height='250px';
+					nodo.style.height='450px';
 					html+='\
 					<section titulo>Nuevo Rol</section>\
 						<section sector>\
@@ -81,10 +81,28 @@
 							      <label>Nombre</label>\
 							    </div>\
 							    <div class="group">\
-							      <input type="text" name="Descripcion" required>\
+							      <input type="text" name="Nombre" required>\
+							      <span class="highlight"></span>\
+							      <span class="bar"></span>\
+							      <label>Nombre</label>\
+							    </div>\
+							     <div formElements>\
+							    	<select>\
+							    		<option value="-">Este es el Titulo</option>\
+							    		<option value="1">Valor 1</option>\
+							    		<option value="2">Valor 2</option>\
+							    		<option value="3">Valor 3</option>\
+							    	</select>\
+							    </div>\
+							    <div class="group">\
+							      <textarea name="Descripcion" required></textarea>\
 							      <span class="highlight"></span>\
 							      <span class="bar"></span>\
 							      <label>Descripcion</label>\
+							    </div>\
+							    <div formElements>\
+							    	<label class="radio"><input id="radio2" type="radio" name="radios" ><span class="outer"><span class="inner"></span></span>Activo</label>\
+							    	<label class="radio"><input id="radio3" type="radio" name="radios" ><span class="outer"><span class="inner"></span></span>Inactivo</label>\
 							    </div>\
 							</form>\
 						</section>\
@@ -148,6 +166,7 @@
 				}else if(lista[x].getAttribute('empresa')!==null){
 					lista[x].onclick=function(){
 						var registro = torque.buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
+						//structura de la ventana modal
 						var dataTemp = {
 							cabecera:'Operaciones Por Empresa',
 							cuerpo:'<label>'+this.textContent+'</label>',
@@ -157,8 +176,14 @@
 									<button type="button" eliminar  id="modalButtonEliminar"></button>\
 								</section>'
 						}
-						interfaz.elementos.modalWindow=new modalWindow();
+						
+						//creo la venta modal
+						if(!interfaz.elementos.modalWindow){
+							interfaz.elementos.modalWindow=new modalWindow();		
+						}
 						interfaz.elementos.modalWindow.arranque(dataTemp);
+
+						//agrego funcionamiento a los botones de la ventaModal
 						var btnCancelar = document.getElementById("modalButtonCancelar");
 						var btnModificar= document.getElementById("modalButtonModificar");
 						var btnEliminar = document.getElementById("modalButtonEliminar");
@@ -169,36 +194,52 @@
 					}
 				}else if(lista[x].getAttribute('add')!==null){
 					lista[x].onclick=function(){
-						console.log('agregar');
+						//busco el registro con la informacion que voy a utilizar
 						var registro = torque.buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
+
+						//armo la estructura de la ventana modal
 						var dataTemp = {
 							cabecera:'Asignar Empresa',
-							cuerpo:'<label>'+registro.nombre+'</label>\
-									<select name="listaEmpresas" id="listaEmpresas">\
-										<option value="-">Selecione un Valor</option>\
-										<option value="1">SocaServicios</option>\
-										<option value="2">SocaPortuguesa</option>\
-										<option value="3">Probioagro</option>\
-										<option value="4">E/S Piedritas Blancas</option>\
-									</select>',
+							cuerpo:'<label>'+registro.nombre+'</label><div clear></div>\
+									<div formElements>\
+										<select name="listaEmpresas" id="listaEmpresas">\
+											<option value="-">Selecione un Valor</option>\
+											<option value="1">SocaServicios</option>\
+											<option value="2">SocaPortuguesa</option>\
+											<option value="3">Probioagro</option>\
+											<option value="4">E/S Piedritas Blancas</option>\
+										</select>\
+									</div>',
 							pie:'<section modalButtons>\
 									<button type="button" cancelar id="modalButtonCancelar"></button>\
 									<button type="button" aceptar  id="modalButtonAceptar"></button>\
 								</section>'
 						}
+						//creo la ventana modal
 						interfaz.elementos.modalWindow=new modalWindow();
+						//le paso los datos
 						interfaz.elementos.modalWindow.arranque(dataTemp);
-						//armo la lista de valores no permitidos
+						
+						
+						//armo la lista de valores no permitidos para el combo
 						var empresas=torque.buscarDetalle(interfaz.elementos.formulario.ventanaForm.registroId,'rol');
 						var valoresNoPermitidos= Array();
 						for(var x=0;x<empresas.length;x++){
 							valoresNoPermitidos.push(empresas[x].id);
 						}
+						//valido el combo box con los valores recopilados
 						interfaz.elementos.formulario.validarCombo(valoresNoPermitidos,document.getElementById('listaEmpresas'));
+						
+
 						//agrego funcionamiento a los botones
 						var btnCancelar = document.getElementById("modalButtonCancelar");
 						var btnAceptar 	= document.getElementById("modalButtonAceptar");
-						
+						var comboEmpresas = interfaz.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.getElementsByTagName('select')[0];
+
+						comboEmpresas.parentNode.onclick = function(){
+							interfaz.elementos.formulario.ventanaForm.construirCapaSelect(comboEmpresas);
+						}
+
 						btnCancelar.onclick=function(){
 							interfaz.elementos.modalWindow.elimiarUltimaCapa();
 						}

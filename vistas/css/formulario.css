@@ -15,6 +15,19 @@ div[clear]{
 div[contenedor]{
   width: 100%;
 }
+div.ink{
+  display: block;
+  position: absolute;
+  transform:scale(0);
+  border-radius: 100%;
+  opacity: 0.3;
+  background-color: #4CAF50;
+}
+div.ink.animate{
+  transition:all 0.65s linear;
+  transform:scale(2.5);
+  opacity: 0;
+}
 /*----------------------------------------Modal Window-------------------------------*/
 div[capa]{
   transition:all 0.5s ease-in-out;
@@ -58,12 +71,7 @@ div[capa='contenido'] section[cuerpo] label{
   padding: 10px;
   font-size: 20px;
   text-transform: capitalize;
-}
-div[capa='contenido'] section[cuerpo] select{
-    box-shadow: 0px 2px 5px 0 rgba(0,0,0,0.26);
-    border: none;
-    padding: 5px;
-    outline: none;
+  float: left;
 }
 div[capa='contenido'] section[cuerpo] option{
 
@@ -248,10 +256,6 @@ div[capaList] section{
     transition: all 0.2s ease-in-out;
     margin-bottom: 1px
 }
-div[capaList] section:hover{
-  background-color: #C8E6C9;
-  color:white;
-}
 div[capaList] section[busqueda]{
   background-color: #4CAF50;
 }
@@ -326,6 +330,7 @@ div[capaList] section:not([busqueda]) button{
 }
 div[capaList] section:not([busqueda]){
   height: 30px;
+  position: relative;
 }
 div[capaList] section[slot] article[title]{
   width: 100%;
@@ -503,29 +508,50 @@ div[botonera] button[btnAbrir]{
   background-color: #f44336 !important;
   box-shadow: 0 -19px 38px rgba(0,0,0,0.30), 0 -15px 12px rgba(0,0,0,0.22) !important;
 }
-/*------------------------elemento campo de texto---------------------*/
+/*------------------------MATERIAL ELEMENTs---------------------*/
+/*---------------------------Contenedores-----------------------*/
+div[formElements]{
+  margin-bottom:45px;
+  margin-left: 5px !important; 
+  float: left;
+  overflow:visible;
+  min-width: 140px;
+}
+/*----------------------Input Text y TextArea-------------------*/
 .group            { 
   position:relative; 
   margin-bottom:45px;
-  margin-left: 15px; 
+  margin-left: 5px; 
   float: left;
   overflow:visible;
 }
 div[capaForm] div.group input{
-  font-size:18px;
+  font-size: 14px;
   padding:10px 10px 10px 5px;
   display:block;
-  width:200px;
+  width:140px;
   border:none;
   border-bottom:1px solid #757575;
   background-color: transparent;
 }
+div[capaForm] div.group textarea{
+  font-size:14px;
+  padding:10px 10px 10px 5px;
+  display:block;
+  width:475px;
+  border:none;
+  border-bottom:1px solid #757575;
+  background-color: transparent;
+  opacity: 1;
+  height: 72px;
+}
+div
 div[capaForm] div.group input:focus{ outline:none; }
 
 /* LABEL ======================================= */
 div.group label                {
   color:#999; 
-  font-size:18px;
+  font-size: 14px;
   font-weight:normal;
   position:absolute;
   pointer-events:none;
@@ -539,16 +565,21 @@ div.group label                {
 /* active state */
 div[capaForm] div.group input:focus ~ label, div[capaForm] div.group input:valid ~ label        {
   top:-20px;
-  font-size:14px;
+  font-size:12px;
+  color:#4CAF50;
+}
+div[capaForm] div.group textarea:focus ~ label, div[capaForm] div.group textarea:valid ~ label        {
+  top:-20px;
+  font-size:12px;
   color:#4CAF50;
 }
 
 /* BOTTOM BARS ================================= */
-.bar    { position:relative; display:block; width:215px; }
+.bar    { position:relative; display:block; width:100%; overflow: visible;max-width: 100% !important}
 .bar:before, .bar:after     {
   content:'';
   height:2px; 
-  width:0;
+  width:0px;
   bottom:1px; 
   position:absolute;
   background:#4CAF50; 
@@ -564,9 +595,10 @@ div[capaForm] div.group input:focus ~ label, div[capaForm] div.group input:valid
 }
 
 /* active state */
-div[capaForm] input:focus ~ .bar:before, div[capaForm] input:focus ~ .bar:after {
+input:focus ~ .bar:before, input:focus ~ .bar:after,textarea:focus ~ .bar:before, textarea:focus ~ .bar:after {
   width:50%; 
 }
+
 
 /* HIGHLIGHTER ================================== */
 .highlight {
@@ -580,7 +612,7 @@ div[capaForm] input:focus ~ .bar:before, div[capaForm] input:focus ~ .bar:after 
 }
 
 /* active state */
-input:focus ~ .highlight {
+input:focus ~ .highlight,textarea:focus ~ .highlight {
   -webkit-animation:inputHighlighter 0.3s ease;
   -moz-animation:inputHighlighter 0.3s ease;
   animation:inputHighlighter 0.3s ease;
@@ -598,6 +630,82 @@ input:focus ~ .highlight {
 @keyframes inputHighlighter {
     from { background:#5264AE; }
   to    { width:0; background:transparent; }
+}
+/*------------------------------Radio Box--------------------------------------*/
+.radio {
+  display: inline-block;
+  padding-right: 15px;
+  font-size: 14px;
+  line-height: 44px;
+  cursor: pointer;
+}
+
+.radio:hover .inner {
+  -webkit-transform: scale(0.5);
+  -ms-transform: scale(0.5);
+  transform: scale(0.5);
+  opacity: .5;
+}
+
+.radio input {
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.radio input:checked + .outer .inner {
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  opacity: 1;
+}
+
+.radio input:checked + .outer { border: 2px solid #f08b3b; }
+
+.radio input:focus + .outer .inner {
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  opacity: 1;
+  background-color: #e67012;
+}
+
+.radio .outer {
+  width: 15px;
+  height: 15px;
+  display: block;
+  float: left;
+  margin:12px -6px 0px 0px;
+  border: 2px solid #0c70b4;
+  border-radius: 50%;
+  background-color: #fff;
+}
+
+.radio .inner {
+  -webkit-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+  width: 11px;
+  height: 11px;
+  -webkit-transform: scale(0);
+  -ms-transform: scale(0);
+  transform: scale(0);
+  display: block;
+  margin: 2px;
+  border-radius: 50%;
+  background-color: #f08b3b;
+  opacity: 0;
+  max-width: 100% !important;
+}
+/*------------------------------Combo Box--------------------------------------*/
+select{
+  border-bottom: 1px solid #757575;
+  padding: 9px;
+  outline: none;
+  border-top:none;
+  border-left: none;
+  border-right: none;
+  font-size: 14px;
+  width: 100%;
 }
 /*-----------------------------------Media Query-------------------------------*/
 @media (max-width: 1000px){
@@ -629,7 +737,7 @@ input:focus ~ .highlight {
   div[capaForm] section[sector]{
     max-width: 830px;
   }
-  div[capaForm] section[sector] div:not(.grupo){
+  div[capaForm] section[sector]:not(div.grupo){
     margin-left: 20px;
   }
   div[capaForm] section[sector] div.grupo{

@@ -428,7 +428,41 @@ var Formulario = function(entidad){
 				campoEdicion.style.width='0px';
 				campoEdicion.value='';
 			},510)
-		};	
+		};
+		/*----------------------------------Funciones del Objeto Select-------------------------------*/
+		this.construirCapaSelect= function(select){
+			var opciones= new Array();
+			var opcion;
+			var html="";
+			for(var x = 0; x < select.options.length;x++){
+				console.log(select.options[x]);
+				opcion = {nombre:select.options[x].textContent,value:select.options[x].value}
+				if(select.options[x]==select.options[select.selectedIndex]){
+					html+='<div option seleccionado>'+opcion.nombre+'</div>';	
+				}else{
+					html+='<div option>'+opcion.nombre+'</div>';
+				}
+				
+				opciones.push(opcion);
+			}
+			//creo el contenedor de las opciones
+			var dataTemp = {
+				cuerpo:html
+			}
+			
+			//creo la venta modal
+			if(!interfaz.elementos.modalWindow){
+				interfaz.elementos.modalWindow=new modalWindow();		
+			}
+			interfaz.elementos.modalWindow.arranque(dataTemp);
+
+			//agrego funcionamiento a los botones de la ventaModal
+			var capaContenido=interfaz.elementos.modalWindow.buscarUltimaCapaContenido();
+
+			
+
+
+		};
 	}
 	/*------------------------------Objeto VentanaForm------------*/
 	/*------------------------------Objeto Slot-------------------*/
@@ -457,7 +491,7 @@ var Formulario = function(entidad){
 		this.funcionamiento = function(){
 			var nodo = this.nodo;
 			var article =nodo.getElementsByTagName('article')[0];
-			article.onclick=function(){
+			article.onclick=function(e){
 				var formulario = interfaz.elementos.formulario;
 				formulario.controlLista(this.parentNode);
 				var newSelec = formulario.obtenerSeleccionado();
@@ -466,6 +500,56 @@ var Formulario = function(entidad){
 						id:newSelec.atributos.id
 					}
 				formulario.construirInterfaz(data);
+				
+
+				//---------------------------Ink Event------------------------
+				var html;
+				var parent=this.parentNode;
+				var ink;
+				//se crea el elemento si no existe
+				if(parent.getElementsByTagName('div')[0]===undefined){
+					ink=document.createElement('div');
+					ink.classList.toggle('ink')
+					parent.insertBefore(ink,parent.firstChild);
+				}
+				ink=parent.getElementsByTagName('div')[0];
+
+				//en caso de doble click rapido remuevo la clase 
+				ink.classList.remove('animated');
+
+				//guardo todo el estilo del elemento 
+				var style = window.getComputedStyle(ink);
+
+				//se guardan los valores de akto y ancho
+				if(parseInt(style.height.substring(0,style.height.length-2))==0 && parseInt(style.width.substring(0,style.width.length-2))==0){
+					//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
+					d = Math.max(parent.offsetHeight, parent.offsetWidth);
+					ink.style.height=d+'px';
+					ink.style.width=d+'px';
+				}
+				//declaro el offset del parent
+				var rect =parent.getBoundingClientRect();
+
+				parent.offset={
+				  top: rect.top + document.body.scrollTop,
+				  left: rect.left + document.body.scrollLeft
+				}
+				//re evaluo los valores de alto y ancho del ink
+				style = window.getComputedStyle(ink);
+
+				//ubico el lugar donde se dispara el click
+				var x=e.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2
+				var y=e.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2
+				//cambio los valores de ink para iniciar la animacion
+				ink.style.top=y+'px';
+				ink.style.left=x+'px';
+				setTimeout(function(){
+					ink.classList.toggle('animate');
+				},10);
+				setTimeout(function(){
+					ink.classList.toggle('animate');
+				},660);
+				//---------------------------Ink Event------------------------
 			}
 		}
 		this.reconstruirNodo = function(){
@@ -594,11 +678,7 @@ var Formulario = function(entidad){
 	}
 	this.agregarVentanaForm = function(){
 		this.ventanaForm.estado='agregado';
-		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);
-		setTimeout(function(){
-			interfaz.elementos.formulario.ventanaForm.nodo.style.height='250px';
-		},10);	
-		
+		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);		
 	}
 	this.construirInterfaz = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
@@ -709,9 +789,6 @@ var modalWindow = function(){
 			nodo.setAttribute('capa','contenido');
 			predecesor.nodo.parentNode.insertBefore(nodo,predecesor.nodo.nextSibling);
 			this.nodo=nodo;
-			this.agregarParte('cabecera');
-			this.agregarParte('cuerpo');
-			this.agregarParte('pie');
 			this.estado='enUso';
 			setTimeout(function(){
 				nodo.style.top=' calc(50% - 250px)';
@@ -737,9 +814,19 @@ var modalWindow = function(){
 		}
 
 		this.dibujarInterfaz = function(data){
-			this.partes.cabecera.nodo.textContent=data.cabecera;
-			this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
-			this.partes.pie.nodo.innerHTML=data.pie;
+			if(data.cabecera!==undefined){
+				this.agregarParte('cabecera');
+				this.partes.cabecera.nodo.textContent=data.cabecera;
+			}
+			if(data.cuerpo!==undefined){
+				this.agregarParte('cuerpo');
+				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
+			}
+			if(data.pie!==undefined){
+				this.agregarParte('pie');
+				this.partes.pie.nodo.innerHTML=data.pie;
+			}
+				
 		}
 		this.construirNodo();
 	}
@@ -768,7 +855,6 @@ var modalWindow = function(){
 	this.capas=new Array();
 
 	this.arranque = function(data){
-		console.log('arranco modalWindow');
 		this.agregarCapa('exterior');
 		var contenido=this.agregarCapa('contenido');
 		contenido.dibujarInterfaz(data);
@@ -777,32 +863,58 @@ var modalWindow = function(){
 	this.agregarCapa = function(tipo){
 		var capaNueva=false;;
 		if(tipo=='exterior'){
-			capaNueva=new capaExterior();
-			this.capas.push(capaNueva);
-		}else if(tipo=='contenido'){
 			if(this.existeExterior()){
-				capaNueva=new capaContenido();
+				var zIndex=window.getComputedStyle(this.buscarUltimaCapaContenido().nodo,null).getPropertyValue("z-index");
+				capaNueva=new capaExterior();
+				this.capas.push(capaNueva);
+				capaNueva.nodo.style.zIndex=zIndex+1;
+			}else{
+				capaNueva=new capaExterior();
 				this.capas.push(capaNueva);
 			}
+		}else if(tipo=='contenido'){
+			if(this.existeExterior()){
+				var zIndex=window.getComputedStyle(this.obtenerUltimaCapa().nodo,null).getPropertyValue("z-index");
+				capaNueva=new capaContenido();
+				this.capas.push(capaNueva);
+				capaNueva.nodo.style.zIndex=zIndex+1;
+			}
+		}else if(tipo=='opciones'){
+
 		}
 		return capaNueva;
 	}
 	this.removerCapa = function(){
 		var capaExterior=interfaz.elementos.modalWindow.buscarCapa(this);
 		if(capaExterior){
-			var capaContenido= interfaz.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
-			//los saco de vista con la tansicion
-			//capa contenido
-			capaContenido.nodo.style.top='200%';
-			capaContenido.nodo.style.opacity='0';
-			setTimeout(function(){
-				capaExterior.nodo.style.opacity='0';
-			},300);
-			setTimeout(function(){
-				capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
-				capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
-				obtenerContenedor().style.position='inherit';
-			},810);
+			if(capaExterior==interfaz.elementos.modalWindow.capas[0]){
+				var capaContenido= interfaz.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+				//los saco de vista con la tansicion
+				//capa contenido
+				capaContenido.nodo.style.top='200%';
+				capaContenido.nodo.style.opacity='0';
+				setTimeout(function(){
+					capaExterior.nodo.style.opacity='0';
+				},300);
+				setTimeout(function(){
+					capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
+					capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
+					obtenerContenedor().style.position='inherit';
+				},810);
+			}else{
+				var capaContenido= interfaz.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+				//los saco de vista con la tansicion
+				//capa contenido
+				capaContenido.nodo.style.top='200%';
+				capaContenido.nodo.style.opacity='0';
+				setTimeout(function(){
+					capaExterior.nodo.style.opacity='0';
+				},300);
+				setTimeout(function(){
+					capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
+					capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
+				},810);
+			}
 		}
 	}
 	this.buscarCapa = function(nodo){
@@ -812,6 +924,14 @@ var modalWindow = function(){
 				capa=this.capas[x];
 				break
 			}
+		}
+		return capa;
+	}
+	this.buscarUltimaCapaContenido = function(){
+		var capa=this.obtenerUltimaCapa();
+		var cont=0;
+		while((capa.tipo!='contenido')||(cont==6)){
+			capa=capa.previousSibling;
 		}
 		return capa;
 	}
@@ -836,7 +956,6 @@ var modalWindow = function(){
 			contenedor.style.position='fixed';
 			for(var x=0;x<this.capas.length;x++){
 				if(this.capas[x].nodo.getAttribute('capa')=='exterior'){
-					console.log('encontro una exterior');
 					this.capas[x].nodo.onclick=this.removerCapa;
 				}
 			}
@@ -873,7 +992,9 @@ var Arquitecto = function(){
 		var mql = window.matchMedia("(max-width: 1000px)");
 		mql.addListener(handleMediaChange);
 		handleMediaChange(mql);
+		document.body.onmousedown=this.activarEfecto;
 	}
+	
 }
 /*---------------Utilidades---------------------------------------------*/
 function obtenerContenedor(){
