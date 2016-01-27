@@ -811,6 +811,7 @@ var Formulario = function(entidad){
 				var html="<article  title>"+titulo+"</article>\
 				<button type='button' btnEliminar></button>";
 				nodo.innerHTML=html;
+				slot.funcionamiento();
 			}
 		}else{
 			for(var x=0;x<this.Slots.length;x++){
@@ -819,6 +820,7 @@ var Formulario = function(entidad){
 				var html="<article  title>"+slot.atributos.nombre+"</article>\
 				<button type='button' btnEliminar></button>";
 				nodo.innerHTML=html;
+				slot.funcionamiento();
 			}
 		}
 	};

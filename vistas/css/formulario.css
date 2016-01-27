@@ -242,10 +242,12 @@ div[capaList]{
    width: 300px;
    background-color: white;
    height: auto;
-   overflow: hidden;
+   overflow-x: hidden;
    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
    margin: 50px 0px 50px 50px;  
    float:left;
+    max-height: 510px;
+    overflow-y:auto;  
 }
 div[capaList] section{
     width: 100%;
@@ -258,7 +260,14 @@ div[capaList] section{
 }
 div[capaList] section[busqueda]{
   background-color: #4CAF50;
+  position: absolute;
+  width: inherit; 
+  z-index: 2;
+  padding: 10px 0px;
 }
+section[busqueda] + section[slot]{
+    margin-top: 51px !important;
+  }
 div[capaList] section[busqueda] div[listBuscar]{
   transition:all 0.3s ease-in-out;
   float: left;
@@ -283,6 +292,7 @@ div[capaList] section[busqueda] input[campBusq]{
     float: left;
     width: 100%;
     height: 20px;
+    margin-left: 10px;
 }
 div[capaList] section[busqueda] button[cerrarBusq]{
   transition:inherit;
@@ -759,6 +769,7 @@ div[option]{
   }
   div[capaList] section:not([busqueda]) button{
     display:inline-block;
+    z-index: 1;
   }
   div[capaform]{
     width: 85%;
