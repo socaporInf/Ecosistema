@@ -136,13 +136,11 @@ div[capaForm] section[titulo]{
     color:white;
 }
 div[capaForm] section[sector]{
-    padding: 30px 0px 0px 0px;
+    padding: 30px 0px 0px 15px;
     margin: 0px auto;
     max-width: 600px;
 }
-div[capaForm] section[sector] div{
-  padding: 4px;
-}
+
 div[capaForm] section[sector]:last-child{
     bottom: 1px;
 }
@@ -521,26 +519,25 @@ div[formElements]{
   min-width: 140px;
   position: relative;
   z-index: 4;
-  width: 30%
+  width: 32%
 }
 div[area]{
-  width: calc(100% - 38px) !important;
+  width: calc(100% - 24px) !important;
 }
 .group            { 
   position:relative; 
   margin-bottom:45px;
-  margin-left: 5px; 
   float: left;
   overflow:visible;
   z-index:3;
-  width: 30%
+  width: 32%
 }
 /*----------------------Input Text y TextArea-------------------*/
 div[capaForm] div.group input{
   font-size: 14px;
   padding:10px 10px 10px 5px;
   display:block;
-  width:100%;
+  width:calc(100% - 15px);
   border:none;
   border-bottom:1px solid #757575;
   background-color: transparent;
@@ -549,7 +546,7 @@ div[capaForm] div.group textarea{
   font-size:14px;
   padding:10px 10px 10px 5px;
   display:block;
-  width:100%;
+  width:calc(100% - 15px);
   border:none;
   border-bottom:1px solid #757575;
   background-color: transparent;

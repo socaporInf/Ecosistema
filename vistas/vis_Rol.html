@@ -80,21 +80,6 @@
 							      <span class="bar"></span>\
 							      <label>Nombre</label>\
 							    </div>\
-							    <div class="group">\
-							      <input type="text" name="Nombre" required>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Nombre</label>\
-							    </div>\
-							     <div formElements>\
-							     	<article capaSelect></article>\
-							    	<select>\
-							    		<option value="-">Este es el Titulo</option>\
-							    		<option value="1">Valor 1</option>\
-							    		<option value="2">Valor 2</option>\
-							    		<option value="3">Valor 3</option>\
-							    	</select>\
-							    </div>\
 							    <div class="group" area>\
 							      <textarea name="Descripcion" required></textarea>\
 							      <span class="highlight"></span>\
@@ -102,8 +87,8 @@
 							      <label>Descripcion</label>\
 							    </div>\
 							    <div formElements>\
-							    	<label class="radio"><input id="radio2" type="radio" name="radios" ><span class="outer"><span class="inner"></span></span>Activo</label>\
-							    	<label class="radio"><input id="radio3" type="radio" name="radios" ><span class="outer"><span class="inner"></span></span>Inactivo</label>\
+							    	<label class="radio"><input id="radio1" type="radio" name="Estado" ><span class="outer"><span class="inner"></span></span>Activo</label>\
+							    	<label class="radio"><input id="radio2" type="radio" name="Estado" ><span class="outer"><span class="inner"></span></span>Inactivo</label>\
 							    </div>\
 							</form>\
 						</section>\
@@ -170,8 +155,8 @@
 						var registro = torque.buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
 						//structura de la ventana modal
 						var dataTemp = {
-							cabecera:'Operaciones Por Empresa',
-							cuerpo:'<label>'+this.textContent+'</label>',
+							cabecera:'Operaciones En '+this.textContent,
+							cuerpo:'Las Operaciones disponibles son: <br>Eliminar Asociacion<br>Modificar Privilegios',
 							pie:'<section modalButtons>\
 									<button type="button" cancelar id="modalButtonCancelar"></button>\
 									<button type="button" modificar  id="modalButtonModificar"></button>\
