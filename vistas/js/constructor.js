@@ -750,6 +750,15 @@ var Formulario = function(entidad){
 		console.log('el slot no existe');
 		return false;
 	};
+	this.buscarSlotPorNombre = function(registro){
+		for(x=0;x<this.Slots.length;x++){
+			if(this.Slots[x].atributos.nombre==registro.nombre){
+				return this.Slots[x];
+			}
+		}
+		console.log('el slot no existe');
+		return false;
+	};
 	this.cambiarTextoSlots = function(cambio){
 		if(cambio=='mediaQuery'){
 			for(var x=0;x<this.Slots.length;x++){
