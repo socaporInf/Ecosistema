@@ -87,6 +87,7 @@
 							      <label>Nombre</label>\
 							    </div>\
 							     <div formElements>\
+							     	<article capaSelect></article>\
 							    	<select>\
 							    		<option value="-">Este es el Titulo</option>\
 							    		<option value="1">Valor 1</option>\
@@ -94,7 +95,7 @@
 							    		<option value="3">Valor 3</option>\
 							    	</select>\
 							    </div>\
-							    <div class="group">\
+							    <div class="group" area>\
 							      <textarea name="Descripcion" required></textarea>\
 							      <span class="highlight"></span>\
 							      <span class="bar"></span>\
@@ -108,6 +109,7 @@
 						</section>\
 					</section>';
 					nodo.innerHTML=html;
+					interfaz.elementos.formulario.ventanaForm.agregarFuncionamiento();
 				},tiempo);
 				interfaz.elementos.botonera.agregarBoton('guardar');
 			}else if(this.tipo='modificar'){
@@ -202,7 +204,7 @@
 							cabecera:'Asignar Empresa',
 							cuerpo:'<label>'+registro.nombre+'</label><div clear></div>\
 									<div formElements>\
-										<select name="listaEmpresas" id="listaEmpresas">\
+										<article capaSelect></article><select name="listaEmpresas" id="listaEmpresas">\
 											<option value="-">Selecione un Valor</option>\
 											<option value="1">SocaServicios</option>\
 											<option value="2">SocaPortuguesa</option>\
@@ -220,6 +222,7 @@
 						//le paso los datos
 						interfaz.elementos.modalWindow.arranque(dataTemp);
 						
+						interfaz.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.style.height='200px';
 						
 						//armo la lista de valores no permitidos para el combo
 						var empresas=torque.buscarDetalle(interfaz.elementos.formulario.ventanaForm.registroId,'rol');
@@ -236,8 +239,8 @@
 						var btnAceptar 	= document.getElementById("modalButtonAceptar");
 						var comboEmpresas = interfaz.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.getElementsByTagName('select')[0];
 
-						comboEmpresas.parentNode.onclick = function(){
-							interfaz.elementos.formulario.ventanaForm.construirCapaSelect(comboEmpresas);
+						comboEmpresas.previousSibling.onclick = function(){
+							interfaz.elementos.formulario.ventanaForm.construirCapaSelect(this);
 						}
 
 						btnCancelar.onclick=function(){
@@ -269,6 +272,10 @@
 							}
 							
 						}
+					}
+				}else if(lista[x].getAttribute('capaSelect')!==null){
+					lista[x].onclick=function(){
+						interfaz.elementos.formulario.ventanaForm.construirCapaSelect(this);
 					}
 				}
 			}

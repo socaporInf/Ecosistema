@@ -430,39 +430,81 @@ var Formulario = function(entidad){
 			},510)
 		};
 		/*----------------------------------Funciones del Objeto Select-------------------------------*/
-		this.construirCapaSelect= function(select){
+		this.construirCapaSelect= function(capaSelect){
+			capaSelect.onclick=function(){};
 			var opciones= new Array();
 			var opcion;
-			var html="";
+			var nodo;
+			var select = capaSelect.nextSibling;
+			while(select.nodeName=='#text'){
+				select=select.nextSibling;
+			}
+			var margen;
 			for(var x = 0; x < select.options.length;x++){
-				console.log(select.options[x]);
-				opcion = {nombre:select.options[x].textContent,value:select.options[x].value}
+				
+				opcion = {
+					nombre:select.options[x].textContent,
+					value:select.options[x].value,
+					nodo:null
+				}
+
+				nodo=document.createElement('div');
+				nodo.setAttribute('option','');
+				nodo.textContent=opcion.nombre;
 				if(select.options[x]==select.options[select.selectedIndex]){
-					html+='<div option seleccionado>'+opcion.nombre+'</div>';	
-				}else{
-					html+='<div option>'+opcion.nombre+'</div>';
+					nodo.setAttribute('selecionado','');
+					margen='-'+parseInt(opciones.length*41)+'px';
+					capaSelect.style.marginTop=margen;
+					console.log(margen);
 				}
 				
+				nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
+				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
+				
+				nodo.setAttribute('valor',opcion.value);
+				nodo.onclick= function(e){
+					//agrego el efecto Ripple
+					interfaz.elementos.formulario.agregarRippleEvent(this,e);
+					var select = this.parentNode.nextSibling;
+					while(select.nodeName=='#text'){
+						select=select.nextSibling;
+					}
+					select.value=this.getAttribute('valor');
+					interfaz.elementos.formulario.ventanaForm.destruirCapaSelect(this.parentNode);
+				}
+				opcion.nodo=nodo;
 				opciones.push(opcion);
+				capaSelect.appendChild(nodo);
 			}
+
 			//creo el contenedor de las opciones
-			var dataTemp = {
-				cuerpo:html
-			}
-			
-			//creo la venta modal
-			if(!interfaz.elementos.modalWindow){
-				interfaz.elementos.modalWindow=new modalWindow();		
-			}
-			interfaz.elementos.modalWindow.arranque(dataTemp);
-
-			//agrego funcionamiento a los botones de la ventaModal
-			var capaContenido=interfaz.elementos.modalWindow.buscarUltimaCapaContenido();
-
-			
-
+			capaSelect.style.opacity='1';
+			capaSelect.style.height=parseInt(opciones.length*41)+'px';
+			capaSelect.style.width='60px'
 
 		};
+		this.destruirCapaSelect = function(capaSelect){
+			var lista = capaSelect.childNodes;
+			var opcion;
+			capaSelect.style.opacity='0';
+			capaSelect.style.height='100%';
+			capaSelect.style.width='100%';
+			capaSelect.style.marginTop='0px';
+			for(var x = 0;x < lista.length;x++){
+				lista[x].style.transition='all 0.3s linear';
+				lista[x].style.marginTop='0px';
+			}
+			setTimeout(function(){
+				while(capaSelect.childNodes.length>0){
+					capaSelect.removeChild(capaSelect.lastChild);
+				}
+				capaSelect.onclick=function(){
+					interfaz.elementos.formulario.ventanaForm.construirCapaSelect(this);
+				}
+			},300)
+			
+		}
+		/*----------------------------------Funciones del Objeto Select-------------------------------*/
 	}
 	/*------------------------------Objeto VentanaForm------------*/
 	/*------------------------------Objeto Slot-------------------*/
@@ -501,55 +543,8 @@ var Formulario = function(entidad){
 					}
 				formulario.construirInterfaz(data);
 				
-
-				//---------------------------Ink Event------------------------
-				var html;
-				var parent=this.parentNode;
-				var ink;
-				//se crea el elemento si no existe
-				if(parent.getElementsByTagName('div')[0]===undefined){
-					ink=document.createElement('div');
-					ink.classList.toggle('ink')
-					parent.insertBefore(ink,parent.firstChild);
-				}
-				ink=parent.getElementsByTagName('div')[0];
-
-				//en caso de doble click rapido remuevo la clase 
-				ink.classList.remove('animated');
-
-				//guardo todo el estilo del elemento 
-				var style = window.getComputedStyle(ink);
-
-				//se guardan los valores de akto y ancho
-				if(parseInt(style.height.substring(0,style.height.length-2))==0 && parseInt(style.width.substring(0,style.width.length-2))==0){
-					//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
-					d = Math.max(parent.offsetHeight, parent.offsetWidth);
-					ink.style.height=d+'px';
-					ink.style.width=d+'px';
-				}
-				//declaro el offset del parent
-				var rect =parent.getBoundingClientRect();
-
-				parent.offset={
-				  top: rect.top + document.body.scrollTop,
-				  left: rect.left + document.body.scrollLeft
-				}
-				//re evaluo los valores de alto y ancho del ink
-				style = window.getComputedStyle(ink);
-
-				//ubico el lugar donde se dispara el click
-				var x=e.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2
-				var y=e.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2
-				//cambio los valores de ink para iniciar la animacion
-				ink.style.top=y+'px';
-				ink.style.left=x+'px';
-				setTimeout(function(){
-					ink.classList.toggle('animate');
-				},10);
-				setTimeout(function(){
-					ink.classList.toggle('animate');
-				},660);
-				//---------------------------Ink Event------------------------
+				formulario.agregarRippleEvent(this.parentNode,e);
+				
 			}
 		}
 		this.reconstruirNodo = function(){
@@ -584,6 +579,55 @@ var Formulario = function(entidad){
 	this.ventanaForm.prototype.constructor = this.ventanaForm;
 	//----------------------------------------------------------------------------------------
 
+	//---------------------------Ink Event------------------------
+	this.agregarRippleEvent= function(parent,evento){
+		var html;
+		var ink;
+		//se crea el elemento si no existe
+		if(parent.getElementsByTagName('div')[0]===undefined){
+			ink=document.createElement('div');
+			ink.classList.toggle('ink')
+			parent.insertBefore(ink,parent.firstChild);
+		}
+		ink=parent.getElementsByTagName('div')[0];
+
+		//en caso de doble click rapido remuevo la clase 
+		ink.classList.remove('animated');
+
+		//guardo todo el estilo del elemento 
+		var style = window.getComputedStyle(ink);
+
+		//se guardan los valores de akto y ancho
+		if(parseInt(style.height.substring(0,style.height.length-2))==0 && parseInt(style.width.substring(0,style.width.length-2))==0){
+			//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
+			d = Math.max(parent.offsetHeight, parent.offsetWidth);
+			ink.style.height=d+'px';
+			ink.style.width=d+'px';
+		}
+		//declaro el offset del parent
+		var rect =parent.getBoundingClientRect();
+
+		parent.offset={
+		  top: rect.top + document.body.scrollTop,
+		  left: rect.left + document.body.scrollLeft
+		}
+		//re evaluo los valores de alto y ancho del ink
+		style = window.getComputedStyle(ink);
+
+		//ubico el lugar donde se dispara el click
+		var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2
+		var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2
+		//cambio los valores de ink para iniciar la animacion
+		ink.style.top=y+'px';
+		ink.style.left=x+'px';
+		setTimeout(function(){
+			ink.classList.toggle('animate');
+		},10);
+		setTimeout(function(){
+			ink.classList.toggle('animate');
+		},660);
+	}
+	//---------------------------Ink Event------------------------
 	this.listarSlots = function(){
 		console.log('Slots:');
 		for(var x=0;x<this.Slots.length;x++){
@@ -867,7 +911,7 @@ var modalWindow = function(){
 				var zIndex=window.getComputedStyle(this.buscarUltimaCapaContenido().nodo,null).getPropertyValue("z-index");
 				capaNueva=new capaExterior();
 				this.capas.push(capaNueva);
-				capaNueva.nodo.style.zIndex=zIndex+1;
+				capaNueva.nodo.style.zIndex=parseInt(zIndex)+1;
 			}else{
 				capaNueva=new capaExterior();
 				this.capas.push(capaNueva);
@@ -877,7 +921,7 @@ var modalWindow = function(){
 				var zIndex=window.getComputedStyle(this.obtenerUltimaCapa().nodo,null).getPropertyValue("z-index");
 				capaNueva=new capaContenido();
 				this.capas.push(capaNueva);
-				capaNueva.nodo.style.zIndex=zIndex+1;
+				capaNueva.nodo.style.zIndex=parseInt(zIndex)+1;
 			}
 		}else if(tipo=='opciones'){
 

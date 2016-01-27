@@ -60,11 +60,13 @@ div[capa='contenido'] section[cabecera]{
   font-size: 25px;
 }
 div[capa='contenido'] section[cuerpo]{
+  transition:all 0.3s ease-in-out;
   width: 100%;
   height: auto;
   padding: 10px;
   margin-bottom: 50px;
   margin-top: 18px;
+  overflow: visible;
 }
 div[capa='contenido'] section[cuerpo] label{
   background-color: transparent;
@@ -150,7 +152,7 @@ div[capaForm] section[sector] div:not(.group){
 div[capaForm] section[contenedor]{
     overflow: hidden;
 }
-div[capaForm] article{
+div[capaForm] section[contenedor] article{
   width: auto;
   background-color: midnightblue;
   color:white;
@@ -161,7 +163,7 @@ div[capaForm] article{
 div[capaForm] article:first-child{
   margin-left: 10px;
 }
-div[capaForm] article[add]{
+div[capaForm] section[contenedor] article[add]{
   width: 18px;
   height: 21px;
   padding: 1px;
@@ -353,6 +355,7 @@ div[botonera]{
     width: 60px;
     margin-bottom: 25px;
     overflow: visible;
+    z-index: 10;
 }
 div[botonera] button{
     transition: all 0.2s ease-in-out;
@@ -516,20 +519,28 @@ div[formElements]{
   float: left;
   overflow:visible;
   min-width: 140px;
+  position: relative;
+  z-index: 4;
+  width: 30%
 }
-/*----------------------Input Text y TextArea-------------------*/
+div[area]{
+  width: calc(100% - 38px) !important;
+}
 .group            { 
   position:relative; 
   margin-bottom:45px;
   margin-left: 5px; 
   float: left;
   overflow:visible;
+  z-index:3;
+  width: 30%
 }
+/*----------------------Input Text y TextArea-------------------*/
 div[capaForm] div.group input{
   font-size: 14px;
   padding:10px 10px 10px 5px;
   display:block;
-  width:140px;
+  width:100%;
   border:none;
   border-bottom:1px solid #757575;
   background-color: transparent;
@@ -538,12 +549,12 @@ div[capaForm] div.group textarea{
   font-size:14px;
   padding:10px 10px 10px 5px;
   display:block;
-  width:475px;
+  width:100%;
   border:none;
   border-bottom:1px solid #757575;
   background-color: transparent;
   opacity: 1;
-  height: 72px;
+  height: 24px;
 }
 div
 div[capaForm] div.group input:focus{ outline:none; }
@@ -634,10 +645,10 @@ input:focus ~ .highlight,textarea:focus ~ .highlight {
 /*------------------------------Radio Box--------------------------------------*/
 .radio {
   display: inline-block;
-  padding-right: 15px;
   font-size: 14px;
   line-height: 44px;
   cursor: pointer;
+  padding-right: 3px;
 }
 
 .radio:hover .inner {
@@ -706,7 +717,32 @@ select{
   border-right: none;
   font-size: 14px;
   width: 100%;
+  z-index: inherit;
 }
+article[capaSelect]{
+  transition:all 0.3s linear ;
+  margin: 0px;
+  width: 100% !important;
+  height: 100%;
+  background-color: transparent !important;
+  position: absolute;
+  opacity: 0;
+  z-index: 4;
+}
+div[option]{
+  color:black;
+  font-size: 12px;
+  width: calc(100% - 15px) !important;
+  background-color: white;
+  height: 30px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  padding: 10px 0px 0px 10px !important;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 1px;
+  margin-left:0px !important;
+  position: absolute;
+}
+
 /*-----------------------------------Media Query-------------------------------*/
 @media (max-width: 1000px){
   /*modal window*/
