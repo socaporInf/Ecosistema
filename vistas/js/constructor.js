@@ -8,12 +8,20 @@ var handleMediaChange = function (mediaQueryList) {
 			    	//cambio interfaz Ventana Form
 			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
 			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
+			        formulario.cambiarTextoSlots('completa');
 			    }
 			    else {
 			    	//cambio interfaz Ventana Form
 			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'600px':null;
 			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
+			        formulario.cambiarTextoSlots('mediaQuery');
 			    }
+			}else{
+				if (mediaQueryList.matches) {
+					formulario.cambiarTextoSlots('completa');
+				}else{
+					formulario.cambiarTextoSlots('mediaQuery');
+				}
 			}
 		}
 	}
@@ -523,7 +531,13 @@ var Formulario = function(entidad){
 			nodo.setAttribute('slot','');
 			nodo.id=this.atributos.id;
 			var html ="";
-			html+="<article  title>"+this.atributos.nombre+"</article>\
+			var titulo;
+			if(this.atributos.nombre.length>28){
+				titulo=this.atributos.nombre.substr(0,28)+'...';
+			}else{
+				titulo=this.atributos.nombre;
+			}
+			html+="<article  title>"+titulo+"</article>\
 				<button type='button' btnEliminar></button>";
 			nodo.innerHTML=html;
 			this.nodo = nodo;
@@ -551,7 +565,13 @@ var Formulario = function(entidad){
 			this.nodo.style.marginLeft="120%";
 			var nodo=this.nodo;
 			var slot=this;
-			var html="<article  title>"+this.atributos.nombre+"</article>\
+			var titulo;
+			if(this.atributos.nombre.length>28){
+				titulo=this.atributos.nombre.substr(0,28)+'...';
+			}else{
+				titulo=this.atributos.nombre;
+			}
+			var html="<article  title>"+titulo+"</article>\
 			<button type='button' btnEliminar></button>";
 			setTimeout(function(){
 				nodo.innerHTML=html;
@@ -626,14 +646,14 @@ var Formulario = function(entidad){
 		setTimeout(function(){
 			ink.classList.toggle('animate');
 		},660);
-	}
+	};
 	//---------------------------Ink Event------------------------
 	this.listarSlots = function(){
 		console.log('Slots:');
 		for(var x=0;x<this.Slots.length;x++){
 			console.log('nombre: '+this.Slots[x].atributos.nombre+'\testado: '+this.Slots[x].estado);
 		}
-	}
+	};
 	this.obtenerSeleccionado = function(){
 		var seleccionado=false;
 		for(var x=0;x<this.Slots.length;x++){
@@ -642,7 +662,7 @@ var Formulario = function(entidad){
 			}
 		}
 		return seleccionado;
-	}
+	};
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
 		var elemento = document.createElement('div');
@@ -691,21 +711,21 @@ var Formulario = function(entidad){
 		}
 		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
 		this.estado='enUso';
-	}
+	};
 	this.agregarSlot = function(data){
 		var slot = new Slot(data);
 		this.Slots.push(slot);
 		this.nodo.appendChild(slot.nodo);
 		return slot.nodo;
-	}
+	};
 	this.cargarRegistros = function(registros){
 		for(var x=0; x<registros.length;x++){
 			this.agregarSlot(registros[x]);
 		}
-	}
+	};
 	this.construirVentanaForm=function(tipo){
 		this.ventanaForm.construirNodo(tipo);
-	}
+	};
 	this.controlLista = function(nodo){
 		var obj=false;
 		var oldSelecinado=this.obtenerSeleccionado();
@@ -719,11 +739,11 @@ var Formulario = function(entidad){
 				this.Slots[x].nodo.style.marginLeft='0px';	
 			}
 		}
-	}
+	};
 	this.agregarVentanaForm = function(){
 		this.ventanaForm.estado='agregado';
 		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);		
-	}
+	};
 	this.construirInterfaz = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
 		if(existeVentana){
@@ -739,17 +759,17 @@ var Formulario = function(entidad){
 			this.construirVentanaForm(data);
 			this.agregarVentanaForm();
 		}
-	}
+	};
 	this.actualizarLista = function(cambios){
 		if(cambios instanceof Array){
 
 		}else{
 			this.actualizarSlot(cambios);
 		}
-	}
+	};
 	this.actualizarSlot = function(registro){
 		this.buscarSlot(registro);
-	}
+	};
 	this.buscarSlot = function(registro){
 		for(x=0;x<this.Slots.length;x++){
 			if(this.Slots[x].atributos.id==registro.id){
@@ -757,7 +777,7 @@ var Formulario = function(entidad){
 				this.Slots[x].reconstruirNodo();
 			}
 		}
-	}
+	};
 	this.validarCombo = function(valoresNoPermitidos,lista){
 		normalizarNodo(lista);
 		for(var x=0;x<lista.length;x++){
@@ -776,7 +796,32 @@ var Formulario = function(entidad){
 			lista.options[0].textContent='No Posee Valores Disponibles';
 			lista.options[0].value='cerrar';
 		}
-	}
+	};
+	this.cambiarTextoSlots = function(cambio){
+		if(cambio=='mediaQuery'){
+			for(var x=0;x<this.Slots.length;x++){
+				var nodo=this.Slots[x].nodo;
+				var slot=this.Slots[x];
+				var titulo;
+				if(slot.atributos.nombre.length>28){
+					titulo=slot.atributos.nombre.substr(0,28)+'...';
+				}else{
+					titulo=slot.atributos.nombre;
+				}
+				var html="<article  title>"+titulo+"</article>\
+				<button type='button' btnEliminar></button>";
+				nodo.innerHTML=html;
+			}
+		}else{
+			for(var x=0;x<this.Slots.length;x++){
+				var nodo=this.Slots[x].nodo;
+				var slot=this.Slots[x];
+				var html="<article  title>"+slot.atributos.nombre+"</article>\
+				<button type='button' btnEliminar></button>";
+				nodo.innerHTML=html;
+			}
+		}
+	};
 	this.construir();
 }
 /*------------------------------Objeto Ventana Modal-----------------------*/

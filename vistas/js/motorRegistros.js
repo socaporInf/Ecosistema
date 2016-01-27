@@ -2,7 +2,7 @@
 	var contId=4;
 	var roles = [
 						{
-							nombre:'cuentasxpagar',
+							nombre:'Analista Cuentas por Cobrar',
 							id:1,
 							descripcion:'cuentasxpagar',
 							detalle:[
@@ -10,7 +10,7 @@
 								]
 						},
 						{
-							nombre:'administrador',
+							nombre:'Administrador Del Sistema',
 							id:2,
 							descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo',
 							detalle:[
@@ -18,8 +18,57 @@
 								]
 						},
 						{
-							nombre:'almacen-facturacion',
+							nombre:'Gerente Administracion',
 							id:3,
+							descripcion:'',
+							detalle:[
+								]
+						},
+						{
+							nombre:'Analista Cuentas por Pagar',
+							id:4,
+							descripcion:'',
+							detalle:[
+								]
+						},
+						{
+							nombre:'Analistas Cuentas por Pagar Productores',
+							id:5,
+							descripcion:'',
+							detalle:[
+								]
+						},
+						{
+							nombre:'Cajera Principal',
+							id:6,
+							descripcion:'',
+							detalle:[
+								]
+						},
+						{
+							nombre:'Analista Tributos',
+							id:7,
+							descripcion:'',
+							detalle:[
+								]
+						},
+						{
+							nombre:'Analista Finanzas',
+							id:8,
+							descripcion:'',
+							detalle:[
+								]
+						},
+						{
+							nombre:'Auditoria General',
+							id:9,
+							descripcion:'',
+							detalle:[
+								]
+						},
+						{
+							nombre:'almacen-facturacion',
+							id:10,
 							descripcion:'factura en almacen',
 							detalle:[
 									{id:'2',nombre:'SocaPortuguesa'}
