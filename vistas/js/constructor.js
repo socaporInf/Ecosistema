@@ -512,7 +512,7 @@ var Formulario = function(entidad){
 			},300)
 			
 		}
-		/*----------------------------------Funciones del Objeto Select-------------------------------*/
+		/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
 	}
 	/*------------------------------Objeto VentanaForm------------*/
 	/*------------------------------Objeto Slot-------------------*/
@@ -667,6 +667,9 @@ var Formulario = function(entidad){
 	};
 	this.buscarElementos = function(){
 		var formulario=interfaz.elementos.formulario;
+
+		formulario.ventanaForm.destruirNodo();
+
 		var botonBusqueda=formulario.nodo.getElementsByTagName('button')[1];
 		var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
 		var registros=torque.registrosEntAct;
