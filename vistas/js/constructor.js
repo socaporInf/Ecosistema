@@ -648,69 +648,70 @@ var Formulario = function(entidad){
 		},660);
 	};
 	//---------------------------Ink Event------------------------
+	
+	this.abrirCampoBusqueda = function(){
+		var botonBusqueda = interfaz.elementos.formulario.nodo.getElementsByTagName('button')[1];
+		var campoBusqueda=botonBusqueda.previousSibling;
+		var titulo=campoBusqueda.previousSibling;
+
+		titulo.style.padding='0px';
+		titulo.style.width='0px';
+
+		campoBusqueda.style.width='calc(100% - 70px)';
+		campoBusqueda.style.height='40px';
+
+		campoBusqueda.focus();
+		setTimeout(function(){
+			botonBusqueda.onclick=interfaz.elementos.formulario.buscarElementos;
+		},10)
+	};
+	this.buscarElementos = function(){
+		var formulario=interfaz.elementos.formulario;
+		var botonBusqueda=formulario.nodo.getElementsByTagName('button')[1];
+		var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
+		var registros=torque.registrosEntAct;
+		var nuevosRegistros= new Array();
+		var contRegEnc=0;
+		for(var x=0; x<registros.length;x++){
+			if(registros[x].nombre.toLowerCase().search(valorBusqueda)!=-1){
+				contRegEnc++
+				formulario.buscarSlot(registros[x]).nodo.style.marginTop='0px';
+				
+				if(contRegEnc==1){
+					formulario.buscarSlot(registros[x]).nodo.style.marginTop='51px';
+				}
+
+				formulario.buscarSlot(registros[x]).nodo.style.display='block';
+			}else{
+				formulario.buscarSlot(registros[x]).nodo.style.marginTop='0px';
+				formulario.buscarSlot(registros[x]).nodo.style.display='none';
+			}
+		}
+	};
+	this.validarCombo = function(valoresNoPermitidos,lista){
+		normalizarNodo(lista);
+		for(var x=0;x<lista.length;x++){
+			lista[x].style.display='block';
+		}
+		for(var x=0;x<lista.length;x++){
+			for(var y=0;y<valoresNoPermitidos.length;y++){
+				if(lista[x].value==valoresNoPermitidos[y]){
+					lista.removeChild(lista[x]);
+					x--;
+				}
+			}
+		}
+		if(lista.length==1){
+			lista.options[0].textContent='No Posee Valores Disponibles';
+			lista.options[0].value='cerrar';
+		}
+	};
+	//-------------------------------------Manejo de Slots------------------------------------------------
 	this.listarSlots = function(){
 		console.log('Slots:');
 		for(var x=0;x<this.Slots.length;x++){
 			console.log('nombre: '+this.Slots[x].atributos.nombre+'\testado: '+this.Slots[x].estado);
 		}
-	};
-	this.obtenerSeleccionado = function(){
-		var seleccionado=false;
-		for(var x=0;x<this.Slots.length;x++){
-			if(this.Slots[x].estado=='seleccionado'){
-				seleccionado=this.Slots[x];
-			}
-		}
-		return seleccionado;
-	};
-	this.construir = function(){
-		var contenedor = obtenerContenedor();
-		var elemento = document.createElement('div');
-		elemento.setAttribute('capaList','');
-		var html='';
-		html+="<section busqueda>";
-		html+=	"<div tituloForm>"+this.entidadActiva.toUpperCase()+"</div>";
-		html+=	"<div listBuscar>";
-		html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
-		html+=		"<button type='button' cerrarBusq></button>";
-		html+=	"</div>";
-		html+=	"<button type='button' btnBusq></button>";
-		html+="</section>";
-		elemento.innerHTML = html;
-		this.nodo=elemento;
-
-		var botonBusqueda=elemento.getElementsByTagName('button')[1];
-		var botonCerrarBusq=elemento.getElementsByTagName('button')[0];
-
-		botonBusqueda.onclick=function(){
-			console.log('presiono buscar');
-			var campoBusqueda=this.previousSibling;
-			var titulo=campoBusqueda.previousSibling;
-
-			titulo.style.padding='0px';
-			titulo.style.width='0px';
-
-			campoBusqueda.style.width='calc(100% - 70px)';
-			campoBusqueda.style.height='40px';
-
-			campoBusqueda.focus();
-
-		}
-		botonCerrarBusq.onclick=function(){
-			console.log('presiono Cerrar buscar');
-
-			var campoBusqueda=this.parentNode;
-			var titulo=campoBusqueda.previousSibling;
-
-			titulo.style.padding='3px 3px 3px 30px';
-			titulo.style.width='calc(100% - 103px)';
-
-			campoBusqueda.style.width='0px';
-			campoBusqueda.style.height='0px';
-
-		}
-		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
-		this.estado='enUso';
 	};
 	this.agregarSlot = function(data){
 		var slot = new Slot(data);
@@ -739,63 +740,15 @@ var Formulario = function(entidad){
 				this.Slots[x].nodo.style.marginLeft='0px';	
 			}
 		}
-	};
-	this.agregarVentanaForm = function(){
-		this.ventanaForm.estado='agregado';
-		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);		
-	};
-	this.construirInterfaz = function(data){
-		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
-		if(existeVentana){
-			if(data.tipo=='modificar'){
-				this.ventanaForm.tipo='modificar';
-				this.ventanaForm.registroId=data.id;
-			}else if(data.tipo=='nuevo'){
-				this.ventanaForm.tipo='nuevo';
-				this.ventanaForm.registroId='';
-			}
-			this.ventanaForm.reconstruirInterfaz();
-		}else{
-			this.construirVentanaForm(data);
-			this.agregarVentanaForm();
-		}
-	};
-	this.actualizarLista = function(cambios){
-		if(cambios instanceof Array){
-
-		}else{
-			this.actualizarSlot(cambios);
-		}
-	};
-	this.actualizarSlot = function(registro){
-		this.buscarSlot(registro);
-	};
+	};	
 	this.buscarSlot = function(registro){
 		for(x=0;x<this.Slots.length;x++){
 			if(this.Slots[x].atributos.id==registro.id){
-				this.Slots[x].atributos=registro;
-				this.Slots[x].reconstruirNodo();
+				return this.Slots[x];
 			}
 		}
-	};
-	this.validarCombo = function(valoresNoPermitidos,lista){
-		normalizarNodo(lista);
-		for(var x=0;x<lista.length;x++){
-			lista[x].style.display='block';
-		}
-		for(var x=0;x<lista.length;x++){
-			for(var y=0;y<valoresNoPermitidos.length;y++){
-				if(lista[x].value==valoresNoPermitidos[y]){
-					lista.removeChild(lista[x]);
-					x--;
-				}
-			}
-		}
-		
-		if(lista.length==1){
-			lista.options[0].textContent='No Posee Valores Disponibles';
-			lista.options[0].value='cerrar';
-		}
+		console.log('el slot no existe');
+		return false;
 	};
 	this.cambiarTextoSlots = function(cambio){
 		if(cambio=='mediaQuery'){
@@ -822,6 +775,94 @@ var Formulario = function(entidad){
 				nodo.innerHTML=html;
 				slot.funcionamiento();
 			}
+		}
+	};
+
+	this.actualizarLista = function(cambios){
+		if(cambios instanceof Array){
+
+		}else{
+			this.actualizarSlot(cambios);
+		}
+	};
+	this.actualizarSlot = function(registro){
+		var slot=this.buscarSlot(registro);
+		if(slot){
+			slot.atributos=registro;
+			slot.reconstruirNodo();
+		}
+	};this.obtenerSeleccionado = function(){
+		var seleccionado=false;
+		for(var x=0;x<this.Slots.length;x++){
+			if(this.Slots[x].estado=='seleccionado'){
+				seleccionado=this.Slots[x];
+			}
+		}
+		return seleccionado;
+	};
+	//-------------------------------------Manejo de Interfaz---------------------------------
+	this.agregarVentanaForm = function(){
+		this.ventanaForm.estado='agregado';
+		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);		
+	};
+	this.construir = function(){
+		var contenedor = obtenerContenedor();
+		var elemento = document.createElement('div');
+		elemento.setAttribute('capaList','');
+		var html='';
+		html+="<section busqueda>";
+		html+=	"<div tituloForm>"+this.entidadActiva.toUpperCase()+"</div>";
+		html+=	"<div listBuscar>";
+		html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
+		html+=		"<button type='button' cerrarBusq></button>";
+		html+=	"</div>";
+		html+=	"<button type='button' btnBusq></button>";
+		html+="</section>";
+		elemento.innerHTML = html;
+		this.nodo=elemento;
+
+		var botonBusqueda=elemento.getElementsByTagName('button')[1];
+		var botonCerrarBusq=elemento.getElementsByTagName('button')[0];
+
+		botonBusqueda.onclick=this.abrirCampoBusqueda;
+
+		botonCerrarBusq.onclick=function(){
+			console.log('presiono Cerrar buscar');
+
+			var botonBusqueda=interfaz.elementos.formulario.nodo.getElementsByTagName('button')[1];
+			var campoBusqueda=this.parentNode;
+			var titulo=campoBusqueda.previousSibling;
+
+			titulo.style.padding='3px 3px 3px 30px';
+			titulo.style.width='calc(100% - 103px)';
+
+			campoBusqueda.style.width='0px';
+			campoBusqueda.style.height='0px';
+			campoBusqueda.firstChild.value='';
+			
+			botonBusqueda.click();
+
+			setTimeout(function(){
+				botonBusqueda.onclick=interfaz.elementos.formulario.abrirCampoBusqueda;
+			},20)
+		}
+		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
+		this.estado='enUso';
+	};
+	this.construirInterfaz = function(data){
+		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
+		if(existeVentana){
+			if(data.tipo=='modificar'){
+				this.ventanaForm.tipo='modificar';
+				this.ventanaForm.registroId=data.id;
+			}else if(data.tipo=='nuevo'){
+				this.ventanaForm.tipo='nuevo';
+				this.ventanaForm.registroId='';
+			}
+			this.ventanaForm.reconstruirInterfaz();
+		}else{
+			this.construirVentanaForm(data);
+			this.agregarVentanaForm();
 		}
 	};
 	this.construir();
