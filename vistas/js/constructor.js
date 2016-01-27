@@ -668,7 +668,10 @@ var Formulario = function(entidad){
 	this.buscarElementos = function(){
 		var formulario=interfaz.elementos.formulario;
 
-		formulario.ventanaForm.destruirNodo();
+		if(formulario.ventanaForm.estado!='sinConstruir'){
+			formulario.ventanaForm.destruirNodo();
+		}
+		
 
 		var botonBusqueda=formulario.nodo.getElementsByTagName('button')[1];
 		var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
