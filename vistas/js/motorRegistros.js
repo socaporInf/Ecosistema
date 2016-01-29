@@ -1,5 +1,4 @@
 //borrar
-	var contId=4;
 	var roles = [
 						{
 							nombre:'Analista Cuentas por Cobrar',
@@ -100,6 +99,7 @@
 			nombre:'E/S Piedritas Blancas'
 		}
 	]
+	var contId=roles.length+1;
 var Motor = function(entidadActiva){
 	
 	this.estado='apagado';

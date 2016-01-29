@@ -260,15 +260,17 @@
 			}
 			lista = this.nodo.getElementsByTagName('input');
 			for(var x=0; x<lista.length;x++){
-				if(lista[x].type=='text'){
+				if((lista[x].type=='text')&&(lista[x].parentNode.nodeName.toLowerCase()=='div')){
 					lista[x].parentNode.onmouseover=interfaz.elementos.formulario.abrirtooltipInput;
 					lista[x].parentNode.onmouseout=interfaz.elementos.formulario.cerrartooltipInput;
 				}
 			}
 			lista = this.nodo.getElementsByTagName('textarea');
 			for(var x=0; x<lista.length;x++){
-				lista[x].parentNode.onmouseover=interfaz.elementos.formulario.abrirtooltipInput;
-				lista[x].parentNode.onmouseout=interfaz.elementos.formulario.cerrartooltipInput;
+				if(lista[x].parentNode.nodeName.toLowerCase()=='div'){
+					lista[x].parentNode.onmouseover=interfaz.elementos.formulario.abrirtooltipInput;
+					lista[x].parentNode.onmouseout=interfaz.elementos.formulario.cerrartooltipInput;
+				}
 			}
 		};
 </script>

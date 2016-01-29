@@ -748,14 +748,16 @@ var Formulario = function(entidad){
 			clearInterval(this.interval);
 			this.interval=null;
 			if(parent.lastChild.nodeName.toLowerCase()=='div'){
-				var tooltip=parent.lastChild;
-					tooltip.style.opacity=0;
-					tooltip.style.top='-20px';
-					tooltip.style.transform='scale(0)';
-				setTimeout(function(){						
-					parent.style.zIndex=null;
-					parent.removeChild(parent.lastChild);	
-				},310);
+				if(parent.lastChild.getAttribute('tooltip')!==null){
+					var tooltip=parent.lastChild;
+						tooltip.style.opacity=0;
+						tooltip.style.top='-20px';
+						tooltip.style.transform='scale(0)';
+					setTimeout(function(){						
+						parent.style.zIndex=null;
+						parent.removeChild(parent.lastChild);	
+					},310);
+				}
 			}
 		}
 	}

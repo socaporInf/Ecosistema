@@ -793,8 +793,7 @@ div[tooltip]:before{
   div[capa='contenido']{
     background-color: white;
     top: 100%;
-    left:calc(50% - 200px);
-    width: 400px;
+    left:23%;
     height:auto;
     position: absolute;
     z-index: 12;
