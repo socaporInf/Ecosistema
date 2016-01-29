@@ -149,28 +149,6 @@
 			lista[x].style.cursor='pointer';
 			if(lista[x].getAttribute('update')!==null){
 				lista[x].onclick=this.edicion;
-			}else if(lista[x].getAttribute('empresa')!==null){
-				lista[x].onclick=function(){
-					var registro = torque.buscarRegistro(interfaz.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
-					var dataTemp = {
-						cabecera:'Operaciones Por Empresa',
-						cuerpo:'<label>'+this.textContent+'</label>',
-						pie:'<section modalButtons>\
-								<button type="button" cancelar id="modalButtonCancelar"></button>\
-								<button type="button" modificar  id="modalButtonModificar"></button>\
-								<button type="button" eliminar  id="modalButtonEliminar"></button>\
-							</section>'
-					}
-					interfaz.elementos.modalWindow=new modalWindow();
-					interfaz.elementos.modalWindow.arranque(dataTemp);
-					var btnCancelar = document.getElementById("modalButtonCancelar");
-					var btnModificar= document.getElementById("modalButtonModificar");
-					var btnEliminar = document.getElementById("modalButtonEliminar");
-
-					btnCancelar.onclick= function(){
-						interfaz.elementos.modalWindow.elimiarUltimaCapa();
-					}
-				}
 			}
 		}
 		lista = this.nodo.getElementsByTagName('input');

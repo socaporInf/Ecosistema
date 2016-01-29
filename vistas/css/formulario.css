@@ -59,6 +59,12 @@ div[capa='contenido'] section[cabecera]{
   padding: 20px;
   font-size: 25px;
 }
+div[capa='contenido'] section[cabecera].error{
+  background-color: #f44336;
+}
+div[capa='contenido'] section[cabecera].advertencia{
+  background-color: #FFC107;
+}
 div[capa='contenido'] section[cuerpo]{
   transition:all 0.3s ease-in-out;
   width: 100%;
@@ -692,7 +698,7 @@ input:focus ~ .highlight,textarea:focus ~ .highlight {
   height: 15px;
   display: block;
   float: left;
-  margin:12px -6px 0px 0px;
+  margin:12px -4px 0px 0px;
   border: 2px solid #0c70b4;
   border-radius: 50%;
   background-color: #fff;
@@ -778,7 +784,7 @@ div[tooltip]:before{
   border-width: 10px;
   border-style: solid;
   border-color: #4CAF50 transparent transparent #4CAF50;
-  
+
 }
 
 /*-----------------------------------Media Query-------------------------------*/

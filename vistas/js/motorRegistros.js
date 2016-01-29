@@ -7,7 +7,8 @@
 							descripcion:'cuentasxpagar',
 							detalle:[
 									{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'}
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'Administrador Del Sistema',
@@ -15,56 +16,64 @@
 							descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo',
 							detalle:[
 									{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'},{id:'1',nombre:'SocaServicios'}
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'Gerente Administracion',
 							id:3,
 							descripcion:'',
 							detalle:[
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'Analista Cuentas por Pagar',
 							id:4,
 							descripcion:'',
 							detalle:[
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'Analistas Cuentas por Pagar Productores',
 							id:5,
 							descripcion:'',
 							detalle:[
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'Cajera Principal',
 							id:6,
 							descripcion:'',
 							detalle:[
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'Analista Tributos',
 							id:7,
 							descripcion:'',
 							detalle:[
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'Analista Finanzas',
 							id:8,
 							descripcion:'',
 							detalle:[
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'Auditoria General',
 							id:9,
 							descripcion:'',
 							detalle:[
-								]
+								],
+							estado:'A'
 						},
 						{
 							nombre:'almacen-facturacion',
@@ -72,7 +81,8 @@
 							descripcion:'factura en almacen',
 							detalle:[
 									{id:'2',nombre:'SocaPortuguesa'}
-								]
+								],
+							estado:'A'
 						}
 					];
 	var empresas = [

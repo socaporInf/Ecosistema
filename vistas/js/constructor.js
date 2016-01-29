@@ -1010,9 +1010,10 @@ var modalWindow = function(){
 		}
 
 		this.dibujarInterfaz = function(data){
+			data.tipo=data.tipo || 'contenedor'
 			if(data.cabecera!==undefined){
 				this.agregarParte('cabecera');
-				this.partes.cabecera.nodo.textContent=data.cabecera;
+				this.partes.cabecera.nodo.innerHTML=data.cabecera;
 			}
 			if(data.cuerpo!==undefined){
 				this.agregarParte('cuerpo');
@@ -1021,8 +1022,15 @@ var modalWindow = function(){
 			if(data.pie!==undefined){
 				this.agregarParte('pie');
 				this.partes.pie.nodo.innerHTML=data.pie;
+			}	
+			switch(data.tipo){
+				case 'advertencia':
+					this.partes.cabecera.nodo.classList.toggle('advertencia');
+				break
+				case 'error':
+					this.partes.cabecera.nodo.classList.toggle('error');
+				break
 			}
-				
 		}
 		this.construirNodo();
 	}
@@ -1055,7 +1063,7 @@ var modalWindow = function(){
 		var contenido=this.agregarCapa('contenido');
 		contenido.dibujarInterfaz(data);
 		this.manejoDeCapas();
-	}
+	};
 	this.agregarCapa = function(tipo){
 		var capaNueva=false;;
 		if(tipo=='exterior'){
@@ -1079,7 +1087,7 @@ var modalWindow = function(){
 
 		}
 		return capaNueva;
-	}
+	};
 	this.removerCapa = function(){
 		var capaExterior=interfaz.elementos.modalWindow.buscarCapa(this);
 		if(capaExterior){
@@ -1112,7 +1120,7 @@ var modalWindow = function(){
 				},810);
 			}
 		}
-	}
+	};
 	this.buscarCapa = function(nodo){
 		var capa=false;
 		for(var x=0;x<this.capas.length;x++){
@@ -1122,7 +1130,7 @@ var modalWindow = function(){
 			}
 		}
 		return capa;
-	}
+	};
 	this.buscarUltimaCapaContenido = function(){
 		var capa=this.obtenerUltimaCapa();
 		var cont=0;
@@ -1130,7 +1138,7 @@ var modalWindow = function(){
 			capa=capa.previousSibling;
 		}
 		return capa;
-	}
+	};
 	this.existeExterior = function(){
 		var capas=this.capas;
 		var existe = false;
@@ -1141,11 +1149,11 @@ var modalWindow = function(){
 			}
 		}
 		return existe;
-	}
+	};
 	this.obtenerUltimaCapa = function(){
 		var ultimaCapa = this.capas[this.capas.length-1];
 		return ultimaCapa;
-	}
+	};
 	this.manejoDeCapas = function(){
 		var contenedor=obtenerContenedor();
 		if(this.existeExterior()){
@@ -1158,7 +1166,7 @@ var modalWindow = function(){
 		}else{
 			contenedor.style.position='inherit';	
 		}
-	}
+	};
 	this.elimiarUltimaCapa = function(){
 		var lista = document.getElementsByTagName('div');
 		for(var x=lista.length-1;x>0;x--){
@@ -1166,7 +1174,7 @@ var modalWindow = function(){
 				lista[x].click();
 			}
 		} 
-	}
+	};
 }
 /*------------------------------Objeto Constructor-----------------------*/
 var Arquitecto = function(){
@@ -1189,7 +1197,15 @@ var Arquitecto = function(){
 		mql.addListener(handleMediaChange);
 		handleMediaChange(mql);
 		document.body.onmousedown=this.activarEfecto;
-	}
+	};
+
+	this.crearVentanaModal= function(data){
+		//creo la venta modal
+		if(!this.elementos.modalWindow){
+			this.elementos.modalWindow=new modalWindow();		
+		}
+		this.elementos.modalWindow.arranque(data);
+	};
 	
 }
 /*---------------Utilidades---------------------------------------------*/

@@ -27,31 +27,29 @@
 	interfaz.elementos.formulario = new Formulario(torque.entidadActiva);
 	//funcionamiento exclusivo del formulario
 	function guardar(){
-		var formulario = document.formNuevo;
+		var formulario = document.formNuevo.elements;
 		var data = new Array();
 		var elemento;
-		var validacion=false;
-		for(var x=0;x<formulario.elements.length;x++){
-			if(formulario.elements[x].type='text'){
-				if(formulario.elements[x].value==''){
-					validacion=true;
-				}
-				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
-				data.push(elemento);
-			}
-		}
-		if(!validacion){
+		if((formulario.Nombre.value!='')&&(formulario.Descripcion.value!='')&&(formulario.Estado.value!='')){
 			var nuevoRegistro = {
-				nombre : data[0].valor,
+				nombre : formulario.Nombre.value,
 				id : contId++,
-				descripcion : data[1].valor,
+				descripcion : formulario.Descripcion.value,
+				estado: formulario.Estado.value,
 				detalle : []
 			}
 			torque.guardar(nuevoRegistro,'rol');
 			var nuevoSlot=interfaz.elementos.formulario.agregarSlot(nuevoRegistro);
 			nuevoSlot.firstChild.click();
 		}else{
-			console.log('formulario no paso la validacion');
+			//creo el mensaje
+			var mensaje='Este es el mensaje';
+			var data={
+				tipo:'error',
+				cabecera:'este es EL error',
+				cuerpo:mensaje
+			}
+			interfaz.crearVentanaModal(data);
 		}
 	}
 	//------------------------------------------Funciones Propias de la interfaz de este formulario---------------------------
@@ -163,11 +161,9 @@
 								</section>'
 						}
 						
-						//creo la venta modal
-						if(!interfaz.elementos.modalWindow){
-							interfaz.elementos.modalWindow=new modalWindow();		
-						}
-						interfaz.elementos.modalWindow.arranque(dataTemp);
+						//creo la ventana modal
+						interfaz.crearVentanaModal(dataTemp);
+						
 
 						//agrego funcionamiento a los botones de la ventaModal
 						var btnCancelar = document.getElementById("modalButtonCancelar");
@@ -201,10 +197,9 @@
 									<button type="button" aceptar  id="modalButtonAceptar"></button>\
 								</section>'
 						}
+
 						//creo la ventana modal
-						interfaz.elementos.modalWindow=new modalWindow();
-						//le paso los datos
-						interfaz.elementos.modalWindow.arranque(dataTemp);
+						interfaz.crearVentanaModal(dataTemp);
 						
 						interfaz.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.style.height='200px';
 						
