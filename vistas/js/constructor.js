@@ -593,6 +593,8 @@ var Formulario = function(entidad){
 	this.entidadActiva=entidad;
 
 	this.nodo;
+
+	this.interval=null;
 	
 	//metodo para hacer el objeto ventana form capaz de recibir funciones en forma de herencia
 	this.ventanaForm.prototype = VentanaForm.prototype;
@@ -712,6 +714,51 @@ var Formulario = function(entidad){
 			lista.options[0].value='cerrar';
 		}
 	};
+	//aqui quede
+	this.abrirtooltipInput = function(event){
+		var parent = this;
+		var input = parent.firstChild;
+		while(input.nodeName=='#text'){
+			input=input.nextSibling;
+		}
+		if(input.value!=''){
+			this.interval=setTimeout(function(){
+				parent.style.zIndex='4';
+				var tooltip = document.createElement('div');
+				tooltip.textContent=input.value;
+				tooltip.setAttribute('tooltip','');
+				parent.appendChild(tooltip);
+				console.log('se abrio');
+				setTimeout(function(){
+					tooltip.style.opacity=1;
+					tooltip.style.top=40+'px';
+					tooltip.style.transform='scale(1)';
+				},10)
+			},1000)	
+		}
+		
+	}
+	this.cerrartooltipInput = function(event){
+		var parent = this;
+		var input = parent.firstChild;
+		while(input.nodeName=='#text'){
+			input=input.nextSibling;
+		}
+		if(this.interval!=null){
+			clearInterval(this.interval);
+			this.interval=null;
+			if(parent.lastChild.nodeName.toLowerCase()=='div'){
+				var tooltip=parent.lastChild;
+					tooltip.style.opacity=0;
+					tooltip.style.top='-20px';
+					tooltip.style.transform='scale(0)';
+				setTimeout(function(){						
+					parent.style.zIndex=null;
+					parent.removeChild(parent.lastChild);	
+				},310);
+			}
+		}
+	}
 	//-------------------------------------Manejo de Slots------------------------------------------------
 	this.listarSlots = function(){
 		console.log('Slots:');
@@ -863,6 +910,8 @@ var Formulario = function(entidad){
 		}
 		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
 		this.estado='enUso';
+
+		this.cargarRegistros(torque.registrosEntAct);
 	};
 	this.construirInterfaz = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;

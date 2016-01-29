@@ -540,7 +540,8 @@ div[area]{
   float: left;
   overflow:visible;
   z-index:3;
-  width: 32%
+  width: 32%;
+  background-color:white;
 }
 /*----------------------Input Text y TextArea-------------------*/
 div[capaForm] div.group input{
@@ -550,7 +551,6 @@ div[capaForm] div.group input{
   width:calc(100% - 15px);
   border:none;
   border-bottom:1px solid #757575;
-  background-color: transparent;
 }
 div[capaForm] div.group textarea{
   font-size:14px;
@@ -559,7 +559,6 @@ div[capaForm] div.group textarea{
   width:calc(100% - 15px);
   border:none;
   border-bottom:1px solid #757575;
-  background-color: transparent;
   opacity: 1;
   height: 24px;
 }
@@ -748,6 +747,38 @@ div[option]{
   margin-bottom: 1px;
   margin-left:0px !important;
   position: absolute;
+}
+/*------------------------------ToolTip--------------------------------------*/
+div[tooltip]{
+  transition:all 0.3s ease-in-out; 
+  transform: scale(0);
+  top:-30px;
+  opacity: 0;
+  padding:5px;
+  position: absolute;
+  margin: 10px 0px 0px 0px !important;
+  z-index: 11;
+  width: 100%;
+  height: 40px;
+  font-size: 10px;
+  background-color: #4CAF50;
+  border-radius: 3px;
+  overflow: visible;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 2px 1px;
+  color:white;
+}
+div[tooltip]:before{
+  content: "";
+  position: absolute;
+  box-shadow: rgba(0, 0, 0, 0.3) -1px -1px 2px;
+  -moz-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  top:-10px;
+  left: 50px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #4CAF50 transparent transparent #4CAF50;
+  
 }
 
 /*-----------------------------------Media Query-------------------------------*/

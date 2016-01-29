@@ -25,7 +25,6 @@
 	interfaz.configure();
 	interfaz.elementos.botonera = new Botonera(botones);
 	interfaz.elementos.formulario = new Formulario(torque.entidadActiva);
-	interfaz.elementos.formulario.cargarRegistros(torque.registrosEntAct);
 	//funcionamiento exclusivo del formulario
 	function guardar(){
 		var formulario = document.formNuevo;
@@ -263,6 +262,18 @@
 						interfaz.elementos.formulario.ventanaForm.construirCapaSelect(this);
 					}
 				}
+			}
+			lista = this.nodo.getElementsByTagName('input');
+			for(var x=0; x<lista.length;x++){
+				if(lista[x].type=='text'){
+					lista[x].parentNode.onmouseover=interfaz.elementos.formulario.abrirtooltipInput;
+					lista[x].parentNode.onmouseout=interfaz.elementos.formulario.cerrartooltipInput;
+				}
+			}
+			lista = this.nodo.getElementsByTagName('textarea');
+			for(var x=0; x<lista.length;x++){
+				lista[x].parentNode.onmouseover=interfaz.elementos.formulario.abrirtooltipInput;
+				lista[x].parentNode.onmouseout=interfaz.elementos.formulario.cerrartooltipInput;
 			}
 		};
 </script>
