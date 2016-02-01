@@ -57,11 +57,19 @@ div[SubCapaMenu] section{
     color: #4CAF50;
     background-repeat: no-repeat;
 }
+div[SubCapaMenu] section[seleccionado]{
+    margin-left: 10px !important;
+    background-color: #a5d6a7;
+    color: white;
+}
+div[SubCapaMenu] section[enlace^='>'][seleccionado]{
+   background-image:  url('../imagenes/forward_white.png');
+}
 div[SubCapaMenu] section[enlace^='>']{
-   background-image:  url('../imagenes/forward.png');
+   background-image:  url('../imagenes/forward_green.png');
    background-position: 100% 50%;
 }
 div[SubCapaMenu] section[enlace^='<']{
-    background-image:  url('../imagenes/backward.png');
+    background-image:  url('../imagenes/backward_green.png');
     background-position: 100% 50%;
 }

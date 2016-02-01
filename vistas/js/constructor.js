@@ -195,7 +195,7 @@ var Botonera = function(estructura){
 /*-------------------------Objeto Menu ----------------------------------------*/
 var Menu = function(){
 	/*-------------------------Objeto SubCapa ---------------------------------*/
-	var SubCapa = function(id,entidadHijo,padre,raiz){
+	var SubCapa = function(id,entidadHijo,padre,raiz,nombre){
 		/*-------------------------Objeto elemento ----------------------------*/
 		var Elemento = function(contenido,enlace){
 			enlace = enlace || '#';
@@ -232,6 +232,7 @@ var Menu = function(){
 		this.nodo;
 		this.id = id;
 		this.elementos=new Array();
+		this.nombre=nombre;
 		
 		//funcionamiento arbol
 		this.raiz = raiz;
@@ -254,27 +255,49 @@ var Menu = function(){
 				var capaNueva;
 				for(var x=0;x<hijos.length;x++){
 					//agrego los elementos
-					this.agregarElemento(hijos[x].nombre,'>'+hijos[x].id);
+					this.agregarElemento(hijos[x].nombre,'>'+hijos[x].id,false);
 					//creo las capas 
-					capaNueva = new SubCapa(hijos[x].id,'submodulo',this,this.raiz);
+					capaNueva = new SubCapa(hijos[x].id,'submodulo',this,this.raiz,hijos[x].nombre);
 					//agrego las capas al padre
 					this.hijos.push(capaNueva);
 				}
 			}else{
+				var seleccionado= false;
+
 				//creo el elemento de retorno
 				this.agregarElemento('Volver...','<'+this.padre.id);
+
+				//creo los demas elementos
 				for(var x=0;x<hijos.length;x++){
+					this.padre.buscarElemento(this.id);
 					if(hijos[x].idPadre==this.id){
-						this.agregarElemento(hijos[x].nombre,hijos[x].enlace);
+						if(hijos[x].enlace==window.location.pathname.split('/')[window.location.pathname.split('/').length-1]){
+							seleccionado=true;
+							this.padre.buscarElemento(this.id).nodo.setAttribute('seleccionado','');
+						}else{
+							seleccionado=false;
+						}
+						this.agregarElemento(hijos[x].nombre,hijos[x].enlace,seleccionado);
 					}
 				}	
 			}
 		};
-		this.agregarElemento = function(contenido,enlace){
+		this.agregarElemento = function(contenido,enlace,seleccionado){
 			var elementoNuevo = new Elemento(contenido,enlace);
+			if(seleccionado==true){
+				elementoNuevo.nodo.setAttribute('seleccionado','');
+			}
 			this.nodo.appendChild(elementoNuevo.nodo);
 			this.elementos.push(elementoNuevo);
 		};
+		this.buscarElemento=function(id){
+			for(var x=0;x<this.elementos.length;x++){
+				if(this.elementos[x].enlace.substring(1,this.elementos[x].enlace.length)==id){
+					return this.elementos[x];
+				}
+			}
+			return false;
+		}
 		this.construir();
 
 	}
@@ -300,11 +323,11 @@ var Menu = function(){
 		this.estado='enUso';
 		//agrego capas
 		var capaNueva;
-		capaNueva = new SubCapa(0,'modulo',this,this);
+		capaNueva = new SubCapa(0,'modulo',this,this,'raiz');
 		
 		//creo la titulo
 		var titulo=document.createElement('section');
-		titulo.textContent='titulo';
+		titulo.textContent='Menu';
 		titulo.setAttribute('titulo','');
 		this.nodo.appendChild(titulo);
 
