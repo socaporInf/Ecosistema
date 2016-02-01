@@ -1,89 +1,89 @@
 //borrar
 	var roles = [
-						{
-							nombre:'Analista Cuentas por Cobrar',
-							id:1,
-							descripcion:'cuentasxpagar',
-							detalle:[
-									{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'}
-								],
-							estado:'A'
-						},
-						{
-							nombre:'Administrador Del Sistema',
-							id:2,
-							descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo',
-							detalle:[
-									{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'},{id:'1',nombre:'SocaServicios'}
-								],
-							estado:'A'
-						},
-						{
-							nombre:'Gerente Administracion',
-							id:3,
-							descripcion:'',
-							detalle:[
-								],
-							estado:'A'
-						},
-						{
-							nombre:'Analista Cuentas por Pagar',
-							id:4,
-							descripcion:'',
-							detalle:[
-								],
-							estado:'A'
-						},
-						{
-							nombre:'Analistas Cuentas por Pagar Productores',
-							id:5,
-							descripcion:'',
-							detalle:[
-								],
-							estado:'A'
-						},
-						{
-							nombre:'Cajera Principal',
-							id:6,
-							descripcion:'',
-							detalle:[
-								],
-							estado:'A'
-						},
-						{
-							nombre:'Analista Tributos',
-							id:7,
-							descripcion:'',
-							detalle:[
-								],
-							estado:'A'
-						},
-						{
-							nombre:'Analista Finanzas',
-							id:8,
-							descripcion:'',
-							detalle:[
-								],
-							estado:'A'
-						},
-						{
-							nombre:'Auditoria General',
-							id:9,
-							descripcion:'',
-							detalle:[
-								],
-							estado:'A'
-						},
-						{
-							nombre:'almacen-facturacion',
-							id:10,
-							descripcion:'factura en almacen',
-							detalle:[
-									{id:'2',nombre:'SocaPortuguesa'}
-								],
-							estado:'A'
-						}
-					];
+					{
+						nombre:'Analista Cuentas por Cobrar',
+						id:1,
+						descripcion:'cuentasxpagar',
+						detalle:[
+								{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'}
+							],
+						estado:'A'
+					},
+					{
+						nombre:'Administrador Del Sistema',
+						id:2,
+						descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo',
+						detalle:[
+								{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'},{id:'1',nombre:'SocaServicios'}
+							],
+						estado:'A'
+					},
+					{
+						nombre:'Gerente Administracion',
+						id:3,
+						descripcion:'',
+						detalle:[
+							],
+						estado:'A'
+					},
+					{
+						nombre:'Analista Cuentas por Pagar',
+						id:4,
+						descripcion:'',
+						detalle:[
+							],
+						estado:'A'
+					},
+					{
+						nombre:'Analistas Cuentas por Pagar Productores',
+						id:5,
+						descripcion:'',
+						detalle:[
+							],
+						estado:'A'
+					},
+					{
+						nombre:'Cajera Principal',
+						id:6,
+						descripcion:'',
+						detalle:[
+							],
+						estado:'A'
+					},
+					{
+						nombre:'Analista Tributos',
+						id:7,
+						descripcion:'',
+						detalle:[
+							],
+						estado:'A'
+					},
+					{
+						nombre:'Analista Finanzas',
+						id:8,
+						descripcion:'',
+						detalle:[
+							],
+						estado:'A'
+					},
+					{
+						nombre:'Auditoria General',
+						id:9,
+						descripcion:'',
+						detalle:[
+							],
+						estado:'A'
+					},
+					{
+						nombre:'almacen-facturacion',
+						id:10,
+						descripcion:'factura en almacen',
+						detalle:[
+								{id:'2',nombre:'SocaPortuguesa'}
+							],
+						estado:'A'
+					}
+				];
 	var empresas = [
 		{	
 			id:'1',
@@ -98,6 +98,23 @@
 			id:'4',
 			nombre:'E/S Piedritas Blancas'
 		}
+	]
+	var modulos = [
+		{id:'1',nombre:'Global'},
+		{id:'2',nombre:'Seguridad'},
+		{id:'3',nombre:'Agronomina'}
+	]
+	var submodulos = [
+		{id:1,idPadre:1,nombre:'Empresa',enlace:'vis_Empresa.html'},
+		{id:2,idPadre:2,nombre:'Rol',enlace:'vis_Rol.html'},
+		{id:3,idPadre:2,nombre:'Pribilegios Por Rol',enlace:'vis_Pribilegios.html'},
+		{id:4,idPadre:3,nombre:'Finca',enlace:'vis_Finca.html'},
+		{id:5,idPadre:3,nombre:'Tablon',enlace:'vis_Tablon.html'},
+		{id:6,idPadre:3,nombre:'Canicultor',enlace:'vis_Canicultor.html'},
+		{id:7,idPadre:3,nombre:'Variedad',enlace:'vis_Variedad.html'},
+		{id:8,idPadre:3,nombre:'Clase',enlace:'vis_Clase.html'},
+		{id:9,idPadre:1,nombre:'Estado',enlace:'vis_Estado.html'},
+		{id:10,idPadre:1,nombre:'Municipio',enlace:'vis_Municipio.html'}
 	]
 	var contId=roles.length+1;
 var Motor = function(entidadActiva){
@@ -147,6 +164,10 @@ var Motor = function(entidadActiva){
 			return empresas;
 		}else if(entidad=='rol'){
 			return roles;
+		}else if(entidad=='modulo'){
+			return modulos;
+		}else if(entidad=='submodulo'){
+			return submodulos;
 		}
 	}
 	//--------------------------------------------funciones guardado--------------------------------

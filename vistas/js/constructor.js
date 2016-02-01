@@ -194,43 +194,100 @@ var Botonera = function(estructura){
 }
 /*-------------------------Objeto Menu ----------------------------------------*/
 var Menu = function(){
+	/*-------------------------Objeto SubCapa ---------------------------------*/
+	var SubCapa = function(id,entidadHijo,padre,raiz){
+		/*-------------------------Objeto elemento ----------------------------*/
+		var Elemento = function(contenido,enlace){
+			enlace = enlace || '#';
+			this.id = '';
+			this.estado = 'porConstriur';
+			this.contenido = contenido;
+			this.nodo;
+			this.enlace = enlace;
 
-	var elemento = function(tipo,contenido,enlace){
-		enlace = enlace || '#';
-		this.id = '';
-		this.estado = 'porConstriur';
-		this.contenido = contenido;
-		this.nodo;
-		this.tipo = tipo;
-		this.enlace = enlace;
-
-		this.construirNodo = function(){
-			var nodo = document.createElement('section');
-			nodo.innerHTML = contenido;
-			if(this.tipo=='titulo'){
-				nodo.setAttribute('titulo','');
-			}
-			if(this.enlace!='#'){
+			this.construirNodo = function(){
+				var nodo = document.createElement('section');
+				nodo.innerHTML = contenido;
 				nodo.setAttribute('enlace',this.enlace);
-				nodo.onclick=function(){
-					location.href=this.getAttribute('enlace');
+				if(this.enlace.substring(0,1)=='>'){
+					nodo.onclick=function(){
+						interfaz.elementos.menu.avanzar(this);
+					}
+				}else if(this.enlace.substring(0,1)=='<'){
+					nodo.onclick=function(){
+						interfaz.elementos.menu.regresar(this);	
+					}
+				}else{
+					nodo.onclick=function(){
+						location.href=this.getAttribute('enlace');
+					}
 				}
+				this.nodo = nodo;
+			};
+			this.construirNodo();
+
+		}
+		/*---------------------Fin Objeto elemento ----------------------------*/
+		this.estado='porConstruir';
+		this.nodo;
+		this.id = id;
+		this.elementos=new Array();
+		
+		//funcionamiento arbol
+		this.raiz = raiz;
+		this.padre = padre;
+		this.hijos = new Array();
+
+		this.construir= function(){
+			var nodo = document.createElement('div');
+			nodo.setAttribute('subCapaMenu',id);
+			this.nodo=nodo;
+			
+			//estilos
+			this.nodo.style.marginLeft='calc(100%)';
+
+			//creacion de hijos
+			var hijos = torque.buscarRegistros(entidadHijo);
+			this.raiz.nodo.appendChild(this.nodo);
+			//se arma la primera capa
+			if(id==0){
+				var capaNueva;
+				for(var x=0;x<hijos.length;x++){
+					//agrego los elementos
+					this.agregarElemento(hijos[x].nombre,'>'+hijos[x].id);
+					//creo las capas 
+					capaNueva = new SubCapa(hijos[x].id,'submodulo',this,this.raiz);
+					//agrego las capas al padre
+					this.hijos.push(capaNueva);
+				}
+			}else{
+				//creo el elemento de retorno
+				this.agregarElemento('Volver...','<'+this.padre.id);
+				for(var x=0;x<hijos.length;x++){
+					if(hijos[x].idPadre==this.id){
+						this.agregarElemento(hijos[x].nombre,hijos[x].enlace);
+					}
+				}	
 			}
-			this.nodo = nodo;
-		}
-		this.agregarId = function(id){
-			this.nodo.setAttribute('elemId',id);
-			this.id = id;
-		}
-		this.construirNodo();
+		};
+		this.agregarElemento = function(contenido,enlace){
+			var elementoNuevo = new Elemento(contenido,enlace);
+			this.nodo.appendChild(elementoNuevo.nodo);
+			this.elementos.push(elementoNuevo);
+		};
+		this.construir();
 
 	}
+	/*---------------------Fin Objeto SubCapa ---------------------------------*/
 	this.estado = 'porConstriur';
-	this.componentes = new Array();
+
+	this.capaActiva;
+
+	this.contCapas=0;
+
+	this.hijos = new Array();
 	//nodo de DOM
 	this.nodo;
-	//contador de elementos agregados
-	this.contE=0;
 
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
@@ -241,58 +298,53 @@ var Menu = function(){
 		contenedor.insertBefore(nodo,contenedor.firstChild);
 		this.nodo = nodo;
 		this.estado='enUso';
-	}
-	this.buscarCompornentesPorTexto = function(texto){
-		var lista = this.componentes;
-		var resultado = new Array();
-		for(var x = 0;x < lista.length; x++){
-			if(lista[x].textContent==texto){
-				resultado.push(lista[x]);
-			}
-		}
-		return resultado;
-	}
-	this.buscarComponente = function(idNum){
-		var lista = this.componentes;
-		for(var x = 0;x < lista.length; x++){
-			if(lista[x].id=='menuElem'+idNum){
-				return lista[x];
-			}
-		}
-		return -1;
-	}
-	this.agregarComponente = function(tipo,contenido,enlace){
-		var menu = this.nodo;
-		var nuevoComponente = new elemento(tipo,contenido,enlace);
-		nuevoComponente.agregarId('menuElem'+this.contE);
-		this.contE++;
-		this.componentes.push(nuevoComponente);
-		menu.appendChild(nuevoComponente.nodo);
-	}
-	this.removerComponente = function(idNum){
-		var componente = this.buscarComponente(idNum);
-		if(componente==-1){
-			console.log('componente '+idNum+' no existe');
-		}else{
-			componente.nodo.parentNode.removeChild(componente.nodo);
-			this.componentes.splice(this.componentes.indexOf(componente),1);
-		}
-	}
-	this.listarComponentes = function(){
-		var lista = this.componentes;
-		var resultado = 'los elementos presentes son:\n';
-		for(var x = 0;x < lista.length; x++){
-			resultado += '\t'+lista[x].id+'\n';
-		}
-		console.log(resultado);
-	}
+		//agrego capas
+		var capaNueva;
+		capaNueva = new SubCapa(0,'modulo',this,this);
+		
+		//creo la titulo
+		var titulo=document.createElement('section');
+		titulo.textContent='titulo';
+		titulo.setAttribute('titulo','');
+		this.nodo.appendChild(titulo);
+
+		//creo el pie
+		var pie = document.createElement('section');
+		pie.textContent='pie';
+		pie.setAttribute('pie','');
+		this.nodo.appendChild(pie);
+
+		//Creo las capas
+		this.hijos.push(capaNueva);
+		this.activarCapa(this.hijos[0]);
+	};
 	this.getEstado = function(){
 		return this.estado;
-	}
+	};
 	this.abrirMenu = function(){
 		var btnMenu = document.getElementById('menuBtn');
 		btnMenu.click();
-	}
+	};
+	this.activarCapa = function(capa){
+		if(this.capaActiva!==undefined){
+			this.capaActiva.nodo.classList.toggle('visible');
+		}
+		capa.nodo.classList.toggle('visible');
+		this.capaActiva=capa;
+	};
+	this.avanzar = function(nodo){
+		var id = nodo.getAttribute('enlace').substring(1,nodo.getAttribute('enlace').length);
+		var lista = this.capaActiva.hijos;
+		for(var x=0;x<lista.length;x++){
+			if(lista[x].id==id){
+				this.capaActiva.nodo.style.marginLeft='-100%';
+				this.activarCapa(lista[x]);
+			}
+		}
+	};
+	this.regresar = function(nodo){
+		this.activarCapa(this.capaActiva.padre);
+	};
 	this.construir();
 }
 /*-------------------------Objeto Cabecera ----------------------------------------*/
@@ -714,7 +766,6 @@ var Formulario = function(entidad){
 			lista.options[0].value='cerrar';
 		}
 	};
-	//aqui quede
 	this.abrirtooltipInput = function(event){
 		var parent = this;
 		var input = parent.firstChild;
@@ -728,7 +779,6 @@ var Formulario = function(entidad){
 				tooltip.textContent=input.value;
 				tooltip.setAttribute('tooltip','');
 				parent.appendChild(tooltip);
-				console.log('se abrio');
 				setTimeout(function(){
 					tooltip.style.opacity=1;
 					tooltip.style.top=40+'px';

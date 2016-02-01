@@ -784,9 +784,7 @@ div[tooltip]:before{
   border-width: 10px;
   border-style: solid;
   border-color: #4CAF50 transparent transparent #4CAF50;
-
 }
-
 /*-----------------------------------Media Query-------------------------------*/
 @media (max-width: 1000px){
   /*modal window*/
