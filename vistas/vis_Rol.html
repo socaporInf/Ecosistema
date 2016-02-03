@@ -186,7 +186,7 @@
 						var btnEliminar = document.getElementById("modalButtonEliminar");
 
 						btnCancelar.onclick= function(){
-							UI.elementos.modalWindow.elimiarUltimaCapa();
+							UI.elementos.modalWindow.eliminarUltimaCapa();
 						}
 						btnModificar.onclick= function(){
 							location.href=this.getAttribute('enlace');
@@ -241,7 +241,7 @@
 						}
 
 						btnCancelar.onclick=function(){
-							UI.elementos.modalWindow.elimiarUltimaCapa();
+							UI.elementos.modalWindow.eliminarUltimaCapa();
 						}
 
 						btnAceptar.onclick=function(){
@@ -259,9 +259,9 @@
 									
 									UI.elementos.formulario.ventanaForm.agregarEmpresa(empresa,document.getElementById('contenedorPri'));
 									//cierro capa
-									UI.elementos.modalWindow.elimiarUltimaCapa();
+									UI.elementos.modalWindow.eliminarUltimaCapa();
 								}else{
-									UI.elementos.modalWindow.elimiarUltimaCapa();
+									UI.elementos.modalWindow.eliminarUltimaCapa();
 								}
 								
 							}else{

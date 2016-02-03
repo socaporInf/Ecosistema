@@ -1180,9 +1180,10 @@ var modalWindow = function(){
 	this.removerCapa = function(){
 		var capaExterior=UI.elementos.modalWindow.buscarCapa(this);
 		if(capaExterior){
+			console.log(UI.elementos.modalWindow.capas);
 			if(capaExterior==UI.elementos.modalWindow.capas[0]){
 				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
-				//los saco de vista con la tansicion
+				//los saco de vista con la trancision
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
 				capaContenido.nodo.style.opacity='0';
@@ -1190,8 +1191,13 @@ var modalWindow = function(){
 					capaExterior.nodo.style.opacity='0';
 				},300);
 				setTimeout(function(){
+
 					capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
 					capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
+
+					UI.elementos.modalWindow.capas.splice(capaContenido);
+					UI.elementos.modalWindow.capas.splice(capaExterior);
+
 					obtenerContenedor().style.position='inherit';
 				},810);
 			}else{
@@ -1204,8 +1210,13 @@ var modalWindow = function(){
 					capaExterior.nodo.style.opacity='0';
 				},300);
 				setTimeout(function(){
+
 					capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
 					capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
+
+					UI.elementos.modalWindow.capas.splice(capaContenido);
+					UI.elementos.modalWindow.capas.splice(capaExterior);
+					
 				},810);
 			}
 		}
@@ -1256,7 +1267,7 @@ var modalWindow = function(){
 			contenedor.style.position='inherit';	
 		}
 	};
-	this.elimiarUltimaCapa = function(){
+	this.eliminarUltimaCapa = function(){
 		var lista = document.getElementsByTagName('div');
 		for(var x=lista.length-1;x>0;x--){
 			if(lista[x].getAttribute('capa')=='exterior'){
