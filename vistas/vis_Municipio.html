@@ -1,0 +1,149 @@
+ <!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="css/cuerpo.css">
+	<link rel="stylesheet" type="text/css" href="css/menu.css">
+	<link rel="stylesheet" type="text/css" href="css/formulario.css">
+</head>
+<body>
+	<div contenedor></div>
+</body>
+<!-- scripts que construyen la interfaz y su funcionamiento -->
+<script type="text/javascript" src='js/motorRegistros.js'></script>
+<script type="text/javascript" src='js/constructor.js'></script>
+
+<script type="text/javascript">
+/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/	
+
+	//arranca el motor de registros que se comunica con BD
+	var torque = new Motor('municipio');
+
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.configure();
+
+	//botones que van a ser utilizados en la UI
+	var botones = ['buscar','nuevo','abrir','redactar'];
+	UI.elementos.botonera = new Botonera(botones);
+
+	//se inicializa el formulario
+	UI.elementos.formulario = new Formulario(torque.entidadActiva);
+
+/*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+
+
+	//funcionamiento exclusivo del formulario
+	function guardar(){
+		var formulario = document.formNuevo;
+		var data = new Array();
+		var elemento;
+		var validacion=true;
+		for(var x=0;x<formulario.elements.length;x++){
+			if(formulario.elements[x].type='text'){
+				if(formulario.elements[x].value==''){
+					validacion=false;
+				}
+				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
+				data.push(elemento);
+			}
+		}
+		if(validacion){
+			var nuevoRegistro = {
+				nombre : data[0].valor,
+				descripcion : data[1].valor
+			}
+
+			//guardo en base de datos
+			torque.guardar(nuevoRegistro,torque.entidadActiva);
+
+			//creo un nuevo slot en la UI
+			var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
+
+			//cambio a modificacion
+			nuevoSlot.firstChild.click();
+		}else{
+			var data= {
+				cabecera: 'Existe un valor requerido en blanco'
+			}
+			UI.crearVentanaModal(data);
+		}
+	}
+	
+	//------------------------------------------Funciones Propias de la UI de este formulario---------------------------
+	//declaro el objeto donde se encuentra la UI del formulario 
+	var objForm=UI.elementos.formulario.ventanaForm;
+	
+	objForm.prototype.reconstruirUI=function(){
+		var tiempo = (this.estado=='agregado')?600:0;
+		var html='';
+		if(this.tipo=='nuevo'){
+			this.registroId='';
+			UI.elementos.formulario.controlLista();
+			this.nodo.style.height='0px';		
+			setTimeout(function(){
+				var nodo=UI.elementos.formulario.ventanaForm.nodo;
+				nodo.style.height='450px';
+				html+='\
+				<section titulo>Nuevo Municipio</section>\
+					<section sector>\
+						<form name ="formNuevo">\
+							<div class="group">\
+						      <input type="text" name="Nombre" required>\
+						      <span class="highlight"></span>\
+						      <span class="bar"></span>\
+						      <label>Nombre</label>\
+						    </div>\
+						    <div class="group" area>\
+							      <textarea name="Descripcion" required></textarea>\
+							      <span class="highlight"></span>\
+							      <span class="bar"></span>\
+							      <label>Descripcion</label>\
+							    </div>\
+						</form>\
+					</section>\
+				</section>';
+				nodo.innerHTML=html;
+				UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
+			},tiempo);
+			UI.elementos.botonera.agregarBoton('guardar');
+		}else if(this.tipo='modificar'){
+			var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
+			UI.elementos.botonera.quitarBoton('guardar');
+			this.nodo.style.height='0px';		
+			setTimeout(function(){
+				var nodo=UI.elementos.formulario.ventanaForm.nodo;
+				nodo.style.height='250px';
+				nodo.style.borderRadius='0px';
+					html+='\
+				<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
+					<section sector>\
+						<!-- Aqui va el contenido -->\
+					</section>\
+				</section>';
+				nodo.innerHTML=html;
+				UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
+			},tiempo);
+		}
+	};
+	objForm.agregarFuncionamiento = function(){
+		var nodo=this.nodo;
+		var lista=nodo.getElementsByTagName('article');
+		for(var x=0;x<lista.length;x++){
+			lista[x].style.cursor='pointer';
+			if(lista[x].getAttribute('update')!==null){
+				lista[x].onclick=this.edicion;
+			}
+		}
+		lista = this.nodo.getElementsByTagName('input');
+		for(var x=0; x<lista.length;x++){
+			if(lista[x].type=='text'){
+				lista[x].parentNode.onmouseover=UI.elementos.formulario.abrirtooltipInput;
+				lista[x].parentNode.onmouseout=UI.elementos.formulario.cerrartooltipInput;
+			}
+		}
+	};
+</script>
+</html>
