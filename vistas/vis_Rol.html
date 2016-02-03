@@ -285,7 +285,7 @@
 			}
 			lista = this.nodo.getElementsByTagName('textarea');
 			for(var x=0; x<lista.length;x++){
-				if(lista[x].parentNode.nodeName.toLowerCase()=='div'){
+				if(lista[x].parentNode.classList.contains('group')){
 					lista[x].parentNode.onmouseover=UI.elementos.formulario.abrirtooltipInput;
 					lista[x].parentNode.onmouseout=UI.elementos.formulario.cerrartooltipInput;
 				}

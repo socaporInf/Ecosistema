@@ -75,7 +75,7 @@
 	//declaro el objeto donde se encuentra la UI del formulario 
 	var objForm=UI.elementos.formulario.ventanaForm;
 	
-	objForm.prototype.reconstruirUI=function(){
+	objForm.reconstruirUI=function(){
 		var tiempo = (this.estado=='agregado')?600:0;
 		var html='';
 		if(this.tipo=='nuevo'){
