@@ -116,7 +116,10 @@
 		{id:9,idPadre:1,nombre:'Estado',enlace:'vis_Estado.html'},
 		{id:10,idPadre:1,nombre:'Municipio',enlace:'vis_Municipio.html'}
 	]
+	var estados = [];
 	var contId=roles.length+1;
+
+	
 var Motor = function(entidadActiva){
 	
 	this.estado='apagado';
@@ -125,9 +128,11 @@ var Motor = function(entidadActiva){
 	//todos los registros que tiene la entidad activa entidad activa 
 	this.registrosEntAct = new Array();
 
+	//funcion de arranque del objeto
 	this.ignition = function(){
 		this.registrosEntAct = this.buscarRegistros(this.entidadActiva);
-	} 
+	};
+
 	this.buscarRegistro = function(id,entidad){
 		var registro=false;
 		var registros;
@@ -147,7 +152,7 @@ var Motor = function(entidadActiva){
 			}
 		}
 		return registro;
-	}
+	};
 
 	this.buscarDetalle = function(idPadre,entidadPadre){
 		console.log('se disparo una busueda de '+entidadPadre+' con id:'+idPadre);
@@ -168,6 +173,8 @@ var Motor = function(entidadActiva){
 			return modulos;
 		}else if(entidad=='submodulo'){
 			return submodulos;
+		}else if(entidad=='estado'){
+			return estados;
 		}
 	}
 	//--------------------------------------------funciones guardado--------------------------------
@@ -176,6 +183,8 @@ var Motor = function(entidadActiva){
 			empresas.push(nuevoRegistro);
 		}else if(entidad=='rol'){
 			roles.push(nuevoRegistro);
+		}else if(entidad=='estado'){
+			estados.push(nuevoRegistro);
 		}
 		if(this.entidadActiva==entidad){
 			this.registrosEntAct = this.buscarRegistros(entidad);

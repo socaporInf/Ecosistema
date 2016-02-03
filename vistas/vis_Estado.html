@@ -19,7 +19,7 @@
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/	
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('empresa');
+	var torque = new Motor('estado');
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
@@ -40,26 +40,24 @@
 		var formulario = document.formNuevo;
 		var data = new Array();
 		var elemento;
-		var validacion=false;
+		var validacion=true;
 		for(var x=0;x<formulario.elements.length;x++){
 			if(formulario.elements[x].type='text'){
 				if(formulario.elements[x].value==''){
-					validacion=true;
+					validacion=false;
 				}
 				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
 				data.push(elemento);
 			}
 		}
-		if(!validacion){
+		if(validacion){
 			var nuevoRegistro = {
 				nombre : data[0].valor,
-				id : contId++,
-				descripcion : data[1].valor,
-				detalle : []
+				descripcion : data[1].valor
 			}
 
 			//guardo en base de datos
-			torque.guardar(nuevoRegistro,'rol');
+			torque.guardar(nuevoRegistro,torque.entidadActiva);
 
 			//creo un nuevo slot en la UI
 			var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
@@ -67,7 +65,10 @@
 			//cambio a modificacion
 			nuevoSlot.firstChild.click();
 		}else{
-			console.log('formulario no paso la validacion');
+			var data= {
+				cabecera: 'Existe un valor requerido en blanco'
+			}
+			UI.crearVentanaModal(data);
 		}
 	}
 	
@@ -86,7 +87,7 @@
 				var nodo=UI.elementos.formulario.ventanaForm.nodo;
 				nodo.style.height='450px';
 				html+='\
-				<section titulo>Nueva Empresa</section>\
+				<section titulo>Nuevo Estado</section>\
 					<section sector>\
 						<form name ="formNuevo">\
 							<div class="group">\

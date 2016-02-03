@@ -800,6 +800,7 @@ div[tooltip]:before{
   div[capaList]{
     width: 85%;
     margin-bottom: 10px;
+    min-height: 50px;
   }
   div[capaList] section:not([busqueda]) button{
     display:inline-block;

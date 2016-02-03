@@ -1,17 +1,17 @@
 /*---------------------MEDIA QUERY CHANGES-----------------------------------*/
 var handleMediaChange = function (mediaQueryList) {
-	if(interfaz.estado=='inicializado'){
-		var formulario = interfaz.elementos.formulario;
+	if(UI.estado=='inicializado'){
+		var formulario = UI.elementos.formulario;
 		if(formulario.ventanaForm!==undefined){
 			if(formulario.ventanaForm.nodo!==undefined){
 				if (mediaQueryList.matches) {
-			    	//cambio interfaz Ventana Form
+			    	//cambio UI Ventana Form
 			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
 			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
 			        formulario.cambiarTextoSlots('completa');
 			    }
 			    else {
-			    	//cambio interfaz Ventana Form
+			    	//cambio UI Ventana Form
 			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'600px':null;
 			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
 			        formulario.cambiarTextoSlots('mediaQuery');
@@ -26,7 +26,10 @@ var handleMediaChange = function (mediaQueryList) {
 		}
 	}
 }
-/*-------------------------Objeto Botonera ----------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------Objeto Botonera ----------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 var Botonera = function(estructura){
 	
 	var Boton = function(tipo){
@@ -89,12 +92,12 @@ var Botonera = function(estructura){
 			var data = {
 				tipo:'nuevo'
 			}
-			var formulario = interfaz.elementos.formulario;
-			formulario.construirInterfaz(data);
+			var formulario = UI.elementos.formulario;
+			formulario.construirUI(data);
 		}
 		//boton nuevo
 		this.buscarBoton('buscar').nodo.onclick=function(){
-			interfaz.elementos.formulario.nodo.firstChild.getElementsByTagName('button')[1].click();
+			UI.elementos.formulario.nodo.firstChild.getElementsByTagName('button')[1].click();
 		}
 	}
 	this.inicializarBotones = function(){
@@ -192,7 +195,10 @@ var Botonera = function(estructura){
 	}
 	this.construir();
 }
-/*-------------------------Objeto Menu ----------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------*/
+/*------------------------------------------------Objeto Menu ----------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 var Menu = function(){
 	/*-------------------------Objeto SubCapa ---------------------------------*/
 	var SubCapa = function(id,entidadHijo,padre,raiz,nombre){
@@ -211,11 +217,11 @@ var Menu = function(){
 				nodo.setAttribute('enlace',this.enlace);
 				if(this.enlace.substring(0,1)=='>'){
 					nodo.onclick=function(){
-						interfaz.elementos.menu.avanzar(this);
+						UI.elementos.menu.avanzar(this);
 					}
 				}else if(this.enlace.substring(0,1)=='<'){
 					nodo.onclick=function(){
-						interfaz.elementos.menu.regresar(this);	
+						UI.elementos.menu.regresar(this);	
 					}
 				}else{
 					nodo.onclick=function(){
@@ -370,7 +376,10 @@ var Menu = function(){
 	};
 	this.construir();
 }
-/*-------------------------Objeto Cabecera ----------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------Objeto Cabecera ----------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 var Cabecera = function(){
 
 	this.estado = 'porConstriur';
@@ -397,7 +406,9 @@ var Cabecera = function(){
 	}
 	this.construir();
 }
-/*------------------------------Objeto Formulario(lista)-----------------*/
+/*----------------------------------------------------------------------------------------------------*/
+/*------------------------------Objeto Formulario(lista)----------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 var Formulario = function(entidad){
 
 	//----------------------------------Objeto Ventana Formulario-------------------
@@ -423,16 +434,16 @@ var Formulario = function(entidad){
 			}else if(data.tipo=='nuevo'){
 				this.registroId='';
 			}
-			this.reconstruirInterfaz();
+			this.reconstruirUI();
 		};
 		this.destruirNodo = function(){
 			if(this.registroId!=''){
 				this.registroId='';
-				interfaz.elementos.formulario.controlLista();
+				UI.elementos.formulario.controlLista();
 			}
 			this.nodo.style.height='0px';
 			setTimeout(function(){
-				var vf=interfaz.elementos.formulario.ventanaForm;
+				var vf=UI.elementos.formulario.ventanaForm;
 				vf.nodo.parentNode.removeChild(vf.nodo);
 				vf.estado='sinConstruir';
 			},510);
@@ -466,7 +477,7 @@ var Formulario = function(entidad){
 				}
 			},10);
 			setTimeout(function(){
-				nodo.onclick=interfaz.elementos.formulario.ventanaForm.finEdicion;
+				nodo.onclick=UI.elementos.formulario.ventanaForm.finEdicion;
 				if(nodo.getAttribute('update')=='area'){
 					campoEdicion.style.height="150px";
 					campoEdicion.style.padding="15px";
@@ -485,13 +496,13 @@ var Formulario = function(entidad){
 
 			contenedor.style.maxHeight='150px';
 
-			var id=interfaz.elementos.formulario.ventanaForm.registroId;
+			var id=UI.elementos.formulario.ventanaForm.registroId;
 			var nombreCampo=campoEdicion.name;
 			var valorCampo=campoEdicion.value;
 
-			console.log('se disparo una edicion con id:'+interfaz.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
+			console.log('se disparo una edicion con id:'+UI.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
 			var registro=torque.editarCampo(id,nombreCampo,valorCampo);
-			interfaz.elementos.formulario.actualizarLista(registro);
+			UI.elementos.formulario.actualizarLista(registro);
 
 			campo.textContent=campoEdicion.value;
 			
@@ -505,7 +516,7 @@ var Formulario = function(entidad){
 			setTimeout(function(){
 				campoEdicion.style.width='auto';
 				campoEdicion.style.display='none';
-				nodo.onclick=interfaz.elementos.formulario.ventanaForm.edicion;
+				nodo.onclick=UI.elementos.formulario.ventanaForm.edicion;
 				campoEdicion.style.width=window.getComputedStyle(campoEdicion,null).getPropertyValue("width");
 				campo.style.width=campoEdicion.style.width;
 				campoEdicion.style.width='0px';
@@ -547,13 +558,13 @@ var Formulario = function(entidad){
 				nodo.setAttribute('valor',opcion.value);
 				nodo.onclick= function(e){
 					//agrego el efecto Ripple
-					interfaz.elementos.formulario.agregarRippleEvent(this,e);
+					UI.elementos.formulario.agregarRippleEvent(this,e);
 					var select = this.parentNode.nextSibling;
 					while(select.nodeName=='#text'){
 						select=select.nextSibling;
 					}
 					select.value=this.getAttribute('valor');
-					interfaz.elementos.formulario.ventanaForm.destruirCapaSelect(this.parentNode);
+					UI.elementos.formulario.ventanaForm.destruirCapaSelect(this.parentNode);
 				}
 				opcion.nodo=nodo;
 				opciones.push(opcion);
@@ -582,7 +593,7 @@ var Formulario = function(entidad){
 					capaSelect.removeChild(capaSelect.lastChild);
 				}
 				capaSelect.onclick=function(){
-					interfaz.elementos.formulario.ventanaForm.construirCapaSelect(this);
+					UI.elementos.formulario.ventanaForm.construirCapaSelect(this);
 				}
 			},300)
 			
@@ -623,14 +634,14 @@ var Formulario = function(entidad){
 			var nodo = this.nodo;
 			var article =nodo.getElementsByTagName('article')[0];
 			article.onclick=function(e){
-				var formulario = interfaz.elementos.formulario;
+				var formulario = UI.elementos.formulario;
 				formulario.controlLista(this.parentNode);
 				var newSelec = formulario.obtenerSeleccionado();
 				var data = {
 						tipo:'modificar',
 						id:newSelec.atributos.id
 					}
-				formulario.construirInterfaz(data);
+				formulario.construirUI(data);
 				
 				formulario.agregarRippleEvent(this.parentNode,e);
 				
@@ -652,7 +663,7 @@ var Formulario = function(entidad){
 				nodo.innerHTML=html;
 				slot.funcionamiento();
 				console.log(slot.estado);
-				interfaz.elementos.formulario.controlLista(nodo);
+				UI.elementos.formulario.controlLista(nodo);
 			},510);
 			
 		}
@@ -727,7 +738,7 @@ var Formulario = function(entidad){
 	//---------------------------Ink Event------------------------
 	
 	this.abrirCampoBusqueda = function(){
-		var botonBusqueda = interfaz.elementos.formulario.nodo.getElementsByTagName('button')[1];
+		var botonBusqueda = UI.elementos.formulario.nodo.getElementsByTagName('button')[1];
 		var campoBusqueda=botonBusqueda.previousSibling;
 		var titulo=campoBusqueda.previousSibling;
 
@@ -739,11 +750,11 @@ var Formulario = function(entidad){
 
 		campoBusqueda.focus();
 		setTimeout(function(){
-			botonBusqueda.onclick=interfaz.elementos.formulario.buscarElementos;
+			botonBusqueda.onclick=UI.elementos.formulario.buscarElementos;
 		},10)
 	};
 	this.buscarElementos = function(){
-		var formulario=interfaz.elementos.formulario;
+		var formulario=UI.elementos.formulario;
 
 		if(formulario.ventanaForm.estado!='sinConstruir'){
 			formulario.ventanaForm.destruirNodo();
@@ -937,7 +948,7 @@ var Formulario = function(entidad){
 		}
 		return seleccionado;
 	};
-	//-------------------------------------Manejo de Interfaz---------------------------------
+	//-------------------------------------Manejo de UI---------------------------------
 	this.agregarVentanaForm = function(){
 		this.ventanaForm.estado='agregado';
 		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);		
@@ -966,7 +977,7 @@ var Formulario = function(entidad){
 		botonCerrarBusq.onclick=function(){
 			console.log('presiono Cerrar buscar');
 
-			var botonBusqueda=interfaz.elementos.formulario.nodo.getElementsByTagName('button')[1];
+			var botonBusqueda=UI.elementos.formulario.nodo.getElementsByTagName('button')[1];
 			var campoBusqueda=this.parentNode;
 			var titulo=campoBusqueda.previousSibling;
 
@@ -980,7 +991,7 @@ var Formulario = function(entidad){
 			botonBusqueda.click();
 
 			setTimeout(function(){
-				botonBusqueda.onclick=interfaz.elementos.formulario.abrirCampoBusqueda;
+				botonBusqueda.onclick=UI.elementos.formulario.abrirCampoBusqueda;
 			},20)
 		}
 		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
@@ -988,7 +999,7 @@ var Formulario = function(entidad){
 
 		this.cargarRegistros(torque.registrosEntAct);
 	};
-	this.construirInterfaz = function(data){
+	this.construirUI = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
 		if(existeVentana){
 			if(data.tipo=='modificar'){
@@ -998,7 +1009,7 @@ var Formulario = function(entidad){
 				this.ventanaForm.tipo='nuevo';
 				this.ventanaForm.registroId='';
 			}
-			this.ventanaForm.reconstruirInterfaz();
+			this.ventanaForm.reconstruirUI();
 		}else{
 			this.construirVentanaForm(data);
 			this.agregarVentanaForm();
@@ -1006,7 +1017,10 @@ var Formulario = function(entidad){
 	};
 	this.construir();
 }
-/*------------------------------Objeto Ventana Modal-----------------------*/
+
+/*----------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------Objeto Ventana Modal------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 var modalWindow = function(){
 
 	var capaContenido = function(){
@@ -1056,7 +1070,7 @@ var modalWindow = function(){
 
 		this.construirNodo = function(){
 			var nodo=document.createElement('div');
-			var predecesor = interfaz.elementos.modalWindow.obtenerUltimaCapa();
+			var predecesor = UI.elementos.modalWindow.obtenerUltimaCapa();
 			nodo.setAttribute('capa','contenido');
 			predecesor.nodo.parentNode.insertBefore(nodo,predecesor.nodo.nextSibling);
 			this.nodo=nodo;
@@ -1084,7 +1098,7 @@ var modalWindow = function(){
 			}
 		}
 
-		this.dibujarInterfaz = function(data){
+		this.dibujarUI = function(data){
 			data.tipo=data.tipo || 'contenedor'
 			if(data.cabecera!==undefined){
 				this.agregarParte('cabecera');
@@ -1136,7 +1150,7 @@ var modalWindow = function(){
 	this.arranque = function(data){
 		this.agregarCapa('exterior');
 		var contenido=this.agregarCapa('contenido');
-		contenido.dibujarInterfaz(data);
+		contenido.dibujarUI(data);
 		this.manejoDeCapas();
 	};
 	this.agregarCapa = function(tipo){
@@ -1164,10 +1178,10 @@ var modalWindow = function(){
 		return capaNueva;
 	};
 	this.removerCapa = function(){
-		var capaExterior=interfaz.elementos.modalWindow.buscarCapa(this);
+		var capaExterior=UI.elementos.modalWindow.buscarCapa(this);
 		if(capaExterior){
-			if(capaExterior==interfaz.elementos.modalWindow.capas[0]){
-				var capaContenido= interfaz.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+			if(capaExterior==UI.elementos.modalWindow.capas[0]){
+				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 				//los saco de vista con la tansicion
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
@@ -1181,7 +1195,7 @@ var modalWindow = function(){
 					obtenerContenedor().style.position='inherit';
 				},810);
 			}else{
-				var capaContenido= interfaz.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 				//los saco de vista con la tansicion
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
@@ -1251,7 +1265,10 @@ var modalWindow = function(){
 		} 
 	};
 }
-/*------------------------------Objeto Constructor-----------------------*/
+
+/*----------------------------------------------------------------------------------------------------*/
+/*-----------------------------------------Objeto Constructor-----------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 var Arquitecto = function(){
 
 	this.elementos = new Array();
