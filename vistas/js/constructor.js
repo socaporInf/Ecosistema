@@ -1202,7 +1202,7 @@ var modalWindow = function(){
 				},810);
 			}else{
 				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
-				//los saco de vista con la tansicion
+				//los saco de vista con la trancision
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
 				capaContenido.nodo.style.opacity='0';
