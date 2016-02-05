@@ -439,7 +439,9 @@ var Formulario = function(entidad){
 		this.destruirNodo = function(){
 			if(this.registroId!=''){
 				this.registroId='';
-				UI.elementos.formulario.controlLista();
+				UI.elementos.formulario.controlLista();				
+			}else{
+				UI.elementos.botonera.quitarBoton('guardar');
 			}
 			this.nodo.style.height='0px';
 			setTimeout(function(){
@@ -821,7 +823,7 @@ var Formulario = function(entidad){
 			},1000)	
 		}
 		
-	}
+	};
 	this.cerrartooltipInput = function(event){
 		var parent = this;
 		var input = parent.firstChild;
@@ -844,7 +846,7 @@ var Formulario = function(entidad){
 				}
 			}
 		}
-	}
+	};
 	//-------------------------------------Manejo de Slots------------------------------------------------
 	this.listarSlots = function(){
 		console.log('Slots:');
@@ -1180,7 +1182,6 @@ var modalWindow = function(){
 	this.removerCapa = function(){
 		var capaExterior=UI.elementos.modalWindow.buscarCapa(this);
 		if(capaExterior){
-			console.log(UI.elementos.modalWindow.capas);
 			if(capaExterior==UI.elementos.modalWindow.capas[0]){
 				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 				//los saco de vista con la trancision
