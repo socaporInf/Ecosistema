@@ -53,13 +53,11 @@
 		if(!validacion){
 			var nuevoRegistro = {
 				nombre : data[0].valor,
-				id : contId++,
-				descripcion : data[1].valor,
-				detalle : []
+				descripcion : data[1].valor
 			}
 
 			//guardo en base de datos
-			torque.guardar(nuevoRegistro,'rol');
+			torque.guardar(nuevoRegistro,torque.entidadActiva);
 
 			//creo un nuevo slot en la UI
 			var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);

@@ -5,6 +5,8 @@
 }
 html{
   overflow: auto;
+  height: 100%;
+  background-color: #ECECEC;
 }
 form{
   overflow: visible;
@@ -64,6 +66,13 @@ div[capa='contenido'] section[cabecera].error{
 }
 div[capa='contenido'] section[cabecera].advertencia{
   background-color: #FFC107;
+  color:#212121;
+}
+div[capa='contenido'] section[pie].error{
+  background-color: #E57373;
+}
+div[capa='contenido'] section[pie].advertencia{
+  background-color: #FFD54F;
 }
 div[capa='contenido'] section[cuerpo]{
   transition:all 0.3s ease-in-out;
@@ -134,6 +143,7 @@ div[capaForm]{
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     float: left;
     margin: 50px 0px 100px 50px;
+    background-color: white;
 }
 div[capaForm] section[titulo]{
     padding: 10px 0px 0px 50px;

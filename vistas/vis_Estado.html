@@ -11,6 +11,7 @@
 <body>
 	<div contenedor></div>
 </body>
+
 <!-- scripts que construyen la interfaz y su funcionamiento -->
 <script type="text/javascript" src='js/motorRegistros.js'></script>
 <script type="text/javascript" src='js/constructor.js'></script>
@@ -33,7 +34,6 @@
 	UI.elementos.formulario = new Formulario(torque.entidadActiva);
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
-
 
 	//funcionamiento exclusivo del formulario
 	function guardar(){
@@ -85,7 +85,8 @@
 			this.nodo.style.height='0px';		
 			setTimeout(function(){
 				var nodo=UI.elementos.formulario.ventanaForm.nodo;
-				nodo.style.height='450px';
+				//tamaño predeterminado de la capaForm para nuevo
+				nodo.style.height='225px';
 				html+='\
 				<section titulo>Nuevo Estado</section>\
 					<section sector>\
