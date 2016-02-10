@@ -216,15 +216,15 @@ var Menu = function(){
 				nodo.innerHTML = contenido;
 				nodo.setAttribute('enlace',this.enlace);
 				if(this.enlace.substring(0,1)=='>'){
-					nodo.onclick=function(){
+					nodo.onclick=function(e){
 						UI.elementos.menu.avanzar(this);
 					}
 				}else if(this.enlace.substring(0,1)=='<'){
-					nodo.onclick=function(){
+					nodo.onclick=function(e){
 						UI.elementos.menu.regresar(this);	
 					}
 				}else{
-					nodo.onclick=function(){
+					nodo.onclick=function(e){
 						location.href=this.getAttribute('enlace');
 					}
 				}
@@ -312,8 +312,6 @@ var Menu = function(){
 
 	this.capaActiva;
 
-	this.contCapas=0;
-
 	this.hijos = new Array();
 	//nodo de DOM
 	this.nodo;
@@ -371,7 +369,7 @@ var Menu = function(){
 			}
 		}
 	};
-	this.regresar = function(nodo){
+	this.regresar = function(){
 		this.activarCapa(this.capaActiva.padre);
 	};
 	this.construir();
@@ -631,10 +629,11 @@ var Formulario = function(entidad){
 			this.nodo = nodo;
 			this.estado='enUso';
 			this.funcionamiento();
-		}
+		};
 		this.funcionamiento = function(){
 			var nodo = this.nodo;
 			var article =nodo.getElementsByTagName('article')[0];
+			var btnEliminar = nodo.getElementsByTagName('button')[0];
 			article.onclick=function(e){
 				var formulario = UI.elementos.formulario;
 				formulario.controlLista(this.parentNode);
@@ -646,9 +645,49 @@ var Formulario = function(entidad){
 				formulario.construirUI(data);
 				
 				formulario.agregarRippleEvent(this.parentNode,e);
-				
 			}
-		}
+			btnEliminar.onclick=function(){
+				var slot = UI.elementos.formulario.buscarSlot({id:this.parentNode.id});
+				var registro = slot.atributos;
+				if(slot.estado=='seleccionado'){
+					var ventana = {
+						tipo : 'error',
+						cabecera : 'Error',
+						cuerpo : 'No puede Eliminar un registro mientras este modificandolo'
+					}
+					UI.crearVentanaModal(ventana);
+				}else{
+					var verificacion = {
+						tipo : 'advertencia',
+						cabecera : 'Advertencia',
+						cuerpo : '¿Desea eliminar '+slot.atributos.nombre+' ?',
+						pie : '<section modalButtons>\
+									<button type="button" cancelar id="modalButtonCancelar"></button>\
+									<button type="button" aceptar registro="'+slot.atributos.id+'"" id="modalButtonAceptar"></button>\
+								</section>'
+					}
+					
+					UI.crearVentanaModal(verificacion);
+					
+					var btnAceptar = document.getElementById('modalButtonAceptar');
+					var btnCancelar = document.getElementById('modalButtonCancelar');
+
+					btnCancelar.onclick=function(){
+						UI.elementos.modalWindow.eliminarUltimaCapa();
+					}
+					btnAceptar.onclick=function(){
+
+						var slot = UI.elementos.formulario.buscarSlot({id:this.getAttribute('registro')});
+						var nodo = slot.nodo;
+
+						UI.elementos.modalWindow.eliminarUltimaCapa();
+						torque.eliminar(registro,torque.entidadActiva);
+
+						slot.destruirNodo();
+					}
+				}
+			}
+		};
 		this.reconstruirNodo = function(){
 			this.nodo.style.marginLeft="120%";
 			var nodo=this.nodo;
@@ -664,11 +703,26 @@ var Formulario = function(entidad){
 			setTimeout(function(){
 				nodo.innerHTML=html;
 				slot.funcionamiento();
-				console.log(slot.estado);
 				UI.elementos.formulario.controlLista(nodo);
 			},510);
 			
-		}
+		};
+		this.destruirNodo = function(){
+			var nodo = this.nodo;
+			var slot = this;
+			nodo.style.marginLeft="120%";
+			nodo.style.marginBotton='0px';
+			nodo.style.boxShadow='none';
+			setTimeout(function(){
+				nodo.style.height='0px';
+				nodo.style.padding='0px';
+			},510);
+			setTimeout(function(){
+				nodo.parentNode.removeChild(nodo);
+				var indice = UI.elementos.formulario.Slots.indexOf(slot);
+				UI.elementos.formulario.Slots.splice(indice,1);
+			},1110);
+		};
 		this.construirNodo();
 	}
 	/*--------------------------Fin Objeto Slot-------------------*/
@@ -765,6 +819,7 @@ var Formulario = function(entidad){
 
 		var botonBusqueda=formulario.nodo.getElementsByTagName('button')[1];
 		var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
+
 		var registros=torque.registrosEntAct;
 		var nuevosRegistros= new Array();
 		var contRegEnc=0;
@@ -1109,19 +1164,27 @@ var modalWindow = function(){
 			if(data.cuerpo!==undefined){
 				this.agregarParte('cuerpo');
 				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
+				switch(data.tipo){
+					case 'advertencia':
+						this.partes.cabecera.nodo.classList.toggle('advertencia');	
+					break
+					case 'error':
+						this.partes.cabecera.nodo.classList.toggle('error');
+					break
+				}
 			}
 			if(data.pie!==undefined){
 				this.agregarParte('pie');
 				this.partes.pie.nodo.innerHTML=data.pie;
+				switch(data.tipo){
+					case 'advertencia':
+						this.partes.pie.nodo.classList.toggle('advertencia');	
+					break
+					case 'error':
+						this.partes.pie.nodo.classList.toggle('error');
+					break
+				}
 			}	
-			switch(data.tipo){
-				case 'advertencia':
-					this.partes.cabecera.nodo.classList.toggle('advertencia');
-				break
-				case 'error':
-					this.partes.cabecera.nodo.classList.toggle('error');
-				break
-			}
 		}
 		this.construirNodo();
 	}

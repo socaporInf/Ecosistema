@@ -86,16 +86,16 @@
 				];
 	var empresas = [
 		{	
-			id:'1',
+			id:0,
 			nombre:'SocaServicios'
 		},{
-			id:'2',
+			id:1,
 			nombre:'ProbioAgro'
 		},{
-			id:'3',
+			id:2,
 			nombre:'SocaPortuguesa'
 		},{
-			id:'4',
+			id:3,
 			nombre:'E/S Piedritas Blancas'
 		}
 	]
@@ -177,17 +177,26 @@ var Motor = function(entidadActiva){
 			return estados;
 		}
 	}
-	//--------------------------------------------funciones guardado--------------------------------
+	//--------------------------------------------funciones de bd--------------------------------
 	this.guardar = function(nuevoRegistro,entidad){
 		if(entidad=='empresa'){
+			nuevoRegistro.id=empresas.length;
 			empresas.push(nuevoRegistro);
 		}else if(entidad=='rol'){
 			roles.push(nuevoRegistro);
 		}else if(entidad=='estado'){
+			nuevoRegistro.id=estados.length;
 			estados.push(nuevoRegistro);
 		}
 		if(this.entidadActiva==entidad){
 			this.registrosEntAct = this.buscarRegistros(entidad);
+		}
+	}
+	this.eliminar = function(registro,entidad){
+		var indice;
+		if(entidad=='empresa'){
+			indice = empresas.indexOf(this.buscarRegistro(registro.id,entidad));
+			empresas.splice(indice,1);
 		}
 	}
 	this.editarCampo= function(id,campo,valor){
