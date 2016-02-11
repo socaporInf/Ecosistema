@@ -54,7 +54,7 @@
 				detalle : []
 			}
 			torque.guardar(nuevoRegistro,'rol');
-			var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
+			var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(nuevoRegistro);
 			nuevoSlot.firstChild.click();
 		}else{
 			//creo el mensaje
@@ -77,7 +77,7 @@
 			var tiempo = (this.estado=='agregado')?600:0;
 			if(this.tipo=='nuevo'){
 				this.registroId='';
-				UI.elementos.formulario.controlLista();
+				UI.elementos.formulario.ventanaList.controlLista();
 				this.nodo.style.height='0px';		
 				setTimeout(function(){
 					var nodo=UI.elementos.formulario.ventanaForm.nodo;
@@ -237,7 +237,7 @@
 						var comboEmpresas = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.getElementsByTagName('select')[0];
 
 						comboEmpresas.previousSibling.onclick = function(){
-							UI.elementos.formulario.ventanaForm.construirCapaSelect(this);
+							UI.elementos.formulario.construirCapaSelect(this);
 						}
 
 						btnCancelar.onclick=function(){
@@ -272,7 +272,7 @@
 					}
 				}else if(lista[x].getAttribute('capaSelect')!==null){
 					lista[x].onclick=function(){
-						UI.elementos.formulario.ventanaForm.construirCapaSelect(this);
+						UI.elementos.formulario.construirCapaSelect(this);
 					}
 				}
 			}
