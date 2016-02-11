@@ -87,16 +87,20 @@
 	var empresas = [
 		{	
 			id:0,
-			nombre:'SocaServicios'
+			nombre:'SocaServicios',
+			descripcion:'empresa con mayor movimiento'
 		},{
 			id:1,
-			nombre:'ProbioAgro'
+			nombre:'ProbioAgro',
+			descripcion:'empresa de materiales agricolas'
 		},{
 			id:2,
-			nombre:'SocaPortuguesa'
+			nombre:'SocaPortuguesa',
+			descripcion:'Principal'
 		},{
 			id:3,
-			nombre:'E/S Piedritas Blancas'
+			nombre:'E/S Piedritas Blancas',
+			descripcion:'Estacion de servicio'
 		}
 	]
 	var modulos = [
@@ -105,18 +109,21 @@
 		{id:'3',nombre:'Agronomina'}
 	]
 	var submodulos = [
-		{id:1,idPadre:1,nombre:'Empresa',enlace:'vis_Empresa.html'},
-		{id:2,idPadre:2,nombre:'Rol',enlace:'vis_Rol.html'},
-		{id:3,idPadre:2,nombre:'Pribilegios Por Rol',enlace:'vis_Pribilegios.html'},
-		{id:4,idPadre:3,nombre:'Finca',enlace:'vis_Finca.html'},
-		{id:5,idPadre:3,nombre:'Tablon',enlace:'vis_Tablon.html'},
-		{id:6,idPadre:3,nombre:'Canicultor',enlace:'vis_Canicultor.html'},
-		{id:7,idPadre:3,nombre:'Variedad',enlace:'vis_Variedad.html'},
-		{id:8,idPadre:3,nombre:'Clase',enlace:'vis_Clase.html'},
-		{id:9,idPadre:1,nombre:'Estado',enlace:'vis_Estado.html'},
-		{id:10,idPadre:1,nombre:'Municipio',enlace:'vis_Municipio.html'}
+		{id:1,idPadre:1,nombre:'Empresa'	,enlace:'vis_Empresa.html'},
+		{id:2,idPadre:2,nombre:'Rol'		,enlace:'vis_Rol.html'},
+		{id:3,idPadre:2,nombre:'Modulos'	,enlace:'vis_Pribilegios.html'},
+		{id:4,idPadre:3,nombre:'Finca'		,enlace:'vis_Finca.html'},
+		{id:5,idPadre:3,nombre:'Tablon'		,enlace:'vis_Tablon.html'},
+		{id:6,idPadre:3,nombre:'Canicultor'	,enlace:'vis_Canicultor.html'},
+		{id:7,idPadre:3,nombre:'Variedad'	,enlace:'vis_Variedad.html'},
+		{id:8,idPadre:3,nombre:'Clase'		,enlace:'vis_Clase.html'},
+		{id:9,idPadre:1,nombre:'Estado'		,enlace:'vis_Estado.html'},
+		{id:10,idPadre:1,nombre:'Municipio'	,enlace:'vis_Municipio.html'}
 	]
-	var estados = [];
+	var estados = [
+					{id:0,nombre:'Portuguesa',descripcion:'localidad'}
+					];
+	var municipios = [];
 	var contId=roles.length+1;
 
 	
@@ -175,6 +182,8 @@ var Motor = function(entidadActiva){
 			return submodulos;
 		}else if(entidad=='estado'){
 			return estados;
+		}else if(entidad=='municipio'){
+			return municipios;
 		}
 	}
 	//--------------------------------------------funciones de bd--------------------------------

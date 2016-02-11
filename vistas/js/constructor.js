@@ -124,7 +124,7 @@ var Botonera = function(estructura){
 			if(this.buscarBoton('abrir')!=-1){
 				if(this.buscarBoton('abrir').nodo.getAttribute('estado')=='visible'){
 					setTimeout(function(){
-						var top=this.botones.length*45;
+						var top=(UI.elementos.botonera.botones.length-1)*45;
 						boton.nodo.style.top='-'+top+'px';
 					},10);
 				}
