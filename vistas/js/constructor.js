@@ -1387,6 +1387,87 @@ var Arquitecto = function(){
 	};
 	
 }
+/*---------------Objetos de interfaz---------------------------------------------*/
+var ComboBox = function(nombre,opciones,seleccionado,eslabon){
+
+	this.estado = 'porConstriur';
+	this.eslabon = eslabon||'simple';
+	this.nombre = nombre;
+	this.seleccionado = seleccionado||'-';
+	this.opciones = opciones;
+	this.nodo;
+
+	this.construir = function(){
+		var nodo=document.createElement('div');
+		nodo.setAttribute(this.tamano,'');
+		nodo.setAttribute('formElements','');
+		
+		//se crea el article
+		var article=document.createElement('article');
+		article.setAttribute('capaSelect','');
+		article.onclick=this.construirCapaSelect;
+		nodo.appendChild(article);
+
+		//se crea el select
+		var select=document.createElement('select');
+		select.name=this.nombre;
+		nodo.appendChild(select);
+		this.nodo=nodo;
+
+		//creo la primera opcion
+		var opcion = {
+			id : '-',
+			nombre : 'Seleccione un Valor'
+		}
+		this.agregarOpcion(opcion)
+
+		//genero y asigno el resto de las opciones
+		this.agregarOpciones(opciones);
+		this.estado='enUso';
+	};
+	this.agregarOpciones = function(opciones){
+		for(var x=0;x<opciones.length;x++){
+			this.agregarOpcion(opciones[x]);
+		}
+	};
+	this.agregarOpcion = function(opcion){
+		var select=this.nodo.getElementsByTagName('select-one')[0];
+		var nuevaOp=document.createElement('option');
+		nuevaOp.textContent=opcion.nombre;
+		nuevaOp.value=opcion.id;
+		select.appendChild(nuevaOp);
+	};
+	this.construir();
+}
+var CampoDeTexto = function(nombre,tipo,eslabon){
+
+	this.estado = 'porConstriur';
+	this.nombre = nombre;
+	this.eslabon = eslabon || 'simple';
+	this.tipo = tipo;
+	this.nodo;
+
+	this.construir = function(){
+		var CampoDeTexto = document.createElement('div');
+		CampoDeTexto.classList.toggle('gruop');
+		var html='';
+		
+		if(this.tipo=='simple'){
+			html+='<input type="text" name="Nombre" required>';
+		}else if(this.tipo=='area'){
+			html+='<textarea name="Descripcion" required></textarea>';
+		}
+		
+		html+='<span class="highlight"></span>\
+		      <span class="bar"></span>\
+		      <label>Nombre</label>';
+
+		CampoDeTexto.innerHTML=html;
+		//aqui quede
+		this.nodo=CampoDeTexto;
+	}
+	this.construir();
+}
 /*---------------Utilidades---------------------------------------------*/
 function obtenerContenedor(){
 	var contenedor = document.body.firstChild;

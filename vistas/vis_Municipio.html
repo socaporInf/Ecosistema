@@ -26,7 +26,7 @@
 	UI.configure();
 
 	//botones que van a ser utilizados en la UI
-	var botones = ['buscar','nuevo','abrir','redactar'];
+	var botones = ['buscar','nuevo','abrir'];
 	UI.elementos.botonera = new Botonera(botones);
 
 	//se inicializa el formulario
@@ -81,7 +81,7 @@
 		var html='';
 		if(this.tipo=='nuevo'){
 			this.registroId='';
-			UI.elementos.formulario.controlLista();
+			UI.elementos.formulario.ventanaList.controlLista();
 			this.nodo.style.height='0px';		
 			setTimeout(function(){
 				var nodo=UI.elementos.formulario.ventanaForm.nodo;
