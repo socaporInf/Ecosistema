@@ -8,19 +8,19 @@ var handleMediaChange = function (mediaQueryList) {
 			    	//cambio UI Ventana Form
 			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
 			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
-			        formulario.cambiarTextoSlots('completa');
+			        formulario.ventanaList.cambiarTextoSlots('completa');
 			    }
 			    else {
 			    	//cambio UI Ventana Form
-			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'600px':null;
+			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(100% - 450px)':null;
 			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
-			        formulario.cambiarTextoSlots('mediaQuery');
+			        formulario.ventanaList.cambiarTextoSlots('mediaQuery');
 			    }
 			}else{
 				if (mediaQueryList.matches) {
-					formulario.cambiarTextoSlots('completa');
+					formulario.ventanaList.cambiarTextoSlots('completa');
 				}else{
-					formulario.cambiarTextoSlots('mediaQuery');
+					formulario.ventanaList.cambiarTextoSlots('mediaQuery');
 				}
 			}
 		}
@@ -79,6 +79,7 @@ var Botonera = function(estructura){
 	this.nodo;
 
 	this.botones = new Array(); 
+
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
 		var nodo = document.createElement('div');
@@ -97,7 +98,7 @@ var Botonera = function(estructura){
 		}
 		//boton nuevo
 		this.buscarBoton('buscar').nodo.onclick=function(){
-			UI.elementos.formulario.nodo.firstChild.getElementsByTagName('button')[1].click();
+			UI.elementos.formulario.ventanaList.nodo.firstChild.getElementsByTagName('button')[1].click();
 		}
 	}
 	this.inicializarBotones = function(){
@@ -124,7 +125,7 @@ var Botonera = function(estructura){
 			if(this.buscarBoton('abrir')!=-1){
 				if(this.buscarBoton('abrir').nodo.getAttribute('estado')=='visible'){
 					setTimeout(function(){
-						var top=this.botones.length*45;
+						var top=(UI.elementos.botonera.botones.length-1)*45;
 						boton.nodo.style.top='-'+top+'px';
 					},10);
 				}
@@ -437,7 +438,7 @@ var Formulario = function(entidad){
 		this.destruirNodo = function(){
 			if(this.registroId!=''){
 				this.registroId='';
-				UI.elementos.formulario.controlLista();				
+				UI.elementos.formulario.ventanaList.controlLista();				
 			}else{
 				UI.elementos.botonera.quitarBoton('guardar');
 			}
@@ -495,6 +496,7 @@ var Formulario = function(entidad){
 			var contenedor=nodo.parentNode;
 
 			contenedor.style.maxHeight='150px';
+			campo.style.maxHeight='150px';
 
 			var id=UI.elementos.formulario.ventanaForm.registroId;
 			var nombreCampo=campoEdicion.name;
@@ -502,7 +504,7 @@ var Formulario = function(entidad){
 
 			console.log('se disparo una edicion con id:'+UI.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
 			var registro=torque.editarCampo(id,nombreCampo,valorCampo);
-			UI.elementos.formulario.actualizarLista(registro);
+			UI.elementos.formulario.ventanaList.actualizarLista(registro);
 
 			campo.textContent=campoEdicion.value;
 			
@@ -523,218 +525,370 @@ var Formulario = function(entidad){
 				campoEdicion.value='';
 			},510)
 		};
-		/*----------------------------------Funciones del Objeto Select-------------------------------*/
-		this.construirCapaSelect= function(capaSelect){
-			capaSelect.onclick=function(){};
-			var opciones= new Array();
-			var opcion;
-			var nodo;
-			var select = capaSelect.nextSibling;
-			while(select.nodeName=='#text'){
-				select=select.nextSibling;
+		this.agregarCampos = function(campos){
+			for(var x=0;x<campos.length;x++){
+				this.agregarCampo(campos[x]);
 			}
-			var margen;
-			for(var x = 0; x < select.options.length;x++){
-				
-				opcion = {
-					nombre:select.options[x].textContent,
-					value:select.options[x].value,
-					nodo:null
-				}
-
-				nodo=document.createElement('div');
-				nodo.setAttribute('option','');
-				nodo.textContent=opcion.nombre;
-				if(select.options[x]==select.options[select.selectedIndex]){
-					nodo.setAttribute('selecionado','');
-					margen='-'+parseInt(opciones.length*41)+'px';
-					capaSelect.style.marginTop=margen;
-					console.log(margen);
-				}
-				
-				nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
-				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
-				
-				nodo.setAttribute('valor',opcion.value);
-				nodo.onclick= function(e){
-					//agrego el efecto Ripple
-					UI.elementos.formulario.agregarRippleEvent(this,e);
-					var select = this.parentNode.nextSibling;
-					while(select.nodeName=='#text'){
-						select=select.nextSibling;
-					}
-					select.value=this.getAttribute('valor');
-					UI.elementos.formulario.ventanaForm.destruirCapaSelect(this.parentNode);
-				}
-				opcion.nodo=nodo;
-				opciones.push(opcion);
-				capaSelect.appendChild(nodo);
-			}
-
-			//creo el contenedor de las opciones
-			capaSelect.style.opacity='1';
-			capaSelect.style.height=parseInt(opciones.length*41)+'px';
-			capaSelect.style.width='60px'
-
 		};
-		this.destruirCapaSelect = function(capaSelect){
-			var lista = capaSelect.childNodes;
-			var opcion;
-			capaSelect.style.opacity='0';
-			capaSelect.style.height='100%';
-			capaSelect.style.width='100%';
-			capaSelect.style.marginTop='0px';
-			for(var x = 0;x < lista.length;x++){
-				lista[x].style.transition='all 0.3s linear';
-				lista[x].style.marginTop='0px';
+		this.agregarCampo = function(campo){
+			var campoNuevo;
+			var contenedor = this.nodo.getElementsByTagName('form')[0];
+			if(campo.tipo.toLowerCase()=='campodetexto'){
+				campoNuevo = new CampoDeTexto(campo.parametros[0],campo.parametros[1],campo.parametros[2],campo.parametros[3]);
+			}else if(campo.tipo.toLowerCase()=='combobox'){
+				campoNuevo = new ComboBox(campo.parametros[0],campo.parametros[1],campo.parametros[2],campo.parametros[3]);
 			}
-			setTimeout(function(){
-				while(capaSelect.childNodes.length>0){
-					capaSelect.removeChild(capaSelect.lastChild);
-				}
-				capaSelect.onclick=function(){
-					UI.elementos.formulario.ventanaForm.construirCapaSelect(this);
-				}
-			},300)
-			
+			contenedor.appendChild(campoNuevo.nodo);
+		};
+		this.crearEstructuraBasicaNuevo = function(titulo,altura){
+				this.nodo.style.height=altura+'px';
+				var html='\
+				<section titulo>Nuevo '+titulo+'</section>\
+					<section sector>\
+						<form name ="formNuevo">\
+						</form>\
+					</section>\
+				</section>';
+				this.nodo.innerHTML=html;
 		}
-		/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
 	}
-	/*------------------------------Objeto VentanaForm------------*/
-	/*------------------------------Objeto Slot-------------------*/
-	var Slot = function(data){
 
-		this.atributos = data;
+	/*------------------------------Objeto VentanaList-------------------------------------------------------------*/
+	var VentanaList = function(entidadActiva){
+		/*------------------------------Objeto Slot-------------------*/
+		var Slot = function(data){
 
-		this.estado = 'sinInicializar';
+			this.atributos = data;
 
-		this.rol = 'lista';
+			this.estado = 'sinInicializar';
+
+			this.rol = 'lista';
+
+			this.nodo;
+
+			this.construirNodo = function(nombre){
+				var nodo = document.createElement('section');
+				nodo.setAttribute('slot','');
+				nodo.id=this.atributos.id;
+				var html ="";
+				var titulo;
+				if(this.atributos.nombre.length>28){
+					titulo=this.atributos.nombre.substr(0,28)+'...';
+				}else{
+					titulo=this.atributos.nombre;
+				}
+				html+="<article  title>"+titulo+"</article>\
+					<button type='button' btnEliminar></button>";
+				nodo.innerHTML=html;
+				this.nodo = nodo;
+				this.estado='enUso';
+				this.funcionamiento();
+			};
+			this.funcionamiento = function(){
+				var nodo = this.nodo;
+				var article =nodo.getElementsByTagName('article')[0];
+				var btnEliminar = nodo.getElementsByTagName('button')[0];
+				article.onclick=function(e){
+					var formulario = UI.elementos.formulario;
+					formulario.ventanaList.controlLista(this.parentNode);
+					var newSelec = formulario.ventanaList.obtenerSeleccionado();
+					var data = {
+							tipo:'modificar',
+							id:newSelec.atributos.id
+						}
+					formulario.construirUI(data);
+					
+					formulario.agregarRippleEvent(this.parentNode,e);
+				}
+				btnEliminar.onclick=function(){
+					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id});
+					var registro = slot.atributos;
+					if(slot.estado=='seleccionado'){
+						var ventana = {
+							tipo : 'error',
+							cabecera : 'Error',
+							cuerpo : 'No puede Eliminar un registro mientras este modificandolo'
+						}
+						UI.crearVentanaModal(ventana);
+					}else{
+						var verificacion = {
+							tipo : 'advertencia',
+							cabecera : 'Advertencia',
+							cuerpo : '¿Desea eliminar '+slot.atributos.nombre+' ?',
+							pie : '<section modalButtons>\
+										<button type="button" cancelar id="modalButtonCancelar"></button>\
+										<button type="button" aceptar registro="'+slot.atributos.id+'"" id="modalButtonAceptar"></button>\
+									</section>'
+						}
+						
+						UI.crearVentanaModal(verificacion);
+						
+						var btnAceptar = document.getElementById('modalButtonAceptar');
+						var btnCancelar = document.getElementById('modalButtonCancelar');
+
+						btnCancelar.onclick=function(){
+							UI.elementos.modalWindow.eliminarUltimaCapa();
+						}
+						btnAceptar.onclick=function(){
+
+							var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.getAttribute('registro')});
+							var nodo = slot.nodo;
+
+							UI.elementos.modalWindow.eliminarUltimaCapa();
+							torque.eliminar(registro,torque.entidadActiva);
+
+							slot.destruirNodo();
+						}
+					}
+				}
+			};
+			this.reconstruirNodo = function(){
+				this.nodo.style.marginLeft="120%";
+				var nodo=this.nodo;
+				var slot=this;
+				var titulo;
+				if(this.atributos.nombre.length>28){
+					titulo=this.atributos.nombre.substr(0,28)+'...';
+				}else{
+					titulo=this.atributos.nombre;
+				}
+				var html="<article  title>"+titulo+"</article>\
+				<button type='button' btnEliminar></button>";
+				setTimeout(function(){
+					nodo.innerHTML=html;
+					slot.funcionamiento();
+					UI.elementos.formulario.ventanaList.controlLista(nodo);
+				},510);
+				
+			};
+			this.destruirNodo = function(){
+				var nodo = this.nodo;
+				var slot = this;
+				nodo.style.marginLeft="120%";
+				nodo.style.marginBotton='0px';
+				nodo.style.boxShadow='none';
+				setTimeout(function(){
+					nodo.style.height='0px';
+					nodo.style.padding='0px';
+				},510);
+				setTimeout(function(){
+					nodo.parentNode.removeChild(nodo);
+					var indice = UI.elementos.formulario.ventanaList.Slots.indexOf(slot);
+					UI.elementos.formulario.ventanaList.Slots.splice(indice,1);
+				},1110);
+			};
+			this.construirNodo();
+		}
+		/*--------------------------Fin Objeto Slot-------------------*/
+
+		this.Slots = new Array();
 
 		this.nodo;
 
-		this.construirNodo = function(nombre){
-			var nodo = document.createElement('section');
-			nodo.setAttribute('slot','');
-			nodo.id=this.atributos.id;
-			var html ="";
-			var titulo;
-			if(this.atributos.nombre.length>28){
-				titulo=this.atributos.nombre.substr(0,28)+'...';
-			}else{
-				titulo=this.atributos.nombre;
-			}
-			html+="<article  title>"+titulo+"</article>\
-				<button type='button' btnEliminar></button>";
-			nodo.innerHTML=html;
-			this.nodo = nodo;
-			this.estado='enUso';
-			this.funcionamiento();
+		this.entidadActiva=entidadActiva;
+
+		this.abrirCampoBusqueda = function(){
+			var botonBusqueda = UI.elementos.formulario.ventanaList.nodo.getElementsByTagName('button')[1];
+			var campoBusqueda=botonBusqueda.previousSibling;
+			var titulo=campoBusqueda.previousSibling;
+
+			titulo.style.padding='0px';
+			titulo.style.width='0px';
+
+			campoBusqueda.style.width='calc(100% - 70px)';
+			campoBusqueda.style.height='40px';
+
+			campoBusqueda.focus();
+			setTimeout(function(){
+				botonBusqueda.onclick=UI.elementos.formulario.ventanaList.buscarElementos;
+			},10)
 		};
-		this.funcionamiento = function(){
-			var nodo = this.nodo;
-			var article =nodo.getElementsByTagName('article')[0];
-			var btnEliminar = nodo.getElementsByTagName('button')[0];
-			article.onclick=function(e){
-				var formulario = UI.elementos.formulario;
-				formulario.controlLista(this.parentNode);
-				var newSelec = formulario.obtenerSeleccionado();
-				var data = {
-						tipo:'modificar',
-						id:newSelec.atributos.id
-					}
-				formulario.construirUI(data);
-				
-				formulario.agregarRippleEvent(this.parentNode,e);
+		this.buscarElementos = function(){
+			var formulario=UI.elementos.formulario;
+
+			if(formulario.ventanaForm.estado!='sinConstruir'){
+				formulario.ventanaForm.destruirNodo();
 			}
-			btnEliminar.onclick=function(){
-				var slot = UI.elementos.formulario.buscarSlot({id:this.parentNode.id});
-				var registro = slot.atributos;
-				if(slot.estado=='seleccionado'){
-					var ventana = {
-						tipo : 'error',
-						cabecera : 'Error',
-						cuerpo : 'No puede Eliminar un registro mientras este modificandolo'
+			
+
+			var botonBusqueda=formulario.ventanaList.nodo.getElementsByTagName('button')[1];
+			var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
+
+			var registros=torque.registrosEntAct;
+			var nuevosRegistros= new Array();
+			var contRegEnc=0;
+			for(var x=0; x<registros.length;x++){
+				if(registros[x].nombre.toLowerCase().search(valorBusqueda)!=-1){
+					contRegEnc++
+					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='0px';
+					
+					if(contRegEnc==1){
+						formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='51px';
 					}
-					UI.crearVentanaModal(ventana);
+
+					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.display='block';
 				}else{
-					var verificacion = {
-						tipo : 'advertencia',
-						cabecera : 'Advertencia',
-						cuerpo : '¿Desea eliminar '+slot.atributos.nombre+' ?',
-						pie : '<section modalButtons>\
-									<button type="button" cancelar id="modalButtonCancelar"></button>\
-									<button type="button" aceptar registro="'+slot.atributos.id+'"" id="modalButtonAceptar"></button>\
-								</section>'
-					}
-					
-					UI.crearVentanaModal(verificacion);
-					
-					var btnAceptar = document.getElementById('modalButtonAceptar');
-					var btnCancelar = document.getElementById('modalButtonCancelar');
-
-					btnCancelar.onclick=function(){
-						UI.elementos.modalWindow.eliminarUltimaCapa();
-					}
-					btnAceptar.onclick=function(){
-
-						var slot = UI.elementos.formulario.buscarSlot({id:this.getAttribute('registro')});
-						var nodo = slot.nodo;
-
-						UI.elementos.modalWindow.eliminarUltimaCapa();
-						torque.eliminar(registro,torque.entidadActiva);
-
-						slot.destruirNodo();
-					}
+					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='0px';
+					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.display='none';
 				}
 			}
 		};
-		this.reconstruirNodo = function(){
-			this.nodo.style.marginLeft="120%";
-			var nodo=this.nodo;
-			var slot=this;
-			var titulo;
-			if(this.atributos.nombre.length>28){
-				titulo=this.atributos.nombre.substr(0,28)+'...';
-			}else{
-				titulo=this.atributos.nombre;
+		this.listarSlots = function(){
+			console.log('Slots:');
+			for(var x=0;x<this.Slots.length;x++){
+				console.log('nombre: '+this.Slots[x].atributos.nombre+'\testado: '+this.Slots[x].estado);
 			}
-			var html="<article  title>"+titulo+"</article>\
-			<button type='button' btnEliminar></button>";
-			setTimeout(function(){
-				nodo.innerHTML=html;
-				slot.funcionamiento();
-				UI.elementos.formulario.controlLista(nodo);
-			},510);
-			
 		};
-		this.destruirNodo = function(){
-			var nodo = this.nodo;
-			var slot = this;
-			nodo.style.marginLeft="120%";
-			nodo.style.marginBotton='0px';
-			nodo.style.boxShadow='none';
-			setTimeout(function(){
-				nodo.style.height='0px';
-				nodo.style.padding='0px';
-			},510);
-			setTimeout(function(){
-				nodo.parentNode.removeChild(nodo);
-				var indice = UI.elementos.formulario.Slots.indexOf(slot);
-				UI.elementos.formulario.Slots.splice(indice,1);
-			},1110);
+		this.agregarSlot = function(data){
+			var slot = new Slot(data);
+			this.Slots.push(slot);
+			this.nodo.appendChild(slot.nodo);
+			return slot.nodo;
 		};
-		this.construirNodo();
-	}
-	/*--------------------------Fin Objeto Slot-------------------*/
-	this.Slots = new Array();
+		this.cargarRegistros = function(registros){
+			for(var x=0; x<registros.length;x++){
+				this.agregarSlot(registros[x]);
+			}
+		};
+		this.controlLista = function(nodo){
+			var obj=false;
+			var oldSelecinado=this.obtenerSeleccionado();
+			for(var x=0;x<this.Slots.length;x++){
+				if(this.Slots[x].nodo==nodo){
+					this.Slots[x].estado='seleccionado';
+					this.Slots[x].nodo.style.marginLeft='20px';
+					obj=this.Slots[x];
+				}else{	
+					this.Slots[x].estado='enUso'
+					this.Slots[x].nodo.style.marginLeft='0px';	
+				}
+			}
+		};	
+		this.buscarSlot = function(registro){
+			for(x=0;x<this.Slots.length;x++){
+				if(this.Slots[x].atributos.id==registro.id){
+					return this.Slots[x];
+				}
+			}
+			console.log('el slot no existe');
+			return false;
+		};
+		this.buscarSlotPorNombre = function(registro){
+			for(x=0;x<this.Slots.length;x++){
+				if(this.Slots[x].atributos.nombre==registro.nombre){
+					return this.Slots[x];
+				}
+			}
+			console.log('el slot no existe');
+			return false;
+		};
+		this.cambiarTextoSlots = function(cambio){
+			if(cambio=='mediaQuery'){
+				for(var x=0;x<this.Slots.length;x++){
+					var nodo=this.Slots[x].nodo;
+					var slot=this.Slots[x];
+					var titulo;
+					if(slot.atributos.nombre.length>28){
+						titulo=slot.atributos.nombre.substr(0,28)+'...';
+					}else{
+						titulo=slot.atributos.nombre;
+					}
+					var html="<article  title>"+titulo+"</article>\
+					<button type='button' btnEliminar></button>";
+					nodo.innerHTML=html;
+					slot.funcionamiento();
+				}
+			}else{
+				for(var x=0;x<this.Slots.length;x++){
+					var nodo=this.Slots[x].nodo;
+					var slot=this.Slots[x];
+					var html="<article  title>"+slot.atributos.nombre+"</article>\
+					<button type='button' btnEliminar></button>";
+					nodo.innerHTML=html;
+					slot.funcionamiento();
+				}
+			}
+		};
 
+		this.actualizarLista = function(cambios){
+			if(cambios instanceof Array){
+
+			}else{
+				this.actualizarSlot(cambios);
+			}
+		};
+		this.actualizarSlot = function(registro){
+			var slot=this.buscarSlot(registro);
+			if(slot){
+				slot.atributos=registro;
+				slot.reconstruirNodo();
+			}
+		};this.obtenerSeleccionado = function(){
+			var seleccionado=false;
+			for(var x=0;x<this.Slots.length;x++){
+				if(this.Slots[x].estado=='seleccionado'){
+					seleccionado=this.Slots[x];
+				}
+			}
+			return seleccionado;
+		};
+		this.construir = function(){
+			var contenedor = obtenerContenedor();
+			var elemento = document.createElement('div');
+			elemento.setAttribute('capaList','');
+			var html='';
+			html+="<section busqueda>";
+			html+=	"<div tituloForm>"+this.entidadActiva.toUpperCase()+"</div>";
+			html+=	"<div listBuscar>";
+			html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
+			html+=		"<button type='button' cerrarBusq></button>";
+			html+=	"</div>";
+			html+=	"<button type='button' btnBusq></button>";
+			html+="</section>";
+			elemento.innerHTML = html;
+			this.nodo=elemento;
+
+			var botonBusqueda=elemento.getElementsByTagName('button')[1];
+			var botonCerrarBusq=elemento.getElementsByTagName('button')[0];
+
+			botonBusqueda.onclick=this.abrirCampoBusqueda;
+
+			botonCerrarBusq.onclick=function(){
+				console.log('presiono Cerrar buscar');
+
+				var botonBusqueda=UI.elementos.formulario.ventanaList.nodo.getElementsByTagName('button')[1];
+				var campoBusqueda=this.parentNode;
+				var titulo=campoBusqueda.previousSibling;
+
+				titulo.style.padding='3px 3px 3px 30px';
+				titulo.style.width='calc(100% - 103px)';
+
+				campoBusqueda.style.width='0px';
+				campoBusqueda.style.height='0px';
+				campoBusqueda.firstChild.value='';
+				
+				botonBusqueda.click();
+				UI.elementos.formulario.ventanaList.controlLista();
+
+				setTimeout(function(){
+					botonBusqueda.onclick=UI.elementos.formulario.ventanaList.abrirCampoBusqueda;
+				},20)
+			}
+			contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
+			this.estado='enUso';
+
+			this.cargarRegistros(torque.registrosEntAct);
+		};
+		this.construir();
+	}
+	/*--------------------------Fin Objeto VentanaList-----------------------------------*/
+	
+	this.ventanaList = new VentanaList(entidad);
 	this.ventanaForm = new VentanaForm();
 
 	this.estado = 'sinInicializar';
 
 	this.entidadActiva=entidad;
-
-	this.nodo;
 
 	this.interval=null;
 	
@@ -792,53 +946,10 @@ var Formulario = function(entidad){
 		},660);
 	};
 	//---------------------------Ink Event------------------------
-	
-	this.abrirCampoBusqueda = function(){
-		var botonBusqueda = UI.elementos.formulario.nodo.getElementsByTagName('button')[1];
-		var campoBusqueda=botonBusqueda.previousSibling;
-		var titulo=campoBusqueda.previousSibling;
-
-		titulo.style.padding='0px';
-		titulo.style.width='0px';
-
-		campoBusqueda.style.width='calc(100% - 70px)';
-		campoBusqueda.style.height='40px';
-
-		campoBusqueda.focus();
-		setTimeout(function(){
-			botonBusqueda.onclick=UI.elementos.formulario.buscarElementos;
-		},10)
+	this.construirVentanaForm=function(tipo){
+		this.ventanaForm.construirNodo(tipo);
 	};
-	this.buscarElementos = function(){
-		var formulario=UI.elementos.formulario;
-
-		if(formulario.ventanaForm.estado!='sinConstruir'){
-			formulario.ventanaForm.destruirNodo();
-		}
 		
-
-		var botonBusqueda=formulario.nodo.getElementsByTagName('button')[1];
-		var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
-
-		var registros=torque.registrosEntAct;
-		var nuevosRegistros= new Array();
-		var contRegEnc=0;
-		for(var x=0; x<registros.length;x++){
-			if(registros[x].nombre.toLowerCase().search(valorBusqueda)!=-1){
-				contRegEnc++
-				formulario.buscarSlot(registros[x]).nodo.style.marginTop='0px';
-				
-				if(contRegEnc==1){
-					formulario.buscarSlot(registros[x]).nodo.style.marginTop='51px';
-				}
-
-				formulario.buscarSlot(registros[x]).nodo.style.display='block';
-			}else{
-				formulario.buscarSlot(registros[x]).nodo.style.marginTop='0px';
-				formulario.buscarSlot(registros[x]).nodo.style.display='none';
-			}
-		}
-	};
 	this.validarCombo = function(valoresNoPermitidos,lista){
 		normalizarNodo(lista);
 		for(var x=0;x<lista.length;x++){
@@ -902,159 +1013,12 @@ var Formulario = function(entidad){
 			}
 		}
 	};
-	//-------------------------------------Manejo de Slots------------------------------------------------
-	this.listarSlots = function(){
-		console.log('Slots:');
-		for(var x=0;x<this.Slots.length;x++){
-			console.log('nombre: '+this.Slots[x].atributos.nombre+'\testado: '+this.Slots[x].estado);
-		}
-	};
-	this.agregarSlot = function(data){
-		var slot = new Slot(data);
-		this.Slots.push(slot);
-		this.nodo.appendChild(slot.nodo);
-		return slot.nodo;
-	};
-	this.cargarRegistros = function(registros){
-		for(var x=0; x<registros.length;x++){
-			this.agregarSlot(registros[x]);
-		}
-	};
-	this.construirVentanaForm=function(tipo){
-		this.ventanaForm.construirNodo(tipo);
-	};
-	this.controlLista = function(nodo){
-		var obj=false;
-		var oldSelecinado=this.obtenerSeleccionado();
-		for(var x=0;x<this.Slots.length;x++){
-			if(this.Slots[x].nodo==nodo){
-				this.Slots[x].estado='seleccionado';
-				this.Slots[x].nodo.style.marginLeft='20px';
-				obj=this.Slots[x];
-			}else{	
-				this.Slots[x].estado='enUso'
-				this.Slots[x].nodo.style.marginLeft='0px';	
-			}
-		}
-	};	
-	this.buscarSlot = function(registro){
-		for(x=0;x<this.Slots.length;x++){
-			if(this.Slots[x].atributos.id==registro.id){
-				return this.Slots[x];
-			}
-		}
-		console.log('el slot no existe');
-		return false;
-	};
-	this.buscarSlotPorNombre = function(registro){
-		for(x=0;x<this.Slots.length;x++){
-			if(this.Slots[x].atributos.nombre==registro.nombre){
-				return this.Slots[x];
-			}
-		}
-		console.log('el slot no existe');
-		return false;
-	};
-	this.cambiarTextoSlots = function(cambio){
-		if(cambio=='mediaQuery'){
-			for(var x=0;x<this.Slots.length;x++){
-				var nodo=this.Slots[x].nodo;
-				var slot=this.Slots[x];
-				var titulo;
-				if(slot.atributos.nombre.length>28){
-					titulo=slot.atributos.nombre.substr(0,28)+'...';
-				}else{
-					titulo=slot.atributos.nombre;
-				}
-				var html="<article  title>"+titulo+"</article>\
-				<button type='button' btnEliminar></button>";
-				nodo.innerHTML=html;
-				slot.funcionamiento();
-			}
-		}else{
-			for(var x=0;x<this.Slots.length;x++){
-				var nodo=this.Slots[x].nodo;
-				var slot=this.Slots[x];
-				var html="<article  title>"+slot.atributos.nombre+"</article>\
-				<button type='button' btnEliminar></button>";
-				nodo.innerHTML=html;
-				slot.funcionamiento();
-			}
-		}
-	};
-
-	this.actualizarLista = function(cambios){
-		if(cambios instanceof Array){
-
-		}else{
-			this.actualizarSlot(cambios);
-		}
-	};
-	this.actualizarSlot = function(registro){
-		var slot=this.buscarSlot(registro);
-		if(slot){
-			slot.atributos=registro;
-			slot.reconstruirNodo();
-		}
-	};this.obtenerSeleccionado = function(){
-		var seleccionado=false;
-		for(var x=0;x<this.Slots.length;x++){
-			if(this.Slots[x].estado=='seleccionado'){
-				seleccionado=this.Slots[x];
-			}
-		}
-		return seleccionado;
-	};
+	
+		
 	//-------------------------------------Manejo de UI---------------------------------
 	this.agregarVentanaForm = function(){
 		this.ventanaForm.estado='agregado';
-		this.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.nodo.nextSibling);		
-	};
-	this.construir = function(){
-		var contenedor = obtenerContenedor();
-		var elemento = document.createElement('div');
-		elemento.setAttribute('capaList','');
-		var html='';
-		html+="<section busqueda>";
-		html+=	"<div tituloForm>"+this.entidadActiva.toUpperCase()+"</div>";
-		html+=	"<div listBuscar>";
-		html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
-		html+=		"<button type='button' cerrarBusq></button>";
-		html+=	"</div>";
-		html+=	"<button type='button' btnBusq></button>";
-		html+="</section>";
-		elemento.innerHTML = html;
-		this.nodo=elemento;
-
-		var botonBusqueda=elemento.getElementsByTagName('button')[1];
-		var botonCerrarBusq=elemento.getElementsByTagName('button')[0];
-
-		botonBusqueda.onclick=this.abrirCampoBusqueda;
-
-		botonCerrarBusq.onclick=function(){
-			console.log('presiono Cerrar buscar');
-
-			var botonBusqueda=UI.elementos.formulario.nodo.getElementsByTagName('button')[1];
-			var campoBusqueda=this.parentNode;
-			var titulo=campoBusqueda.previousSibling;
-
-			titulo.style.padding='3px 3px 3px 30px';
-			titulo.style.width='calc(100% - 103px)';
-
-			campoBusqueda.style.width='0px';
-			campoBusqueda.style.height='0px';
-			campoBusqueda.firstChild.value='';
-			
-			botonBusqueda.click();
-
-			setTimeout(function(){
-				botonBusqueda.onclick=UI.elementos.formulario.abrirCampoBusqueda;
-			},20)
-		}
-		contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
-		this.estado='enUso';
-
-		this.cargarRegistros(torque.registrosEntAct);
+		this.ventanaList.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.ventanaList.nodo.nextSibling);		
 	};
 	this.construirUI = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
@@ -1072,7 +1036,82 @@ var Formulario = function(entidad){
 			this.agregarVentanaForm();
 		}
 	};
-	this.construir();
+	/*----------------------------------Funciones del Objeto Select-------------------------------*/
+		this.construirCapaSelect= function(capaSelect){
+			capaSelect.onclick=function(){};
+			var opciones= new Array();
+			var opcion;
+			var nodo;
+			var select = capaSelect.nextSibling;
+			while(select.nodeName=='#text'){
+				select=select.nextSibling;
+			}
+			var margen;
+			for(var x = 0; x < select.options.length;x++){
+				
+				opcion = {
+					nombre:select.options[x].textContent,
+					value:select.options[x].value,
+					nodo:null
+				}
+
+				nodo=document.createElement('div');
+				nodo.setAttribute('option','');
+				nodo.textContent=opcion.nombre;
+				if(select.options[x]==select.options[select.selectedIndex]){
+					nodo.setAttribute('selecionado','');
+					margen='-'+parseInt(opciones.length*41)+'px';
+					capaSelect.style.marginTop=margen;
+					console.log(margen);
+				}
+				
+				nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
+				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
+				
+				nodo.setAttribute('valor',opcion.value);
+				nodo.onclick= function(e){
+					//agrego el efecto Ripple
+					UI.elementos.formulario.agregarRippleEvent(this,e);
+					var select = this.parentNode.nextSibling;
+					while(select.nodeName=='#text'){
+						select=select.nextSibling;
+					}
+					select.value=this.getAttribute('valor');
+					UI.elementos.formulario.destruirCapaSelect(this.parentNode);
+				}
+				opcion.nodo=nodo;
+				opciones.push(opcion);
+				capaSelect.appendChild(nodo);
+			}
+
+			//creo el contenedor de las opciones
+			capaSelect.style.opacity='1';
+			capaSelect.style.height=parseInt(opciones.length*41)+'px';
+			capaSelect.style.width='60px'
+
+		};
+		this.destruirCapaSelect = function(capaSelect){
+			var lista = capaSelect.childNodes;
+			var opcion;
+			capaSelect.style.opacity='0';
+			capaSelect.style.height='100%';
+			capaSelect.style.width='100%';
+			capaSelect.style.marginTop='0px';
+			for(var x = 0;x < lista.length;x++){
+				lista[x].style.transition='all 0.3s linear';
+				lista[x].style.marginTop='0px';
+			}
+			setTimeout(function(){
+				while(capaSelect.childNodes.length>0){
+					capaSelect.removeChild(capaSelect.lastChild);
+				}
+				capaSelect.onclick=function(){
+					UI.elementos.formulario.construirCapaSelect(this);
+				}
+			},300)
+			
+		}
+	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
 }
 
 /*----------------------------------------------------------------------------------------------------*/
@@ -1217,6 +1256,7 @@ var modalWindow = function(){
 		var contenido=this.agregarCapa('contenido');
 		contenido.dibujarUI(data);
 		this.manejoDeCapas();
+		return contenido;
 	};
 	this.agregarCapa = function(tipo){
 		var capaNueva=false;;
@@ -1259,8 +1299,10 @@ var modalWindow = function(){
 					capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
 					capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
 
-					UI.elementos.modalWindow.capas.splice(capaContenido);
-					UI.elementos.modalWindow.capas.splice(capaExterior);
+					var indice = UI.elementos.modalWindow.capas.indexOf(capaContenido);
+					UI.elementos.modalWindow.capas.splice(indice,1);
+					indice = UI.elementos.modalWindow.capas.indexOf(capaExterior);
+					UI.elementos.modalWindow.capas.splice(indice,1);
 
 					obtenerContenedor().style.position='inherit';
 				},810);
@@ -1278,8 +1320,10 @@ var modalWindow = function(){
 					capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
 					capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
 
-					UI.elementos.modalWindow.capas.splice(capaContenido);
-					UI.elementos.modalWindow.capas.splice(capaExterior);
+					var indice = UI.elementos.modalWindow.capas.indexOf(capaContenido);
+					UI.elementos.modalWindow.capas.splice(indice,1);
+					indice = UI.elementos.modalWindow.capas.indexOf(capaExterior);
+					UI.elementos.modalWindow.capas.splice(indice,1);
 					
 				},810);
 			}
@@ -1332,10 +1376,10 @@ var modalWindow = function(){
 		}
 	};
 	this.eliminarUltimaCapa = function(){
-		var lista = document.getElementsByTagName('div');
-		for(var x=lista.length-1;x>0;x--){
-			if(lista[x].getAttribute('capa')=='exterior'){
-				lista[x].click();
+		for(var x=this.capas.length-1;x>=0;x--){
+			if(this.capas[x].tipo=='exterior'){
+				this.capas[x].nodo.click();
+				break;
 			}
 		} 
 	};
@@ -1371,9 +1415,98 @@ var Arquitecto = function(){
 		if(!this.elementos.modalWindow){
 			this.elementos.modalWindow=new modalWindow();		
 		}
-		this.elementos.modalWindow.arranque(data);
+		var capaContenido=this.elementos.modalWindow.arranque(data);
+		return capaContenido;
 	};
 	
+}
+/*---------------Objetos de interfaz---------------------------------------------*/
+var ComboBox = function(nombre,opciones,seleccionado,eslabon){
+
+	this.estado = 'porConstriur';
+	this.eslabon = eslabon||'simple';
+	this.nombre = nombre;
+	this.seleccionado = seleccionado||'-';
+	this.opciones = opciones;
+	this.nodo;
+
+	this.construir = function(){
+		var nodo=document.createElement('div');
+		nodo.setAttribute(this.tamano,'');
+		nodo.setAttribute('formElements','');
+		
+		//se crea el article
+		var article=document.createElement('article');
+		article.setAttribute('capaSelect','');
+		article.onclick=function(){
+			UI.elementos.formulario.construirCapaSelect(this);
+		}
+		nodo.appendChild(article);
+
+		//se crea el select
+		var select=document.createElement('select');
+		select.name=this.nombre;
+		nodo.appendChild(select);
+		this.nodo=nodo;
+
+		//creo la primera opcion
+		var opcion = {
+			id : '-',
+			nombre : 'Elija un '+this.nombre
+		}
+		this.agregarOpcion(opcion)
+
+		//genero y asigno el resto de las opciones
+		this.agregarOpciones(opciones);
+		this.estado='enUso';
+	};
+	this.agregarOpciones = function(opciones){
+		for(var x=0;x<opciones.length;x++){
+			this.agregarOpcion(opciones[x]);
+		}
+	};
+	this.agregarOpcion = function(opcion){
+		var select=this.nodo.getElementsByTagName('select')[0];
+		var nuevaOp=document.createElement('option');
+		nuevaOp.textContent=opcion.nombre;
+		nuevaOp.value=opcion.id;
+		select.appendChild(nuevaOp);
+	};
+	this.construir();
+}
+var CampoDeTexto = function(nombre,tipo,eslabon,usaTooltip){
+
+	this.estado = 'porConstriur';
+	this.nombre = nombre;
+	this.eslabon = eslabon || 'simple';
+	this.tipo = tipo;
+	this.usaTooltip = usaTooltip ||  false;
+	this.nodo;
+
+	this.construir = function(){
+		var CampoDeTexto = document.createElement('div');
+		CampoDeTexto.classList.toggle('group');
+		CampoDeTexto.setAttribute(this.eslabon,'');
+		var html='';
+		if(this.tipo=='simple'){
+			html+='<input type="text" name="'+this.nombre+'" required>';
+		}else if(this.tipo=='area'){
+			html+='<textarea name="Descripcion" required></textarea>';
+		}
+		
+		html+='<span class="highlight"></span>\
+		      <span class="bar"></span>\
+		      <label>'+this.nombre+'</label>';
+
+		CampoDeTexto.innerHTML=html;
+		this.nodo=CampoDeTexto;
+		if(this.usaTooltip!=false){
+			this.nodo.onmouseover=UI.elementos.formulario.abrirtooltipInput;
+			this.nodo.onmouseout=UI.elementos.formulario.cerrartooltipInput;
+		}
+		this.estado='enUso';
+	}
+	this.construir();
 }
 /*---------------Utilidades---------------------------------------------*/
 function obtenerContenedor(){

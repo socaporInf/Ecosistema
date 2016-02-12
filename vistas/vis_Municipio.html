@@ -26,7 +26,7 @@
 	UI.configure();
 
 	//botones que van a ser utilizados en la UI
-	var botones = ['buscar','nuevo','abrir','redactar'];
+	var botones = ['buscar','nuevo','abrir'];
 	UI.elementos.botonera = new Botonera(botones);
 
 	//se inicializa el formulario
@@ -53,14 +53,14 @@
 		if(validacion){
 			var nuevoRegistro = {
 				nombre : data[0].valor,
-				descripcion : data[1].valor
+				descripcion : data[2].valor,
+				estado : data[1].valor
 			}
-
 			//guardo en base de datos
 			torque.guardar(nuevoRegistro,torque.entidadActiva);
 
 			//creo un nuevo slot en la UI
-			var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
+			var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(nuevoRegistro);
 
 			//cambio a modificacion
 			nuevoSlot.firstChild.click();
@@ -81,35 +81,38 @@
 		var html='';
 		if(this.tipo=='nuevo'){
 			this.registroId='';
-			UI.elementos.formulario.controlLista();
+			UI.elementos.formulario.ventanaList.controlLista();
 			this.nodo.style.height='0px';		
 			setTimeout(function(){
-				var nodo=UI.elementos.formulario.ventanaForm.nodo;
-				nodo.style.height='450px';
-				html+='\
-				<section titulo>Nuevo Municipio</section>\
-					<section sector>\
-						<form name ="formNuevo">\
-							<div class="group">\
-						      <input type="text" name="Nombre" required>\
-						      <span class="highlight"></span>\
-						      <span class="bar"></span>\
-						      <label>Nombre</label>\
-						    </div>\
-						    <div class="group" area>\
-							      <textarea name="Descripcion" required></textarea>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Descripcion</label>\
-							    </div>\
-						</form>\
-					</section>\
-				</section>';
-				nodo.innerHTML=html;
-				UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
+				var capaForm=UI.elementos.formulario.ventanaForm;
+
+				var titulo = 'Nuevo Municipio';
+				var altura = 225;
+				capaForm.crearEstructuraBasicaNuevo(titulo,altura);
+
+				//creo los campos que va a usar el formulario 
+				var campos = [
+					{
+						tipo : 'campoDeTexto',
+						parametros : ['Nombre','simple',null,true]	
+					},
+					{
+						tipo: 'comboBox',
+						parametros : [
+							'Estado',
+							torque.buscarRegistros('estado')
+						]
+					},
+					{
+						tipo : 'campoDeTexto',
+						parametros : ['Descripcion','area','area',true]
+					}
+				]
+				UI.elementos.formulario.ventanaForm.agregarCampos(campos);
 			},tiempo);
 			UI.elementos.botonera.agregarBoton('guardar');
 		}else if(this.tipo='modificar'){
+			//busco los datos del registro
 			var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
 			UI.elementos.botonera.quitarBoton('guardar');
 			this.nodo.style.height='0px';		
@@ -135,13 +138,6 @@
 			lista[x].style.cursor='pointer';
 			if(lista[x].getAttribute('update')!==null){
 				lista[x].onclick=this.edicion;
-			}
-		}
-		lista = this.nodo.getElementsByTagName('input');
-		for(var x=0; x<lista.length;x++){
-			if(lista[x].type=='text'){
-				lista[x].parentNode.onmouseover=UI.elementos.formulario.abrirtooltipInput;
-				lista[x].parentNode.onmouseout=UI.elementos.formulario.cerrartooltipInput;
 			}
 		}
 	};

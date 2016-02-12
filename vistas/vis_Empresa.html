@@ -78,11 +78,11 @@
 		var html='';
 		if(this.tipo=='nuevo'){
 			this.registroId='';
-			UI.elementos.formulario.controlLista();
+			UI.elementos.formulario.ventanaList.controlLista();
 			this.nodo.style.height='0px';		
 			setTimeout(function(){
 				var nodo=UI.elementos.formulario.ventanaForm.nodo;
-				nodo.style.height='450px';
+				nodo.style.height='225px';
 				html+='\
 				<section titulo>Nueva Empresa</section>\
 					<section sector>\
@@ -108,6 +108,7 @@
 			UI.elementos.botonera.agregarBoton('guardar');
 		}else if(this.tipo='modificar'){
 			var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
+			console.log(data);
 			UI.elementos.botonera.quitarBoton('guardar');
 			this.nodo.style.height='0px';		
 			setTimeout(function(){
@@ -118,6 +119,7 @@
 				<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
 					<section sector>\
 						<!-- Aqui va el contenido -->\
+						<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
 					</section>\
 				</section>';
 				nodo.innerHTML=html;

@@ -539,7 +539,7 @@ div[botonera] button[btnAbrir]{
 /*---------------------------Contenedores-----------------------*/
 div[formElements]{
   margin-bottom:45px;
-  margin-left: 5px !important; 
+  margin-left: 0px !important; 
   float: left;
   overflow:visible;
   min-width: 140px;
