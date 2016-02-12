@@ -56,6 +56,7 @@ var Botonera = function(estructura){
 				break;
 				case 'eliminar':
 					nodo.setAttribute('btnEliminar','');
+					nodo.onclick=UI.elementos.formulario.eliminar;
 				break;
 				case 'listar':
 					nodo.setAttribute('btnListar','');
@@ -438,7 +439,8 @@ var Formulario = function(entidad){
 		this.destruirNodo = function(){
 			if(this.registroId!=''){
 				this.registroId='';
-				UI.elementos.formulario.ventanaList.controlLista();				
+				UI.elementos.formulario.ventanaList.controlLista();
+				UI.elementos.botonera.quitarBoton('eliminar');
 			}else{
 				UI.elementos.botonera.quitarBoton('guardar');
 			}
@@ -611,34 +613,7 @@ var Formulario = function(entidad){
 						}
 						UI.crearVentanaModal(ventana);
 					}else{
-						var verificacion = {
-							tipo : 'advertencia',
-							cabecera : 'Advertencia',
-							cuerpo : '¿Desea eliminar '+slot.atributos.nombre+' ?',
-							pie : '<section modalButtons>\
-										<button type="button" cancelar id="modalButtonCancelar"></button>\
-										<button type="button" aceptar registro="'+slot.atributos.id+'"" id="modalButtonAceptar"></button>\
-									</section>'
-						}
-						
-						UI.crearVentanaModal(verificacion);
-						
-						var btnAceptar = document.getElementById('modalButtonAceptar');
-						var btnCancelar = document.getElementById('modalButtonCancelar');
-
-						btnCancelar.onclick=function(){
-							UI.elementos.modalWindow.eliminarUltimaCapa();
-						}
-						btnAceptar.onclick=function(){
-
-							var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.getAttribute('registro')});
-							var nodo = slot.nodo;
-
-							UI.elementos.modalWindow.eliminarUltimaCapa();
-							torque.eliminar(registro,torque.entidadActiva);
-
-							slot.destruirNodo();
-						}
+						UI.elementos.formulario.eliminar(slot);
 					}
 				}
 			};
@@ -710,7 +685,6 @@ var Formulario = function(entidad){
 				formulario.ventanaForm.destruirNodo();
 			}
 			
-
 			var botonBusqueda=formulario.ventanaList.nodo.getElementsByTagName('button')[1];
 			var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
 
@@ -1013,9 +987,42 @@ var Formulario = function(entidad){
 			}
 		}
 	};
-	
+	//------------------------------------Funciones Operacionales de Formulario-----------------------------------
+	this.eliminar = function(slot){
+		if(slot instanceof MouseEvent){				
+			var registro =torque.buscarRegistro(UI.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
+			slot = UI.elementos.formulario.ventanaList.buscarSlot(registro);
+		}
+		var verificacion = {
+			tipo : 'advertencia',
+			cabecera : 'Advertencia',
+			cuerpo : '¿Desea eliminar '+slot.atributos.nombre+' ?',
+			pie : '<section modalButtons>\
+						<button type="button" cancelar id="modalButtonCancelar"></button>\
+						<button type="button" aceptar registro="'+slot.atributos.id+'" id="modalButtonAceptar"></button>\
+					</section>'
+		}
 		
-	//-------------------------------------Manejo de UI---------------------------------
+		UI.crearVentanaModal(verificacion);
+		
+		var btnAceptar = document.getElementById('modalButtonAceptar');
+		var btnCancelar = document.getElementById('modalButtonCancelar');
+
+		btnCancelar.onclick=function(){
+			UI.elementos.modalWindow.eliminarUltimaCapa();
+		}
+		btnAceptar.onclick=function(){
+
+			var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.getAttribute('registro')});
+			var nodo = slot.nodo;
+
+			UI.elementos.modalWindow.eliminarUltimaCapa();
+			torque.eliminar(registro,torque.entidadActiva);
+
+			slot.destruirNodo();
+		}		
+	};
+	//-------------------------------------Manejo de UI-----------------------------------------------------------
 	this.agregarVentanaForm = function(){
 		this.ventanaForm.estado='agregado';
 		this.ventanaList.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.ventanaList.nodo.nextSibling);		
@@ -1397,7 +1404,6 @@ var Arquitecto = function(){
 	this.configure = function(){
 
 		this.elementos = {
-
 			 menu : new Menu(),
 			 cabecera : new Cabecera(),
 			 formulario : 'noPosee',

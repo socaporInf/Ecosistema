@@ -820,9 +820,6 @@ div[tooltip]:before{
     width: 85%;
     margin-top: 10px;
   }
-  div[botonera] button[btnEliminar], div[botonera] button[btnModificar] {
-    display: none;
-  }
   div[capaForm] section[sector]{
     max-width: 830px;
   }
