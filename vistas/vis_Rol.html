@@ -58,10 +58,10 @@
 			nuevoSlot.firstChild.click();
 		}else{
 			//creo el mensaje
-			var mensaje='Este es el mensaje';
+			var mensaje='Por favor rellene todos los campos antes de continuar';
 			var data={
 				tipo:'error',
-				cabecera:'este es EL error',
+				cabecera:'Error',
 				cuerpo:mensaje
 			}
 			UI.crearVentanaModal(data);
@@ -109,8 +109,10 @@
 					UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
 				},tiempo);
 				UI.elementos.botonera.agregarBoton('guardar');
+				UI.elementos.botonera.quitarBoton('eliminar');
 			}else if(this.tipo='modificar'){
 				var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
+				UI.elementos.botonera.agregarBoton('eliminar');
 				UI.elementos.botonera.quitarBoton('guardar');
 				this.nodo.style.height='0px';		
 				setTimeout(function(){
@@ -187,7 +189,7 @@
 						btnCancelar.onclick= function(){
 							UI.elementos.modalWindow.eliminarUltimaCapa();
 						}
-						btnEliminar.onclick= function(){
+						btnEliminar.onclick=function(){
 							var dataTemp = {
 								tipo:'advertencia',
 								cabecera:'Advertencia',
