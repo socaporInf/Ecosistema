@@ -196,6 +196,9 @@ var Motor = function(entidadActiva){
 		}else if(entidad=='estado'){
 			nuevoRegistro.id=estados.length;
 			estados.push(nuevoRegistro);
+		}else if(entidad=='municipio'){
+			nuevoRegistro.id=municipios.length;
+			municipios.push(nuevoRegistro);
 		}
 		if(this.entidadActiva==entidad){
 			this.registrosEntAct = this.buscarRegistros(entidad);

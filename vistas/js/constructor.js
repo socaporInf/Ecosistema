@@ -12,7 +12,7 @@ var handleMediaChange = function (mediaQueryList) {
 			    }
 			    else {
 			    	//cambio UI Ventana Form
-			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'600px':null;
+			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(100% - 450px)':null;
 			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
 			        formulario.ventanaList.cambiarTextoSlots('mediaQuery');
 			    }
@@ -79,6 +79,7 @@ var Botonera = function(estructura){
 	this.nodo;
 
 	this.botones = new Array(); 
+
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
 		var nodo = document.createElement('div');
@@ -524,6 +525,32 @@ var Formulario = function(entidad){
 				campoEdicion.value='';
 			},510)
 		};
+		this.agregarCampos = function(campos){
+			for(var x=0;x<campos.length;x++){
+				this.agregarCampo(campos[x]);
+			}
+		};
+		this.agregarCampo = function(campo){
+			var campoNuevo;
+			var contenedor = this.nodo.getElementsByTagName('form')[0];
+			if(campo.tipo.toLowerCase()=='campodetexto'){
+				campoNuevo = new CampoDeTexto(campo.parametros[0],campo.parametros[1],campo.parametros[2],campo.parametros[3]);
+			}else if(campo.tipo.toLowerCase()=='combobox'){
+				campoNuevo = new ComboBox(campo.parametros[0],campo.parametros[1],campo.parametros[2],campo.parametros[3]);
+			}
+			contenedor.appendChild(campoNuevo.nodo);
+		};
+		this.crearEstructuraBasicaNuevo = function(titulo,altura){
+				this.nodo.style.height=altura+'px';
+				var html='\
+				<section titulo>Nuevo '+titulo+'</section>\
+					<section sector>\
+						<form name ="formNuevo">\
+						</form>\
+					</section>\
+				</section>';
+				this.nodo.innerHTML=html;
+		}
 	}
 
 	/*------------------------------Objeto VentanaList-------------------------------------------------------------*/
@@ -1084,7 +1111,7 @@ var Formulario = function(entidad){
 			},300)
 			
 		}
-		/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
+	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
 }
 
 /*----------------------------------------------------------------------------------------------------*/
@@ -1229,6 +1256,7 @@ var modalWindow = function(){
 		var contenido=this.agregarCapa('contenido');
 		contenido.dibujarUI(data);
 		this.manejoDeCapas();
+		return contenido;
 	};
 	this.agregarCapa = function(tipo){
 		var capaNueva=false;;
@@ -1271,8 +1299,10 @@ var modalWindow = function(){
 					capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
 					capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
 
-					UI.elementos.modalWindow.capas.splice(capaContenido);
-					UI.elementos.modalWindow.capas.splice(capaExterior);
+					var indice = UI.elementos.modalWindow.capas.indexOf(capaContenido);
+					UI.elementos.modalWindow.capas.splice(indice,1);
+					indice = UI.elementos.modalWindow.capas.indexOf(capaExterior);
+					UI.elementos.modalWindow.capas.splice(indice,1);
 
 					obtenerContenedor().style.position='inherit';
 				},810);
@@ -1290,8 +1320,10 @@ var modalWindow = function(){
 					capaContenido.nodo.parentNode.removeChild(capaContenido.nodo);
 					capaExterior.nodo.parentNode.removeChild(capaExterior.nodo);
 
-					UI.elementos.modalWindow.capas.splice(capaContenido);
-					UI.elementos.modalWindow.capas.splice(capaExterior);
+					var indice = UI.elementos.modalWindow.capas.indexOf(capaContenido);
+					UI.elementos.modalWindow.capas.splice(indice,1);
+					indice = UI.elementos.modalWindow.capas.indexOf(capaExterior);
+					UI.elementos.modalWindow.capas.splice(indice,1);
 					
 				},810);
 			}
@@ -1344,10 +1376,10 @@ var modalWindow = function(){
 		}
 	};
 	this.eliminarUltimaCapa = function(){
-		var lista = document.getElementsByTagName('div');
-		for(var x=lista.length-1;x>0;x--){
-			if(lista[x].getAttribute('capa')=='exterior'){
-				lista[x].click();
+		for(var x=this.capas.length-1;x>=0;x--){
+			if(this.capas[x].tipo=='exterior'){
+				this.capas[x].nodo.click();
+				break;
 			}
 		} 
 	};
@@ -1383,7 +1415,8 @@ var Arquitecto = function(){
 		if(!this.elementos.modalWindow){
 			this.elementos.modalWindow=new modalWindow();		
 		}
-		this.elementos.modalWindow.arranque(data);
+		var capaContenido=this.elementos.modalWindow.arranque(data);
+		return capaContenido;
 	};
 	
 }
@@ -1405,7 +1438,9 @@ var ComboBox = function(nombre,opciones,seleccionado,eslabon){
 		//se crea el article
 		var article=document.createElement('article');
 		article.setAttribute('capaSelect','');
-		article.onclick=this.construirCapaSelect;
+		article.onclick=function(){
+			UI.elementos.formulario.construirCapaSelect(this);
+		}
 		nodo.appendChild(article);
 
 		//se crea el select
@@ -1417,7 +1452,7 @@ var ComboBox = function(nombre,opciones,seleccionado,eslabon){
 		//creo la primera opcion
 		var opcion = {
 			id : '-',
-			nombre : 'Seleccione un Valor'
+			nombre : 'Elija un '+this.nombre
 		}
 		this.agregarOpcion(opcion)
 
@@ -1431,7 +1466,7 @@ var ComboBox = function(nombre,opciones,seleccionado,eslabon){
 		}
 	};
 	this.agregarOpcion = function(opcion){
-		var select=this.nodo.getElementsByTagName('select-one')[0];
+		var select=this.nodo.getElementsByTagName('select')[0];
 		var nuevaOp=document.createElement('option');
 		nuevaOp.textContent=opcion.nombre;
 		nuevaOp.value=opcion.id;
@@ -1439,32 +1474,37 @@ var ComboBox = function(nombre,opciones,seleccionado,eslabon){
 	};
 	this.construir();
 }
-var CampoDeTexto = function(nombre,tipo,eslabon){
+var CampoDeTexto = function(nombre,tipo,eslabon,usaTooltip){
 
 	this.estado = 'porConstriur';
 	this.nombre = nombre;
 	this.eslabon = eslabon || 'simple';
 	this.tipo = tipo;
+	this.usaTooltip = usaTooltip ||  false;
 	this.nodo;
 
 	this.construir = function(){
 		var CampoDeTexto = document.createElement('div');
-		CampoDeTexto.classList.toggle('gruop');
+		CampoDeTexto.classList.toggle('group');
+		CampoDeTexto.setAttribute(this.eslabon,'');
 		var html='';
-		
 		if(this.tipo=='simple'){
-			html+='<input type="text" name="Nombre" required>';
+			html+='<input type="text" name="'+this.nombre+'" required>';
 		}else if(this.tipo=='area'){
 			html+='<textarea name="Descripcion" required></textarea>';
 		}
 		
 		html+='<span class="highlight"></span>\
 		      <span class="bar"></span>\
-		      <label>Nombre</label>';
+		      <label>'+this.nombre+'</label>';
 
 		CampoDeTexto.innerHTML=html;
-		//aqui quede
 		this.nodo=CampoDeTexto;
+		if(this.usaTooltip!=false){
+			this.nodo.onmouseover=UI.elementos.formulario.abrirtooltipInput;
+			this.nodo.onmouseout=UI.elementos.formulario.cerrartooltipInput;
+		}
+		this.estado='enUso';
 	}
 	this.construir();
 }

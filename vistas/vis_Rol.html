@@ -177,8 +177,7 @@
 						}
 						
 						//creo la ventana modal
-						UI.crearVentanaModal(dataTemp);
-						
+						UI.crearVentanaModal(dataTemp);						
 
 						//agrego funcionamiento a los botones de la ventaModal
 						var btnCancelar = document.getElementById("modalButtonCancelar");
@@ -187,6 +186,24 @@
 
 						btnCancelar.onclick= function(){
 							UI.elementos.modalWindow.eliminarUltimaCapa();
+						}
+						btnEliminar.onclick= function(){
+							var dataTemp = {
+								tipo:'advertencia',
+								cabecera:'Advertencia',
+								cuerpo:'Si Elimina esta Asociacion se perderan todos los datos del Mismo<br><br>¿Realmente desea eliminarla?',
+								pie:'<section modalButtons>\
+										<button type="button" cancelar 	></button>\
+										<button type="button" eliminar  ></button>\
+									</section>'
+							}
+						
+							//creo la ventana modal
+							var capaContenido=UI.crearVentanaModal(dataTemp);
+							var btnCancelar=capaContenido.nodo.getElementsByTagName('button')[0];
+							btnCancelar.onclick=function(){
+								UI.elementos.modalWindow.eliminarUltimaCapa();
+							}
 						}
 						btnModificar.onclick= function(){
 							location.href=this.getAttribute('enlace');
