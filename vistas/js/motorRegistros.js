@@ -104,21 +104,22 @@
 		}
 	]
 	var modulos = [
-		{id:'1',nombre:'Global'},
-		{id:'2',nombre:'Seguridad'},
-		{id:'3',nombre:'Agronomina'}
+		{id:'1',nombre:'Global',descripcion:'sin restricciones'},
+		{id:'2',nombre:'Seguridad',descripcion:'Modulo de Seguridad'},
+		{id:'3',nombre:'Agronomina',descripcion:'todo lo referente a produccion'}
 	]
 	var submodulos = [
 		{id:1,idPadre:1,nombre:'Empresa'	,enlace:'vis_Empresa.html'},
 		{id:2,idPadre:2,nombre:'Rol'		,enlace:'vis_Rol.html'},
-		{id:3,idPadre:2,nombre:'Modulos'	,enlace:'vis_Pribilegios.html'},
+		{id:3,idPadre:2,nombre:'Modulo'		,enlace:'vis_Modulo.html'},
 		{id:4,idPadre:3,nombre:'Finca'		,enlace:'vis_Finca.html'},
 		{id:5,idPadre:3,nombre:'Tablon'		,enlace:'vis_Tablon.html'},
 		{id:6,idPadre:3,nombre:'Canicultor'	,enlace:'vis_Canicultor.html'},
 		{id:7,idPadre:3,nombre:'Variedad'	,enlace:'vis_Variedad.html'},
 		{id:8,idPadre:3,nombre:'Clase'		,enlace:'vis_Clase.html'},
 		{id:9,idPadre:1,nombre:'Estado'		,enlace:'vis_Estado.html'},
-		{id:10,idPadre:1,nombre:'Municipio'	,enlace:'vis_Municipio.html'}
+		{id:10,idPadre:1,nombre:'Municipio'	,enlace:'vis_Municipio.html'},
+		{id:11,idPadre:2,nombre:'Submodulo'	,enlace:'vis_Submodulo.html'},
 	]
 	var estados = [
 					{id:0,nombre:'Portuguesa',descripcion:'localidad'}
@@ -137,7 +138,9 @@ var Motor = function(entidadActiva){
 
 	//funcion de arranque del objeto
 	this.ignition = function(){
-		this.registrosEntAct = this.buscarRegistros(this.entidadActiva);
+		if(this.entidadActiva!='acceso'){
+			this.registrosEntAct = this.buscarRegistros(this.entidadActiva);
+		}
 	};
 
 	this.buscarRegistro = function(id,entidad){
@@ -199,6 +202,9 @@ var Motor = function(entidadActiva){
 		}else if(entidad=='municipio'){
 			nuevoRegistro.id=municipios.length;
 			municipios.push(nuevoRegistro);
+		}else if(entidad=='modulo'){
+			nuevoRegistro.id=modulos.length+1;
+			modulos.push(nuevoRegistro);
 		}
 		if(this.entidadActiva==entidad){
 			this.registrosEntAct = this.buscarRegistros(entidad);
