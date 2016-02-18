@@ -1,10 +1,10 @@
 div[capaLog]{
 	position: absolute;
-	top:50%;
-	left:50%;
-	margin-top: -225px;
-	margin-left: -200px;
+	top:calc(50% - 225px);
+	left:calc(50% - 200px);
+	margin-top: 80px;
 	z-index: 1;
+	overflow: visible;
 }
 div[loginForm]{
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
@@ -14,6 +14,7 @@ div[loginForm]{
 	height: auto;
 	border-radius: 5px;
 	overflow: hidden;
+	margin-bottom: 200px;
 }
 div[loginForm] div{
 	float:left;
@@ -21,9 +22,10 @@ div[loginForm] div{
 }
 div[loginForm] div[titulo]{
 	background: #4CAF50;
-	text-align: center;
-	font-size: 25px;
-	height: 150px;
+    text-align: center;
+    font-size: 35px;
+    height: 75px;
+    color: white;
 }
 div[capaLog] button[type='button']{
 	margin-left: 370px;
@@ -37,7 +39,7 @@ div[capaLog] button[type='button']{
     background-repeat: no-repeat;
     background-position: 17px;
     border: none;
-    top: 355px;
+    top: 285px;
     z-index: 2;
 }
 div[loginForm] div[cuerpo]{

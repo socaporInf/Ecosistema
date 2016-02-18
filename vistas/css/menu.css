@@ -4,7 +4,7 @@ div[capaMenu]{
     width: 250px;
     top: 0;
     left: 0;
-    margin-top: 50px;
+    margin-top: 48px;
     transition: all 0.5s ease-in-out;
     position: fixed;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
@@ -27,7 +27,7 @@ div[capaMenu] section[titulo]{
 }
 div[capaMenu] section[pie]{
     
-    bottom:51px; 
+    bottom:48px; 
 }
 div[SubCapaMenu]{
     float:left;
@@ -72,4 +72,29 @@ div[SubCapaMenu] section[enlace^='>']{
 div[SubCapaMenu] section[enlace^='<']{
     background-image:  url('../imagenes/backward_green.png');
     background-position: 100% 50%;
+}
+div[capamenu] section[pie] article{
+    width: 48px;
+    height: 48px;
+    float: right;
+    border-left: 1px solid #7b7b7b;
+    margin: 0px 1px;
+    background-repeat: no-repeat;
+}
+div[capamenu] section[pie] article[off]{
+    background-image:  url('../imagenes/off.png');
+    background-position: 0 50%;
+}
+div[capamenu] section[pie] article[contac]{
+    background-image:  url('../imagenes/contactanos.png');
+    background-position: 0 50%;
+}
+div[capamenu] section[pie] article[seguridad]{
+    background-image:  url('../imagenes/seguridad.png');
+    background-position: 0 50%;
+}
+div[capamenu] section[pie] article[books]{
+    background-image:  url('../imagenes/books.png');
+    background-position: 2px 50%;
+    width: 54px
 }
