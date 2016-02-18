@@ -273,7 +273,7 @@ var Menu = function(){
 				var seleccionado= false;
 
 				//creo el elemento de retorno
-				this.agregarElemento('Volver...','<'+this.padre.id);
+				this.agregarElemento('Atras...','<'+this.padre.id);
 
 				//creo los demas elementos
 				for(var x=0;x<hijos.length;x++){
@@ -318,7 +318,7 @@ var Menu = function(){
 	//nodo de DOM
 	this.nodo;
 
-	this.construir = function(){
+	this.construir = function(){	
 		var contenedor = obtenerContenedor();
 		var nodo = document.createElement('div');
 		nodo.setAttribute('capaMenu','');
@@ -327,10 +327,6 @@ var Menu = function(){
 		contenedor.insertBefore(nodo,contenedor.firstChild);
 		this.nodo = nodo;
 		this.estado='enUso';
-		//agrego capas
-		var capaNueva;
-		capaNueva = new SubCapa(0,'modulo',this,this,'raiz');
-		
 		//creo la titulo
 		var titulo=document.createElement('section');
 		titulo.textContent='Menu';
@@ -339,13 +335,23 @@ var Menu = function(){
 
 		//creo el pie
 		var pie = document.createElement('section');
-		pie.textContent='pie';
+		var html ='';
 		pie.setAttribute('pie','');
 		this.nodo.appendChild(pie);
 
-		//Creo las capas
-		this.hijos.push(capaNueva);
-		this.activarCapa(this.hijos[0]);
+		if(torque.entidadActiva!='acceso'){
+			//agrego capas
+			var capaNueva;
+			capaNueva = new SubCapa(0,'modulo',this,this,'raiz');
+			html+='<article off></article>'	
+			//Creo las capas
+			this.hijos.push(capaNueva);
+			this.activarCapa(this.hijos[0]);
+		}
+		html+='<article contac></article>';
+		html+='<article seguridad></article>';
+		html+='<article books></article>';
+		pie.innerHTML=html;
 	};
 	this.getEstado = function(){
 		return this.estado;
