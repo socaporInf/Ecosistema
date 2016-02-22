@@ -18,15 +18,14 @@ div[capaMenu] section[titulo],div[capaMenu] section[pie]{
     position: absolute;
     float: left;
     background-color: white;
-    background-color: #E0E0E0;
+    background-color: #7b7b7b;
 }
 div[capaMenu] section[titulo]{
-    color: #7b7b7b;
+    color: white;
     padding-left:5px; 
     font-size: 22px;
 }
 div[capaMenu] section[pie]{
-    
     bottom:48px; 
 }
 div[SubCapaMenu]{
@@ -77,24 +76,40 @@ div[capamenu] section[pie] article{
     width: 48px;
     height: 48px;
     float: right;
-    border-left: 1px solid #7b7b7b;
+    border-left: 1px solid white;
     margin: 0px 1px;
     background-repeat: no-repeat;
+    transition: all 0.3s linear;
+}
+div[capamenu] section[pie] article:hover{
+    background-color: #E0E0E0;
 }
 div[capamenu] section[pie] article[off]{
-    background-image:  url('../imagenes/off.png');
+    background-image:  url('../imagenes/off-white.png');
     background-position: 0 50%;
 }
 div[capamenu] section[pie] article[contac]{
-    background-image:  url('../imagenes/contactanos.png');
+    background-image:  url('../imagenes/contactanos-white.png');
     background-position: 0 50%;
 }
 div[capamenu] section[pie] article[seguridad]{
-    background-image:  url('../imagenes/seguridad.png');
+    background-image:  url('../imagenes/seguridad-white.png');
     background-position: 0 50%;
 }
 div[capamenu] section[pie] article[books]{
-    background-image:  url('../imagenes/books.png');
+    background-image:  url('../imagenes/books-white.png');
     background-position: 2px 50%;
     width: 54px
+}
+div[capamenu] section[pie] article[off]:hover{
+    background-image:  url('../imagenes/off.png');
+}
+div[capamenu] section[pie] article[contac]:hover{
+    background-image:  url('../imagenes/contactanos.png');
+}
+div[capamenu] section[pie] article[seguridad]:hover{
+    background-image:  url('../imagenes/seguridad.png');
+}
+div[capamenu] section[pie] article[books]:hover{
+    background-image:  url('../imagenes/books.png');
 }
