@@ -84,47 +84,6 @@
 						estado:'A'
 					}
 				];
-	var empresas = [
-		{	
-			id:0,
-			nombre:'SocaServicios',
-			descripcion:'empresa con mayor movimiento'
-		},{
-			id:1,
-			nombre:'ProbioAgro',
-			descripcion:'empresa de materiales agricolas'
-		},{
-			id:2,
-			nombre:'SocaPortuguesa',
-			descripcion:'Principal'
-		},{
-			id:3,
-			nombre:'E/S Piedritas Blancas',
-			descripcion:'Estacion de servicio'
-		}
-	]
-	var modulos = [
-		{id:'1',nombre:'Global',descripcion:'sin restricciones'},
-		{id:'2',nombre:'Seguridad',descripcion:'Modulo de Seguridad'},
-		{id:'3',nombre:'Agronomina',descripcion:'todo lo referente a produccion'}
-	]
-	var submodulos = [
-		{id:1,idPadre:1,nombre:'Empresa'	,enlace:'vis_Empresa.html'},
-		{id:2,idPadre:2,nombre:'Rol'		,enlace:'vis_Rol.html'},
-		{id:3,idPadre:2,nombre:'Modulo'		,enlace:'vis_Modulo.html'},
-		{id:4,idPadre:3,nombre:'Finca'		,enlace:'vis_Finca.html'},
-		{id:5,idPadre:3,nombre:'Tablon'		,enlace:'vis_Tablon.html'},
-		{id:6,idPadre:3,nombre:'Canicultor'	,enlace:'vis_Canicultor.html'},
-		{id:7,idPadre:3,nombre:'Variedad'	,enlace:'vis_Variedad.html'},
-		{id:8,idPadre:3,nombre:'Clase'		,enlace:'vis_Clase.html'},
-		{id:9,idPadre:1,nombre:'Estado'		,enlace:'vis_Estado.html'},
-		{id:10,idPadre:1,nombre:'Municipio'	,enlace:'vis_Municipio.html'},
-		{id:11,idPadre:2,nombre:'Submodulo'	,enlace:'vis_Submodulo.html'},
-	]
-	var estados = [
-					{id:0,nombre:'Portuguesa',descripcion:'localidad'}
-					];
-	var municipios = [];
 	var contId=roles.length+1;
 
 	
@@ -174,52 +133,55 @@ var Motor = function(entidadActiva){
 		return data;
 	}
 	//busqueda en bd
-	this.buscarRegistros =function(entidad){
-		if(entidad=='empresa'){
-			return empresas;
-		}else if(entidad=='rol'){
-			return roles;
-		}else if(entidad=='modulo'){
-			return modulos;
-		}else if(entidad=='submodulo'){
-			return submodulos;
-		}else if(entidad=='estado'){
-			return estados;
-		}else if(entidad=='municipio'){
-			return municipios;
+	this.buscarRegistros =function(entidad,callback){
+		conexionAcc=crearXMLHttpRequest();
+		conexionAcc.onreadystatechange = function(){
+			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
+		            callback(conexionAcc.responseText);
+		    }
 		}
+		conexionAcc.open('POST','../controladores/cor_Motor.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("buscar")+'&Entidad='+encodeURIComponent(entidad);
+		conexionAcc.send(envio);
+	}
+	this.obtenerSesion = function(){
+		conexionAcc=crearXMLHttpRequest();
+		conexionAcc.onreadystatechange = function(){
+			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
+				console.log(conexionAcc.responseText);            
+		    }
+		}
+		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("obtenerSesion");
+		conexionAcc.send(envio);
+	}
+	this.cerrarSesion = function(){
+		conexionAcc=crearXMLHttpRequest();
+		conexionAcc.onreadystatechange = function(){
+			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
+				console.log(conexionAcc.responseText);            
+		    }
+		}
+		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("cerrarSesion");
+		conexionAcc.send(envio);
 	}
 	//--------------------------------------------funciones de bd--------------------------------
 	this.guardar = function(nuevoRegistro,entidad){
-		if(entidad=='empresa'){
-			nuevoRegistro.id=empresas.length;
-			empresas.push(nuevoRegistro);
-		}else if(entidad=='rol'){
-			roles.push(nuevoRegistro);
-		}else if(entidad=='estado'){
-			nuevoRegistro.id=estados.length;
-			estados.push(nuevoRegistro);
-		}else if(entidad=='municipio'){
-			nuevoRegistro.id=municipios.length;
-			municipios.push(nuevoRegistro);
-		}else if(entidad=='modulo'){
-			nuevoRegistro.id=modulos.length+1;
-			modulos.push(nuevoRegistro);
-		}
+		//guardar general por entidad
 		if(this.entidadActiva==entidad){
 			this.registrosEntAct = this.buscarRegistros(entidad);
 		}
 	}
 	this.eliminar = function(registro,entidad){
-		var indice;
-		if(entidad=='empresa'){
-			indice = empresas.indexOf(this.buscarRegistro(registro.id,entidad));
-			empresas.splice(indice,1);
-		}
+		//borrar registro
 	}
 	this.editarCampo= function(id,campo,valor){
 		var registro=torque.buscarRegistro(id);
-		registro[campo]=valor;
+		//editar campo
 		return registro;
 	}
 	this.guardarEnDetalle= function(id,cambios){
@@ -229,7 +191,47 @@ var Motor = function(entidadActiva){
 		}
 		return registro;
 	}
+	this.peticionMenu = function(){
+		var campNom=document.getElementById('nomUsu');
+		var campPass=document.getElementById('pass');
+		conexionAcc=crearXMLHttpRequest();
+		conexionAcc.onreadystatechange = this.respuestaMenu;
+		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("cargarPermisologia");
+		envio+="&Nombre="+encodeURIComponent(campNom.value);
+		console.log(envio);
+		conexionAcc.send(envio);
+	}
+	this.respuestaMenu = function(){
+		if(conexionAcc.readyState == 4){
+			var respuesta=JSON.parse(conexionAcc.responseText);
+			console.log(respuesta);
+
+			var ventana={};
+
+			if(respuesta.success==1){
+				ventana.cabecera='Acesso';
+				ventana.cuerpo=respuesta.mensaje
+			}else{
+				ventana.tipo='advertencia';
+				ventana.cabecera='Error de Acceso';
+				ventana.cuerpo=respuesta.mensaje;
+			}
+			UI.crearVentanaModal(ventana);
+		}
+	}
 	//funcion de arranque 
 	this.ignition();
 }
-	
+//--------------------------------AJAX---------------------------------------
+function crearXMLHttpRequest() 
+{
+  var xmlHttp=null;
+  if (window.ActiveXObject) 
+    xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+  else 
+    if (window.XMLHttpRequest) 
+      xmlHttp = new XMLHttpRequest();
+  return xmlHttp;
+}

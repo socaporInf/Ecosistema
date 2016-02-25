@@ -606,7 +606,7 @@ var Formulario = function(entidad){
 						}
 					formulario.construirUI(data);
 					
-					formulario.agregarRippleEvent(this.parentNode,e);
+					agregarRippleEvent(this.parentNode,e);
 				}
 				btnEliminar.onclick=function(){
 					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id});
@@ -877,55 +877,6 @@ var Formulario = function(entidad){
 	this.ventanaForm.prototype.constructor = this.ventanaForm;
 	//----------------------------------------------------------------------------------------
 
-	//---------------------------Ink Event------------------------
-	this.agregarRippleEvent= function(parent,evento){
-		var html;
-		var ink;
-		//se crea el elemento si no existe
-		if(parent.getElementsByTagName('div')[0]===undefined){
-			ink=document.createElement('div');
-			ink.classList.toggle('ink')
-			parent.insertBefore(ink,parent.firstChild);
-		}
-		ink=parent.getElementsByTagName('div')[0];
-
-		//en caso de doble click rapido remuevo la clase 
-		ink.classList.remove('animated');
-
-		//guardo todo el estilo del elemento 
-		var style = window.getComputedStyle(ink);
-
-		//se guardan los valores de akto y ancho
-		if(parseInt(style.height.substring(0,style.height.length-2))==0 && parseInt(style.width.substring(0,style.width.length-2))==0){
-			//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
-			d = Math.max(parent.offsetHeight, parent.offsetWidth);
-			ink.style.height=d+'px';
-			ink.style.width=d+'px';
-		}
-		//declaro el offset del parent
-		var rect =parent.getBoundingClientRect();
-
-		parent.offset={
-		  top: rect.top + document.body.scrollTop,
-		  left: rect.left + document.body.scrollLeft
-		}
-		//re evaluo los valores de alto y ancho del ink
-		style = window.getComputedStyle(ink);
-
-		//ubico el lugar donde se dispara el click
-		var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2
-		var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2
-		//cambio los valores de ink para iniciar la animacion
-		ink.style.top=y+'px';
-		ink.style.left=x+'px';
-		setTimeout(function(){
-			ink.classList.toggle('animate');
-		},10);
-		setTimeout(function(){
-			ink.classList.toggle('animate');
-		},660);
-	};
-	//---------------------------Ink Event------------------------
 	this.construirVentanaForm=function(tipo){
 		this.ventanaForm.construirNodo(tipo);
 	};
@@ -1049,88 +1000,12 @@ var Formulario = function(entidad){
 			this.agregarVentanaForm();
 		}
 	};
-	/*----------------------------------Funciones del Objeto Select-------------------------------*/
-		this.construirCapaSelect= function(capaSelect){
-			capaSelect.onclick=function(){};
-			var opciones= new Array();
-			var opcion;
-			var nodo;
-			var select = capaSelect.nextSibling;
-			while(select.nodeName=='#text'){
-				select=select.nextSibling;
-			}
-			var margen;
-			for(var x = 0; x < select.options.length;x++){
-				
-				opcion = {
-					nombre:select.options[x].textContent,
-					value:select.options[x].value,
-					nodo:null
-				}
-
-				nodo=document.createElement('div');
-				nodo.setAttribute('option','');
-				nodo.textContent=opcion.nombre;
-				if(select.options[x]==select.options[select.selectedIndex]){
-					nodo.setAttribute('selecionado','');
-					margen='-'+parseInt(opciones.length*41)+'px';
-					capaSelect.style.marginTop=margen;
-					console.log(margen);
-				}
-				
-				nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
-				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
-				
-				nodo.setAttribute('valor',opcion.value);
-				nodo.onclick= function(e){
-					//agrego el efecto Ripple
-					UI.elementos.formulario.agregarRippleEvent(this,e);
-					var select = this.parentNode.nextSibling;
-					while(select.nodeName=='#text'){
-						select=select.nextSibling;
-					}
-					select.value=this.getAttribute('valor');
-					UI.elementos.formulario.destruirCapaSelect(this.parentNode);
-				}
-				opcion.nodo=nodo;
-				opciones.push(opcion);
-				capaSelect.appendChild(nodo);
-			}
-
-			//creo el contenedor de las opciones
-			capaSelect.style.opacity='1';
-			capaSelect.style.height=parseInt(opciones.length*41)+'px';
-			capaSelect.style.width='60px'
-
-		};
-		this.destruirCapaSelect = function(capaSelect){
-			var lista = capaSelect.childNodes;
-			var opcion;
-			capaSelect.style.opacity='0';
-			capaSelect.style.height='100%';
-			capaSelect.style.width='100%';
-			capaSelect.style.marginTop='0px';
-			for(var x = 0;x < lista.length;x++){
-				lista[x].style.transition='all 0.3s linear';
-				lista[x].style.marginTop='0px';
-			}
-			setTimeout(function(){
-				while(capaSelect.childNodes.length>0){
-					capaSelect.removeChild(capaSelect.lastChild);
-				}
-				capaSelect.onclick=function(){
-					UI.elementos.formulario.construirCapaSelect(this);
-				}
-			},300)
-			
-		}
-	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
 }
 
 /*----------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------Objeto Ventana Modal------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
-var modalWindow = function(){
+var modalWindow = function(bloqueo){
 
 	var capaContenido = function(){
 
@@ -1216,7 +1091,7 @@ var modalWindow = function(){
 			if(data.cuerpo!==undefined){
 				this.agregarParte('cuerpo');
 				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
-				switch(data.tipo){
+				switch(data.tipo.toLowerCase()){
 					case 'advertencia':
 						this.partes.cabecera.nodo.classList.toggle('advertencia');	
 					break
@@ -1228,7 +1103,7 @@ var modalWindow = function(){
 			if(data.pie!==undefined){
 				this.agregarParte('pie');
 				this.partes.pie.nodo.innerHTML=data.pie;
-				switch(data.tipo){
+				switch(data.tipo.toLowerCase()){
 					case 'advertencia':
 						this.partes.pie.nodo.classList.toggle('advertencia');	
 					break
@@ -1241,11 +1116,12 @@ var modalWindow = function(){
 		this.construirNodo();
 	}
 
-	var capaExterior = function(){
+	var capaExterior = function(bloqueo){
 
 		this.estado='sinConstruir';
 		this.nodo;
 		this.tipo='exterior';
+		this.bloqueo=bloqueo || false;
 
 		this.construirNodo = function(){
 			var nodo = document.createElement('div');
@@ -1265,22 +1141,22 @@ var modalWindow = function(){
 	this.capas=new Array();
 
 	this.arranque = function(data){
-		this.agregarCapa('exterior');
+		this.agregarCapa('exterior',data.bloqueo);
 		var contenido=this.agregarCapa('contenido');
 		contenido.dibujarUI(data);
 		this.manejoDeCapas();
 		return contenido;
 	};
-	this.agregarCapa = function(tipo){
+	this.agregarCapa = function(tipo,bloqueo){
 		var capaNueva=false;;
 		if(tipo=='exterior'){
 			if(this.existeExterior()){
 				var zIndex=window.getComputedStyle(this.buscarUltimaCapaContenido().nodo,null).getPropertyValue("z-index");
-				capaNueva=new capaExterior();
+				capaNueva=new capaExterior(bloqueo);
 				this.capas.push(capaNueva);
 				capaNueva.nodo.style.zIndex=parseInt(zIndex)+1;
 			}else{
-				capaNueva=new capaExterior();
+				capaNueva=new capaExterior(bloqueo);
 				this.capas.push(capaNueva);
 			}
 		}else if(tipo=='contenido'){
@@ -1381,7 +1257,9 @@ var modalWindow = function(){
 			contenedor.style.position='fixed';
 			for(var x=0;x<this.capas.length;x++){
 				if(this.capas[x].nodo.getAttribute('capa')=='exterior'){
-					this.capas[x].nodo.onclick=this.removerCapa;
+					if(!this.capas[x].bloqueo){
+						this.capas[x].nodo.onclick=this.removerCapa;
+					}
 				}
 			}
 		}else{
@@ -1391,6 +1269,7 @@ var modalWindow = function(){
 	this.eliminarUltimaCapa = function(){
 		for(var x=this.capas.length-1;x>=0;x--){
 			if(this.capas[x].tipo=='exterior'){
+				this.capas[x].nodo.onclick=this.removerCapa;
 				this.capas[x].nodo.click();
 				break;
 			}
@@ -1422,10 +1301,10 @@ var Arquitecto = function(){
 		document.body.onmousedown=this.activarEfecto;
 	};
 
-	this.crearVentanaModal= function(data){
+	this.crearVentanaModal= function(data,bloqueo){
 		//creo la venta modal
 		if(!this.elementos.modalWindow){
-			this.elementos.modalWindow=new modalWindow();		
+			this.elementos.modalWindow=new modalWindow(bloqueo);		
 		}
 		var capaContenido=this.elementos.modalWindow.arranque(data);
 		return capaContenido;
@@ -1444,14 +1323,14 @@ var ComboBox = function(nombre,opciones,seleccionado,eslabon){
 
 	this.construir = function(){
 		var nodo=document.createElement('div');
-		nodo.setAttribute(this.tamano,'');
+		nodo.setAttribute(this.eslabon,'');
 		nodo.setAttribute('formElements','');
 		
 		//se crea el article
 		var article=document.createElement('article');
 		article.setAttribute('capaSelect','');
 		article.onclick=function(){
-			UI.elementos.formulario.construirCapaSelect(this);
+			construirCapaSelect(this);
 		}
 		nodo.appendChild(article);
 
@@ -1481,10 +1360,12 @@ var ComboBox = function(nombre,opciones,seleccionado,eslabon){
 		var select=this.nodo.getElementsByTagName('select')[0];
 		var nuevaOp=document.createElement('option');
 		nuevaOp.textContent=opcion.nombre;
-		nuevaOp.value=opcion.id;
+		nuevaOp.value=opcion.codigo;
 		select.appendChild(nuevaOp);
 	};
+	
 	this.construir();
+
 }
 var CampoDeTexto = function(nombre,tipo,eslabon,usaTooltip){
 
@@ -1520,6 +1401,130 @@ var CampoDeTexto = function(nombre,tipo,eslabon,usaTooltip){
 	}
 	this.construir();
 }
+/*----------------------------------Funciones del Objeto Select-------------------------------*/
+		construirCapaSelect= function(capaSelect){
+			capaSelect.onclick=function(){};
+			var opciones= new Array();
+			var opcion;
+			var nodo;
+			var select = capaSelect.nextSibling;
+			while(select.nodeName=='#text'){
+				select=select.nextSibling;
+			}
+			var margen;
+			for(var x = 0; x < select.options.length;x++){
+				
+				opcion = {
+					nombre:select.options[x].textContent,
+					value:select.options[x].value,
+					nodo:null
+				}
+
+				nodo=document.createElement('div');
+				nodo.setAttribute('option','');
+				nodo.textContent=opcion.nombre;
+				if(select.options[x]==select.options[select.selectedIndex]){
+					nodo.setAttribute('selecionado','');
+					margen='-'+parseInt(opciones.length*41)+'px';
+					capaSelect.style.marginTop=margen;
+				}
+				
+				nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
+				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
+				
+				nodo.setAttribute('valor',opcion.value);
+				nodo.onclick= function(e){
+					//agrego el efecto Ripple
+					agregarRippleEvent(this,e);
+					var select = this.parentNode.nextSibling;
+					while(select.nodeName=='#text'){
+						select=select.nextSibling;
+					}
+					select.value=this.getAttribute('valor');
+					destruirCapaSelect(this.parentNode);
+				}
+				opcion.nodo=nodo;
+				opciones.push(opcion);
+				capaSelect.appendChild(nodo);
+			}
+
+			//creo el contenedor de las opciones
+			capaSelect.style.opacity='1';
+			capaSelect.style.height=parseInt(opciones.length*41)+'px';
+			capaSelect.style.width='60px'
+
+		};
+		destruirCapaSelect = function(capaSelect){
+			var lista = capaSelect.childNodes;
+			var opcion;
+			capaSelect.style.opacity='0';
+			capaSelect.style.height='100%';
+			capaSelect.style.width='100%';
+			capaSelect.style.marginTop='0px';
+			for(var x = 0;x < lista.length;x++){
+				lista[x].style.transition='all 0.3s linear';
+				lista[x].style.marginTop='0px';
+			}
+			setTimeout(function(){
+				while(capaSelect.childNodes.length>0){
+					capaSelect.removeChild(capaSelect.lastChild);
+				}
+				capaSelect.onclick=function(){
+					construirCapaSelect(this);
+				}
+			},300)
+			
+		}
+	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
+//---------------------------Ink Event------------------------
+	agregarRippleEvent= function(parent,evento){
+		var html;
+		var ink;
+		//se crea el elemento si no existe
+		if(parent.getElementsByTagName('div')[0]===undefined){
+			ink=document.createElement('div');
+			ink.classList.toggle('ink')
+			parent.insertBefore(ink,parent.firstChild);
+		}
+		ink=parent.getElementsByTagName('div')[0];
+
+		//en caso de doble click rapido remuevo la clase 
+		ink.classList.remove('animated');
+
+		//guardo todo el estilo del elemento 
+		var style = window.getComputedStyle(ink);
+
+		//se guardan los valores de akto y ancho
+		if(parseInt(style.height.substring(0,style.height.length-2))==0 && parseInt(style.width.substring(0,style.width.length-2))==0){
+			//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
+			d = Math.max(parent.offsetHeight, parent.offsetWidth);
+			ink.style.height=d+'px';
+			ink.style.width=d+'px';
+		}
+		//declaro el offset del parent
+		var rect =parent.getBoundingClientRect();
+
+		parent.offset={
+		  top: rect.top + document.body.scrollTop,
+		  left: rect.left + document.body.scrollLeft
+		}
+		//re evaluo los valores de alto y ancho del ink
+		style = window.getComputedStyle(ink);
+
+		//ubico el lugar donde se dispara el click
+		var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2
+		var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2
+		//cambio los valores de ink para iniciar la animacion
+		ink.style.top=y+'px';
+		ink.style.left=x+'px';
+		setTimeout(function(){
+			ink.classList.toggle('animate');
+		},10);
+		setTimeout(function(){
+			ink.classList.toggle('animate');
+		},660);
+	};
+	//---------------------------Ink Event------------------------
 /*---------------Utilidades---------------------------------------------*/
 function obtenerContenedor(){
 	var contenedor = document.body.firstChild;
