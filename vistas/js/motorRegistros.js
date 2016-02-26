@@ -1,147 +1,168 @@
-//borrar
-	var roles = [
-					{
-						nombre:'Analista Cuentas por Cobrar',
-						id:1,
-						descripcion:'cuentasxpagar',
-						detalle:[
-								{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'}
-							],
-						estado:'A'
-					},
-					{
-						nombre:'Administrador Del Sistema',
-						id:2,
-						descripcion:'este rol esta encargado de supervisar lo que ocurre dentro del sistema con opcion a ver la mayoria de los modulos ademas de asegurar el correcto funcionamiento del mismo',
-						detalle:[
-								{id:'3',nombre:'ProbioAgro'},{id:'2',nombre:'SocaPortuguesa'},{id:'1',nombre:'SocaServicios'}
-							],
-						estado:'A'
-					},
-					{
-						nombre:'Gerente Administracion',
-						id:3,
-						descripcion:'',
-						detalle:[
-							],
-						estado:'A'
-					},
-					{
-						nombre:'Analista Cuentas por Pagar',
-						id:4,
-						descripcion:'',
-						detalle:[
-							],
-						estado:'A'
-					},
-					{
-						nombre:'Analistas Cuentas por Pagar Productores',
-						id:5,
-						descripcion:'',
-						detalle:[
-							],
-						estado:'A'
-					},
-					{
-						nombre:'Cajera Principal',
-						id:6,
-						descripcion:'',
-						detalle:[
-							],
-						estado:'A'
-					},
-					{
-						nombre:'Analista Tributos',
-						id:7,
-						descripcion:'',
-						detalle:[
-							],
-						estado:'A'
-					},
-					{
-						nombre:'Analista Finanzas',
-						id:8,
-						descripcion:'',
-						detalle:[
-							],
-						estado:'A'
-					},
-					{
-						nombre:'Auditoria General',
-						id:9,
-						descripcion:'',
-						detalle:[
-							],
-						estado:'A'
-					},
-					{
-						nombre:'almacen-facturacion',
-						id:10,
-						descripcion:'factura en almacen',
-						detalle:[
-								{id:'2',nombre:'SocaPortuguesa'}
-							],
-						estado:'A'
-					}
-				];
-	var empresas = [
-		{	
-			id:0,
-			nombre:'SocaServicios',
-			descripcion:'empresa con mayor movimiento'
-		},{
-			id:1,
-			nombre:'ProbioAgro',
-			descripcion:'empresa de materiales agricolas'
-		},{
-			id:2,
-			nombre:'SocaPortuguesa',
-			descripcion:'Principal'
-		},{
-			id:3,
-			nombre:'E/S Piedritas Blancas',
-			descripcion:'Estacion de servicio'
-		}
-	]
-	var modulos = [
-		{id:'1',nombre:'Global',descripcion:'sin restricciones'},
-		{id:'2',nombre:'Seguridad',descripcion:'Modulo de Seguridad'},
-		{id:'3',nombre:'Agronomina',descripcion:'todo lo referente a produccion'}
-	]
-	var submodulos = [
-		{id:1,idPadre:1,nombre:'Empresa'	,enlace:'vis_Empresa.html'},
-		{id:2,idPadre:2,nombre:'Rol'		,enlace:'vis_Rol.html'},
-		{id:3,idPadre:2,nombre:'Modulo'		,enlace:'vis_Modulo.html'},
-		{id:4,idPadre:3,nombre:'Finca'		,enlace:'vis_Finca.html'},
-		{id:5,idPadre:3,nombre:'Tablon'		,enlace:'vis_Tablon.html'},
-		{id:6,idPadre:3,nombre:'Canicultor'	,enlace:'vis_Canicultor.html'},
-		{id:7,idPadre:3,nombre:'Variedad'	,enlace:'vis_Variedad.html'},
-		{id:8,idPadre:3,nombre:'Clase'		,enlace:'vis_Clase.html'},
-		{id:9,idPadre:1,nombre:'Estado'		,enlace:'vis_Estado.html'},
-		{id:10,idPadre:1,nombre:'Municipio'	,enlace:'vis_Municipio.html'},
-		{id:11,idPadre:2,nombre:'Submodulo'	,enlace:'vis_Submodulo.html'},
-	]
-	var estados = [
-					{id:0,nombre:'Portuguesa',descripcion:'localidad'}
-					];
-	var municipios = [];
-	var contId=roles.length+1;
+var Sesion = function(){
 
-	
+	this.estado='cerrada';
+	this.nombre;
+	this.privilegios= null;
+
+	this.obtenerSesion = function(){
+		console.log('arranque');
+		conexionAcc=crearXMLHttpRequest();
+		var sesionActiva=this;
+		conexionAcc.onreadystatechange = function(){
+			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
+				var respuesta=JSON.parse(conexionAcc.responseText);
+				if(respuesta.success==1){
+					sesionActiva.estado='activa';
+					sesionActiva.nombre=respuesta.sesion.Nombre;
+					sesionActiva.armarPrivilegios(respuesta.sesion.privilegios[0]);
+				}else{
+					location.href='index.html';
+				}
+
+		    }
+		}
+		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("obtenerSesion");
+		conexionAcc.send(envio);
+	};
+	this.cerrarSesion = function(){
+		conexionAcc=crearXMLHttpRequest();
+		conexionAcc.onreadystatechange = function(){
+			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
+				var respuesta=JSON.parse(conexionAcc.responseText);
+				if(respuesta.success==1){
+					location.href='index.html';
+				}            
+		    }
+		}
+		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("cerrarSesion");
+		conexionAcc.send(envio);
+	};
+	this.mostrarSesion = function(){
+		console.log('Sesion Activa:');
+		console.log('Nombre de Usuario: '+this.nombre);
+		console.log('Estado de la Sesion: '+this.estado);
+	};
+	this.armarPrivilegios =function(privilegios){
+		var modEnc=false;
+		var subEnc=false;
+		var modulo;
+		var submodulo;
+		var modulos=new Array();
+		var submodulos=new Array();
+		for(var x=0;x<privilegios.length;x++){
+			
+			modEnc=false;
+			subEnc=false;
+
+			//------------------------------------Evaluar Modulos
+			var y=0;
+			if(modulos.length==0){
+				modulo={
+					codigo:privilegios[x].Cod_Mod,
+					nombre:privilegios[x].Modulo
+				}
+				modulos.push(modulo);
+			}
+
+			do{
+				if(privilegios[x].Cod_Mod==modulos[y].codigo){
+					modEnc=true;
+					break;
+				}
+				y++;
+			}while(y<modulos.length);
+
+			if(!modEnc){
+				modulo={
+					codigo:privilegios[x].Cod_Mod,
+					nombre:privilegios[x].Modulo
+				}
+				modulos.push(modulo);
+			}
+			//----------------------------------------Evaluar Submodulos
+			var z=0;
+			if(submodulos.length==0){
+				submodulo={
+					codigo:privilegios[x].Codigo,
+					nombre:privilegios[x].Nombre,
+					enlace:privilegios[x].Enlace,
+					codPadre:privilegios[x].Cod_Mod
+				}
+				submodulos.push(submodulo);
+			}
+			do{
+				if(privilegios[x].Codigo==submodulos[z].codigo){
+					subEnc=true;
+					break
+				}
+				z++;
+			}while(z<submodulos.length);
+			if(!subEnc){
+				submodulo={
+					codigo:privilegios[x].Codigo,
+					nombre:privilegios[x].Nombre,
+					enlace:privilegios[x].Enlace,
+					codPadre:privilegios[x].Cod_Mod
+				}
+				submodulos.push(submodulo);
+			}
+		}
+		var privilegio;
+		for(var x=0;x<modulos.length;x++){
+			privilegio={
+				nombre:modulos[x].nombre,
+				codigo:modulos[x].codigo,
+				hijos:[]
+			}
+			for(var y=0;y<submodulos.length;y++){
+				if(modulos[x].codigo==submodulos[y].codPadre){
+					privilegio.hijos.push(submodulos[y]);
+				}
+			}
+			if(this.privilegios==null){
+				this.privilegios=new Array();
+			}
+			this.privilegios.push(privilegio);
+		}
+	}
+}	
 var Motor = function(entidadActiva){
 	
 	this.estado='apagado';
 	//entidad activa es decir la entidad que inicio el motor o la que esta en uso en el momento
 	this.entidadActiva=entidadActiva;
 	//todos los registros que tiene la entidad activa entidad activa 
-	this.registrosEntAct = new Array();
-
+	this.registrosEntAct = null;
+	//resultado busqueda
+	this.resultadoBusqueda;
+	
 	//funcion de arranque del objeto
 	this.ignition = function(){
 		if(this.entidadActiva!='acceso'){
-			this.registrosEntAct = this.buscarRegistros(this.entidadActiva);
+			this.buscarRegistros(this.entidadActiva,function(respuesta){
+				torque.registrosEntAct=respuesta.registros;
+			});
 		}
 	};
+
+	//busqueda en bd
+	this.buscarRegistros =function(entidad,callback){
+		
+		var conexionMotor=crearXMLHttpRequest();
+		conexionMotor.onreadystatechange = function(){
+			if (conexionMotor.readyState == 4){
+		            callback(JSON.parse(conexionMotor.responseText));
+		    }
+		}
+		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
+		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("buscar")+'&Entidad='+encodeURIComponent(entidad);
+		conexionMotor.send(envio);
+	}
 
 	this.buscarRegistro = function(id,entidad){
 		var registro=false;
@@ -153,7 +174,10 @@ var Motor = function(entidadActiva){
 		//en caso contraria se dispara la busqueda
 		else 
 		{
-			registros = this.buscarRegistros(entidad);
+			 this.buscarRegistros(entidad,function(respuesta){
+				torque.resultadoBusqueda=respuesta.registros;
+			});
+			registros = torque.resultadoBusqueda;
 		}
 		
 		for(var x=0;x<registros.length;x++){
@@ -173,53 +197,20 @@ var Motor = function(entidadActiva){
 		}
 		return data;
 	}
-	//busqueda en bd
-	this.buscarRegistros =function(entidad){
-		if(entidad=='empresa'){
-			return empresas;
-		}else if(entidad=='rol'){
-			return roles;
-		}else if(entidad=='modulo'){
-			return modulos;
-		}else if(entidad=='submodulo'){
-			return submodulos;
-		}else if(entidad=='estado'){
-			return estados;
-		}else if(entidad=='municipio'){
-			return municipios;
-		}
-	}
+
 	//--------------------------------------------funciones de bd--------------------------------
 	this.guardar = function(nuevoRegistro,entidad){
-		if(entidad=='empresa'){
-			nuevoRegistro.id=empresas.length;
-			empresas.push(nuevoRegistro);
-		}else if(entidad=='rol'){
-			roles.push(nuevoRegistro);
-		}else if(entidad=='estado'){
-			nuevoRegistro.id=estados.length;
-			estados.push(nuevoRegistro);
-		}else if(entidad=='municipio'){
-			nuevoRegistro.id=municipios.length;
-			municipios.push(nuevoRegistro);
-		}else if(entidad=='modulo'){
-			nuevoRegistro.id=modulos.length+1;
-			modulos.push(nuevoRegistro);
-		}
+		//guardar general por entidad
 		if(this.entidadActiva==entidad){
 			this.registrosEntAct = this.buscarRegistros(entidad);
 		}
 	}
 	this.eliminar = function(registro,entidad){
-		var indice;
-		if(entidad=='empresa'){
-			indice = empresas.indexOf(this.buscarRegistro(registro.id,entidad));
-			empresas.splice(indice,1);
-		}
+		//borrar registro
 	}
 	this.editarCampo= function(id,campo,valor){
 		var registro=torque.buscarRegistro(id);
-		registro[campo]=valor;
+		//editar campo
 		return registro;
 	}
 	this.guardarEnDetalle= function(id,cambios){
@@ -229,7 +220,47 @@ var Motor = function(entidadActiva){
 		}
 		return registro;
 	}
+	this.peticionMenu = function(){
+		var campNom=document.getElementById('nomUsu');
+		var campPass=document.getElementById('pass');
+		conexionAcc=crearXMLHttpRequest();
+		conexionAcc.onreadystatechange = this.respuestaMenu;
+		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("cargarPermisologia");
+		envio+="&Nombre="+encodeURIComponent(campNom.value);
+		console.log(envio);
+		conexionAcc.send(envio);
+	}
+	this.respuestaMenu = function(){
+		if(conexionAcc.readyState == 4){
+			var respuesta=JSON.parse(conexionAcc.responseText);
+			console.log(respuesta);
+
+			var ventana={};
+
+			if(respuesta.success==1){
+				ventana.cabecera='Acesso';
+				ventana.cuerpo=respuesta.mensaje
+			}else{
+				ventana.tipo='advertencia';
+				ventana.cabecera='Error de Acceso';
+				ventana.cuerpo=respuesta.mensaje;
+			}
+			UI.crearVentanaModal(ventana);
+		}
+	}
 	//funcion de arranque 
 	this.ignition();
 }
-	
+//--------------------------------AJAX---------------------------------------
+function crearXMLHttpRequest() 
+{
+  var xmlHttp=null;
+  if (window.ActiveXObject) 
+    xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+  else 
+    if (window.XMLHttpRequest) 
+      xmlHttp = new XMLHttpRequest();
+  return xmlHttp;
+}

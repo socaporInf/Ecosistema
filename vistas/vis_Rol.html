@@ -143,10 +143,10 @@
 		};
 		objForm.prototype.agregarEmpresas=function(contenedor,elementos){
 			var html="";
+			html+='<article add="empresa"></article>';
 			for(var x=0;x<elementos.length;x++){
 				html+="<article empresa>"+elementos[x].nombre+"</article>";
 			}
-			html+='<article add="empresa"></article>';
 			contenedor.innerHTML=html;
 			this.agregarFuncionamiento();
 		};
@@ -154,7 +154,7 @@
 			var nodo=document.createElement('article');
 			nodo.textContent = empresa.nombre;
 			nodo.setAttribute('empresa','');
-			contenedor.insertBefore(nodo,contenedor.lastChild);
+			contenedor.appendChild(nodo);
 			this.agregarFuncionamiento();
 		};
 		objForm.prototype.agregarFuncionamiento = function(){
