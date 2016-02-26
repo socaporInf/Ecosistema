@@ -31,13 +31,14 @@ if($la_Form['Operacion']=='acceso'){
 	include_once('../clases/cls_Permisos.php');
 	$lobj_Permisos = new cls_Permisos;
 	$lobj_Permisos->setForm($la_Form);
-	$_SESSION['Usuario']['privilegios']=array($lobj_Permisos->f_ObtenerPrivilegios());
-	if(count($_SESSION['Usuario']['privilegios'])==0){
+	$privilegios=$lobj_Permisos->f_ObtenerPrivilegios();
+	if(count($privilegios)==0){
 		$respuesta=array(
 				'mensaje'=>'Este Usuario No Posee Privilegios Para Esta Empresa',
 				'success'=>0
 				);
 	}else{
+		$_SESSION['Usuario']['privilegios']=array($privilegios);
 		$respuesta=array(
 				'mensaje'=>'Sesion Iniciada con exito',
 				'privilegios'=>$_SESSION['Usuario']['privilegios'],
@@ -69,6 +70,7 @@ if($la_Form['Operacion']=='acceso'){
 			);
 
 }else if($la_Form['Operacion']=='obtenerSesion'){
+
 	if(isset($_SESSION['Usuario'])){
 		$respuesta=array(
 			'mensaje'=>'Datos de Sesion',

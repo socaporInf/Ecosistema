@@ -21,8 +21,6 @@ class cls_Acceso extends cls_Conexion{
 		if($la_registro=$this->f_Arreglo($lr_tabla)){
 			if($la_registro['clave']==$this->aa_Form['Pass']){
 				$lb_Enc=true;
-			}else{
-				print('clave erronea');
 			}
 		}
 		unset($this->aa_Form['Pass']);

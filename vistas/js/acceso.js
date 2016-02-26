@@ -43,7 +43,7 @@ function procesarAcc(){
 			}
 			torque.buscarRegistros('empresa',function(response){
 				//recivo la informacion
-				var respuesta=JSON.parse(conexionAcc.responseText);
+				var respuesta=response;
 				var html='';
 				for(var x=0;x<respuesta.registros.length;x++){
 					html+='<button inicio valor="'+respuesta.registros[x].codigo+'" onclick="iniciarSession(this) "';
@@ -71,14 +71,13 @@ function iniciarSession(nodo){
 	        var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 	        var respuesta = JSON.parse(conexionAcc.responseText);
 	        var html='';
-	        console.log(respuesta);
-	        capaContenido.partes.cuerpo.nodo.firstChild.style.opacity='0';
 	        if(respuesta.success==1){	
-	        	html+='<article texto>'+respuesta.mensaje+'</article>'
-	        }
-	        setTimeout(function(){
+	        	location.href='vis_Empresa.html';
+	        }else{
+	        	console.log(respuesta.mensaje);
+	        	html+="<atricle>"+respuesta.mensaje+"</article>";
 	        	capaContenido.partes.cuerpo.nodo.innerHTML=html;
-	        },300);
+	        }
 	    }
 	};
 	conexionAcc.open('POST','../controladores/cor_Validar.php', true);
@@ -88,7 +87,8 @@ function iniciarSession(nodo){
 	
 	var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 	
-	capaContenido.partes.cuerpo.nodo.innerHTML='<div class="showbox">\
+	capaContenido.partes.cuerpo.nodo.innerHTML='<article style="color:#7b7b7b;margin-top:70px;text-align:center">Iniciando Sesion</article>\
+			<div class="showbox">\
 			  <div class="loader">\
 			    <svg class="circular" viewBox="25 25 50 50">\
 			      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>\

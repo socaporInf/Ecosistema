@@ -203,19 +203,18 @@ var Botonera = function(estructura){
 /*----------------------------------------------------------------------------------------------------*/
 var Menu = function(){
 	/*-------------------------Objeto SubCapa ---------------------------------*/
-	var SubCapa = function(id,entidadHijo,padre,raiz,nombre){
+	var SubCapa = function(codigo,self,padre,raiz,nombre){
 		/*-------------------------Objeto elemento ----------------------------*/
-		var Elemento = function(contenido,enlace){
-			enlace = enlace || '#';
-			this.id = '';
+		var Elemento = function(data){
+			this.codigo = data.codigo;
 			this.estado = 'porConstriur';
-			this.contenido = contenido;
+			this.contenido = data.nombre;
 			this.nodo;
-			this.enlace = enlace;
+			this.enlace = data.enlace || '#';
 
 			this.construirNodo = function(){
 				var nodo = document.createElement('section');
-				nodo.innerHTML = contenido;
+				nodo.innerHTML = this.contenido;
 				nodo.setAttribute('enlace',this.enlace);
 				if(this.enlace.substring(0,1)=='>'){
 					nodo.onclick=function(e){
@@ -238,55 +237,72 @@ var Menu = function(){
 		/*---------------------Fin Objeto elemento ----------------------------*/
 		this.estado='porConstruir';
 		this.nodo;
-		this.id = id;
+		this.codigo = codigo;
 		this.elementos=new Array();
 		this.nombre=nombre;
 		
 		//funcionamiento arbol
 		this.raiz = raiz;
 		this.padre = padre;
-		this.hijos = new Array();
+		this.self = self;
+		this.hijos=new Array();
 
 		this.construir= function(){
 			var nodo = document.createElement('div');
-			nodo.setAttribute('subCapaMenu',id);
+			nodo.setAttribute('subCapaMenu',codigo);
 			this.nodo=nodo;
 			
 			//estilos
 			this.nodo.style.marginLeft='calc(100%)';
 
 			//creacion de hijos
-			var hijos = torque.buscarRegistros(entidadHijo);
+			var hijos=this.self.hijos;
 			this.raiz.nodo.appendChild(this.nodo);
+
+
 			//se arma la primera capa
-			if(id==0){
+			if(codigo==0){
 				var capaNueva;
 				for(var x=0;x<hijos.length;x++){
 					//agrego los elementos
-					this.agregarElemento(hijos[x].nombre,'>'+hijos[x].id,false);
+					var data={
+						codigo:hijos[x].codigo,
+						nombre:hijos[x].nombre,
+						enlace:'>'+hijos[x].codigo,
+						seleccionado:false
+					}
+					this.agregarElemento(data);
 					//creo las capas 
-					capaNueva = new SubCapa(hijos[x].id,'submodulo',this,this.raiz,hijos[x].nombre);
+					capaNueva = new SubCapa(hijos[x].codigo,hijos[x],this,this.raiz,hijos[x].nombre);
 					//agrego las capas al padre
 					this.hijos.push(capaNueva);
 				}
 			}else{
 				var seleccionado= false;
-
 				//creo el elemento de retorno
-				this.agregarElemento('Atras...','<'+this.padre.id);
-
+				var data = {
+					codigo:'',
+					nombre:'Atras...',
+					enlace:'<'+this.padre.codigo,
+					selecionado:false
+				}
+				this.agregarElemento(data);
 				//creo los demas elementos
 				for(var x=0;x<hijos.length;x++){
-					this.padre.buscarElemento(this.id);
-					if(hijos[x].idPadre==this.id){
-						if(hijos[x].enlace==window.location.pathname.split('/')[window.location.pathname.split('/').length-1]){
-							seleccionado=true;
-							this.padre.buscarElemento(this.id).nodo.setAttribute('seleccionado','');
-						}else{
-							seleccionado=false;
-						}
-						this.agregarElemento(hijos[x].nombre,hijos[x].enlace,seleccionado);
+					//Creo el enlace para la navegacion
+					if(hijos[x].enlace==window.location.pathname.split('/')[window.location.pathname.split('/').length-1]){
+						seleccionado=true;
+						this.padre.buscarElemento(this.codigo).nodo.setAttribute('seleccionado','');
+					}else{
+						seleccionado=false;
 					}
+					var data={
+						codigo:hijos[x].codigo,
+						nombre:hijos[x].nombre,
+						enlace:hijos[x].enlace,
+						seleccionado:seleccionado
+					}
+					this.agregarElemento(data);
 				}	
 			}
 		};
@@ -298,9 +314,9 @@ var Menu = function(){
 			this.nodo.appendChild(elementoNuevo.nodo);
 			this.elementos.push(elementoNuevo);
 		};
-		this.buscarElemento=function(id){
+		this.buscarElemento=function(codigo){
 			for(var x=0;x<this.elementos.length;x++){
-				if(this.elementos[x].enlace.substring(1,this.elementos[x].enlace.length)==id){
+				if(this.elementos[x].enlace.substring(1,this.elementos[x].enlace.length)==codigo){
 					return this.elementos[x];
 				}
 			}
@@ -317,6 +333,8 @@ var Menu = function(){
 	this.hijos = new Array();
 	//nodo de DOM
 	this.nodo;
+
+	this.intervaloCarga=null;
 
 	this.construir = function(){	
 		var contenedor = obtenerContenedor();
@@ -339,14 +357,30 @@ var Menu = function(){
 		pie.setAttribute('pie','');
 		this.nodo.appendChild(pie);
 
-		if(torque.entidadActiva!='acceso'){
-			//agrego capas
-			var capaNueva;
-			capaNueva = new SubCapa(0,'modulo',this,this,'raiz');
-			html+='<article off></article>'	
-			//Creo las capas
-			this.hijos.push(capaNueva);
-			this.activarCapa(this.hijos[0]);
+
+		var menu=this;
+		//si la sesion no esta creada dejo el centro vacio
+		if(typeof(sesion)!=='undefined'){
+			//creo el intervalo y guarda el id
+			this.intervaloCarga=setInterval(function(){
+				if(sesion.privilegios!=null){
+					//cierro el intervalo*/
+					clearInterval(UI.elementos.menu.intervaloCarga);
+					this.intervaloCarga=null;
+					//agrego capas
+					var capaNueva;
+
+					var elemento = {
+						hijos:sesion.privilegios
+					}
+					capaNueva = new SubCapa(0,elemento,UI.elementos.menu,UI.elementos.menu,'raiz');
+					//Creo las capas
+					UI.elementos.menu.hijos.push(capaNueva);
+					UI.elementos.menu.activarCapa(UI.elementos.menu.hijos[0]);
+				}
+			},30);		
+			html+='<article off onclick="sesion.cerrarSesion()"></article>'	
+			
 		}
 		html+='<article contac></article>';
 		html+='<article seguridad></article>';
@@ -368,10 +402,10 @@ var Menu = function(){
 		this.capaActiva=capa;
 	};
 	this.avanzar = function(nodo){
-		var id = nodo.getAttribute('enlace').substring(1,nodo.getAttribute('enlace').length);
+		var codigo = nodo.getAttribute('enlace').substring(1,nodo.getAttribute('enlace').length);
 		var lista = this.capaActiva.hijos;
 		for(var x=0;x<lista.length;x++){
-			if(lista[x].id==id){
+			if(lista[x].codigo==codigo){
 				this.capaActiva.nodo.style.marginLeft='-100%';
 				this.activarCapa(lista[x]);
 			}
@@ -856,8 +890,16 @@ var Formulario = function(entidad){
 			}
 			contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
 			this.estado='enUso';
-
-			this.cargarRegistros(torque.registrosEntAct);
+			//declaro la variable para usarla dentro del intervalo
+			var ventanaForm=this;
+			var intervalID;
+			intervalID=setInterval(function(){
+				console.log(intervalID);
+				if(torque.registrosEntAct!==null){
+					ventanaForm.cargarRegistros(torque.registrosEntAct);
+					clearInterval(intervalID);
+				}
+			},30)
 		};
 		this.construir();
 	}
