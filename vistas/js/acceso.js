@@ -84,19 +84,13 @@ function iniciarSession(nodo){
 	conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	var envio="Operacion="+encodeURIComponent("iniciarSession");
 	envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Empresa="+encodeURIComponent(nodo.getAttribute('valor'));
-	
+	conexionAcc.send(envio);	
 	var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
-	
-	capaContenido.partes.cuerpo.nodo.innerHTML='<article style="color:#7b7b7b;margin-top:70px;text-align:center">Iniciando Sesion</article>\
-			<div class="showbox">\
-			  <div class="loader">\
-			    <svg class="circular" viewBox="25 25 50 50">\
-			      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>\
-			    </svg>\
-			  </div>\
-			</div>';
-	conexionAcc.send(envio);
-
-	
+	var info={
+		mensaje:'Iniciar Sesion'
+	}
+	capaContenido.partes.cuerpo.nodo.innerHTML='';
+	var cuadroDeCarga=UI.crearCuadroDeCarga(info,capaContenido.partes.cuerpo.nodo);
+	cuadroDeCarga.style.marginTop='80px';
 
 }

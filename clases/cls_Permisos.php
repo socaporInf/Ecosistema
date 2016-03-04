@@ -39,6 +39,8 @@ class cls_Permisos extends cls_Conexion{
 			$la_Pribilegios[$x]['Modulo']=$la_registro['modulo'];
 			$x++;
 		}
+		$this->f_Cierra();
+		$this->f_Des();
 		return $la_Pribilegios;
 	}
 }

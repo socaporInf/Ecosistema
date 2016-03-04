@@ -110,25 +110,53 @@
 				nodo.innerHTML=html;
 				UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
 			},tiempo);
+			
+			//funcionamiento botones
 			UI.elementos.botonera.agregarBoton('guardar');
+			UI.elementos.botonera.quitarBoton('eliminar');
+
 		}else if(this.tipo='modificar'){
-			var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
-			console.log(data);
+			
+			//funcinamiento botones
+			UI.elementos.botonera.agregarBoton('eliminar');
 			UI.elementos.botonera.quitarBoton('guardar');
+			
 			this.nodo.style.height='0px';		
+
 			setTimeout(function(){
 				var nodo=UI.elementos.formulario.ventanaForm.nodo;
 				nodo.style.height='250px';
 				nodo.style.borderRadius='0px';
+				//------------Cuadro Carga-------------------------------
+				var infoCuadro = {
+					mensaje:'Buscando'
+				}
+				nodo.innerHTML='';
+				var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,nodo);
+				cuadroDeCarga.style.marginTop='80px';
+				//--------------------------------------------------------
+				var info={
+					codigo:UI.elementos.formulario.ventanaForm.registroId,
+					entidad:torque.entidadActiva,
+					operacion:'buscarRegistro'
+				}
+				torque.Busqueda(info,function(respuesta){
+					console.log(respuesta);
+					var data = respuesta.registros;
+					UI.elementos.formulario.ventanaForm.registroAct=data;
+					//tiempo para aparicion del Formulario
+					var nodo=UI.elementos.formulario.ventanaForm.nodo;
 					html+='\
-				<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
-					<section sector>\
-						<!-- Aqui va el contenido -->\
-						<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
-					</section>\
-				</section>';
-				nodo.innerHTML=html;
-				UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
+					<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
+						<section sector>\
+							<!-- Aqui va el contenido -->\
+							<div ><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
+							<div ><input  type="text" name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
+						</section>\
+					</section>';
+					nodo.innerHTML=html;
+					UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
+				});
 			},tiempo);
 		}
 	};
