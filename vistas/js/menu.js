@@ -1,4 +1,0 @@
-arranque();
-function arranque(){
-	
-}

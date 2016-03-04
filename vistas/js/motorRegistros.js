@@ -5,11 +5,22 @@ var Sesion = function(){
 	this.privilegios= null;
 
 	this.obtenerSesion = function(){
-		console.log('arranque');
+		var contEspera=0;
+
+		var intervaloCargaSession = setInterval(function(){
+			console.log('contador de espera:'+contEspera);
+			contEspera++;
+			if(contEspera>=10){
+				console.log('culmino tiempo de espera');
+				//clearInterval(intervaloCargaSession);
+			}
+		},20); 
+		console.log('intervalo carga session:'+intervaloCargaSession);
 		conexionAcc=crearXMLHttpRequest();
 		var sesionActiva=this;
 		conexionAcc.onreadystatechange = function(){
 			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
+				clearInterval(intervaloCargaSession);
 				var respuesta=JSON.parse(conexionAcc.responseText);
 				if(respuesta.success==1){
 					sesionActiva.estado='activa';
@@ -151,7 +162,32 @@ var Motor = function(entidadActiva){
 
 	//busqueda en bd
 	this.buscarRegistros =function(entidad,callback){
-		
+		var conexionBuscar=crearXMLHttpRequest();
+		conexionBuscar.onreadystatechange = function(){
+			if (conexionBuscar.readyState == 4){
+		        callback(JSON.parse(conexionBuscar.responseText));
+		    }
+		}
+		conexionBuscar.open('POST','../controladores/cor_Motor.php', true);
+		conexionBuscar.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="operacion="+encodeURIComponent("buscar")+'&entidad='+encodeURIComponent(entidad);
+		conexionBuscar.send(envio);
+	}
+
+	this.Busqueda = function(info,callback){
+		var conexionBusqueda=crearXMLHttpRequest();
+		conexionBusqueda.onreadystatechange = function(){
+			if (conexionBusqueda.readyState == 4){
+		            callback(JSON.parse(conexionBusqueda.responseText));
+		    }
+		}
+		conexionBusqueda.open('POST','../controladores/cor_Motor.php', true);
+		conexionBusqueda.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="operacion="+encodeURIComponent(info.operacion)+'&entidad='+encodeURIComponent(info.entidad);
+		envio+="&codigo="+encodeURIComponent(info.codigo);
+		conexionBusqueda.send(envio);
+	};
+	this.Operacion = function(info,callback){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
@@ -160,44 +196,13 @@ var Motor = function(entidadActiva){
 		}
 		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-		var envio="Operacion="+encodeURIComponent("buscar")+'&Entidad='+encodeURIComponent(entidad);
+		var envio='';
+		var valor;
+		for(var llave in info){
+			envio+=llave.toLowerCase()+'='+encodeURIComponent(info[llave])+'&';
+		}
 		conexionMotor.send(envio);
 	}
-
-	this.buscarRegistro = function(id,entidad){
-		var registro=false;
-		var registros;
-		//si la entidad a la cual se va a buscar es la misma que esta activa en el motor se utiliza el arreglo temporal
-		if(entidad=this.entidadActiva){
-			registros = this.registrosEntAct;
-		} 
-		//en caso contraria se dispara la busqueda
-		else 
-		{
-			 this.buscarRegistros(entidad,function(respuesta){
-				torque.resultadoBusqueda=respuesta.registros;
-			});
-			registros = torque.resultadoBusqueda;
-		}
-		
-		for(var x=0;x<registros.length;x++){
-			if(registros[x].id==id){
-				registro=registros[x];
-			}
-		}
-		return registro;
-	};
-
-	this.buscarDetalle = function(idPadre,entidadPadre){
-		console.log('se disparo una busueda de '+entidadPadre+' con id:'+idPadre);
-		var registroPadre = this.buscarRegistro(idPadre,entidadPadre);
-		var data = new Array();
-		for(var y=0;y<registroPadre.detalle.length;y++){
-			data.push(registroPadre.detalle[y]);
-		}
-		return data;
-	}
-
 	//--------------------------------------------funciones de bd--------------------------------
 	this.guardar = function(nuevoRegistro,entidad){
 		//guardar general por entidad
@@ -229,7 +234,6 @@ var Motor = function(entidadActiva){
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="Operacion="+encodeURIComponent("cargarPermisologia");
 		envio+="&Nombre="+encodeURIComponent(campNom.value);
-		console.log(envio);
 		conexionAcc.send(envio);
 	}
 	this.respuestaMenu = function(){

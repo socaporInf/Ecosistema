@@ -23,6 +23,8 @@ class cls_Acceso extends cls_Conexion{
 				$lb_Enc=true;
 			}
 		}
+		$this->f_Cierra();
+		$this->f_Des();
 		unset($this->aa_Form['Pass']);
 		return $lb_Enc;
 	}
