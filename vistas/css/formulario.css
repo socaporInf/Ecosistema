@@ -798,6 +798,53 @@ div[tooltip]:before{
   border-style: solid;
   border-color: #4CAF50 transparent transparent #4CAF50;
 }
+
+/*--------------------------ELEMENTOS DE EDICION-------------------------------*/
+div[formUpdate]{
+  position: relative;
+  width: 40%;
+  float: left;
+  margin: 0px 3% 15px 3%;
+}
+div[formUpdate][area]{
+  width: 80%;
+}
+div[formUpdate] div:not([clear]){
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  border-left: 1px solid #7b7b7b;
+  background-color: white;
+}
+div[formUpdate] label{
+  color:#1B5E20;
+}
+div[formUpdate] div input[type='text']{
+  transition:all 0.5s ease-in-out;
+  border:none;
+  padding: 0px;
+  opacity: 0;
+  resize:none;
+  width: 0px;
+  height: 0px;
+  font-size: 15px;
+  display: none;
+  color:inherit;
+  background-color: transparent;
+  font-size: inherit;
+}
+div[formUpdate] div span{
+  font-size:13px; 
+  background-color: white;
+  max-width: 100%;
+}
+div[formUpdate] article[update]{
+  transition: all 0.3s ease-in-out;
+  margin-left: -25px;
+}
+div[formUpdate]:hover article[update]{
+  margin-left: 0px;
+}
 /*-----------------------------------Media Query-------------------------------*/
 @media (max-width: 1000px){
   /*modal window*/

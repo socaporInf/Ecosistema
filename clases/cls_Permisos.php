@@ -24,10 +24,10 @@ class cls_Permisos extends cls_Conexion{
 				s.cod_mod as cod_mod,
 				m.nombre as Modulo
 				FROM seguridad.rolemp_usu AS reu
-				INNER JOIN seguridad.rol_emp AS re ON(reu.cod_rol_emp=re.codigo)
-				INNER JOIN seguridad.privilegio AS p ON(re.codigo=p.cod_rolemp) 
-				INNER JOIN seguridad.submodulo AS s ON(p.cod_submod=s.codigo)
-				INNER JOIN seguridad.modulo AS m ON(s.cod_mod=m.codigo) 
+				INNER JOIN seguridad.rol_emp AS re ON(reu.cod_rol_emp=re.cod_rol_emp)
+				INNER JOIN seguridad.privilegio AS p ON(re.cod_rol_emp=p.cod_rol_emp) 
+				INNER JOIN seguridad.submodulo AS s ON(p.cod_submod=s.cod_submod)
+				INNER JOIN seguridad.modulo AS m ON(s.cod_mod=m.cod_mod) 
 				WHERE reu.cod_usu='".$this->aa_Form['Nombre']."' AND re.cod_emp='".$this->aa_Form['Empresa']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);

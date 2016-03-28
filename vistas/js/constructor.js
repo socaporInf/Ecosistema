@@ -571,17 +571,25 @@ var Formulario = function(entidad){
 		};
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
+			console.log(campo.tipo);
 			var campoNuevo;
 			var contenedor = this.nodo.getElementsByTagName('form')[0];
 			switch(campo.tipo.toLowerCase()){ 
 				case 'campodetexto':
-					campoNuevo = new CampoDeTexto(campo.parametros[0],campo.parametros[1],campo.parametros[2],campo.parametros[3]);
+					campoNuevo = new CampoDeTexto(campo.parametros);
 					break
 				case 'combobox':
-					campoNuevo = new ComboBox(campo.parametros[0],campo.parametros[1],campo.parametros[2],campo.parametros[3]);
+					campoNuevo = new ComboBox(campo.parametros);
 					break
 				case 'radio':
-					campoNuevo = new Radio(campo.parametros[0],campo.parametros[1],campo.parametros[2]); 
+					campoNuevo = new Radio(campo.parametros);
+					break
+				case 'campoedicion': 
+					campoNuevo = new CampoEdicion(campo.parametros);
+					break
+				case 'saltodelinea':
+					campoNuevo = new SaltoDeLinea();
+					break
 
 			}
 			contenedor.appendChild(campoNuevo.nodo);
@@ -602,6 +610,21 @@ var Formulario = function(entidad){
 						</form>\
 					</section>\
 				</section>';
+				this.nodo.innerHTML=html;
+		}
+
+		this.crearEstructuraBasicaModificar = function(titulo,altura){
+				this.nodo.style.height=altura+'px';
+				var html="<section titulo>\
+								<textarea  name='"+titulo.nombre+"'></textarea>\
+								<span>"+titulo.valor+"</span>\
+								<article update='campo'></article>\
+						</section>\
+						<section sector>\
+							<!-- Aqui va el contenido -->\
+							<form name ='formModificar'>\
+							</form>\
+						</section>";
 				this.nodo.innerHTML=html;
 		}
 	}
@@ -1387,7 +1410,7 @@ var CuadroCarga = function(info,callback){
 				callback();
 			}
 			if(UI.elementos.cuadroCarga!==undefined){
-				if(UI.elementos.cuadroCarga.contEspera>=1000){
+				if(UI.elementos.cuadroCarga.contEspera>=500){
 					console.log('tiempo de espera culminado');
 					clearInterval(UI.elementos.cuadroCarga.intervalID);
 					var ventana = {
@@ -1476,12 +1499,11 @@ var Arquitecto = function(){
 	}
 }
 /*---------------Objetos de interfaz---------------------------------------------*/
-var Radio = function(nombre,opciones,seleccionado){
-
+var Radio = function(info){
+	//nombre,opciones,seleccionado
+	this.data = info;
 	this.estado = 'porConstriur';
 	this.nodo;
-	this.opciones = opciones;
-	this.nombre = nombre;
 
 	this.construirNodo = function(){
 		var nodo = document.createElement('div');
@@ -1493,7 +1515,7 @@ var Radio = function(nombre,opciones,seleccionado){
 		var nodoOpcion = document.createElement('label');
 		nodoOpcion.classList.toggle('radio');
 		var html = '';
-		html+='<input type="radio" name="'+this.nombre+'" value="'+opcion.valor+'"><span class="outer"><span class="inner"></span></span>'+opcion.nombre;
+		html+='<input type="radio" name="'+this.data.nombre+'" value="'+opcion.valor+'"><span class="outer"><span class="inner"></span></span>'+opcion.nombre;
 		nodoOpcion.innerHTML=html;
 		this.nodo.appendChild(nodoOpcion);
 	}
@@ -1505,18 +1527,18 @@ var Radio = function(nombre,opciones,seleccionado){
 	this.construirNodo();
 }
 //--------------------------Combo Box -------------------------------------
-var ComboBox = function(nombre,opciones,seleccionado,eslabon){
-
+var ComboBox = function(info){
+	console.log(info);
+	//nombre,opciones,seleccionado,eslabon
+	this.data = info;
 	this.estado = 'porConstriur';
-	this.eslabon = eslabon||'simple';
-	this.nombre = nombre;
-	this.seleccionado = seleccionado||'-';
-	this.opciones = opciones;
+	this.data.eslabon = info.eslabon||'simple';
+	this.data.seleccionado = info.seleccionado||'-';
 	this.nodo;
 
 	this.construir = function(){
 		var nodo=document.createElement('div');
-		nodo.setAttribute(this.eslabon,'');
+		nodo.setAttribute(this.data.eslabon,'');
 		nodo.setAttribute('formElements','');
 		
 		//se crea el article
@@ -1529,22 +1551,23 @@ var ComboBox = function(nombre,opciones,seleccionado,eslabon){
 
 		//se crea el select
 		var select=document.createElement('select');
-		select.name=this.nombre;
+		select.name=this.data.nombre;
 		nodo.appendChild(select);
 		this.nodo=nodo;
 
 		//creo la primera opcion
 		var opcion = {
 			id : '-',
-			nombre : 'Elija un '+this.nombre
+			nombre : 'Elija un '+this.data.nombre
 		}
 		this.agregarOpcion(opcion)
 
 		//genero y asigno el resto de las opciones
-		this.agregarOpciones(opciones);
+		this.agregarOpciones(this.data.opciones);
 		this.estado='enUso';
 	};
 	this.agregarOpciones = function(opciones){
+		console.log(opciones);
 		for(var x=0;x<opciones.length;x++){
 			this.agregarOpcion(opciones[x]);
 		}
@@ -1560,30 +1583,40 @@ var ComboBox = function(nombre,opciones,seleccionado,eslabon){
 	this.construir();
 
 }
+//-------------------- Salto de linea ---------------
+var SaltoDeLinea = function(){
+	this.nodo;
+	this.construirNodo = function(){
+		var nodo = document.createElement('div');
+		nodo.setAttribute('clear','');
+		this.nodo=nodo;
+	}
+	this.construirNodo();
+}
 //-------------------- Campo  de Texto ---------------------------
-var CampoDeTexto = function(nombre,tipo,eslabon,usaTooltip){
-
+var CampoDeTexto = function(info){
+	this.data = info;
 	this.estado = 'porConstriur';
-	this.nombre = nombre;
-	this.eslabon = eslabon || 'simple';
-	this.tipo = tipo;
-	this.usaTooltip = usaTooltip ||  false;
+	this.data.eslabon = info.eslabon || 'simple';
+	this.data.usaTooltip = info.usaTooltip ||  false;
 	this.nodo;
 
 	this.construir = function(){
 		var CampoDeTexto = document.createElement('div');
 		CampoDeTexto.classList.toggle('group');
-		CampoDeTexto.setAttribute(this.eslabon,'');
+		CampoDeTexto.setAttribute(this.data.eslabon,'');
 		var html='';
-		if(this.tipo=='simple'){
-			html+='<input type="text" name="'+this.nombre+'" required>';
-		}else if(this.tipo=='area'){
+		if(this.data.tipo=='simple'){
+			html+='<input type="text" name="'+this.data.nombre+'" required>';
+		}else if(this.data.tipo=='area'){
 			html+='<textarea name="Descripcion" required></textarea>';
+		}else{
+			console.log(this.data.tipo);
 		}
 		
 		html+='<span class="highlight"></span>\
 		      <span class="bar"></span>\
-		      <label>'+this.nombre+'</label>';
+		      <label>'+this.data.titulo+'</label>';
 
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
@@ -1594,6 +1627,41 @@ var CampoDeTexto = function(nombre,tipo,eslabon,usaTooltip){
 		this.estado='enUso';
 	}
 	this.construir();
+}
+//-------------------- Campo Edicion----------------------------------------------------------
+var CampoEdicion = function(info){
+	
+	this.data =  info;
+	this.nodo;
+	this.tipo = info.tipo || 'simple';
+	
+	this.construirNodo = function(){
+		var nodo =  document.createElement('div');
+		var campo = '';
+		var html = '';
+		nodo.setAttribute('formUpdate','');
+		if(this.tipo=='simple'){
+			campo+="<input  type='text' name='"+this.data.nombre+"'>";
+		}else if(this.tipo=='area'){
+			campo+="<textarea name='"+this.data.nombre+"'></textarea>";
+			nodo.setAttribute('area','');
+		}
+		html+="<label>"+this.data.titulo+"</label>";
+		html+="<div clear></div>";
+		html+="<article update='area'></article>";
+		html+="<div >";
+		html+=	campo;
+		html+=	"<span >"+this.data.valor+"</span>";
+		html+="</div>";
+		nodo.innerHTML=html;
+		this.nodo=nodo;
+		this.darVida();
+	}
+	this.darVida = function(){
+		//aqui quede
+		var article = this.nodo.getElementsByTagName('article')[0];
+	}
+	this.construirNodo();
 }
 /*----------------------------------Funciones del Objeto Select-------------------------------*/
 		construirCapaSelect= function(capaSelect){
