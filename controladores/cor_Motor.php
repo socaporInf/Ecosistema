@@ -29,6 +29,13 @@ switch ($la_Form['entidad']) {
 				}
 				break;
 			
+			case 'guardar':
+				$lb_Hecho=$lobj_Entidad->f_Guardar();
+				if($lb_Hecho){
+					$respuesta['mensaje'] = 'Insercion realizada con exito';
+					$success=1;
+				}
+				break;
 			default:
 				
 				break;

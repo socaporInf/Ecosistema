@@ -19,7 +19,7 @@ class cls_Rol extends cls_Conexion{
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['codigo'];
+			$la_respuesta['codigo']=$la_registros['cod_rol'];
 			$la_respuesta['nombre']=$la_registros['nombre'];
 			$la_respuesta['descripcion']=$la_registros['descripcion'];
 			$lb_Enc=true;
@@ -41,14 +41,14 @@ class cls_Rol extends cls_Conexion{
 	private function f_Buscar_Detalle(){
 
 		//Busco Detalle
-		$ls_Sql="SELECT e.*,re.codigo as codigoRelacion FROM seguridad.rol_emp AS re 
-				INNER JOIN global.empresa AS e ON(re.cod_emp=e.codigo)
+		$ls_Sql="SELECT e.*,re.cod_rol_emp as codigoRelacion FROM seguridad.rol_emp AS re 
+				INNER JOIN global.empresa AS e ON(re.cod_emp=e.cod_emp)
 				WHERE re.cod_rol='".$this->aa_Form['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$x=0;
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo'];
+			$la_respuesta[$x]['codigo']=$la_registros['cod_emp'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
 			$la_respuesta[$x]['codigoRelacion']=$la_registros['codigorelacion'];
 			$x++;
@@ -65,7 +65,7 @@ class cls_Rol extends cls_Conexion{
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo'];
+			$la_respuesta[$x]['codigo']=$la_registros['cod_rol'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
 			$la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
 			$x++;

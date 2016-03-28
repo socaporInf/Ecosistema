@@ -6,22 +6,12 @@ var Sesion = function(){
 
 	this.obtenerSesion = function(){
 		var contEspera=0;
-
-		var intervaloCargaSession = setInterval(function(){
-			console.log('contador de espera:'+contEspera);
-			contEspera++;
-			if(contEspera>=10){
-				console.log('culmino tiempo de espera');
-				//clearInterval(intervaloCargaSession);
-			}
-		},20); 
-		console.log('intervalo carga session:'+intervaloCargaSession);
 		conexionAcc=crearXMLHttpRequest();
 		var sesionActiva=this;
 		conexionAcc.onreadystatechange = function(){
 			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
-				clearInterval(intervaloCargaSession);
 				var respuesta=JSON.parse(conexionAcc.responseText);
+				console.log(respuesta);
 				if(respuesta.success==1){
 					sesionActiva.estado='activa';
 					sesionActiva.nombre=respuesta.sesion.Nombre;
@@ -29,7 +19,6 @@ var Sesion = function(){
 				}else{
 					location.href='index.html';
 				}
-
 		    }
 		}
 		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
@@ -94,7 +83,7 @@ var Sesion = function(){
 				}
 				modulos.push(modulo);
 			}
-			//----------------------------------------Evaluar Submodulos
+			//-------------------------------Evaluar Submodulos-----------------
 			var z=0;
 			if(submodulos.length==0){
 				submodulo={
@@ -204,55 +193,26 @@ var Motor = function(entidadActiva){
 		conexionMotor.send(envio);
 	}
 	//--------------------------------------------funciones de bd--------------------------------
-	this.guardar = function(nuevoRegistro,entidad){
-		//guardar general por entidad
-		if(this.entidadActiva==entidad){
-			this.registrosEntAct = this.buscarRegistros(entidad);
+	this.guardar = function(entidad,info,callback){
+		var conexionMotor=crearXMLHttpRequest();
+		conexionMotor.onreadystatechange = function(){
+			if (conexionMotor.readyState == 4){
+		            callback(JSON.parse(conexionMotor.responseText));
+		    }
 		}
-	}
-	this.eliminar = function(registro,entidad){
-		//borrar registro
+		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
+		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="operacion="+encodeURIComponent('guardar')+'&entidad='+encodeURIComponent(entidad);+'&';
+		for(var x=0;x<info.length;x++){
+			envio+=info[x].nombre.toLowerCase()+'='+encodeURIComponent(info[x].valor)+'&';
+		}
+		console.log(envio);
+		//conexionMotor.send(envio);
 	}
 	this.editarCampo= function(id,campo,valor){
 		var registro=torque.buscarRegistro(id);
 		//editar campo
 		return registro;
-	}
-	this.guardarEnDetalle= function(id,cambios){
-		var registro=this.buscarRegistro(id)
-		for(var x=0;x<cambios.length;x++){
-			registro.detalle.push(cambios[x]);
-		}
-		return registro;
-	}
-	this.peticionMenu = function(){
-		var campNom=document.getElementById('nomUsu');
-		var campPass=document.getElementById('pass');
-		conexionAcc=crearXMLHttpRequest();
-		conexionAcc.onreadystatechange = this.respuestaMenu;
-		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
-		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-		var envio="Operacion="+encodeURIComponent("cargarPermisologia");
-		envio+="&Nombre="+encodeURIComponent(campNom.value);
-		conexionAcc.send(envio);
-	}
-	this.respuestaMenu = function(){
-		if(conexionAcc.readyState == 4){
-			var respuesta=JSON.parse(conexionAcc.responseText);
-			console.log(respuesta);
-
-			var ventana={};
-
-			if(respuesta.success==1){
-				ventana.cabecera='Acesso';
-				ventana.cuerpo=respuesta.mensaje
-			}else{
-				ventana.tipo='advertencia';
-				ventana.cabecera='Error de Acceso';
-				ventana.cuerpo=respuesta.mensaje;
-			}
-			UI.crearVentanaModal(ventana);
-		}
 	}
 	//funcion de arranque 
 	this.ignition();

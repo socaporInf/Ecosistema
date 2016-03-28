@@ -94,18 +94,22 @@
 				var campos = [
 					{
 						tipo : 'campoDeTexto',
-						parametros : ['Nombre','simple',null,true]	
+						parametros : {titulo:'Nombre',nombre:'nombre',tipo:'simple',eslabon:null,usaTooltip:true}	
 					},
 					{
 						tipo: 'comboBox',
-						parametros : [
-							'Estado',
-							torque.buscarRegistros('estado')
-						]
+						parametros : {
+							nombre:'Estado',
+							opciones:[
+								{codigo:1,nombre:'opcion1'},
+								{codigo:2,nombre:'opcion2'},
+								{codigo:3,nombre:'opcion3'}
+							]
+						}
 					},
 					{
 						tipo : 'campoDeTexto',
-						parametros : ['Descripcion','area','area',true]
+						parametros : {titulo:'Descripcion',nombre:'descr',tipo:'area',eslabon:'area',usaToolTip:true}
 					}
 				]
 				UI.elementos.formulario.ventanaForm.agregarCampos(campos);
