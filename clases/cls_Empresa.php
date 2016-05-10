@@ -24,7 +24,7 @@ class cls_Empresa extends cls_Conexion{
 			$la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
 			$x++;
 		}
-		$this->f_Cierra();
+		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
 		return $la_respuesta;
 	}

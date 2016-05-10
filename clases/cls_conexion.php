@@ -1,6 +1,6 @@
 <?php 
    class cls_Conexion { 									//Declarar clase Abstracta Modelo
-	private  $db_host 	= '192.168.88.250';									//Nombre del Host
+	private  $db_host 	= '127.0.0.1';									//Nombre del Host
 	private  $db_usuario 	= 'postgres';									//Nombre del Usuario
 	private  $db_password = '1234';									//Password de la BD.
 	private  $db_num_db	 ='';
