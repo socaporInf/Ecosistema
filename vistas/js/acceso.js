@@ -3,8 +3,8 @@ function accesar(){
 	var campNom=document.getElementById('nomUsu');
 	var campPass=document.getElementById('pass');
 
-	if((campNom.value=='')||(campPass.value=='')){
-		return
+	if((campNom.value==='')||(campPass.value==='')){
+		return;
 	}
 	conexionAcc=crearXMLHttpRequest();
 	conexionAcc.onreadystatechange = procesarAcc;
@@ -40,14 +40,14 @@ function procesarAcc(){
 			//le agrego funcionamiento
 			btnCancelar.onclick = function(){
 				UI.elementos.modalWindow.eliminarUltimaCapa();
-			}
+			};
 			torque.buscarRegistros('empresa',function(response){
 				//recivo la informacion
 				var respuesta=response;
 				var html='';
 				for(var x=0;x<respuesta.registros.length;x++){
 					html+='<button inicio valor="'+respuesta.registros[x].codigo+'" onclick="iniciarSession(this) "';
-					html+='>'+respuesta.registros[x].nombre+'</button>'
+					html+='>'+respuesta.registros[x].nombre+'</button>';
 				}
 				
 				var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
@@ -88,7 +88,7 @@ function iniciarSession(nodo){
 	var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 	var info={
 		mensaje:'Iniciar Sesion'
-	}
+	};
 	capaContenido.partes.cuerpo.nodo.innerHTML='';
 	var cuadroDeCarga=UI.crearCuadroDeCarga(info,capaContenido.partes.cuerpo.nodo);
 	cuadroDeCarga.style.marginTop='80px';

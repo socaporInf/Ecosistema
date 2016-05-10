@@ -2,12 +2,12 @@
    class cls_Conexion { 									//Declarar clase Abstracta Modelo
 	private  $db_host 	= '192.168.88.250';									//Nombre del Host
 	private  $db_usuario 	= 'postgres';									//Nombre del Usuario
-	private  $db_password = '1234';									//Password de la BD.
+	private  $db_password = '1234';											//Password de la BD.
 	private  $db_num_db	 ='';
 	protected $db_nombre= 'socaDB';										//Nombre de la Base de Datos.
 	private  $db_port="5433";		
 	protected $query;													//Variable del Query
-	protected $rows 			= array();								//Variable arreglo de las filas de una busqueda
+	protected $rows = array();											//Variable arreglo de las filas de una busqueda
 	private $arCon;														//Variable de Conexion
 	public $mensaje = 'Hecho';											//Mensaje de Hecho
 	

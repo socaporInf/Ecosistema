@@ -16,32 +16,33 @@ class cls_Permisos extends cls_Conexion{
 		$x=0;
 		$la_Privilegios=array();
 		$ls_Sql="SELECT
-				p.cod_submod AS submodulo,
+				p.cod_comp AS componente,
+				c.cod_comp_pad AS padre,
 				re.cod_emp AS empresa,
 				re.cod_rol AS rol,
-				s.nombre,
-				s.enlace,
-				s.cod_mod as cod_mod,
-				m.nombre as Modulo
+				c.tit AS titulo,
+				c.url,
+				pa.tit AS nom_padre
 				FROM seguridad.rolemp_usu AS reu
 				INNER JOIN seguridad.rol_emp AS re ON(reu.cod_rol_emp=re.cod_rol_emp)
 				INNER JOIN seguridad.privilegio AS p ON(re.cod_rol_emp=p.cod_rol_emp) 
-				INNER JOIN seguridad.submodulo AS s ON(p.cod_submod=s.cod_submod)
-				INNER JOIN seguridad.modulo AS m ON(s.cod_mod=m.cod_mod) 
+				INNER JOIN seguridad.componente AS c ON(p.cod_comp=c.cod_comp)
+				LEFT JOIN seguridad.componente AS pa ON(pa.cod_comp=c.cod_comp_pad)
 				WHERE reu.cod_usu='".$this->aa_Form['Nombre']."' AND re.cod_emp='".$this->aa_Form['Empresa']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registro=$this->f_Arreglo($lr_tabla)){
-			$la_Pribilegios[$x]['Nombre']=$la_registro['nombre'];
-			$la_Pribilegios[$x]['Enlace']=$la_registro['enlace'];
-			$la_Pribilegios[$x]['Codigo']=$la_registro['submodulo'];
-			$la_Pribilegios[$x]['Cod_Mod']=$la_registro['cod_mod'];
-			$la_Pribilegios[$x]['Modulo']=$la_registro['modulo'];
+			$la_Pribilegios[$x]['titulo']=$la_registro['titulo'];
+			$la_Pribilegios[$x]['URL']=$la_registro['url'];
+			$la_Pribilegios[$x]['componente']=$la_registro['componente'];
+			$la_Pribilegios[$x]['padre']=$la_registro['padre'];
+			$la_Pribilegios[$x]['nom_padre']=$la_registro['nom_padre'];
 			$x++;
 		}
-		$this->f_Cierra();
+		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
 		return $la_Pribilegios;
 	}
+	
 }
 ?>
