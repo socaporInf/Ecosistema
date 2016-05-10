@@ -1,17 +1,16 @@
 var Sesion = function(){
 
-	this.estado='cerrada';
+	this.estado = 'cerrada';
 	this.nombre;
-	this.privilegios= null;
+	this.privilegios = null;
+	this.arbol = null;
 
 	this.obtenerSesion = function(){
-		var contEspera=0;
 		conexionAcc=crearXMLHttpRequest();
 		var sesionActiva=this;
 		conexionAcc.onreadystatechange = function(){
 			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
 				var respuesta=JSON.parse(conexionAcc.responseText);
-				console.log(respuesta);
 				if(respuesta.success==1){
 					sesionActiva.estado='activa';
 					sesionActiva.nombre=respuesta.sesion.Nombre;
@@ -20,8 +19,8 @@ var Sesion = function(){
 					location.href='index.html';
 				}
 		    }
-		}
-		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		};
+		conexionAcc.open('POST','../controladores/cor_validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="Operacion="+encodeURIComponent("obtenerSesion");
 		conexionAcc.send(envio);
@@ -35,7 +34,7 @@ var Sesion = function(){
 					location.href='index.html';
 				}            
 		    }
-		}
+		};
 		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="Operacion="+encodeURIComponent("cerrarSesion");
@@ -47,89 +46,29 @@ var Sesion = function(){
 		console.log('Estado de la Sesion: '+this.estado);
 	};
 	this.armarPrivilegios =function(privilegios){
-		var modEnc=false;
-		var subEnc=false;
-		var modulo;
-		var submodulo;
-		var modulos=new Array();
-		var submodulos=new Array();
-		for(var x=0;x<privilegios.length;x++){
-			
-			modEnc=false;
-			subEnc=false;
-
-			//------------------------------------Evaluar Modulos
-			var y=0;
-			if(modulos.length==0){
-				modulo={
-					codigo:privilegios[x].Cod_Mod,
-					nombre:privilegios[x].Modulo
-				}
-				modulos.push(modulo);
-			}
-
-			do{
-				if(privilegios[x].Cod_Mod==modulos[y].codigo){
-					modEnc=true;
-					break;
-				}
-				y++;
-			}while(y<modulos.length);
-
-			if(!modEnc){
-				modulo={
-					codigo:privilegios[x].Cod_Mod,
-					nombre:privilegios[x].Modulo
-				}
-				modulos.push(modulo);
-			}
-			//-------------------------------Evaluar Submodulos-----------------
-			var z=0;
-			if(submodulos.length==0){
-				submodulo={
-					codigo:privilegios[x].Codigo,
-					nombre:privilegios[x].Nombre,
-					enlace:privilegios[x].Enlace,
-					codPadre:privilegios[x].Cod_Mod
-				}
-				submodulos.push(submodulo);
-			}
-			do{
-				if(privilegios[x].Codigo==submodulos[z].codigo){
-					subEnc=true;
-					break
-				}
-				z++;
-			}while(z<submodulos.length);
-			if(!subEnc){
-				submodulo={
-					codigo:privilegios[x].Codigo,
-					nombre:privilegios[x].Nombre,
-					enlace:privilegios[x].Enlace,
-					codPadre:privilegios[x].Cod_Mod
-				}
-				submodulos.push(submodulo);
+		//rellenar la variable this.privilegios
+		var arbol = {};
+		for(var x = 0; x < privilegios.length; x++ ){
+			if(privilegios[x].codigo==0){
+				arbol = privilegios[x];
+				privilegios.splice(x,1);
+				this.privilegios = privilegios;
 			}
 		}
-		var privilegio;
-		for(var x=0;x<modulos.length;x++){
-			privilegio={
-				nombre:modulos[x].nombre,
-				codigo:modulos[x].codigo,
-				hijos:[]
+		arbol.hijos = this.buscarHijos(arbol.codigo);
+		this.arbol = arbol;
+	};
+	this.buscarHijos = function(codigoPadre){
+		var hijos = [];
+		for(var x = 0; x < this.privilegios.length; x++){
+			if(this.privilegios[x].padre==codigoPadre){
+				this.privilegios[x].hijos=this.buscarHijos(this.privilegios[x].codigo);
+				hijos.push(this.privilegios[x]);
 			}
-			for(var y=0;y<submodulos.length;y++){
-				if(modulos[x].codigo==submodulos[y].codPadre){
-					privilegio.hijos.push(submodulos[y]);
-				}
-			}
-			if(this.privilegios==null){
-				this.privilegios=new Array();
-			}
-			this.privilegios.push(privilegio);
 		}
+		return hijos;
 	}
-}	
+};	
 var Motor = function(entidadActiva){
 	
 	this.estado='apagado';
@@ -156,12 +95,12 @@ var Motor = function(entidadActiva){
 			if (conexionBuscar.readyState == 4){
 		        callback(JSON.parse(conexionBuscar.responseText));
 		    }
-		}
+		};
 		conexionBuscar.open('POST','../controladores/cor_Motor.php', true);
 		conexionBuscar.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="operacion="+encodeURIComponent("buscar")+'&entidad='+encodeURIComponent(entidad);
 		conexionBuscar.send(envio);
-	}
+	};
 
 	this.Busqueda = function(info,callback){
 		var conexionBusqueda=crearXMLHttpRequest();
@@ -169,7 +108,7 @@ var Motor = function(entidadActiva){
 			if (conexionBusqueda.readyState == 4){
 		            callback(JSON.parse(conexionBusqueda.responseText));
 		    }
-		}
+		};
 		conexionBusqueda.open('POST','../controladores/cor_Motor.php', true);
 		conexionBusqueda.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="operacion="+encodeURIComponent(info.operacion)+'&entidad='+encodeURIComponent(info.entidad);
@@ -182,16 +121,15 @@ var Motor = function(entidadActiva){
 			if (conexionMotor.readyState == 4){
 		            callback(JSON.parse(conexionMotor.responseText));
 		    }
-		}
+		};
 		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio='';
-		var valor;
 		for(var llave in info){
 			envio+=llave.toLowerCase()+'='+encodeURIComponent(info[llave])+'&';
 		}
 		conexionMotor.send(envio);
-	}
+	};
 	//--------------------------------------------funciones de bd--------------------------------
 	this.guardar = function(entidad,info,callback){
 		var conexionMotor=crearXMLHttpRequest();
@@ -199,7 +137,7 @@ var Motor = function(entidadActiva){
 			if (conexionMotor.readyState == 4){
 		            callback(JSON.parse(conexionMotor.responseText));
 		    }
-		}
+		};
 		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="operacion="+encodeURIComponent('guardar')+'&entidad='+encodeURIComponent(entidad);+'&';
@@ -208,15 +146,15 @@ var Motor = function(entidadActiva){
 		}
 		console.log(envio);
 		//conexionMotor.send(envio);
-	}
+	};
 	this.editarCampo= function(id,campo,valor){
 		var registro=torque.buscarRegistro(id);
 		//editar campo
 		return registro;
-	}
+	};
 	//funcion de arranque 
 	this.ignition();
-}
+};
 //--------------------------------AJAX---------------------------------------
 function crearXMLHttpRequest() 
 {
