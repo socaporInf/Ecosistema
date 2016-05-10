@@ -3,12 +3,12 @@ function accesar(){
 	var campNom=document.getElementById('nomUsu');
 	var campPass=document.getElementById('pass');
 
-	if((campNom.value=='')||(campPass.value=='')){
-		return
+	if((campNom.value==='')||(campPass.value==='')){
+		return;
 	}
 	conexionAcc=crearXMLHttpRequest();
 	conexionAcc.onreadystatechange = procesarAcc;
-	conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+	conexionAcc.open('POST','../controladores/cor_validar.php', true);
 	conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	var envio="Operacion="+encodeURIComponent("acceso");
 	envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Pass="+encodeURIComponent(campPass.value);
@@ -18,7 +18,6 @@ function accesar(){
 function procesarAcc(){
 	if(conexionAcc.readyState == 4){
 		var respuesta=JSON.parse(conexionAcc.responseText);
-		console.log(respuesta);
 
 		var ventana={};
 
@@ -40,14 +39,14 @@ function procesarAcc(){
 			//le agrego funcionamiento
 			btnCancelar.onclick = function(){
 				UI.elementos.modalWindow.eliminarUltimaCapa();
-			}
+			};
 			torque.buscarRegistros('empresa',function(response){
 				//recivo la informacion
 				var respuesta=response;
 				var html='';
 				for(var x=0;x<respuesta.registros.length;x++){
 					html+='<button inicio valor="'+respuesta.registros[x].codigo+'" onclick="iniciarSession(this) "';
-					html+='>'+respuesta.registros[x].nombre+'</button>'
+					html+='>'+respuesta.registros[x].nombre+'</button>';
 				}
 				
 				var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
@@ -80,7 +79,7 @@ function iniciarSession(nodo){
 	        }
 	    }
 	};
-	conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+	conexionAcc.open('POST','../controladores/cor_validar.php', true);
 	conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	var envio="Operacion="+encodeURIComponent("iniciarSession");
 	envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Empresa="+encodeURIComponent(nodo.getAttribute('valor'));
@@ -88,7 +87,7 @@ function iniciarSession(nodo){
 	var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 	var info={
 		mensaje:'Iniciar Sesion'
-	}
+	};
 	capaContenido.partes.cuerpo.nodo.innerHTML='';
 	var cuadroDeCarga=UI.crearCuadroDeCarga(info,capaContenido.partes.cuerpo.nodo);
 	cuadroDeCarga.style.marginTop='80px';
