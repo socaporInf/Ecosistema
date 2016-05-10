@@ -20,6 +20,8 @@
 
 
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
+	//arranca la sesion
+	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
 	var torque = new Motor('rol');
@@ -29,7 +31,10 @@
 	UI.configure();
 	//se cargan los registros necesarios que no forman parte de la entidad activa pero
 	//que de igual forma se utilizaran dentro del maestro
-	var empresas = torque.buscarRegistros('empresa');
+	var empresas
+	torque.Busqueda({entidad:'empresa',operacion:'buscar'},function(respuesta){
+		empresas=respuesta.registros;
+	});
 	
 	//Se inicializa la botonera con sus respectivos botones
 	var botones = ['buscar','nuevo','abrir'];
@@ -37,6 +42,8 @@
 
 	//se inicializa el formulario
 	UI.elementos.formulario = new Formulario(torque.entidadActiva);
+
+	sesion.obtenerSesion();
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 
@@ -54,14 +61,14 @@
 				detalle : []
 			}
 			torque.guardar(nuevoRegistro,'rol');
-			var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
+			var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(nuevoRegistro);
 			nuevoSlot.firstChild.click();
 		}else{
 			//creo el mensaje
-			var mensaje='Este es el mensaje';
+			var mensaje='Por favor rellene todos los campos antes de continuar';
 			var data={
 				tipo:'error',
-				cabecera:'este es EL error',
+				cabecera:'Error',
 				cuerpo:mensaje
 			}
 			UI.crearVentanaModal(data);
@@ -77,83 +84,127 @@
 			var tiempo = (this.estado=='agregado')?600:0;
 			if(this.tipo=='nuevo'){
 				this.registroId='';
-				UI.elementos.formulario.controlLista();
+				UI.elementos.formulario.ventanaList.controlLista();
 				this.nodo.style.height='0px';		
 				setTimeout(function(){
-					var nodo=UI.elementos.formulario.ventanaForm.nodo;
-					nodo.style.height='450px';
-					html+='\
-					<section titulo>Nuevo Rol</section>\
-						<section sector>\
-							<form name ="formNuevo">\
-								<div class="group">\
-							      <input type="text" name="Nombre" required>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Nombre</label>\
-							    </div>\
-							    <div class="group" area>\
-							      <textarea name="Descripcion" required></textarea>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Descripcion</label>\
-							    </div>\
-							    <div formElements>\
-							    	<label class="radio"><input id="radio1" type="radio" name="Estado" ><span class="outer"><span class="inner"></span></span>Activo</label>\
-							    	<label class="radio"><input id="radio2" type="radio" name="Estado" ><span class="outer"><span class="inner"></span></span>Inactivo</label>\
-							    </div>\
-							</form>\
-						</section>\
-					</section>';
-					nodo.innerHTML=html;
-					UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
+					var capaForm=UI.elementos.formulario.ventanaForm;
+
+					//inicializo valores basicos del formulario
+					var titulo = 'Nuevo Rol';
+					var altura = 325;
+					
+					//construyo el html
+					capaForm.crearEstructuraBasicaNuevo(titulo,altura);
+
+					//creo los campos que va a usar el formulario 
+					var campos = [
+						{
+							tipo : 'campoDeTexto',
+							parametros : [
+								'nombre','simple',null,true
+							]
+						},
+						{
+							tipo : 'campoDeTexto',
+							parametros : [
+								'descripcion','area','area',true
+							]
+						}
+					]
+					//agrego dichos campos
+					UI.elementos.formulario.ventanaForm.agregarCampos(campos);
 				},tiempo);
+
+				//funcionamiento botones
 				UI.elementos.botonera.agregarBoton('guardar');
+				UI.elementos.botonera.quitarBoton('eliminar');
+
 			}else if(this.tipo='modificar'){
-				var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
+
+				//funcinamiento botones
+				UI.elementos.botonera.agregarBoton('eliminar');
 				UI.elementos.botonera.quitarBoton('guardar');
-				this.nodo.style.height='0px';		
+				
+				this.nodo.style.height='0px';
+				
+				//busco informacion del registro
 				setTimeout(function(){
 					var nodo=UI.elementos.formulario.ventanaForm.nodo;
 					nodo.style.height='250px';
 					nodo.style.borderRadius='0px';
-						html+='\
-					<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
-						<section sector>\
-							<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
-						</section>\
-						<section sector>\
-							<div>Empresas</div>\
-							<section contenedor id="contenedorPri">\
+					//------------Cuadro Carga-------------------------------
+					var infoCuadro = {
+						mensaje:'Buscando'
+					}
+					nodo.innerHTML='';
+					var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,nodo);
+					cuadroDeCarga.style.marginTop='80px';
+					//--------------------------------------------------------
+					var info={
+						codigo:UI.elementos.formulario.ventanaForm.registroId,
+						entidad:torque.entidadActiva,
+						operacion:'buscarRegistro'
+					}
+					torque.Busqueda(info,function(respuesta){
+
+						var data = respuesta.registros;
+						UI.elementos.formulario.ventanaForm.registroAct=data;
+						//tiempo para aparicion del Formulario
+						var nodo=UI.elementos.formulario.ventanaForm.nodo;
+							html+='\
+						<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
+							<section sector>\
+								<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
 							</section>\
-						</section>\
-					</section>';
-					nodo.innerHTML=html;
-					normalizarNodo(nodo);
-					normalizarNodo(nodo.childNodes[2]);
-					var contenedor=nodo.childNodes[2].childNodes[1];
-					this.nodo=nodo;
-					//arreglo temporal de empresas
-						dataTemp=torque.buscarDetalle(data.id,'rol');
-						UI.elementos.formulario.ventanaForm.agregarEmpresas(contenedor,dataTemp);
+							<section sector>\
+								<div>Empresas</div>\
+								<section contenedor id="contenedorPri">\
+								</section>\
+							</section>\
+						</section>';
+						nodo.innerHTML=html;
+						normalizarNodo(nodo);
+						normalizarNodo(nodo.childNodes[2]);
+						var contenedor=nodo.childNodes[2].childNodes[1];
+						//arreglo temporal de empresas
+							UI.elementos.formulario.ventanaForm.agregarEmpresas(contenedor,data.detalle);
+						
+					});
 				},tiempo);
 			}
 		};
 		objForm.prototype.agregarEmpresas=function(contenedor,elementos){
 			var html="";
-			for(var x=0;x<elementos.length;x++){
-				html+="<article empresa>"+elementos[x].nombre+"</article>";
-			}
 			html+='<article add="empresa"></article>';
+			for(var x=0;x<elementos.length;x++){
+				html+="<article empresa='"+elementos[x].codigo+"' codigo='"+elementos[x].codigoRelacion+"'>"+elementos[x].nombre+"</article>";
+			}
 			contenedor.innerHTML=html;
 			this.agregarFuncionamiento();
 		};
 		objForm.prototype.agregarEmpresa = function(empresa,contenedor){
 			var nodo=document.createElement('article');
 			nodo.textContent = empresa.nombre;
-			nodo.setAttribute('empresa','');
-			contenedor.insertBefore(nodo,contenedor.lastChild);
+			nodo.setAttribute('empresa',empresa.codigo);
+			contenedor.appendChild(nodo);
 			this.agregarFuncionamiento();
+		};
+		objForm.prototype.eliminarEmpresa = function(empresa,contenedor){
+			var empresas=this.registroAct.detalle;
+			for(var x=0;x<empresas.length;x++){
+				if(empresas[x].codigo==empresa.codigo){
+					var indice=x;
+				}
+			}
+			empresas.splice(indice,1);
+			var lista = contenedor.childNodes;
+			for(var x=0;x<lista.length;x++){
+				if(lista[x].nodeName.toLowerCase()=='article'){
+					if(lista[x].getAttribute('empresa')==empresa.codigo){
+						contenedor.removeChild(lista[x]);
+					}
+				}
+			}
 		};
 		objForm.prototype.agregarFuncionamiento = function(){
 			var nodo=this.nodo;
@@ -164,21 +215,19 @@
 					lista[x].onclick=this.edicion;
 				}else if(lista[x].getAttribute('empresa')!==null){
 					lista[x].onclick=function(){
-						var registro = torque.buscarRegistro(UI.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
 						//structura de la ventana modal
 						var dataTemp = {
 							cabecera:'Operaciones En '+this.textContent,
 							cuerpo:'Las Operaciones disponibles son: <br>Eliminar Asociacion<br>Modificar Privilegios',
 							pie:'<section modalButtons>\
 									<button type="button" cancelar id="modalButtonCancelar"></button>\
-									<button type="button" modificar ruta="'+registro.id+'" id="modalButtonModificar"></button>\
-									<button type="button" eliminar  id="modalButtonEliminar"></button>\
+									<button type="button" modificar ruta="'+this.getAttribute('codigo')+'" id="modalButtonModificar"></button>\
+									<button type="button" eliminar codigo="'+this.getAttribute('empresa')+'"  id="modalButtonEliminar"></button>\
 								</section>'
 						}
 						
 						//creo la ventana modal
-						UI.crearVentanaModal(dataTemp);
-						
+						UI.crearVentanaModal(dataTemp);						
 
 						//agrego funcionamiento a los botones de la ventaModal
 						var btnCancelar = document.getElementById("modalButtonCancelar");
@@ -188,6 +237,60 @@
 						btnCancelar.onclick= function(){
 							UI.elementos.modalWindow.eliminarUltimaCapa();
 						}
+						btnEliminar.onclick=function(){
+							var dataTemp = {
+								tipo:'advertencia',
+								cabecera:'Advertencia',
+								cuerpo:'Si Elimina esta Asociacion se perderan todos los datos del Mismo<br><br>¿Realmente desea eliminarla?',
+								pie:'<section modalButtons>\
+										<button type="button" cancelar 	></button>\
+										<button type="button" eliminar codigo="'+this.getAttribute('codigo')+'" ></button>\
+									</section>'
+							}
+						
+							//creo la ventana modal
+							var capaContenido=UI.crearVentanaModal(dataTemp);
+							var btnCancelar=capaContenido.nodo.getElementsByTagName('button')[0];
+							var btnEliminar=capaContenido.nodo.getElementsByTagName('button')[1];
+							btnCancelar.onclick=function(){
+								UI.elementos.modalWindow.eliminarUltimaCapa();
+							}
+							btnEliminar.onclick=function(){
+								
+								//------------Cuadro Carga-------------------------------
+								var contenedor = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo;
+								var infoCuadro={
+									tipo:'advertencia',
+									mensaje:'Eliminando Registro'
+								}
+								capaContenido.partes.cuerpo.nodo.innerHTML='';
+								var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,contenedor);
+								cuadroDeCarga.style.width='150px';
+								//--------------------------------------------------------
+
+								var info={
+									operacion:'eliminarDetalle',
+									cod_emp:this.getAttribute('codigo'),
+									codigo:UI.elementos.formulario.ventanaForm.registroId,
+									entidad:'rol'
+								}
+								//ejecuto operacion
+								torque.Operacion(info,function(respuesta){
+
+									var cuadroDeCarga=UI.elementos.cuadroCarga;
+									//culmino carga
+									cuadroCarga.culminarCarga(respuesta,function(respuesta){
+										console.log('entrando');
+										var empresa={
+											codigo:respuesta.cod_emp
+										}
+										UI.elementos.formulario.ventanaForm.eliminarEmpresa(empresa,document.getElementById('contenedorPri'));
+										UI.elementos.modalWindow.eliminarUltimaCapa();
+										setTimeout(function(){UI.elementos.modalWindow.eliminarUltimaCapa();},820);
+									});
+								});
+							}
+						}
 						btnModificar.onclick= function(){
 							location.href=this.getAttribute('enlace');
 						}
@@ -195,7 +298,7 @@
 				}else if(lista[x].getAttribute('add')!==null){
 					lista[x].onclick=function(){
 						//busco el registro con la informacion que voy a utilizar
-						var registro = torque.buscarRegistro(UI.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
+						var registro = UI.elementos.formulario.ventanaForm.registroAct;
 
 						//armo la estructura de la ventana modal
 						var dataTemp = {
@@ -222,10 +325,10 @@
 						UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.style.height='200px';
 						
 						//armo la lista de valores no permitidos para el combo
-						var empresas=torque.buscarDetalle(UI.elementos.formulario.ventanaForm.registroId,'rol');
+						var empresas=registro.detalle;
 						var valoresNoPermitidos= Array();
 						for(var x=0;x<empresas.length;x++){
-							valoresNoPermitidos.push(empresas[x].id);
+							valoresNoPermitidos.push(empresas[x].codigo);
 						}
 						//valido el combo box con los valores recopilados
 						UI.elementos.formulario.validarCombo(valoresNoPermitidos,document.getElementById('listaEmpresas'));
@@ -237,7 +340,7 @@
 						var comboEmpresas = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.getElementsByTagName('select')[0];
 
 						comboEmpresas.previousSibling.onclick = function(){
-							UI.elementos.formulario.ventanaForm.construirCapaSelect(this);
+							construirCapaSelect(this);
 						}
 
 						btnCancelar.onclick=function(){
@@ -249,17 +352,23 @@
 							//guardo el empresa
 							if(lista.value!='-'){
 								if(lista.value!='cerrar'){
-									var empresa= {	
-										id: lista.value,
-										nombre: lista.options[lista.selectedIndex].textContent
+									var info= {	
+										cod_emp: lista.value,
+										codigo: UI.elementos.formulario.ventanaForm.registroId,
+										entidad: 'rol',
+										Operacion:'guardarDetalle'
 									}
-									var cambios = Array();
-									cambios.push(empresa);
-									torque.guardarEnDetalle(UI.elementos.formulario.ventanaForm.registroId,cambios);
-									
-									UI.elementos.formulario.ventanaForm.agregarEmpresa(empresa,document.getElementById('contenedorPri'));
-									//cierro capa
-									UI.elementos.modalWindow.eliminarUltimaCapa();
+									torque.Operacion(info,function(respuesta){
+
+										var empresa={
+											codigo:lista.value,
+											nombre:lista.options[lista.selectedIndex].textContent
+										}
+										
+										UI.elementos.formulario.ventanaForm.agregarEmpresa(empresa,document.getElementById('contenedorPri'));
+										//cierro capa
+										UI.elementos.modalWindow.eliminarUltimaCapa();
+									});
 								}else{
 									UI.elementos.modalWindow.eliminarUltimaCapa();
 								}
@@ -272,7 +381,7 @@
 					}
 				}else if(lista[x].getAttribute('capaSelect')!==null){
 					lista[x].onclick=function(){
-						UI.elementos.formulario.ventanaForm.construirCapaSelect(this);
+						construirCapaSelect(this);
 					}
 				}
 			}

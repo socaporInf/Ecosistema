@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 	<title></title>
@@ -11,7 +11,6 @@
 <body>
 	<div contenedor></div>
 </body>
-
 <!-- scripts que construyen la interfaz y su funcionamiento -->
 <script type="text/javascript" src='js/motorRegistros.js'></script>
 <script type="text/javascript" src='js/constructor.js'></script>
@@ -20,7 +19,7 @@
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/	
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('estado');
+	var torque = new Motor('modulo');
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
@@ -34,6 +33,7 @@
 	UI.elementos.formulario = new Formulario(torque.entidadActiva);
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+
 
 	//funcionamiento exclusivo del formulario
 	function guardar(){
@@ -53,14 +53,13 @@
 		if(validacion){
 			var nuevoRegistro = {
 				nombre : data[0].valor,
-				descripcion : data[1].valor
+				descripcion : data[1].valor,
 			}
-
 			//guardo en base de datos
 			torque.guardar(nuevoRegistro,torque.entidadActiva);
 
 			//creo un nuevo slot en la UI
-			var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
+			var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(nuevoRegistro);
 
 			//cambio a modificacion
 			nuevoSlot.firstChild.click();
@@ -84,37 +83,79 @@
 			UI.elementos.formulario.ventanaList.controlLista();
 			this.nodo.style.height='0px';		
 			setTimeout(function(){
-				var nodo=UI.elementos.formulario.ventanaForm.nodo;
-				//tamaño predeterminado de la capaForm para nuevo
-				nodo.style.height='225px';
-				html+='\
-				<section titulo>Nuevo Estado</section>\
-					<section sector>\
-						<form name ="formNuevo">\
-							<div class="group">\
-						      <input type="text" name="Nombre" required>\
-						      <span class="highlight"></span>\
-						      <span class="bar"></span>\
-						      <label>Nombre</label>\
-						    </div>\
-						    <div class="group" area>\
-							      <textarea name="Descripcion" required></textarea>\
-							      <span class="highlight"></span>\
-							      <span class="bar"></span>\
-							      <label>Descripcion</label>\
-							    </div>\
-						</form>\
-					</section>\
-				</section>';
-				nodo.innerHTML=html;
-				UI.elementos.formulario.ventanaForm.agregarFuncionamiento();
+				var capaForm=UI.elementos.formulario.ventanaForm;
+
+				var titulo = 'Nuevo Modulo';
+				var altura = 225;
+				capaForm.crearEstructuraBasicaNuevo(titulo,altura);
+
+				//creo los campos que va a usar el formulario 
+				var campos = [
+					{
+						tipo : 'campoDeTexto',
+						parametros : ['Nombre','simple',null,true]	
+					},
+					{
+						tipo : 'campoDeTexto',
+						parametros : ['Descripcion','area','area',true]
+					}
+				]
+				UI.elementos.formulario.ventanaForm.agregarCampos(campos);
 			},tiempo);
 			UI.elementos.botonera.agregarBoton('guardar');
+			UI.elementos.botonera.quitarBoton('eliminar');
 		}else if(this.tipo='modificar'){
+			//busco los datos del registro
 			var data = torque.buscarRegistro(this.registroId,torque.entidadActiva);
+			UI.elementos.botonera.agregarBoton('eliminar');
 			UI.elementos.botonera.quitarBoton('guardar');
 			this.nodo.style.height='0px';		
 			setTimeout(function(){
+					var formulario = UI.elementos.formulario.ventanaForm;
+					var nodo=formulario.nodo;
+					html+="<section titulo><textarea  name='nombre'></textarea><span>"+data.nombre+"</span><article update='campo'></article></section>";
+					html+=	"<section sector>";
+					html+=		"<!-- Aqui va el contenido -->";
+					html+=		"<div formUpdate>";
+					html+=			"<label>Nombre abreviado</label>";
+					html+=			"<div clear></div>";
+					html+=			"<article update='area'></article>";
+					html+=			"<div >";
+					html+=				"<input  type='text' name='descripcion'>";
+					html+=				"<span >"+data.nombre_abr+"</span>";
+					html+=			"</div>";
+					html+=		"</div>";
+					html+=		"<div formUpdate>";
+					html+=			"<label>Telefono</label>";
+					html+=			"<div clear></div>";
+					html+=			"<article update='area'></article>";
+					html+=			"<div >";
+					html+=				"<input  type='text' name='Telefono'>";
+					html+=				"<span >"+data.telefono+"</span>";
+					html+=			"</div>";
+					html+=		"</div>";
+					html+=		"<div formUpdate>";
+					html+=			"<label>Correo</label>";
+					html+=			"<div clear></div>";
+					html+=			"<article update='area'></article>";
+					html+=			"<div >";
+					html+=				"<input  type='text' name='Correo'>";
+					html+=				"<span >"+data.correo+"</span>";
+					html+=			"</div>";
+					html+=		"</div>";
+					html+=		"<div formUpdate area>";
+					html+=			"<label>Direccion Fiscal</label>";
+					html+=			"<div clear></div>";
+					html+=			"<article update='area'></article>";
+					html+=			"<div >";
+					html+=				"<textarea name='dir_fis'></textarea>";
+					html+=				"<span >"+data.dir_fis+"</span>";
+					html+=			"</div>";
+					html+=		"</div>";
+					html+="	</section>";
+					html+="</section>";
+					nodo.innerHTML=html;
+					UI.elementos.formulario.ventanaForm.agregarFuncionamiento();*/
 				var nodo=UI.elementos.formulario.ventanaForm.nodo;
 				nodo.style.height='250px';
 				nodo.style.borderRadius='0px';
@@ -122,7 +163,6 @@
 				<section titulo><textarea  name="nombre"></textarea><span>'+data.nombre+'</span><article update="campo"></article></section>\
 					<section sector>\
 						<!-- Aqui va el contenido -->\
-						<div><textarea name="descripcion"></textarea><span >'+data.descripcion+'</span><article update="area"></article></div>\
 					</section>\
 				</section>';
 				nodo.innerHTML=html;
@@ -137,13 +177,6 @@
 			lista[x].style.cursor='pointer';
 			if(lista[x].getAttribute('update')!==null){
 				lista[x].onclick=this.edicion;
-			}
-		}
-		lista = this.nodo.getElementsByTagName('input');
-		for(var x=0; x<lista.length;x++){
-			if(lista[x].type=='text'){
-				lista[x].parentNode.onmouseover=UI.elementos.formulario.abrirtooltipInput;
-				lista[x].parentNode.onmouseout=UI.elementos.formulario.cerrartooltipInput;
 			}
 		}
 	};
