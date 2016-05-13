@@ -67,8 +67,9 @@ switch ($la_Form['entidad']) {
 				break;
 
 			case 'guardarDetalle':
-				$lb_Hecho=$lobj_Entidad->guardarDetalle();
-				if($lb_Hecho){
+				$respuesta=$lobj_Entidad->guardarDetalle();
+				if($respuesta!=false){
+					$respuesta['registro'] = $respuesta;
 					$success=1;
 				}
 			break;

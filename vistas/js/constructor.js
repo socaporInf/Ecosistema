@@ -34,7 +34,7 @@ var Botonera = function(estructura){
 	
 	var Boton = function(tipo){
 		this.tipo = tipo.toLowerCase();
-		this.nodo;
+		this.nodo =  null;
 		this.estado = 'porConstruir';
 
 		this.construirNodo = function(){
@@ -77,7 +77,7 @@ var Botonera = function(estructura){
 
 	this.estructura = estructura;
 	this.estado = 'porConstruir';
-	this.nodo;
+	this.nodo = null;
 
 	this.botones = []; 
 
@@ -208,7 +208,7 @@ var Menu = function(){
 			this.codigo = data.codigo;
 			this.estado = 'porConstriur';
 			this.contenido = data.nombre;
-			this.nodo;
+			this.nodo = null;
 			this.enlace = data.enlace || '#';
 
 			this.construirNodo = function(){
@@ -231,7 +231,7 @@ var Menu = function(){
     
 		/*---------------------Fin Objeto elemento ----------------------------*/
 		this.estado='porConstruir';
-		this.nodo;
+		this.nodo = null;
 		this.elementos=[];
 		this.codigo = yo.codigo;
 		
@@ -246,7 +246,7 @@ var Menu = function(){
 			this.nodo=nodo;
 			
 			//estilos
-			this.nodo.style.marginLeft='calc(100%)';
+			this.nodo.classList.add('siguiente');
 
 			//creacion de hijos
 			var hijos=this.yo.hijos;
@@ -294,12 +294,9 @@ var Menu = function(){
 	};
 	/*---------------------Fin Objeto SubCapa ---------------------------------*/
 	this.estado = 'porConstriur';
-
 	this.capaActiva;
-
 	this.partes = [];
-	//nodo de DOM
-	this.nodo;
+	this.nodo = null;
 
 	this.intervaloCarga=null;
 
@@ -312,6 +309,7 @@ var Menu = function(){
 		contenedor.insertBefore(nodo,contenedor.firstChild);
 		this.nodo = nodo;
 		this.estado='enUso';
+
 		//creo la titulo
 		var titulo=document.createElement('section');
 		titulo.textContent='Menu';
@@ -357,24 +355,36 @@ var Menu = function(){
 		btnMenu.click();
 	};
 	this.activarCapa = function(capa){
-		if(this.capaActiva!==undefined){
-			this.capaActiva.nodo.classList.toggle('visible');
+		if(this.capaActiva===undefined){
+			capa.nodo.classList.remove('siguiente');	
 		}
-		capa.nodo.classList.toggle('visible');
-		this.capaActiva=capa;
+		this.capaActiva = capa;
+		this.capaActiva.nodo.classList.add('capaActiva');
+
+		//reviso si tiene las clases siguiente o anterior y se las remuevo
+		if(this.capaActiva.nodo.classList.contains('siguiente')){
+			this.capaActiva.nodo.classList.remove('siguiente');
+		}
+		if(this.capaActiva.nodo.classList.contains('anterior')){
+			this.capaActiva.nodo.classList.remove('anterior');
+		}
+		
 	};
 	this.avanzar = function(nodo){
 		var codigo = nodo.getAttribute('enlace').substring(1,nodo.getAttribute('enlace').length);
 		var lista = this.capaActiva.hijos;
-		for(var x=0;x<lista.length;x++){
+		this.capaActiva.nodo.classList.remove('capaActiva');
+		this.capaActiva.nodo.classList.add('anterior');
+		for(var x = 0; x < lista.length; x++){
 			if(lista[x].codigo==codigo){
-				this.capaActiva.nodo.style.marginLeft='-100%';
 				this.activarCapa(lista[x]);
 				this.cambiarTitulo(lista[x].yo.titulo);
 			}
 		}
 	};
 	this.regresar = function(){
+		this.capaActiva.nodo.classList.remove('capaActiva');
+		this.capaActiva.nodo.classList.add('siguiente');
 		this.activarCapa(this.capaActiva.padre);
 		var titulo = (this.capaActiva.padre!==null)?this.capaActiva.yo.titulo:'Menu';
 		this.cambiarTitulo(titulo);
@@ -387,10 +397,10 @@ var Menu = function(){
 			titulo.classList.add('retroceso');
 			titulo.onclick = function(){
 				UI.elementos.menu.regresar();
-			}
+			};
 		}
 		titulo.textContent = texto;
-	}
+	};
 	this.construir();
 };
 
@@ -433,9 +443,7 @@ var Formulario = function(entidad){
 	var VentanaForm = function(){
 
 		this.tipo = 'noPosee';
-
-		this.nodo;
-
+		this.nodo = null;
 		this.estado = 'sinConstruir';
 
 		//este es el registro que se esta editando
@@ -549,7 +557,6 @@ var Formulario = function(entidad){
 		};
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
-			console.log(campo.tipo);
 			var campoNuevo;
 			var contenedor = this.nodo.getElementsByTagName('form')[0];
 			switch(campo.tipo.toLowerCase()){ 
@@ -613,12 +620,9 @@ var Formulario = function(entidad){
 		var Slot = function(data){
 
 			this.atributos = data;
-
 			this.estado = 'sinInicializar';
-
 			this.rol = 'lista';
-
-			this.nodo;
+			this.nodo = null;
 
 			this.construirNodo = function(nombre){
 				var nodo = document.createElement('section');
@@ -655,8 +659,7 @@ var Formulario = function(entidad){
 					agregarRippleEvent(this.parentNode,e);
 				};
 				btnEliminar.onclick=function(){
-					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id});
-					var registro = slot.atributos;
+					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id})
 					if(slot.estado=='seleccionado'){
 						var ventana = {
 							tipo : 'error',
@@ -778,7 +781,6 @@ var Formulario = function(entidad){
 		};
 		this.controlLista = function(nodo){
 			var obj=false;
-			var oldSelecinado=this.obtenerSeleccionado();
 			for(var x=0;x<this.Slots.length;x++){
 				if(this.Slots[x].nodo==nodo){
 					this.Slots[x].estado='seleccionado';
@@ -1071,20 +1073,20 @@ var modalWindow = function(bloqueo){
 
 		var Cabecera = function(){
 
-			this.estado='sinConstruir';
-			this.nodo;
+			this.estado = 'sinConstruir';
+			this.nodo = null;
 
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('cabecera','');
-				this.nodo=nodo;
+				this.nodo = nodo;
 			};
 			this.construirNodo();
 		};
 
 		var Cuerpo = function(){
 			this.estado='sinConstruir';
-			this.nodo;
+			this.nodo = null;
 
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
@@ -1095,8 +1097,8 @@ var modalWindow = function(bloqueo){
 		};
 
 		var Pie = function(){
-			this.estado='sinConstruir';
-			this.nodo;
+			this.estado = 'sinConstruir';
+			this.nodo = null;
 			//funcion para agregar funcionamiento a los elementos hijos
 			this.funcionamiento;
 			this.construirNodo = function(){
@@ -1107,10 +1109,10 @@ var modalWindow = function(bloqueo){
 			this.construirNodo();
 		};
 
-		this.estado='sinConstruir';
-		this.partes={};
-		this.nodo;
-		this.tipo='contenido';
+		this.estado = 'sinConstruir';
+		this.partes = {};
+		this.nodo = null;
+		this.tipo = 'contenido';
 
 		this.construirNodo = function(){
 			var nodo=document.createElement('div');
@@ -1374,7 +1376,7 @@ var CuadroCarga = function(info,callback){
 		}else if(this.tipo.toLowerCase()=='carga'){
 			circulo.classList.toggle('pathCarga');
 		}
-		this.estado = 'iniciado'
+		this.estado = 'iniciado';
 		this.nodo = cuadro;
 	};
 	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
@@ -1384,7 +1386,7 @@ var CuadroCarga = function(info,callback){
 		this.intervalID=setInterval(function(){
 			var callback = UI.elementos.cuadroCarga.callback;
 			UI.elementos.cuadroCarga.contEspera++;
-			if(callback!=null){
+			if(callback!==null){
 				callback();
 			}
 			if(UI.elementos.cuadroCarga!==undefined){
@@ -1396,13 +1398,13 @@ var CuadroCarga = function(info,callback){
 						bloqueo:true,
 						cabecera:'Error de Conexion',
 						cuerpo:'Tiempo de espera Culminado por Favor Refresque la Pagina'
-					}
+					};
 					UI.crearVentanaModal(ventana);
 					//funcionamiento de recarga
 					var capaContenido=UI.elementos.modalWindow.buscarUltimaCapaContenido();
 					capaContenido.partes.cuerpo.nodo.onclick=function(){
 						location.reload();
-					}
+					};
 				}
 			}
 		},50);
@@ -1416,7 +1418,7 @@ var CuadroCarga = function(info,callback){
 		var circulo = this.nodo.getElementsByTagName('circle')[0];
 		circulo.parentNode.removeChild(circulo);
 		titulo.textContent = respuesta.mensaje;
-		if(callback!=null){
+		if(callback!==null){
 			callback(respuesta);
 		}
 	};
@@ -1425,15 +1427,15 @@ var CuadroCarga = function(info,callback){
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
 		UI.elementos.cuadroCarga=undefined;
-	}
+	};
 	this.construirNodo();
-}
+};
 /*----------------------------------------------------------------------------------------------------*/
 /*-----------------------------------------Objeto Constructor-----------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
 var Arquitecto = function(){
 
-	this.elementos = new Array();
+	this.elementos = [];
 
 	this.estado = 'sinInicializar';
 
@@ -1444,7 +1446,7 @@ var Arquitecto = function(){
 			 cabecera : new Cabecera(),
 			 formulario : 'noPosee',
 			 botonera : 'noPosee'
-		}
+		};
 		this.estado='inicializado';
 		var mql = window.matchMedia("(max-width: 1000px)");
 		mql.addListener(handleMediaChange);
@@ -1466,7 +1468,7 @@ var Arquitecto = function(){
 		cuadroCarga=new CuadroCarga(info,null);
 		this.elementos.cuadroCarga=cuadroCarga;
 		return cuadroCarga.nodo;
-	}
+	};
 	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
 	this.iniciarCarga = function(info,callback){
 		console.log('inicio carga');
@@ -1474,21 +1476,21 @@ var Arquitecto = function(){
 		this.elementos.cuadroCarga=cuadroCarga;
 		this.elementos.cuadroCarga.manejarCarga();
 		return cuadroCarga.nodo;
-	}
-}
+	};
+};
 /*---------------Objetos de interfaz---------------------------------------------*/
 var Radio = function(info){
 	//nombre,opciones,seleccionado
 	this.data = info;
 	this.estado = 'porConstriur';
-	this.nodo;
+	this.nodo = null;
 
 	this.construirNodo = function(){
 		var nodo = document.createElement('div');
 		nodo.setAttribute('formElements','');
 		this.nodo = nodo;
 		this.agregarOpciones();
-	}
+	};
 	this.agregarOpcion = function(opcion){
 		var nodoOpcion = document.createElement('label');
 		nodoOpcion.classList.toggle('radio');
@@ -1496,56 +1498,57 @@ var Radio = function(info){
 		html+='<input type="radio" name="'+this.data.nombre+'" value="'+opcion.valor+'"><span class="outer"><span class="inner"></span></span>'+opcion.nombre;
 		nodoOpcion.innerHTML=html;
 		this.nodo.appendChild(nodoOpcion);
-	}
+	};
 	this.agregarOpciones = function(){
 		for(var x=0; x<this.opciones.length;x++){
 			this.agregarOpcion(this.opciones[x]);
 		}
-	}
+	};
 	this.construirNodo();
-}
+};
+
 //--------------------------Combo Box -------------------------------------
 var ComboBox = function(info){
-	console.log(info);
 	//nombre,opciones,seleccionado,eslabon
 	this.data = info;
 	this.estado = 'porConstriur';
 	this.data.eslabon = info.eslabon||'simple';
 	this.data.seleccionado = info.seleccionado||'-';
-	this.nodo;
+	this.nodo = null;
 
 	this.construir = function(){
 		var nodo=document.createElement('div');
 		nodo.setAttribute(this.data.eslabon,'');
 		nodo.setAttribute('formElements','');
-		
 		//se crea el article
 		var article=document.createElement('article');
 		article.setAttribute('capaSelect','');
 		article.onclick=function(){
 			construirCapaSelect(this);
-		}
+		};
 		nodo.appendChild(article);
 
 		//se crea el select
 		var select=document.createElement('select');
 		select.name=this.data.nombre;
+		if(this.data.id!==undefined){
+			select.id=this.data.id;
+		}
 		nodo.appendChild(select);
 		this.nodo=nodo;
 
 		//creo la primera opcion
 		var opcion = {
-			id : '-',
+			codigo : '-',
 			nombre : 'Elija un '+this.data.nombre
-		}
-		this.agregarOpcion(opcion)
+		};
+		this.agregarOpcion(opcion);
 
 		//genero y asigno el resto de las opciones
 		this.agregarOpciones(this.data.opciones);
 		this.estado='enUso';
 	};
 	this.agregarOpciones = function(opciones){
-		console.log(opciones);
 		for(var x=0;x<opciones.length;x++){
 			this.agregarOpcion(opciones[x]);
 		}
@@ -1559,25 +1562,26 @@ var ComboBox = function(info){
 	};
 	
 	this.construir();
+};
 
-}
 //-------------------- Salto de linea ---------------
 var SaltoDeLinea = function(){
-	this.nodo;
+	this.nodo = null;
 	this.construirNodo = function(){
 		var nodo = document.createElement('div');
 		nodo.setAttribute('clear','');
-		this.nodo=nodo;
-	}
+		this.nodo = nodo;
+	};
 	this.construirNodo();
-}
+};
+
 //-------------------- Campo  de Texto ---------------------------
 var CampoDeTexto = function(info){
 	this.data = info;
 	this.estado = 'porConstriur';
 	this.data.eslabon = info.eslabon || 'simple';
 	this.data.usaTooltip = info.usaTooltip ||  false;
-	this.nodo;
+	this.nodo = null;
 
 	this.construir = function(){
 		var CampoDeTexto = document.createElement('div');
@@ -1598,14 +1602,14 @@ var CampoDeTexto = function(info){
 
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
-		if(this.usaTooltip!=false){
+		if(this.usaTooltip!==false){
 			this.nodo.onmouseover=UI.elementos.formulario.abrirtooltipInput;
 			this.nodo.onmouseout=UI.elementos.formulario.cerrartooltipInput;
 		}
 		this.estado='enUso';
-	}
+	};
 	this.construir();
-}
+};
 //-------------------- Campo Edicion----------------------------------------------------------
 var CampoEdicion = function(info){
 	
@@ -1634,19 +1638,19 @@ var CampoEdicion = function(info){
 		nodo.innerHTML=html;
 		this.nodo=nodo;
 		this.darVida();
-	}
+	};
 	this.darVida = function(){
 		//aqui quede
 		var article = this.nodo.getElementsByTagName('article')[0];
-	}
+	};
 	this.construirNodo();
-}
+};
 /*----------------------------------Funciones del Objeto Select-------------------------------*/
 		construirCapaSelect= function(capaSelect){
 			capaSelect.onclick=function(){};
-			var opciones= new Array();
-			var opcion;
-			var nodo;
+			var opciones =[];
+			var opcion = null;
+			var nodo = null;
 			var select = capaSelect.nextSibling;
 			while(select.nodeName=='#text'){
 				select=select.nextSibling;
@@ -1658,7 +1662,7 @@ var CampoEdicion = function(info){
 					nombre:select.options[x].textContent,
 					value:select.options[x].value,
 					nodo:null
-				}
+				};
 
 				nodo=document.createElement('div');
 				nodo.setAttribute('option','');
@@ -1682,7 +1686,7 @@ var CampoEdicion = function(info){
 					}
 					select.value=this.getAttribute('valor');
 					destruirCapaSelect(this.parentNode);
-				}
+				};
 				opcion.nodo=nodo;
 				opciones.push(opcion);
 				capaSelect.appendChild(nodo);
@@ -1691,9 +1695,9 @@ var CampoEdicion = function(info){
 			//creo el contenedor de las opciones
 			capaSelect.style.opacity='1';
 			capaSelect.style.height=parseInt(opciones.length*41)+'px';
-			capaSelect.style.width='60px'
-
+			capaSelect.style.width='60px';
 		};
+
 		destruirCapaSelect = function(capaSelect){
 			var lista = capaSelect.childNodes;
 			var opcion;
@@ -1711,11 +1715,11 @@ var CampoEdicion = function(info){
 				}
 				capaSelect.onclick=function(){
 					construirCapaSelect(this);
-				}
-			},300)
-			
-		}
+				};
+			},300);
+		};
 	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
+    
 //---------------------------Ink Event------------------------
 	agregarRippleEvent= function(parent,evento){
 		var html;
@@ -1723,7 +1727,7 @@ var CampoEdicion = function(info){
 		//se crea el elemento si no existe
 		if(parent.getElementsByTagName('div')[0]===undefined){
 			ink=document.createElement('div');
-			ink.classList.toggle('ink')
+			ink.classList.toggle('ink');
 			parent.insertBefore(ink,parent.firstChild);
 		}
 		ink=parent.getElementsByTagName('div')[0];
@@ -1735,7 +1739,7 @@ var CampoEdicion = function(info){
 		var style = window.getComputedStyle(ink);
 
 		//se guardan los valores de akto y ancho
-		if(parseInt(style.height.substring(0,style.height.length-2))==0 && parseInt(style.width.substring(0,style.width.length-2))==0){
+		if(parseInt(style.height.substring(0,style.height.length-2))===0 && parseInt(style.width.substring(0,style.width.length-2))===0){
 			//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
 			d = Math.max(parent.offsetHeight, parent.offsetWidth);
 			ink.style.height=d+'px';
@@ -1747,13 +1751,13 @@ var CampoEdicion = function(info){
 		parent.offset={
 		  top: rect.top + document.body.scrollTop,
 		  left: rect.left + document.body.scrollLeft
-		}
+		};
 		//re evaluo los valores de alto y ancho del ink
 		style = window.getComputedStyle(ink);
 
 		//ubico el lugar donde se dispara el click
-		var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2
-		var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2
+		var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2;
+		var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2;
 		//cambio los valores de ink para iniciar la animacion
 		ink.style.top=y+'px';
 		ink.style.left=x+'px';
@@ -1777,7 +1781,7 @@ function normalizarNodo(nodo){
 	var hijo=null;
 	var eliminar;
 	while(hijo!=nodo.lastChild){
-		if(hijo==null){
+		if(hijo===null){
 			hijo=nodo.firstChild;
 		}
 		if(hijo.nodeName=='#text'){
