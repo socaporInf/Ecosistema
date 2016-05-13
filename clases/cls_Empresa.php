@@ -61,7 +61,7 @@ class cls_Empresa extends cls_Conexion{
 				('".$this->aa_Form['nombre']."','".$this->aa_Form['rif']."','".$this->aa_Form['dir_fis']."',
 				'".$this->aa_Form['telefono']."','".$this->aa_Form['correo']."','".$this->aa_Form['nombre_abr']."')";
 		$this->f_Con();
-		//$lb_Hecho=$this->f_Ejecutar($ls_Sql);
+		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
 		return $lb_Hecho;
 	}
