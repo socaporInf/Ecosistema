@@ -28,7 +28,7 @@ var handleMediaChange = function (mediaQueryList) {
 };
 
 /*----------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------Objeto Botonera ----------------------------------------*/
+/*--------------------------------------------Objeto Botonera-----------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
 var Botonera = function(estructura){
 	
@@ -919,6 +919,7 @@ var Formulario = function(entidad){
 				}
 			});
 			cuadroDeCarga.style.marginTop='80px';
+			//------------Cuadro Carga-------------------------------
 		};
 		this.construir();
 	};
@@ -936,7 +937,7 @@ var Formulario = function(entidad){
 	//metodo para hacer el objeto ventana form capaz de recibir funciones en forma de herencia
 	this.ventanaForm.prototype = VentanaForm.prototype;
 	this.ventanaForm.prototype.constructor = this.ventanaForm;
-	//----------------------------------------------------------------------------------------
+	//-----------------------------Metodos----------------------------------------------
 
 	this.construirVentanaForm=function(data){
 		this.ventanaForm.registroId=data.codigo;
@@ -1071,6 +1072,7 @@ var modalWindow = function(bloqueo){
 
 	var capaContenido = function(){
 
+		//------------------- Partes-------------------------------------
 		var Cabecera = function(){
 
 			this.estado = 'sinConstruir';
@@ -1108,7 +1110,7 @@ var modalWindow = function(bloqueo){
 			};
 			this.construirNodo();
 		};
-
+		//------------------- Partes-------------------------------------
 		this.estado = 'sinConstruir';
 		this.partes = {};
 		this.nodo = null;
@@ -1259,7 +1261,7 @@ var modalWindow = function(bloqueo){
 				},810);
 			}else{
 				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
-				//los saco de vista con la trancision
+				//los saco de vista con la transcision
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
 				capaContenido.nodo.style.opacity='0';
@@ -1356,7 +1358,7 @@ var CuadroCarga = function(info,callback){
 	this.estado = 'sinIniciar';
 
 	this.construirNodo = function(){
-		
+
 		var cuadro = document.createElement('div');
 		cuadro.classList.toggle('ContenedorCarga');
 
@@ -1370,6 +1372,7 @@ var CuadroCarga = function(info,callback){
 			</div>';
 		this.contenedor.appendChild(cuadro);
 		var circulo=document.querySelector('.path');
+
 		//asigno color al circulo de carga
 		if(this.tipo.toLowerCase()=='advertencia'){
 			circulo.classList.toggle('pathAdvertencia');
@@ -1390,8 +1393,10 @@ var CuadroCarga = function(info,callback){
 				callback();
 			}
 			if(UI.elementos.cuadroCarga!==undefined){
+
 				if(UI.elementos.cuadroCarga.contEspera>=500){
-					console.log('tiempo de espera culminado');
+					//cuando el tiempo de espera es exedido muestro el mensaje 
+					console.log('tiempo de espera exedido');
 					clearInterval(UI.elementos.cuadroCarga.intervalID);
 					var ventana = {
 						tipo:'error',
@@ -1412,7 +1417,7 @@ var CuadroCarga = function(info,callback){
 	//funcion en la cual se le pasa parametros al callback al culminar la carga
 	// y muestra un mensaje al culminar la carga
 	this.culminarCarga = function(respuesta,callback){
-		callback= callback || null;
+		callback = callback || null;
 		this.estado = 'cargaCulminada';
 		var titulo = this.nodo.firstChild;
 		var circulo = this.nodo.getElementsByTagName('circle')[0];
@@ -1623,25 +1628,45 @@ var CampoEdicion = function(info){
 		var html = '';
 		nodo.setAttribute('formUpdate','');
 		if(this.tipo=='simple'){
-			campo+="<input  type='text' name='"+this.data.nombre+"'>";
+			campo+="<input  type='text' edit name='"+this.data.nombre+"'>";
 		}else if(this.tipo=='area'){
 			campo+="<textarea name='"+this.data.nombre+"'></textarea>";
 			nodo.setAttribute('area','');
 		}
 		html+="<label>"+this.data.titulo+"</label>";
 		html+="<div clear></div>";
-		html+="<article update='area'></article>";
+		html+="<article update='area' ></article>";
 		html+="<div >";
 		html+=	campo;
-		html+=	"<span >"+this.data.valor+"</span>";
+		html+=	"<display >"+this.data.valor+"</display>";
 		html+="</div>";
 		nodo.innerHTML=html;
 		this.nodo=nodo;
 		this.darVida();
 	};
+
+	//---------------------quede en esta funcion -------------
 	this.darVida = function(){
-		//aqui quede
 		var article = this.nodo.getElementsByTagName('article')[0];
+		article.onclick = function(){
+			contenedorEdicion = this.nextSibling; 
+			edit = contenedorEdicion.firstChild;
+			display = edit.nextSibling;
+			if(this.classList.contains('edicion')){
+				edit.classList.remove('visible');
+				display.classList.remove('oculto');
+
+				display.textContent = edit.value;
+				edit.value='';
+			}else{
+				edit.classList.add('visible');
+				display.classList.add('oculto');
+
+				edit.value = display.textContent;
+				edit.focus();
+			}
+			this.classList.toggle('edicion');
+		}
 	};
 	this.construirNodo();
 };
