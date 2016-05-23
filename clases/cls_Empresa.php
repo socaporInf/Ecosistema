@@ -1,4 +1,4 @@
-<?php 
+ <?php 
 include('cls_Conexion.php');
 class cls_Empresa extends cls_Conexion{
 	
@@ -12,7 +12,41 @@ class cls_Empresa extends cls_Conexion{
 		return $this->aa_Form;
 	}
 
-	public function f_Listar(){
+	public function gestionar(){
+		switch ($this->aa_Form['operacion']) {
+			case 'buscar':
+				$registros=$this->f_Listar();
+				if(count($registros)!=0){
+					$success=1;
+					$respuesta['registros']=$registros;
+				}
+				break;
+
+			case 'buscarRegistro':
+				$lb_Enc=$this->f_buscar();
+				if($lb_Enc){
+					$la_Form=$this->getForm();
+					$respuesta['registros']=$la_Form['registro'];
+					$success=1;
+				}
+				break;
+			
+			case 'guardar':
+				$lb_Hecho=$this->f_Guardar();
+				if($lb_Hecho){
+					$respuesta['mensaje'] = 'Insercion realizada con exito';
+					$success=1;
+				}
+				break;
+			default:
+				$respuesta['mensaje'] = 'Operacion '.$la_Form['operacion'].' no existe para esta entidad';
+				$success = 0;
+				break;
+		}	
+		$respuesta['success']=$success;
+		return $respuesta;
+	}
+	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
 		$ls_Sql="SELECT * FROM global.empresa ";
@@ -29,7 +63,7 @@ class cls_Empresa extends cls_Conexion{
 		return $la_respuesta;
 	}
 
-	public function f_Buscar(){
+	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
 		$ls_Sql="SELECT * FROM global.empresa where cod_emp='".$this->aa_Form['codigo']."'";
@@ -55,7 +89,7 @@ class cls_Empresa extends cls_Conexion{
 
 		return $lb_Enc;
 	}
-	public function f_Guardar(){
+	private function f_Guardar(){
 		$lb_Hecho=false;
 		$ls_Sql="INSERT INTO global.empresa (nombre,rif,dir_fis,telefono,correo,nombre_br) values 
 				('".$this->aa_Form['nombre']."','".$this->aa_Form['rif']."','".$this->aa_Form['dir_fis']."',

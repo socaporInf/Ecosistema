@@ -53,7 +53,7 @@
   
 	protected function f_Filtro($lcSql){
 		//print($lcSql);
-		$result=pg_query($this->arCon,$lcSql) OR die ('Ejecucion Invalida');
+		$result=pg_query($this->arCon,$lcSql) OR die ('Busqueda Invalida');
 		return $result;		
 	}
 			

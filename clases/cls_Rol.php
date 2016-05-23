@@ -12,7 +12,57 @@ class cls_Rol extends cls_Conexion{
 		return $this->aa_Form;
 	}
 
-	public function f_Buscar(){
+	public function gestionar(){
+		print("<pre>");
+		print_r($this->aa_Form);
+		switch ($this->aa_Form['operacion']) {
+
+			case 'buscar':
+				$registros=$this->f_Listar();
+				if(count($registros)!=0){
+					$success=1;
+					$respuesta['registros']=$registros;
+				}
+				break;
+			
+			case 'buscarRegistro':
+				$lb_Enc=$this->f_buscar();
+				if($lb_Enc){
+					$la_Form=$this->getForm();
+					$respuesta['registros']=$la_Form['registro'];
+					$success=1;
+				}
+				break;
+
+			case 'guardarDetalle':
+				$respuesta=$this->guardarDetalle();
+				if($respuesta!=false){
+					$respuesta['registro'] = $respuesta;
+					$success=1;
+				}
+			break;
+
+			case 'eliminarDetalle':
+				$lb_Hecho=$this->eliminarDetalle();
+				if($lb_Hecho){
+					$respuesta['mensaje'] = 'Eliminacion realizada con exito';
+					$respuesta['cod_emp'] = $la_Form['cod_emp'];
+					$success=1;
+				}
+			break;
+
+			default:
+				$respuesta['mensaje'] = 'Operacion '.$la_Form['operacion'].' no existe para esta entidad';
+				$success = 0;
+				break;
+		}
+		
+		$respuesta['success']=$success;
+		
+		return $respuesta;
+	}
+	
+	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
 		$ls_Sql="SELECT * FROM seguridad.rol where cod_rol='".$this->aa_Form['codigo']."'";
@@ -58,7 +108,8 @@ class cls_Rol extends cls_Conexion{
 
 		return $la_respuesta;
 	}
-	public function f_Listar(){
+	
+	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
 		$ls_Sql="SELECT * FROM seguridad.rol ";
@@ -75,7 +126,7 @@ class cls_Rol extends cls_Conexion{
 		return $la_respuesta;
 	}
 
-	public function guardarDetalle(){
+	private function guardarDetalle(){
 		$lb_Hecho=false;
 		$ls_Sql='INSERT INTO seguridad.rol_emp (cod_rol,cod_emp) values ('.$this->aa_Form['codigo'].','.$this->aa_Form['cod_emp'].')';
 		$this->f_Con();
@@ -100,7 +151,7 @@ class cls_Rol extends cls_Conexion{
 		return $lb_Hecho;
 	}
 
-	public function eliminarDetalle(){
+	private function eliminarDetalle(){
 		$lb_Hecho=false;
 		$ls_Sql='DELETE FROM seguridad.rol_emp AS re WHERE re.cod_rol='.$this->aa_Form['codigo'].' and re.cod_emp='.$this->aa_Form['cod_emp'].'';
 		$this->f_Con();
