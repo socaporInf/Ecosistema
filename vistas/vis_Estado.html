@@ -18,7 +18,10 @@
 
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/	
-
+	
+	//arranca la sesion
+	var sesion = new Sesion();
+	
 	//arranca el motor de registros que se comunica con BD
 	var torque = new Motor('estado');
 
@@ -32,6 +35,8 @@
 
 	//se inicializa el formulario
 	UI.elementos.formulario = new Formulario(torque.entidadActiva);
+
+	sesion.obtenerSesion();
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 

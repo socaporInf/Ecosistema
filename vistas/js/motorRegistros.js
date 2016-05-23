@@ -86,7 +86,12 @@ var Motor = function(entidadActiva){
 	this.ignition = function(){
 		if(this.entidadActiva!='acceso'){
 			this.buscarRegistros(this.entidadActiva,function(respuesta){
-				torque.registrosEntAct=respuesta.registros;
+				if(respuesta.success===1){
+					torque.registrosEntAct=respuesta.registros;	
+				}else{
+					UI.crearMensaje('error',respuesta.mensaje);
+					UI.elementos.cuadroCarga.terminarCarga();
+				}
 			});
 		}
 	};

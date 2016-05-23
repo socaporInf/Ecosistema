@@ -2,18 +2,18 @@
 include('cls_Conexion.php');
 class cls_Empresa extends cls_Conexion{
 	
-	private $aa_Form = array();
+	private $aa_Atributos = array();
 
-	public function setForm($pa_Form){
-		$this->aa_Form=$pa_Form;
+	public function setPeticion($pa_Peticion){
+		$this->aa_Atributos=$pa_Peticion;
 	}
 
-	public function getForm(){
-		return $this->aa_Form;
+	public function getAtributos(){
+		return $this->aa_Atributos;
 	}
 
 	public function gestionar(){
-		switch ($this->aa_Form['operacion']) {
+		switch ($this->aa_Atributos['operacion']) {
 			case 'buscar':
 				$registros=$this->f_Listar();
 				if(count($registros)!=0){
@@ -25,8 +25,7 @@ class cls_Empresa extends cls_Conexion{
 			case 'buscarRegistro':
 				$lb_Enc=$this->f_buscar();
 				if($lb_Enc){
-					$la_Form=$this->getForm();
-					$respuesta['registros']=$la_Form['registro'];
+					$respuesta['registros']=$this->aa_Atributos['registro'];
 					$success=1;
 				}
 				break;
@@ -39,7 +38,7 @@ class cls_Empresa extends cls_Conexion{
 				}
 				break;
 			default:
-				$respuesta['mensaje'] = 'Operacion '.$la_Form['operacion'].' no existe para esta entidad';
+				$respuesta['mensaje'] = 'Operacion "'.strtoupper($this->aa_Atributos['operacion']).'" no existe para esta entidad';
 				$success = 0;
 				break;
 		}	
@@ -66,7 +65,7 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * FROM global.empresa where cod_emp='".$this->aa_Form['codigo']."'";
+		$ls_Sql="SELECT * FROM global.empresa where cod_emp='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -84,7 +83,7 @@ class cls_Empresa extends cls_Conexion{
 
 		if($lb_Enc){
 			//guardo en atributo de la clase
-			$this->aa_Form['registro']=$la_respuesta;
+			$this->aa_Atributos['registro']=$la_respuesta;
 		}
 
 		return $lb_Enc;
@@ -92,8 +91,8 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Guardar(){
 		$lb_Hecho=false;
 		$ls_Sql="INSERT INTO global.empresa (nombre,rif,dir_fis,telefono,correo,nombre_br) values 
-				('".$this->aa_Form['nombre']."','".$this->aa_Form['rif']."','".$this->aa_Form['dir_fis']."',
-				'".$this->aa_Form['telefono']."','".$this->aa_Form['correo']."','".$this->aa_Form['nombre_abr']."')";
+				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['rif']."','".$this->aa_Atributos['dir_fis']."',
+				'".$this->aa_Atributos['telefono']."','".$this->aa_Atributos['correo']."','".$this->aa_Atributos['nombre_abr']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();

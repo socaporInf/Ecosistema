@@ -1506,14 +1506,24 @@ var Arquitecto = function(){
 		document.body.onmousedown=this.activarEfecto;
 	};
 
-	this.crearVentanaModal= function(data,bloqueo){
+	this.crearVentanaModal= function(data){
 		//creo la venta modal
 		if(!this.elementos.modalWindow){
-			this.elementos.modalWindow = new modalWindow(bloqueo);		
+			this.elementos.modalWindow = new modalWindow();		
 		}
 		var capaContenido=this.elementos.modalWindow.arranque(data);
 		return capaContenido;
 	};
+
+	this.crearMensaje = function(tipo,mensaje){
+		let ventana = {
+			tipo: tipo,
+			cabecera: tipo.toUpperCase(),
+			cuerpo: mensaje
+		};
+		this.crearVentanaModal(ventana);
+	}
+	
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
 	this.crearCuadroDeCarga = function(info,contenedor){
 		info.contenedor = contenedor;
