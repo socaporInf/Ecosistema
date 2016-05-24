@@ -814,6 +814,9 @@ div[formUpdate] div[cont]{
   background-color: white;
   position: relative;
 }
+section[titulo] div[cont]{
+  float:left;
+}
 div[formUpdate] label{
   color:#1B5E20;
 }
@@ -841,11 +844,13 @@ div[capaForm] section textarea{
   resize:none;
   width: calc(100% - 90px);
   height: calc(100% - 20px);
-  font-size: 15px;
   color:inherit;
   background-color: transparent;
   font-size: inherit;
   z-index: 1;
+}
+div[capaForm] section[titulo] textarea{
+  height: 100%;
 }
 div[formUpdate] div span{
   font-size:13px; 
@@ -879,12 +884,13 @@ div[capaForm] section[sector] div[formupdate] > div div[display]{
 }
 
 /*------------Funcionamiento edicion-----------*/
-div[capaForm] section[sector] div[formupdate].edicion div div[display]{
+div[capaForm] section[sector] div[formupdate].edicion div div[display],div[capaForm] section[titulo].edicion div div[display]{
   opacity: 0;
   z-index: 1;
 }
-div[capaForm] section[sector] div[formupdate].edicion div textarea,
-div[capaForm] section[sector] div[formupdate].edicion div input[type='text']{
+div[capaForm] section[sector] div[formupdate].edicion div[cont] textarea,
+div[capaForm] section[sector] div[formupdate].edicion div[cont] input[type='text'],
+div[capaForm] section[titulo].edicion div[cont] textarea{
   opacity: 1;
   z-index: 2;
 }

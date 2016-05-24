@@ -3,6 +3,7 @@ include('cls_Conexion.php');
 class cls_Empresa extends cls_Conexion{
 	
 	private $aa_Atributos = array();
+	private $aa_Campos = array('cod_emp','rif','nombre','nombre_abr','dir_fis','telefono','correo');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -37,12 +38,19 @@ class cls_Empresa extends cls_Conexion{
 					$success=1;
 				}
 				break;
+
+			case 'modificar':
+				$respuesta = $this->f_Modificar();
+				break;
+				
 			default:
 				$respuesta['mensaje'] = 'Operacion "'.strtoupper($this->aa_Atributos['operacion']).'" no existe para esta entidad';
 				$success = 0;
 				break;
+		}
+		if(!isset($respuesta['success'])){
+			$respuesta['success']=$success;
 		}	
-		$respuesta['success']=$success;
 		return $respuesta;
 	}
 	private function f_Listar(){
@@ -88,6 +96,7 @@ class cls_Empresa extends cls_Conexion{
 
 		return $lb_Enc;
 	}
+	
 	private function f_Guardar(){
 		$lb_Hecho=false;
 		$ls_Sql="INSERT INTO global.empresa (nombre,rif,dir_fis,telefono,correo,nombre_br) values 
@@ -98,5 +107,28 @@ class cls_Empresa extends cls_Conexion{
 		$this->f_Des();
 		return $lb_Hecho;
 	}
+
+	private function f_Modificar(){
+		$lb_Hecho=false;
+		$contCampos = 0;
+		$ls_Sql="UPDATE global.empresa SET ";
+
+		//arma la cadena sql en base a los campos pasados en la peticion
+		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
+
+		$ls_Sql.="WHERE cod_emp ='".$this->aa_Atributos['codigo']."'";
+		$this->f_Con();
+		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
+		$this->f_Des();
+
+
+		if($lb_Hecho){
+			$this->f_Buscar();
+			$respuesta['registro'] = $this->aa_Atributos['registro'];
+			$respuesta['success'] = 1;
+		}
+		return $respuesta;
+	}
+
 }
 ?>

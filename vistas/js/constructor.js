@@ -485,12 +485,12 @@ var Formulario = function(entidad){
 		this.edicion = function(){
 			var formulario =  UI.elementos.formulario.ventanaForm;
 			var lista = Array.prototype.slice.call(formulario.formNode.childNodes);
-			//lista.splice(lista.length,0,formulario.titulo);
+			lista.splice(lista.length,0,formulario.titulo);
 			for(var x = 0; x < lista.length; x++){
 				lista[x].classList.add('edicion');
 
 				//contenedor
-				var contenedorEdit = lista[x].getElementsByTagName('div')[1];
+				var contenedorEdit = lista[x].querySelector('div[cont]');
 
 				//campo donde se muestra el valor del campo pero de solo lectura
 				var display = contenedorEdit.getElementsByTagName('div')[0];
@@ -499,9 +499,9 @@ var Formulario = function(entidad){
 				var campoEdit = null; 
 
 				if(lista[x].getAttribute('area')===null){
-					campoEdit = contenedorEdit.getElementsByTagName('input')[0];
+					campoEdit = contenedorEdit.querySelector('input');
 				}else{
-					campoEdit = contenedorEdit.getElementsByTagName('textarea')[0];
+					campoEdit = contenedorEdit.querySelector('textarea');
 				}
 				campoEdit.value = display.textContent;	
 				campoEdit.focus();
@@ -515,12 +515,12 @@ var Formulario = function(entidad){
 			let formulario =  UI.elementos.formulario.ventanaForm;
 			let newReg = {};
 			let lista = Array.prototype.slice.call(formulario.formNode.childNodes);
-			//lista.splice(lista.length,0,formulario.titulo);
+			lista.splice(lista.length,0,formulario.titulo);
 			for(var x = 0; x < lista.length; x++){
 				lista[x].classList.remove('edicion');
 
 				//contenedor
-				let contenedorEdit = lista[x].getElementsByTagName('div')[1];
+				var contenedorEdit = lista[x].querySelector('div[cont]');
 
 				//campo donde se muestra el valor del campo pero de solo lectura
 				let display = contenedorEdit.getElementsByTagName('div')[0];
@@ -529,9 +529,9 @@ var Formulario = function(entidad){
 				let campoEdit = null;
 
 				if(lista[x].getAttribute('area')===null){
-					campoEdit = contenedorEdit.getElementsByTagName('input')[0];
+					campoEdit = contenedorEdit.querySelector('input');
 				}else{
-					campoEdit = contenedorEdit.getElementsByTagName('textarea')[0];
+					campoEdit = contenedorEdit.querySelector('textarea');
 				}
 				display.textContent = campoEdit.value;	
 
@@ -569,7 +569,7 @@ var Formulario = function(entidad){
 				//------------Cuadro Carga-------------------------------
 				
 				torque.Operacion(peticion,function(respuesta){
-					UI.elementos.cuadroCarga.culminarCarga(respuesta,function(data){
+					UI.elementos.cuadroCarga.culminarCarga(respuesta,function(respuesta){
 						if(respuesta.success===0){
 							let ventana = {
 								tipo : 'error',
@@ -579,7 +579,8 @@ var Formulario = function(entidad){
 							UI.crearVentanaModal(ventana);
 							UI.elementos.formulario.ventanaForm.destruirNodo();
 						}else{
-
+							UI.elementos.formulario.ventanaList.actualizarSlot(respuesta.registro);
+							UI.elementos.formulario.ventanaList.obtenerSeleccionado().activar();
 						}
 					});
 
@@ -640,9 +641,11 @@ var Formulario = function(entidad){
 
 		this.crearEstructuraBasicaModificar = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html="<section titulo>\
-								<textarea  name='"+titulo.nombre+"'></textarea>\
-								<div display>"+titulo.valor+"</div>\
+				var html="<section titulo area>\
+								<div cont>\
+									<textarea  name='"+titulo.nombre+"'></textarea>\
+									<div display>"+titulo.valor+"</div>\
+								</div>\
 								<article update='campo'></article>\
 						</section>\
 						<section sector>\
@@ -754,6 +757,9 @@ var Formulario = function(entidad){
 					UI.elementos.formulario.ventanaList.Slots.splice(indice,1);
 				},1110);
 			};
+			this.activar = function(){
+				this.nodo.getElementsByTagName('article')[0].click();
+			}
 			this.construirNodo();
 		};
 		/*--------------------------Fin Objeto Slot-------------------*/
@@ -1079,7 +1085,7 @@ var Formulario = function(entidad){
 		};
 		btnAceptar.onclick=function(){
 
-			var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.getAttribute('registro')});
+			var slot = UI.elementos.formulario.ventanaList.buscarSlot({codigo:this.getAttribute('registro')});
 			var nodo = slot.nodo;
 
 			UI.elementos.modalWindow.eliminarUltimaCapa();
@@ -1506,7 +1512,7 @@ var Arquitecto = function(){
 		document.body.onmousedown=this.activarEfecto;
 	};
 
-	this.crearVentanaModal= function(data){
+	this.crearVentanaModal = function(data){
 		//creo la venta modal
 		if(!this.elementos.modalWindow){
 			this.elementos.modalWindow = new modalWindow();		
@@ -1523,7 +1529,7 @@ var Arquitecto = function(){
 		};
 		this.crearVentanaModal(ventana);
 	}
-	
+
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
 	this.crearCuadroDeCarga = function(info,contenedor){
 		info.contenedor = contenedor;
