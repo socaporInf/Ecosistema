@@ -53,7 +53,7 @@
   
 	protected function f_Filtro($lcSql){
 		//print($lcSql);
-		$result=pg_query($this->arCon,$lcSql) OR die ('Ejecucion Invalida');
+		$result=pg_query($this->arCon,$lcSql) OR die ('Busqueda Invalida');
 		return $result;		
 	}
 			
@@ -122,6 +122,44 @@
  	/**/    return $li_Registros;												/**/
     /**/}																		/**/
     /******************************************************************************/
+
+/*-----------------------------------
+* Funcion Fecha Real (Convierte una fecha 'Y/m/d' a formato normal 'd/m/Y')
+*-----------------------------------*/
+    protected function armarCamposUpdate($pa_Campos,$pa_Peticion){
+		$contCampos = 0;
+		$ls_Sql = '';
+		for($x = 0; $x < count($pa_Campos);$x++){
+			if($this->evaluarCampo($pa_Campos[$x],$pa_Peticion)){
+				$ls_Sql = $this->evaluarComa($contCampos,$ls_Sql);
+				$ls_Sql.= $pa_Campos[$x]."='".$pa_Peticion[$pa_Campos[$x]]."' ";
+				$contCampos++;
+			}
+		}
+		return $ls_Sql;
+	}
+
+/*-----------------------------------
+* Funcion Evaluar Campo (Evalua si el campo fue pasado en la peticion)
+*-----------------------------------*/
+
+	protected function evaluarCampo($ps_Campo,$pa_Peticion){
+		if(array_key_exists($ps_Campo,$pa_Peticion)){
+			return true;
+		}
+		return false;
+	}
+
+/*-----------------------------------
+* Funcion Evalua  (si la coma es necesaria en un update)
+*-----------------------------------*/
+
+	protected function evaluarComa($pi_Cont,$ps_Cadena){
+		if($pi_Cont>0){
+			$ps_Cadena.=','; 
+		}
+		return $ps_Cadena;
+	}
 }
 	
 /*---------------------------------------------

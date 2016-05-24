@@ -445,6 +445,8 @@ var Formulario = function(entidad){
 		this.tipo = 'noPosee';
 		this.nodo = null;
 		this.estado = 'sinConstruir';
+		this.formNode = null;
+		this.titulo = null;
 
 		//este es el registro que se esta editando
 		this.registroId='';
@@ -479,82 +481,119 @@ var Formulario = function(entidad){
 				vf.estado='sinConstruir';
 			},510);
 		};
-		this.edicion=function(){
-			var nodo=this;
-			var campo=this.previousSibling;
-			var campoEdicion=campo.previousSibling;
-			var contenedor=nodo.parentNode;
-			
-			contenedor.style.maxHeight='1000px';
+		
+		this.edicion = function(){
+			var formulario =  UI.elementos.formulario.ventanaForm;
+			var lista = Array.prototype.slice.call(formulario.formNode.childNodes);
+			lista.splice(lista.length,0,formulario.titulo);
+			for(var x = 0; x < lista.length; x++){
+				lista[x].classList.add('edicion');
 
-			campoEdicion.value=campo.textContent;
-			campoEdicion.style.display='inline-block';
+				//contenedor
+				var contenedorEdit = lista[x].querySelector('div[cont]');
 
-			campo.style.width=window.getComputedStyle(campo,null).getPropertyValue("width");
-			campo.style.maxHeight=window.getComputedStyle(campo,null).getPropertyValue("height");
-			nodo.classList.toggle('edicion');
+				//campo donde se muestra el valor del campo pero de solo lectura
+				var display = contenedorEdit.getElementsByTagName('div')[0];
 
-			setTimeout(function(){
-				campo.style.width='0px';
-				campo.style.opacity='0';
+				//campo donde se edita la informacion
+				var campoEdit = null; 
 
-				campoEdicion.style.width='calc(100% - 62px)';
-				campoEdicion.style.opacity='1';
-				if(nodo.getAttribute('update')=='campo'){
-					campoEdicion.style.height="32px";
-				}else if(nodo.getAttribute('update')=='area'){
-					campoEdicion.style.height="40px";
-					campoEdicion.style.padding='5px';
+				if(lista[x].getAttribute('area')===null){
+					campoEdit = contenedorEdit.querySelector('input');
+				}else{
+					campoEdit = contenedorEdit.querySelector('textarea');
 				}
-			},10);
-			setTimeout(function(){
-				nodo.onclick=UI.elementos.formulario.ventanaForm.finEdicion;
-				if(nodo.getAttribute('update')=='area'){
-					campoEdicion.style.height="150px";
-					campoEdicion.style.padding="15px";
-				}
-			},520);
-			setTimeout(function(){
-				campoEdicion.focus();
-			},1010);
-
+				campoEdit.value = display.textContent;	
+				campoEdit.focus();
+			}
+			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
+			boton.classList.add('edicion');
+			boton.onclick = UI.elementos.formulario.ventanaForm.finEdicion;
 		};
+
 		this.finEdicion = function(){
-			var nodo=this;
-			var campo=this.previousSibling;
-			var campoEdicion=campo.previousSibling;
-			var contenedor=nodo.parentNode;
+			let formulario =  UI.elementos.formulario.ventanaForm;
+			let newReg = {};
+			let lista = Array.prototype.slice.call(formulario.formNode.childNodes);
+			lista.splice(lista.length,0,formulario.titulo);
+			for(var x = 0; x < lista.length; x++){
+				lista[x].classList.remove('edicion');
 
-			contenedor.style.maxHeight='150px';
-			campo.style.maxHeight='150px';
+				//contenedor
+				var contenedorEdit = lista[x].querySelector('div[cont]');
 
-			var id=UI.elementos.formulario.ventanaForm.registroId;
-			var nombreCampo=campoEdicion.name;
-			var valorCampo=campoEdicion.value;
+				//campo donde se muestra el valor del campo pero de solo lectura
+				let display = contenedorEdit.getElementsByTagName('div')[0];
 
-			console.log('se disparo una edicion con id:'+UI.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
-			var registro=torque.editarCampo(id,nombreCampo,valorCampo);
-			UI.elementos.formulario.ventanaList.actualizarLista(registro);
+				//campo donde se edita la informacion
+				let campoEdit = null;
 
-			campo.textContent=campoEdicion.value;
+				if(lista[x].getAttribute('area')===null){
+					campoEdit = contenedorEdit.querySelector('input');
+				}else{
+					campoEdit = contenedorEdit.querySelector('textarea');
+				}
+				display.textContent = campoEdit.value;	
+
+				//creo el nuevo registro para posteriormete verificar cambios
+				let propiedad = campoEdit.name;
+				newReg[propiedad] = campoEdit.value;
+			}
+			//verifico si hubo algun cambio y en que campo y armo la peticion
+			let oldReg = UI.elementos.formulario.ventanaForm.registroAct;
+			let peticion = { cambios:0, codigo:oldReg.codigo, operacion:'modificar', entidad:torque.entidadActiva};
+			for (let oldPropiedad in oldReg){
+				
+				for(let newPropiedad in newReg){
+
+					if(oldPropiedad.toLowerCase() == newPropiedad.toLowerCase()){
+
+						if(oldReg[oldPropiedad] !== newReg[newPropiedad]){
+							peticion[oldPropiedad] = newReg[newPropiedad];
+							peticion.cambios++;
+						}
+					}
+				}
+			}
+			//en caso de haber cambios envio a la base de datos y actualizo dicho cambio en el registro local
+			if(peticion.cambios!==0){
+				let contenedor = UI.elementos.formulario.ventanaForm.nodo;
+				contenedor.innerHTML = '';
+				//------------Cuadro Carga-------------------------------
+				var infoCuadro = {
+					mensaje:'Guardando cambios',
+					contenedor:contenedor,
+				};
+				var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,contenedor);
+				cuadroDeCarga.style.marginTop='80px';
+				//------------Cuadro Carga-------------------------------
+				
+				torque.Operacion(peticion,function(respuesta){
+					UI.elementos.cuadroCarga.culminarCarga(respuesta,function(respuesta){
+						if(respuesta.success===0){
+							let ventana = {
+								tipo : 'error',
+								cabecera: 'Error interno del Servidor',
+								cuerpo: respuesta.mensaje,
+							}
+							UI.crearVentanaModal(ventana);
+							UI.elementos.formulario.ventanaForm.destruirNodo();
+						}else{
+							UI.elementos.formulario.ventanaList.actualizarSlot(respuesta.registro);
+							UI.elementos.formulario.ventanaList.obtenerSeleccionado().activar();
+						}
+					});
+
+				});
+				
+			}
 			
-			nodo.classList.toggle('edicion');
-			campo.style.width='calc(100% - 62px)';
-			campo.style.opacity='1';
 
-			campoEdicion.style.width='0px';
-			campoEdicion.style.opacity='0';
-			campoEdicion.style.height='0px';
-			setTimeout(function(){
-				campoEdicion.style.width='auto';
-				campoEdicion.style.display='none';
-				nodo.onclick=UI.elementos.formulario.ventanaForm.edicion;
-				campoEdicion.style.width=window.getComputedStyle(campoEdicion,null).getPropertyValue("width");
-				campo.style.width=campoEdicion.style.width;
-				campoEdicion.style.width='0px';
-				campoEdicion.value='';
-			},510);
+			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
+			boton.classList.remove('edicion');
+			boton.onclick = UI.elementos.formulario.ventanaForm.edicion;
 		};
+
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
 			var campoNuevo;
@@ -588,29 +627,40 @@ var Formulario = function(entidad){
 
 		this.crearEstructuraBasicaNuevo = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html='\
-				<section titulo>Nuevo '+titulo+'</section>\
-					<section sector>\
-						<form name ="formNuevo">\
-						</form>\
-					</section>\
-				</section>';
+				var html='<section titulo>Nuevo '+titulo+'</section>\
+							<section sector>\
+								<form name ="formNuevo"></form>\
+							</section>\
+						</section>';
 				this.nodo.innerHTML=html;
+				//asigno el nodo formulario de html
+				this.formNode = this.nodo.getElementsByTagName('form')[0];
+				//asigo el titulo del formulario
+				this.titulo = this.nodo.getElementsByTagName('section')[0];
 		};
 
 		this.crearEstructuraBasicaModificar = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html="<section titulo>\
-								<textarea  name='"+titulo.nombre+"'></textarea>\
-								<span>"+titulo.valor+"</span>\
+				var html="<section titulo area>\
+								<div cont>\
+									<textarea  name='"+titulo.nombre+"'></textarea>\
+									<div display>"+titulo.valor+"</div>\
+								</div>\
 								<article update='campo'></article>\
 						</section>\
 						<section sector>\
 							<!-- Aqui va el contenido -->\
-							<form name ='formModificar'>\
-							</form>\
+							<form name ='formModificar'></form>\
 						</section>";
 				this.nodo.innerHTML=html;
+				//asigno el nodo formulario de html
+				this.formNode = this.nodo.getElementsByTagName('form')[0];
+				//asigo el titulo del formulario
+				this.titulo = this.nodo.getElementsByTagName('section')[0];
+				//agrego funcionamiento del boton editar
+				this.titulo.getElementsByTagName('article')[0].onclick=function(){
+					UI.elementos.formulario.ventanaForm.edicion();
+				}
 		};
 	};
 
@@ -707,6 +757,9 @@ var Formulario = function(entidad){
 					UI.elementos.formulario.ventanaList.Slots.splice(indice,1);
 				},1110);
 			};
+			this.activar = function(){
+				this.nodo.getElementsByTagName('article')[0].click();
+			}
 			this.construirNodo();
 		};
 		/*--------------------------Fin Objeto Slot-------------------*/
@@ -913,7 +966,6 @@ var Formulario = function(entidad){
 			};
 			var cuadroDeCarga=UI.iniciarCarga(infoCuadro,function(){
 				if(torque.registrosEntAct!==null){
-					UI.elementos.cuadroCarga.nodo.parentNode.removeChild(UI.elementos.cuadroCarga.nodo);
 					UI.elementos.cuadroCarga.terminarCarga();
 					ventanaForm.cargarRegistros(torque.registrosEntAct);
 				}
@@ -1033,7 +1085,7 @@ var Formulario = function(entidad){
 		};
 		btnAceptar.onclick=function(){
 
-			var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.getAttribute('registro')});
+			var slot = UI.elementos.formulario.ventanaList.buscarSlot({codigo:this.getAttribute('registro')});
 			var nodo = slot.nodo;
 
 			UI.elementos.modalWindow.eliminarUltimaCapa();
@@ -1068,7 +1120,7 @@ var Formulario = function(entidad){
 /*----------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------Objeto Ventana Modal------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
-var modalWindow = function(bloqueo){
+var modalWindow = function(){
 
 	var capaContenido = function(){
 
@@ -1151,10 +1203,6 @@ var modalWindow = function(bloqueo){
 			if(data.cabecera!==undefined){
 				this.agregarParte('cabecera');
 				this.partes.cabecera.nodo.innerHTML=data.cabecera;
-			}
-			if(data.cuerpo!==undefined){
-				this.agregarParte('cuerpo');
-				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
 				switch(data.tipo.toLowerCase()){
 					case 'advertencia':
 						this.partes.cabecera.nodo.classList.toggle('advertencia');	
@@ -1163,6 +1211,10 @@ var modalWindow = function(bloqueo){
 						this.partes.cabecera.nodo.classList.toggle('error');
 					break;
 				}
+			}
+			if(data.cuerpo!==undefined){
+				this.agregarParte('cuerpo');
+				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
 			}
 			if(data.pie!==undefined){
 				this.agregarParte('pie');
@@ -1431,6 +1483,7 @@ var CuadroCarga = function(info,callback){
 	this.terminarCarga = function(){					
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
+		UI.elementos.cuadroCarga.nodo.parentNode.removeChild(UI.elementos.cuadroCarga.nodo);
 		UI.elementos.cuadroCarga=undefined;
 	};
 	this.construirNodo();
@@ -1459,25 +1512,35 @@ var Arquitecto = function(){
 		document.body.onmousedown=this.activarEfecto;
 	};
 
-	this.crearVentanaModal= function(data,bloqueo){
+	this.crearVentanaModal = function(data){
 		//creo la venta modal
 		if(!this.elementos.modalWindow){
-			this.elementos.modalWindow=new modalWindow(bloqueo);		
+			this.elementos.modalWindow = new modalWindow();		
 		}
 		var capaContenido=this.elementos.modalWindow.arranque(data);
 		return capaContenido;
 	};
+
+	this.crearMensaje = function(tipo,mensaje){
+		let ventana = {
+			tipo: tipo,
+			cabecera: tipo.toUpperCase(),
+			cuerpo: mensaje
+		};
+		this.crearVentanaModal(ventana);
+	}
+
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
 	this.crearCuadroDeCarga = function(info,contenedor){
-		info.contenedor=contenedor;
-		cuadroCarga=new CuadroCarga(info,null);
-		this.elementos.cuadroCarga=cuadroCarga;
+		info.contenedor = contenedor;
+		cuadroCarga = new CuadroCarga(info,null);
+		this.elementos.cuadroCarga = cuadroCarga;
 		return cuadroCarga.nodo;
 	};
 	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
 	this.iniciarCarga = function(info,callback){
 		console.log('inicio carga');
-		cuadroCarga=new CuadroCarga(info,callback);
+		cuadroCarga = new CuadroCarga(info,callback);
 		this.elementos.cuadroCarga=cuadroCarga;
 		this.elementos.cuadroCarga.manejarCarga();
 		return cuadroCarga.nodo;
@@ -1635,41 +1698,20 @@ var CampoEdicion = function(info){
 		}
 		html+="<label>"+this.data.titulo+"</label>";
 		html+="<div clear></div>";
-		html+="<article update='area' ></article>";
-		html+="<div >";
+		html+="<div cont>";
 		html+=	campo;
-		html+=	"<display >"+this.data.valor+"</display>";
+		html+=	"<div display>"+this.data.valor+"</div>";
 		html+="</div>";
 		nodo.innerHTML=html;
 		this.nodo=nodo;
-		this.darVida();
 	};
 
-	//---------------------quede en esta funcion -------------
 	this.darVida = function(){
-		var article = this.nodo.getElementsByTagName('article')[0];
-		article.onclick = function(){
-			contenedorEdicion = this.nextSibling; 
-			edit = contenedorEdicion.firstChild;
-			display = edit.nextSibling;
-			if(this.classList.contains('edicion')){
-				edit.classList.remove('visible');
-				display.classList.remove('oculto');
 
-				display.textContent = edit.value;
-				edit.value='';
-			}else{
-				edit.classList.add('visible');
-				display.classList.add('oculto');
-
-				edit.value = display.textContent;
-				edit.focus();
-			}
-			this.classList.toggle('edicion');
-		}
 	};
 	this.construirNodo();
 };
+
 /*----------------------------------Funciones del Objeto Select-------------------------------*/
 		construirCapaSelect= function(capaSelect){
 			capaSelect.onclick=function(){};
