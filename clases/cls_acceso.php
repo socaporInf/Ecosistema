@@ -13,6 +13,7 @@ class cls_Acceso extends cls_Conexion{
 	}
 
 	public function f_Accesar(){
+		$this->aa_Form['Pass'] = $this->encriptarPass($this->aa_Form['Pass']);
 		$x=0;
 		$lb_Enc=false;
 		$ls_Sql="SELECT * FROM seguridad.usuario where nombre='".$this->aa_Form['Nombre']."'";
@@ -27,6 +28,10 @@ class cls_Acceso extends cls_Conexion{
 		$this->f_Des();
 		unset($this->aa_Form['Pass']);
 		return $lb_Enc;
+	}
+
+	public function encriptarPass($pass){
+		return hash('whirlpool',$pass);
 	}
 }
 ?>
