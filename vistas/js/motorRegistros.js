@@ -127,7 +127,13 @@ var Motor = function(entidadActiva){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
-		            callback(JSON.parse(conexionMotor.responseText));
+		        let respuesta = JSON.parse(conexionMotor.responseText);
+				if(respuesta.success === 1){
+	            	callback(respuesta);
+				}else{
+					UI.crearMensaje('error',respuesta.mensaje);
+					UI.elementos.formulario.ventanaForm.destruirNodo();
+				}
 		    }
 		};
 		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
@@ -143,17 +149,22 @@ var Motor = function(entidadActiva){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
-		            callback(JSON.parse(conexionMotor.responseText));
+		        let respuesta = JSON.parse(conexionMotor.responseText);
+				if(respuesta.success === 1){
+	            	callback(respuesta);
+				}else{
+					UI.crearMensaje('error',respuesta.mensaje);
+					UI.elementos.formulario.ventanaForm.destruirNodo();
+				}
 		    }
 		};
 		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-		var envio="operacion="+encodeURIComponent('guardar')+'&entidad='+encodeURIComponent(entidad);+'&';
+		var envio="operacion="+encodeURIComponent('guardar')+'&entidad='+encodeURIComponent(entidad)+'&';
 		for(var x=0;x<info.length;x++){
 			envio+=info[x].nombre.toLowerCase()+'='+encodeURIComponent(info[x].valor)+'&';
 		}
-		console.log(envio);
-		//conexionMotor.send(envio);
+		conexionMotor.send(envio);
 	};
 	this.editarCampo= function(id,campo,valor){
 		var registro=torque.buscarRegistro(id);
