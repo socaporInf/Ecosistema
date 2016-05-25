@@ -1,5 +1,5 @@
  <?php 
-include('cls_Conexion.php');
+include_once('cls_Conexion.php');
 class cls_Empresa extends cls_Conexion{
 	
 	private $aa_Atributos = array();
