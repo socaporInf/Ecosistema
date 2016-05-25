@@ -1,3 +1,6 @@
+/*----------------------------------------------------------------------------------------------------*/
+/*------------------------------Objeto Sesion----------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/	
 var Sesion = function(){
 
 	this.estado = 'cerrada';
@@ -165,11 +168,6 @@ var Motor = function(entidadActiva){
 			envio+=info[x].nombre.toLowerCase()+'='+encodeURIComponent(info[x].valor)+'&';
 		}
 		conexionMotor.send(envio);
-	};
-	this.editarCampo= function(id,campo,valor){
-		var registro=torque.buscarRegistro(id);
-		//editar campo
-		return registro;
 	};
 	//funcion de arranque 
 	this.ignition();

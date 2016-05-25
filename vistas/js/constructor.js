@@ -1568,8 +1568,8 @@ var Radio = function(info){
 		this.nodo.appendChild(nodoOpcion);
 	};
 	this.agregarOpciones = function(){
-		for(var x=0; x<this.opciones.length;x++){
-			this.agregarOpcion(this.opciones[x]);
+		for(var x=0; x<this.data.opciones.length;x++){
+			this.agregarOpcion(this.data.opciones[x]);
 		}
 	};
 	this.construirNodo();
