@@ -20,6 +20,20 @@ switch ($la_Form['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 	
+	case 'usuario':
+		include_once('../clases/cls_Usuario.php');
+		$lobj_Entidad = new cls_Usuario;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
+	case 'tipoUsuario':
+		include_once('../clases/cls_TipoUsuario.php');
+		$lobj_Entidad = new cls_TipoUsuario;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	default:
 		$respuesta['success'] = 0;
 		$respuesta['mensaje'] = 'Entidad '.$la_Form['entidad'].' no se encuentra soportada por esta aplicacion';
