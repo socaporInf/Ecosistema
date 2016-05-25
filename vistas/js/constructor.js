@@ -1648,7 +1648,7 @@ var CampoDeTexto = function(info){
 	this.data = info;
 	this.estado = 'porConstriur';
 	this.data.eslabon = info.eslabon || 'simple';
-	this.data.usaTooltip = info.usaTooltip ||  false;
+	this.data.usaToolTip = info.usaToolTip ||  false;
 	this.nodo = null;
 
 	this.construir = function(){
@@ -1658,6 +1658,8 @@ var CampoDeTexto = function(info){
 		var html='';
 		if(this.data.tipo=='simple'){
 			html+='<input type="text" name="'+this.data.nombre+'" required>';
+		}else if(this.data.tipo=='password'){
+			html+='<input type="password" name="'+this.data.nombre+'" required>';
 		}else if(this.data.tipo=='area'){
 			html+='<textarea name="Descripcion" required></textarea>';
 		}else{
@@ -1670,7 +1672,7 @@ var CampoDeTexto = function(info){
 
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
-		if(this.usaTooltip!==false){
+		if(this.data.usaToolTip!==false){
 			this.nodo.onmouseover=UI.elementos.formulario.abrirtooltipInput;
 			this.nodo.onmouseout=UI.elementos.formulario.cerrartooltipInput;
 		}
