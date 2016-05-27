@@ -87,7 +87,7 @@ var Motor = function(entidadActiva){
 	
 	//funcion de arranque del objeto
 	this.ignition = function(){
-		if(this.entidadActiva!='acceso'){
+		if((this.entidadActiva!='acceso')&&(typeof(this.entidadActiva)!=='undefined')){
 			this.buscarRegistros(this.entidadActiva,function(respuesta){
 				if(respuesta.success===1){
 					torque.registrosEntAct=respuesta.registros;	
@@ -126,27 +126,56 @@ var Motor = function(entidadActiva){
 		envio+="&codigo="+encodeURIComponent(info.codigo);
 		conexionBusqueda.send(envio);
 	};
-	this.Operacion = function(info,callback){
+	this.Operacion = function(peticion,callback){
+
+		//si no se le paso el valor de la entidad a afectar en la peticion el tomara por defecto a 
+		//la entidad que se encuentra activa en el momento de la misma
+		peticion.entidad = peticion.entidad || this.entidadActiva;
+
+		//lo mismo sucede con el codigo si no se le pasa en el objeto el tomara por defecto el codigo
+		//del registro que esta activo en el formulario
+		peticion.codigo = peticion.codigo || UI.elementos.formulario.ventanaForm.registroId;
+
+		//si no recive el parametro de manejarCarga toma por defecto el valor de falso
+		peticion.manejarOperacion = peticion.manejarOperacion || false;
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
-		        let respuesta = JSON.parse(conexionMotor.responseText);
-				if(respuesta.success === 1){
-	            	callback(respuesta);
+				//si el manejar carga es verdadero culmino la carga
+				if(peticion.manejarOperacion === true){
+					UI.elementos.cuadroCarga.terminarCarga();
+					let respuesta = JSON.parse(conexionMotor.responseText);
+					callback(respuesta);
 				}else{
-					UI.crearMensaje('error',respuesta.mensaje);
-					UI.elementos.formulario.ventanaForm.destruirNodo();
+					let respuesta = JSON.parse(conexionMotor.responseText);
+					if(respuesta.success === 1){
+		            	callback(respuesta);
+					}else{
+						UI.crearMensaje('error',respuesta.mensaje);
+						UI.elementos.formulario.ventanaForm.destruirNodo();
+					}
 				}
 		    }
 		};
 		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio='';
-		for(var llave in info){
-			envio+=llave.toLowerCase()+'='+encodeURIComponent(info[llave])+'&';
+		for(var llave in peticion){
+			envio+=llave.toLowerCase()+'='+encodeURIComponent(peticion[llave])+'&';
 		}
 		conexionMotor.send(envio);
 	};
+	this.manejarOperacion = function(peticion,cuadroCarga,callback){
+		//------------Cuadro Carga-------------------------------
+			cuadroCarga.nodo.innerHTML='';
+			var cuadroDeCarga = UI.crearCuadroDeCarga(cuadroCarga.cuadro,cuadroCarga.nodo);
+			cuadroDeCarga.style.marginTop = '80px';
+		//-----------------------------------------------------------
+
+		//le digo que la peticion fue por manejarOperacion
+		peticion.manejarOperacion = true;
+		this.Operacion(peticion,callback);
+	}
 	//--------------------------------------------funciones de bd--------------------------------
 	this.guardar = function(entidad,info,callback){
 		var conexionMotor=crearXMLHttpRequest();
