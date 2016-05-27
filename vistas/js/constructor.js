@@ -343,7 +343,7 @@ var Menu = function(){
 			
 		}
 		html+='<article contac></article>';
-		html+='<article seguridad></article>';
+		html+='<article seguridad onclick="location.href=\'vis_Cuenta.html\'"></article>';
 		html+='<article books></article>';
 		pie.innerHTML=html;
 	};
@@ -583,9 +583,7 @@ var Formulario = function(entidad){
 							UI.elementos.formulario.ventanaList.obtenerSeleccionado().activar();
 						}
 					});
-
-				});
-				
+				});	
 			}
 			
 
@@ -656,12 +654,20 @@ var Formulario = function(entidad){
 				//asigno el nodo formulario de html
 				this.formNode = this.nodo.getElementsByTagName('form')[0];
 				//asigo el titulo del formulario
-				this.titulo = this.nodo.getElementsByTagName('section')[0];
+				this.titulo = this.nodo.querySelector('section[titulo]');
 				//agrego funcionamiento del boton editar
-				this.titulo.getElementsByTagName('article')[0].onclick=function(){
+				let article = this.titulo.querySelector('article[update]');
+				article.onclick=function(){
 					UI.elementos.formulario.ventanaForm.edicion();
 				}
 		};
+
+		this.agregarSectorOperaciones = function(){
+			let operaciones = document.createElement('section');
+			operaciones.setAttribute('operaciones','');
+			operaciones.innerHTML='<section contOp ></section>';
+			this.nodo.appendChild(operaciones);
+		}
 	};
 
 	/*------------------------------Objeto VentanaList-------------------------------------------------------------*/
@@ -1147,6 +1153,35 @@ var modalWindow = function(){
 				nodo.setAttribute('cuerpo','');
 				this.nodo=nodo;
 			};
+			this.agregarCampos = function(campos){
+				for(let x = 0;x < campos.length; x++){
+					this.agregarCampos(campos[x]);
+				}
+			};
+			this.agregarCampo = function(campo){
+				let campoNuevo;
+				let contenedor = this.nodo;
+				switch(campo.tipo.toLowerCase()){ 
+					case 'campodetexto':
+						campoNuevo = new CampoDeTexto(campo.parametros);
+						break;
+					case 'combobox':
+						campoNuevo = new ComboBox(campo.parametros);
+						break;
+					case 'radio':
+						campoNuevo = new Radio(campo.parametros);
+						break;
+					case 'campoedicion': 
+						campoNuevo = new CampoEdicion(campo.parametros);
+						break;
+					case 'saltodelinea':
+						campoNuevo = new SaltoDeLinea();
+						break;
+
+				}
+				contenedor.appendChild(campoNuevo.nodo);
+			};
+
 			this.construirNodo();
 		};
 
@@ -1160,6 +1195,10 @@ var modalWindow = function(){
 				nodo.setAttribute('pie','');
 				this.nodo=nodo;
 			};
+			this.desaparecer = function(){
+				this.nodo.style.height = '0px';
+				this.nodo.innerHTML='';
+			}
 			this.construirNodo();
 		};
 		//------------------- Partes-------------------------------------
@@ -1229,8 +1268,21 @@ var modalWindow = function(){
 				}
 			}	
 		};
+		this.convertirEnMensaje = function(mensaje){
+			this.partes.cabecera.nodo.class='';
+			this.partes.cabecera.nodo.classList.add(mensaje.tipo);
+			this.partes.cabecera.nodo.textContent = mensaje.titulo;
+
+			//cambio el cuerpo
+			this.partes.cuerpo.nodo.innerHTML='<strong>'+mensaje.mensaje+'</strong>';
+			this.partes.cuerpo.nodo.style.height = '50px'
+
+			//cambio pie
+			this.partes.pie.desaparecer();
+		}
 		this.construirNodo();
 	};
+	//-------------------Fin CapaContenido-------------------------------------
 
 	var capaExterior = function(bloqueo){
 
@@ -1588,6 +1640,7 @@ var ComboBox = function(info){
 		var nodo=document.createElement('div');
 		nodo.setAttribute(this.data.eslabon,'');
 		nodo.setAttribute('formElements','');
+
 		//se crea el article
 		var article=document.createElement('article');
 		article.setAttribute('capaSelect','');
@@ -1602,13 +1655,14 @@ var ComboBox = function(info){
 		if(this.data.id!==undefined){
 			select.id=this.data.id;
 		}
+		
 		nodo.appendChild(select);
 		this.nodo=nodo;
 
 		//creo la primera opcion
 		var opcion = {
 			codigo : '-',
-			nombre : 'Elija un '+this.data.nombre
+			nombre : 'Elija un '+this.data.titulo
 		};
 		this.agregarOpcion(opcion);
 
