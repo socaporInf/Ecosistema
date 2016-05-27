@@ -21,19 +21,18 @@
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('empresa');
+	var torque = new Motor('tipoUsuario');
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
 	UI.configure();
 
 	//botones que van a ser utilizados en la UI
-	var botones = ['buscar','nuevo','abrir'];
+	let botones = ['buscar','nuevo','abrir'];
 	UI.elementos.botonera = new Botonera(botones);
 
 	//se inicializa el formulario
 	UI.elementos.formulario = new Formulario(torque.entidadActiva);
-
 
 	sesion.obtenerSesion();
 
@@ -47,7 +46,7 @@
 		var elemento;
 		var validacion=false;
 		for(var x=0;x<formulario.elements.length;x++){
-			if(formulario.elements[x].type='text'){
+			if((formulario.elements[x].type=='text')||(formulario.elements[x].type=='password')){
 				if(formulario.elements[x].value==''){
 					validacion=true;
 				}
@@ -57,13 +56,13 @@
 		}
 		if(!validacion){
 			//guardo en base de datos
-			torque.guardar('empresa',data,function(){
+			torque.guardar(torque.entidadActiva,data,function(respuesta){
+				console.log(respuesta);
 				var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
 
 				//cambio a modificacion
 				nuevoSlot.firstChild.click();
 			});
-			//creo un nuevo slot en la UI
 			
 		}else{
 			console.log('formulario no paso la validacion');
@@ -85,33 +84,21 @@
 				//guardo el objeto venana formulario para mejor entendimiento y acceso rapido
 				var capaForm=UI.elementos.formulario.ventanaForm;
 				//inicializo los datos del titulo del formulario y la altura del mismo
-				var titulo = 'Empresa';
-				var altura = 400;
+				var titulo = 'Tipo de Usuario';
+				var altura = 210;
 				capaForm.crearEstructuraBasicaNuevo(titulo,altura);
 
 				//creo los campos que va a usar el formulario 
 				var campos = [
-
 					{
-						tipo: 'campoDeTexto',
-						parametros: {titulo:'Rif',nombre:'rif',tipo:'simple',eslabon:'simple',usaToolTip:false}
-					},{
-						tipo: 'saltoDeLinea'
+						tipo : 'campoDeTexto',
+						parametros : {titulo:'Codigo',nombre:'codigo',tipo:'simple',eslabon:'simple',usaToolTip:true}
 					},{
 						tipo : 'campoDeTexto',
-						parametros : {titulo:'Nombre',nombre:'nombre',tipo:'simple',eslabon:'simple',usaToolTip:true}
+						parametros : {titulo:'Nombre',nombre:'nom',tipo:'simple',eslabon:'simple',usaToolTip:true}
 					},{
 						tipo : 'campoDeTexto',
-						parametros : {titulo:'Nombre Abreviado',nombre:'nombre_abr',tipo:'simple',eslabon:'simple',usaToolTip:true}
-					},{
-						tipo : 'campoDeTexto',
-						parametros : {titulo:'Telefono',nombre:'telefono',tipo:'simple',eslabon:'simple',usaToolTip:true}
-					},{
-						tipo : 'campoDeTexto',
-						parametros : {titulo:'Correo',nombre:'correo',tipo:'simple',eslabon:'simple',usaToolTip:true}
-					},{
-						tipo : 'campoDeTexto',
-						parametros : {titulo:'Direccion Fisica',nombre:'dir_fis',tipo:'area',eslabon:'area',usaToolTip:true}
+						parametros : {titulo:'Descripcion',nombre:'des',tipo:'area',eslabon:'area',usaToolTip:true}
 					}
 				]
 				//agrego los campos
@@ -160,26 +147,14 @@
 						nombre:'Nombre',
 						valor:data.nombre
 					}
-					var altura = 400;
+					var altura = 210;
 					//monto la estructura basica sobre la cual se montan los campos a agregar
 					formulario.crearEstructuraBasicaModificar(titulo,altura);
 					//inicializo el arreglo con los campos a agregar
 					var campos = [
 						{
 							tipo : 'campoEdicion',
-							parametros : {nombre:'rif',valor:data.rif,titulo:'Rif'}
-						},{
-							tipo : 'campoEdicion',
-							parametros : {nombre:'nombre_abr',valor:data.nombre_abr,titulo:'Nombre Abreviado'}
-						},{
-							tipo : 'campoEdicion',
-							parametros : {nombre:'telefono',valor:data.telefono,titulo:'Telefono'}	
-						},{
-							tipo : 'campoEdicion',
-							parametros : {nombre:'correo',valor:data.correo,titulo:'Correo'}
-						},{
-							tipo : 'campoEdicion',
-							parametros : {nombre:'dir_fis',valor:data.dir_fis,titulo:'Direccion Fisica',tipo:'area'}		
+							parametros : {titulo:'Descripcion',nombre:'des',valor:data.des,tipo:'area'}
 						}
 					]
 					//agrego los campos

@@ -1,5 +1,5 @@
-<?php 
-include('cls_Conexion.php');
+<?php
+include_once('cls_Conexion.php');
 class cls_Acceso extends cls_Conexion{
 	
 	private $aa_Form = array();
@@ -13,7 +13,16 @@ class cls_Acceso extends cls_Conexion{
 	}
 
 	public function f_Accesar(){
-		$x=0;
+		$lb_Enc = $this->f_VerificarAcceso();
+		return $lb_Enc;
+	}
+
+	public function encriptarPass($pass){
+		return hash('whirlpool',$pass);
+	}
+
+	public function f_VerificarAcceso($pa_Clave){
+		$this->aa_Form['Pass'] = $this->encriptarPass($this->aa_Form['Pass']);
 		$lb_Enc=false;
 		$ls_Sql="SELECT * FROM seguridad.usuario where nombre='".$this->aa_Form['Nombre']."'";
 		$this->f_Con();

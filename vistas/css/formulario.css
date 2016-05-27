@@ -30,6 +30,48 @@ div.ink.animate{
   transform:scale(2.5);
   opacity: 0;
 }
+
+/*----------------------------------------Botones General-------------------------------*/
+button.mat-round-but{
+  transition: all 0.2s ease-in-out;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 60px;
+  z-index: 10;
+  margin-left: 10px;
+  background-repeat: no-repeat;
+  background-position: 12px;
+  float: left;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  overflow: visible;
+}
+button.pass{
+  background-color: #607D8B;
+  background-image: url('../imagenes/security.png');    
+  top:0px;
+  left:0px;
+  background-position: 8px;
+  float: right;
+}
+button.act{
+  background-color: #607D8B;
+  background-image: url('../imagenes/act_usu.png');    
+  top:0px;
+  left:0px;
+  background-position: 8px;
+  float: right;
+}
+button.mat-text-but{
+  border: transparent;
+  background-color: transparent;
+  float: right;
+  transition: all 0.3s linear;
+  padding: 2px;
+  margin-right: 20px;
+  font-weight: bold;
+  color: #607D8B;
+}
 /*----------------------------------------Modal Window-------------------------------*/
 div[capa]{
   transition:all 0.5s ease-in-out;
@@ -61,10 +103,27 @@ div[capa='contenido'] section[cabecera]{
   padding: 20px;
   font-size: 25px;
 }
+div[capa='contenido'] section[cabecera].error,
+div[capa='contenido'] section[cabecera].informacion,
+div[capa='contenido'] section[cabecera].advertencia{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  background-repeat: no-repeat;
+  background-position: 4px;
+  padding-left: 60px;
+}
 div[capa='contenido'] section[cabecera].error{
   background-color: #f44336;
+  background-image: url('../imagenes/error_white.png');
+}
+div[capa='contenido'] section[cabecera].informacion{
+  background-color: #3F51B5;
+  background-image: url('../imagenes/info_white.png');
 }
 div[capa='contenido'] section[cabecera].advertencia{
+  background-image: url('../imagenes/warning_white.png');
   background-color: #FFC107;
   color:#212121;
 }
@@ -83,13 +142,6 @@ div[capa='contenido'] section[cuerpo]{
   margin-top: 18px;
   overflow: visible;
 }
-div[capa='contenido'] section[cuerpo] label{
-  background-color: transparent;
-  padding: 10px;
-  font-size: 20px;
-  text-transform: capitalize;
-  float: left;
-}
 div[capa='contenido'] section[cuerpo] option{
 
 }
@@ -99,6 +151,7 @@ div[capa='contenido'] section[pie]{
   background-color: #A5D6A7;
   position: absolute;
   bottom: 0px;
+  transition: all 0.3s linear;
 }
 div[capa='contenido'] section[pie] section[modalbuttons]{
 
@@ -161,6 +214,12 @@ div[capaform] section[titulo] div{
 div[capaForm] section[sector]{
     padding: 30px 0px 0px 15px;
     max-width: 600px;
+}
+div[capaForm] section[operaciones]{
+  height: 50px;
+  padding-top:15px; 
+  padding-right:15px; 
+  border-top:1px solid rgba(160,160,160,0.5); 
 }
 /*---------------funcionamiento boton update-----------*/
 div[capaForm] article[update]{
@@ -557,7 +616,7 @@ div[area]{
   background-color:white;
 }
 /*----------------------Input Text y TextArea-------------------*/
-div[capaForm] div.group input{
+div.group input{
   font-size: 14px;
   padding:10px 10px 10px 5px;
   display:block;
@@ -565,7 +624,7 @@ div[capaForm] div.group input{
   border:none;
   border-bottom:1px solid #757575;
 }
-div[capaForm] div.group textarea{
+div.group textarea{
   font-size:14px;
   padding:10px 10px 10px 5px;
   display:block;
@@ -575,8 +634,7 @@ div[capaForm] div.group textarea{
   opacity: 1;
   height: 24px;
 }
-div
-div[capaForm] div.group input:focus{ outline:none; }
+div.group input:focus{ outline:none; }
 
 /* LABEL ======================================= */
 div.group label                {
@@ -593,12 +651,12 @@ div.group label                {
 }
 
 /* active state */
-div[capaForm] div.group input:focus ~ label, div[capaForm] div.group input:valid ~ label        {
+div.group input:focus ~ label, div[capaForm] div.group input:valid ~ label        {
   top:-20px;
   font-size:12px;
   color:#4CAF50;
 }
-div[capaForm] div.group textarea:focus ~ label, div[capaForm] div.group textarea:valid ~ label        {
+div.group textarea:focus ~ label, div[capaForm] div.group textarea:valid ~ label        {
   top:-20px;
   font-size:12px;
   color:#4CAF50;
