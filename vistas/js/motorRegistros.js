@@ -1,10 +1,10 @@
 /*----------------------------------------------------------------------------------------------------*/
 /*------------------------------Objeto Sesion----------------------------------------------------------*/
-/*----------------------------------------------------------------------------------------------------*/	
+/*----------------------------------------------------------------------------------------------------*/
 var Sesion = function(){
 
 	this.estado = 'cerrada';
-	this.nombre;
+	this.nombre = '';
 	this.privilegios = null;
 	this.arbol = null;
 
@@ -35,8 +35,8 @@ var Sesion = function(){
 				var respuesta=JSON.parse(conexionAcc.responseText);
 				if(respuesta.success==1){
 					location.href='index.html';
-				}            
-		    }
+				}
+		  }
 		};
 		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
@@ -74,23 +74,23 @@ var Sesion = function(){
 };
 /*----------------------------------------------------------------------------------------------------*/
 /*------------------------------Objeto Motor----------------------------------------------------------*/
-/*----------------------------------------------------------------------------------------------------*/	
+/*----------------------------------------------------------------------------------------------------*/
 var Motor = function(entidadActiva){
-	
+
 	this.estado='apagado';
 	//entidad activa es decir la entidad que inicio el motor o la que esta en uso en el momento
 	this.entidadActiva=entidadActiva;
-	//todos los registros que tiene la entidad activa entidad activa 
+	//todos los registros que tiene la entidad activa entidad activa
 	this.registrosEntAct = null;
 	//resultado busqueda
 	this.resultadoBusqueda;
-	
+
 	//funcion de arranque del objeto
 	this.ignition = function(){
 		if((this.entidadActiva!='acceso')&&(typeof(this.entidadActiva)!=='undefined')){
 			this.buscarRegistros(this.entidadActiva,function(respuesta){
 				if(respuesta.success===1){
-					torque.registrosEntAct=respuesta.registros;	
+					torque.registrosEntAct=respuesta.registros;
 				}else{
 					UI.crearMensaje('error',respuesta.mensaje);
 					UI.elementos.cuadroCarga.terminarCarga();
@@ -128,7 +128,7 @@ var Motor = function(entidadActiva){
 	};
 	this.Operacion = function(peticion,callback){
 
-		//si no se le paso el valor de la entidad a afectar en la peticion el tomara por defecto a 
+		//si no se le paso el valor de la entidad a afectar en la peticion el tomara por defecto a
 		//la entidad que se encuentra activa en el momento de la misma
 		peticion.entidad = peticion.entidad || this.entidadActiva;
 
@@ -176,7 +176,6 @@ var Motor = function(entidadActiva){
 		peticion.manejarOperacion = true;
 		this.Operacion(peticion,callback);
 	}
-	//--------------------------------------------funciones de bd--------------------------------
 	this.guardar = function(entidad,info,callback){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
@@ -198,17 +197,17 @@ var Motor = function(entidadActiva){
 		}
 		conexionMotor.send(envio);
 	};
-	//funcion de arranque 
+	//funcion de arranque
 	this.ignition();
 };
 //--------------------------------AJAX---------------------------------------
-function crearXMLHttpRequest() 
+function crearXMLHttpRequest()
 {
   var xmlHttp=null;
-  if (window.ActiveXObject) 
+  if (window.ActiveXObject)
     xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-  else 
-    if (window.XMLHttpRequest) 
+  else
+    if (window.XMLHttpRequest)
       xmlHttp = new XMLHttpRequest();
   return xmlHttp;
 }
