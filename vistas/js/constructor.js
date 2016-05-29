@@ -31,7 +31,7 @@ var handleMediaChange = function (mediaQueryList) {
 /*--------------------------------------------Objeto Botonera-----------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
 var Botonera = function(estructura){
-	
+
 	var Boton = function(tipo){
 		this.tipo = tipo.toLowerCase();
 		this.nodo =  null;
@@ -79,7 +79,7 @@ var Botonera = function(estructura){
 	this.estado = 'porConstruir';
 	this.nodo = null;
 
-	this.botones = []; 
+	this.botones = [];
 
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
@@ -161,8 +161,8 @@ var Botonera = function(estructura){
 						}
 					}
 				};
-			}	
-		}	
+			}
+		}
 	};
 	this.buscarBoton = function(tipo){
 		var botones = this.botones;
@@ -228,13 +228,13 @@ var Menu = function(){
 			};
 			this.construirNodo();
 		};
-    
+
 		/*---------------------Fin Objeto elemento ----------------------------*/
 		this.estado='porConstruir';
 		this.nodo = null;
 		this.elementos=[];
 		this.codigo = yo.codigo;
-		
+
 		//funcionamiento arbol
 		this.padre = padre;
 		this.yo = yo;
@@ -244,16 +244,16 @@ var Menu = function(){
 			var nodo = document.createElement('div');
 			nodo.setAttribute('subCapaMenu',this.yo.codigo);
 			this.nodo=nodo;
-			
+
 			//estilos
 			this.nodo.classList.add('siguiente');
 
 			//creacion de hijos
 			var hijos=this.yo.hijos;
 			UI.elementos.menu.nodo.appendChild(this.nodo);
-      
+
 			//se arma la primera capa
-			
+
 			var capaNueva;
 			for(var x=0;x<hijos.length;x++){
 				//verifico el url del nodo u hoja
@@ -264,14 +264,14 @@ var Menu = function(){
 					nombre:hijos[x].titulo,
 					enlace:hijos[x].URL
 				};
-				
+
 				this.agregarElemento(data);
-				//creo las capas 
+				//creo las capas
 				capaNueva = new SubCapa(hijos[x],this);
 				//agrego las capas al padre
 				this.hijos.push(capaNueva);
 			}
-				
+
 		};
 		this.agregarElemento = function(contenido,enlace,seleccionado){
 			var elementoNuevo = new Elemento(contenido,enlace);
@@ -300,7 +300,7 @@ var Menu = function(){
 
 	this.intervaloCarga=null;
 
-	this.construir = function(){	
+	this.construir = function(){
 		var contenedor = obtenerContenedor();
 		var nodo = document.createElement('div');
 		nodo.setAttribute('capaMenu','');
@@ -338,9 +338,9 @@ var Menu = function(){
 					capaNueva = new SubCapa(sesion.arbol,null);
 					UI.elementos.menu.activarCapa(capaNueva);
 				}
-			},30);		
-			html+='<article off onclick="sesion.cerrarSesion()"></article>';	
-			
+			},30);
+			html+='<article off onclick="sesion.cerrarSesion()"></article>';
+
 		}
 		html+='<article contac></article>';
 		html+='<article seguridad onclick="location.href=\'vis_Cuenta.html\'"></article>';
@@ -356,7 +356,7 @@ var Menu = function(){
 	};
 	this.activarCapa = function(capa){
 		if(this.capaActiva===undefined){
-			capa.nodo.classList.remove('siguiente');	
+			capa.nodo.classList.remove('siguiente');
 		}
 		this.capaActiva = capa;
 		this.capaActiva.nodo.classList.add('capaActiva');
@@ -368,7 +368,7 @@ var Menu = function(){
 		if(this.capaActiva.nodo.classList.contains('anterior')){
 			this.capaActiva.nodo.classList.remove('anterior');
 		}
-		
+
 	};
 	this.avanzar = function(nodo){
 		var codigo = nodo.getAttribute('enlace').substring(1,nodo.getAttribute('enlace').length);
@@ -415,7 +415,7 @@ var Cabecera = function(){
 		var contenedor = obtenerContenedor();
 		var elemento = document.createElement('div');
 		elemento.setAttribute('cabecera','');
-		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'></button><div titulo>SOCA-PORTUGUESA</div>"; 
+		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'></button><div titulo>SOCA-PORTUGUESA</div>";
 		contenedor.insertBefore(elemento,contenedor.firstChild);
 		//funcionamiento boton
 		var botonMenu=document.getElementById('menuBtn');
@@ -451,7 +451,7 @@ var Formulario = function(entidad){
 		//este es el registro que se esta editando
 		this.registroId='';
 		//el registro despues de buscarlo
-		this.registroAct; 
+		this.registroAct;
 
 		this.construirNodo = function(data){
 			var nodo = document.createElement('div');
@@ -481,7 +481,7 @@ var Formulario = function(entidad){
 				vf.estado='sinConstruir';
 			},510);
 		};
-		
+
 		this.edicion = function(){
 			var formulario =  UI.elementos.formulario.ventanaForm;
 			var lista = Array.prototype.slice.call(formulario.formNode.childNodes);
@@ -496,14 +496,14 @@ var Formulario = function(entidad){
 				var display = contenedorEdit.getElementsByTagName('div')[0];
 
 				//campo donde se edita la informacion
-				var campoEdit = null; 
+				var campoEdit = null;
 
 				if(lista[x].getAttribute('area')===null){
 					campoEdit = contenedorEdit.querySelector('input');
 				}else{
 					campoEdit = contenedorEdit.querySelector('textarea');
 				}
-				campoEdit.value = display.textContent;	
+				campoEdit.value = display.textContent;
 				campoEdit.focus();
 			}
 			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
@@ -533,7 +533,7 @@ var Formulario = function(entidad){
 				}else{
 					campoEdit = contenedorEdit.querySelector('textarea');
 				}
-				display.textContent = campoEdit.value;	
+				display.textContent = campoEdit.value;
 
 				//creo el nuevo registro para posteriormete verificar cambios
 				let propiedad = campoEdit.name;
@@ -543,7 +543,7 @@ var Formulario = function(entidad){
 			let oldReg = UI.elementos.formulario.ventanaForm.registroAct;
 			let peticion = { cambios:0, codigo:oldReg.codigo, operacion:'modificar', entidad:torque.entidadActiva};
 			for (let oldPropiedad in oldReg){
-				
+
 				for(let newPropiedad in newReg){
 
 					if(oldPropiedad.toLowerCase() == newPropiedad.toLowerCase()){
@@ -567,7 +567,7 @@ var Formulario = function(entidad){
 				var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,contenedor);
 				cuadroDeCarga.style.marginTop='80px';
 				//------------Cuadro Carga-------------------------------
-				
+
 				torque.Operacion(peticion,function(respuesta){
 					UI.elementos.cuadroCarga.culminarCarga(respuesta,function(respuesta){
 						if(respuesta.success===0){
@@ -583,9 +583,9 @@ var Formulario = function(entidad){
 							UI.elementos.formulario.ventanaList.obtenerSeleccionado().activar();
 						}
 					});
-				});	
+				});
 			}
-			
+
 
 			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
 			boton.classList.remove('edicion');
@@ -596,7 +596,7 @@ var Formulario = function(entidad){
 		this.agregarCampo = function(campo){
 			var campoNuevo;
 			var contenedor = this.nodo.getElementsByTagName('form')[0];
-			switch(campo.tipo.toLowerCase()){ 
+			switch(campo.tipo.toLowerCase()){
 				case 'campodetexto':
 					campoNuevo = new CampoDeTexto(campo.parametros);
 					break;
@@ -606,7 +606,7 @@ var Formulario = function(entidad){
 				case 'radio':
 					campoNuevo = new Radio(campo.parametros);
 					break;
-				case 'campoedicion': 
+				case 'campoedicion':
 					campoNuevo = new CampoEdicion(campo.parametros);
 					break;
 				case 'saltodelinea':
@@ -711,7 +711,7 @@ var Formulario = function(entidad){
 							codigo:newSelec.atributos.codigo
 						};
 					formulario.construirUI(data);
-					
+
 					agregarRippleEvent(this.parentNode,e);
 				};
 				btnEliminar.onclick=function(){
@@ -745,7 +745,7 @@ var Formulario = function(entidad){
 					slot.funcionamiento();
 					UI.elementos.formulario.ventanaList.controlLista(nodo);
 				},510);
-				
+
 			};
 			this.destruirNodo = function(){
 				var nodo = this.nodo;
@@ -798,7 +798,7 @@ var Formulario = function(entidad){
 			if(formulario.ventanaForm.estado!='sinConstruir'){
 				formulario.ventanaForm.destruirNodo();
 			}
-			
+
 			var botonBusqueda=formulario.ventanaList.nodo.getElementsByTagName('button')[1];
 			var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
 
@@ -809,7 +809,7 @@ var Formulario = function(entidad){
 				if(registros[x].nombre.toLowerCase().search(valorBusqueda)!=-1){
 					contRegEnc++;
 					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='0px';
-					
+
 					if(contRegEnc==1){
 						formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='51px';
 					}
@@ -845,12 +845,12 @@ var Formulario = function(entidad){
 					this.Slots[x].estado='seleccionado';
 					this.Slots[x].nodo.style.marginLeft='20px';
 					obj=this.Slots[x];
-				}else{	
+				}else{
 					this.Slots[x].estado='enUso';
-					this.Slots[x].nodo.style.marginLeft='0px';	
+					this.Slots[x].nodo.style.marginLeft='0px';
 				}
 			}
-		};	
+		};
 		this.buscarSlot = function(registro){
 			for(x=0;x<this.Slots.length;x++){
 				if(this.Slots[x].atributos.codigo==registro.codigo){
@@ -953,7 +953,7 @@ var Formulario = function(entidad){
 				campoBusqueda.style.width='0px';
 				campoBusqueda.style.height='0px';
 				campoBusqueda.firstChild.value='';
-				
+
 				botonBusqueda.click();
 				UI.elementos.formulario.ventanaList.controlLista();
 
@@ -982,7 +982,7 @@ var Formulario = function(entidad){
 		this.construir();
 	};
 	/*--------------------------Fin Objeto VentanaList-----------------------------------*/
-	
+
 	this.ventanaList = new VentanaList(entidad);
 	this.ventanaForm = new VentanaForm();
 
@@ -991,7 +991,7 @@ var Formulario = function(entidad){
 	this.entidadActiva=entidad;
 
 	this.interval=null;
-	
+
 	//metodo para hacer el objeto ventana form capaz de recibir funciones en forma de herencia
 	this.ventanaForm.prototype = VentanaForm.prototype;
 	this.ventanaForm.prototype.constructor = this.ventanaForm;
@@ -1001,7 +1001,7 @@ var Formulario = function(entidad){
 		this.ventanaForm.registroId=data.codigo;
 		this.ventanaForm.construirNodo(data);
 	};
-		
+
 	this.validarCombo = function(valoresNoPermitidos,lista){
 		normalizarNodo(lista);
 		for(var x=0;x<lista.length;x++){
@@ -1038,9 +1038,9 @@ var Formulario = function(entidad){
 					tooltip.style.top=40+'px';
 					tooltip.style.transform='scale(1)';
 				},10);
-			},1000);	
+			},1000);
 		}
-		
+
 	};
 	this.cerrartooltipInput = function(event){
 		var parent = this;
@@ -1057,9 +1057,9 @@ var Formulario = function(entidad){
 						tooltip.style.opacity=0;
 						tooltip.style.top='-20px';
 						tooltip.style.transform='scale(0)';
-					setTimeout(function(){						
+					setTimeout(function(){
 						parent.style.zIndex=null;
-						parent.removeChild(parent.lastChild);	
+						parent.removeChild(parent.lastChild);
 					},310);
 				}
 			}
@@ -1067,7 +1067,7 @@ var Formulario = function(entidad){
 	};
 	//------------------------------------Funciones Operacionales de Formulario-----------------------------------
 	this.eliminar = function(slot){
-		if(slot instanceof MouseEvent){				
+		if(slot instanceof MouseEvent){
 			var registro =torque.buscarRegistro(UI.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
 			slot = UI.elementos.formulario.ventanaList.buscarSlot(registro);
 		}
@@ -1080,9 +1080,9 @@ var Formulario = function(entidad){
 						<button type="button" aceptar registro="'+slot.atributos.codigo+'" id="modalButtonAceptar"></button>\
 					</section>'
 		};
-		
+
 		UI.crearVentanaModal(verificacion);
-		
+
 		var btnAceptar = document.getElementById('modalButtonAceptar');
 		var btnCancelar = document.getElementById('modalButtonCancelar');
 
@@ -1098,12 +1098,12 @@ var Formulario = function(entidad){
 			torque.eliminar(registro,torque.entidadActiva);
 
 			slot.destruirNodo();
-		};		
+		};
 	};
 	//-------------------------------------Manejo de UI-----------------------------------------------------------
 	this.agregarVentanaForm = function(){
 		this.ventanaForm.estado='agregado';
-		this.ventanaList.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.ventanaList.nodo.nextSibling);		
+		this.ventanaList.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.ventanaList.nodo.nextSibling);
 	};
 	this.construirUI = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
@@ -1161,7 +1161,7 @@ var modalWindow = function(){
 			this.agregarCampo = function(campo){
 				let campoNuevo;
 				let contenedor = this.nodo;
-				switch(campo.tipo.toLowerCase()){ 
+				switch(campo.tipo.toLowerCase()){
 					case 'campodetexto':
 						campoNuevo = new CampoDeTexto(campo.parametros);
 						break;
@@ -1171,7 +1171,7 @@ var modalWindow = function(){
 					case 'radio':
 						campoNuevo = new Radio(campo.parametros);
 						break;
-					case 'campoedicion': 
+					case 'campoedicion':
 						campoNuevo = new CampoEdicion(campo.parametros);
 						break;
 					case 'saltodelinea':
@@ -1244,7 +1244,7 @@ var modalWindow = function(){
 				this.partes.cabecera.nodo.innerHTML=data.cabecera;
 				switch(data.tipo.toLowerCase()){
 					case 'advertencia':
-						this.partes.cabecera.nodo.classList.toggle('advertencia');	
+						this.partes.cabecera.nodo.classList.toggle('advertencia');
 					break;
 					case 'error':
 						this.partes.cabecera.nodo.classList.toggle('error');
@@ -1260,13 +1260,13 @@ var modalWindow = function(){
 				this.partes.pie.nodo.innerHTML=data.pie;
 				switch(data.tipo.toLowerCase()){
 					case 'advertencia':
-						this.partes.pie.nodo.classList.toggle('advertencia');	
+						this.partes.pie.nodo.classList.toggle('advertencia');
 					break;
 					case 'error':
 						this.partes.pie.nodo.classList.toggle('error');
 					break;
 				}
-			}	
+			}
 		};
 		this.convertirEnMensaje = function(mensaje){
 			this.partes.cabecera.nodo.class='';
@@ -1300,10 +1300,11 @@ var modalWindow = function(){
 			setTimeout(function(){
 				nodo.style.opacity='0.8';
 			},10);
-			
+
 		};
 		this.construirNodo();
 	};
+	//-------------------Fin CapaExterior-------------------------------------
 
 	this.estado='sinConstruir';
 	this.capas = [];
@@ -1381,7 +1382,7 @@ var modalWindow = function(){
 					UI.elementos.modalWindow.capas.splice(indice,1);
 					indice = UI.elementos.modalWindow.capas.indexOf(capaExterior);
 					UI.elementos.modalWindow.capas.splice(indice,1);
-					
+
 				},810);
 			}
 		}
@@ -1431,7 +1432,7 @@ var modalWindow = function(){
 				}
 			}
 		}else{
-			contenedor.style.position='inherit';	
+			contenedor.style.position='inherit';
 		}
 	};
 	this.eliminarUltimaCapa = function(){
@@ -1441,7 +1442,7 @@ var modalWindow = function(){
 				this.capas[x].nodo.click();
 				break;
 			}
-		} 
+		}
 	};
 };
 /*----------------------------------------------------------------------------------------------------*/
@@ -1452,7 +1453,7 @@ var CuadroCarga = function(info,callback){
 	//manejo de interfaz
 	this.contenedor=info.contenedor;
 	this.tipo=info.tipo || 'carga';
-	this.nodo;
+	this.nodo = null;
 
 	//maenjo de carga
 	this.intervalID;
@@ -1499,7 +1500,7 @@ var CuadroCarga = function(info,callback){
 			if(UI.elementos.cuadroCarga!==undefined){
 
 				if(UI.elementos.cuadroCarga.contEspera>=500){
-					//cuando el tiempo de espera es exedido muestro el mensaje 
+					//cuando el tiempo de espera es exedido muestro el mensaje
 					console.log('tiempo de espera exedido');
 					clearInterval(UI.elementos.cuadroCarga.intervalID);
 					var ventana = {
@@ -1532,7 +1533,7 @@ var CuadroCarga = function(info,callback){
 		}
 	};
 	//esta funcion mata el intervalo al ejecultarce el callback de dicha carga
-	this.terminarCarga = function(){					
+	this.terminarCarga = function(){
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
 		UI.elementos.cuadroCarga.nodo.parentNode.removeChild(UI.elementos.cuadroCarga.nodo);
@@ -1567,7 +1568,7 @@ var Arquitecto = function(){
 	this.crearVentanaModal = function(data){
 		//creo la venta modal
 		if(!this.elementos.modalWindow){
-			this.elementos.modalWindow = new modalWindow();		
+			this.elementos.modalWindow = new modalWindow();
 		}
 		var capaContenido=this.elementos.modalWindow.arranque(data);
 		return capaContenido;
@@ -1655,7 +1656,7 @@ var ComboBox = function(info){
 		if(this.data.id!==undefined){
 			select.id=this.data.id;
 		}
-		
+
 		nodo.appendChild(select);
 		this.nodo=nodo;
 
@@ -1682,7 +1683,7 @@ var ComboBox = function(info){
 		nuevaOp.value=opcion.codigo;
 		select.appendChild(nuevaOp);
 	};
-	
+
 	this.construir();
 };
 
@@ -1719,7 +1720,7 @@ var CampoDeTexto = function(info){
 		}else{
 			console.log(this.data.tipo);
 		}
-		
+
 		html+='<span class="highlight"></span>\
 		      <span class="bar"></span>\
 		      <label>'+this.data.titulo+'</label>';
@@ -1736,11 +1737,11 @@ var CampoDeTexto = function(info){
 };
 //-------------------- Campo Edicion----------------------------------------------------------
 var CampoEdicion = function(info){
-	
+
 	this.data =  info;
 	this.nodo;
 	this.tipo = info.tipo || 'simple';
-	
+
 	this.construirNodo = function(){
 		var nodo =  document.createElement('div');
 		var campo = '';
@@ -1780,7 +1781,7 @@ var CampoEdicion = function(info){
 			}
 			var margen;
 			for(var x = 0; x < select.options.length;x++){
-				
+
 				opcion = {
 					nombre:select.options[x].textContent,
 					value:select.options[x].value,
@@ -1795,10 +1796,10 @@ var CampoEdicion = function(info){
 					margen='-'+parseInt(opciones.length*41)+'px';
 					capaSelect.style.marginTop=margen;
 				}
-				
+
 				nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
 				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
-				
+
 				nodo.setAttribute('valor',opcion.value);
 				nodo.onclick= function(e){
 					//agrego el efecto Ripple
@@ -1842,7 +1843,7 @@ var CampoEdicion = function(info){
 			},300);
 		};
 	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
-    
+
 //---------------------------Ink Event------------------------
 	agregarRippleEvent= function(parent,evento){
 		var html;
@@ -1855,10 +1856,10 @@ var CampoEdicion = function(info){
 		}
 		ink=parent.getElementsByTagName('div')[0];
 
-		//en caso de doble click rapido remuevo la clase 
+		//en caso de doble click rapido remuevo la clase
 		ink.classList.remove('animated');
 
-		//guardo todo el estilo del elemento 
+		//guardo todo el estilo del elemento
 		var style = window.getComputedStyle(ink);
 
 		//se guardan los valores de akto y ancho

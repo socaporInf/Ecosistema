@@ -1,0 +1,62 @@
+modalWindow: {
+
+  capaContenido:{
+    cabecera: {
+      estado: string,
+      nodo: DOM,
+
+      Metodos
+        construirNodo()
+    }
+    Cuerpo: {
+      estado: string,
+      nodo: DOM,
+
+      Metodos
+        construirNodo()
+        agregarCampos(campos) ----- agrega los campos pasados en el arreglo
+        agregarCampo(campo) ------- agrega el campo pasdo como Objeto
+    }
+    Pie: {
+      estado: string,
+      nodo: DOM,
+
+      Metodos
+        construirNodo()
+    }
+    estado: string,
+    tipo: string,
+    partes: Object, ---- objeto que contiene cabecera, cuerpo y Pie
+    nodo: DOM,
+
+    Metodos
+      construirNodo()
+      agregarParte(parte)
+      dibujarUI(data) ------------- recibe la data completa de la interfaz y la construye
+      convertirEnMensaje(mensaje) - transforma la capaContenido completa en un mensaje sobre escribiendo lo que esta contenia
+  }
+
+  capaExterior:{
+    estado: string,
+    tipo: string,
+    bloqueo: boolean, --- tiene valor por defecto falso
+    nodo: DOM,
+
+    metodos
+      construirNodo()
+  }
+
+  estado: string,
+  capas: array, ----- guarda todas las capas abierta al momento
+
+  Metodos
+    arranque(data) -------------- funcion que corre al crear el objeto
+    agregarCapa(tipo,bloqueo)
+    removerCapa() --------------- remueve la ultima capa creada
+    buscarCapa(nodo) ------------ busca y retorna la estructura logica de la capa pasa como nodo DOM
+    buscarUltimaCapaContenido() - busca y retorna la ultima capa contenido creada
+    existeExterior() ------------ verifica si existe una capa exterior creada y retorna vcalor boolean
+    obtenerUltimaCapa() --------- busca y retorna la ultima capa creada sin importar el tipo
+    manejoDeCapas() ------------- activa todo el funcionamiento de las capas
+    eliminarUltimaCapa() -------- elimina la ultima combinacion de exterior y contenido
+}

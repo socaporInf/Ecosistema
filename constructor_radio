@@ -1,0 +1,10 @@
+Radio(info): {
+  data: Object, ---- objeto con toda la informacion para la creacion del Radio
+  estado: string,
+  nodo: DOM,
+
+  Metodos
+    construirNodo()
+    agregarOpciones()  ---- agrega todas los opciones que se encuentran dentro de data
+    agregarOpcion(opcion) - agrega la opcion al radio
+}

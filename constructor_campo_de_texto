@@ -1,0 +1,8 @@
+campodetexto(info): {
+  data: Object, ---- objeto con toda la informacion para la creacion del campodetexto
+  estado: string,
+  nodo: DOM,
+
+  Metodos
+    construir()
+}

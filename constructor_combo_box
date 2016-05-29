@@ -1,0 +1,10 @@
+combobox(info): {
+  data: Object, ---- objeto con toda la informacion para la creacion del combobox
+  estado: string,
+  nodo: DOM,
+
+  metodos
+    construir()
+    agregarOpciones()  ---- agrega todas los opciones pasadas como parametro
+    agregarOpcion(opcion) - agrega la opcion al combo
+}
