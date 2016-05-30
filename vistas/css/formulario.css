@@ -30,6 +30,48 @@ div.ink.animate{
   transform:scale(2.5);
   opacity: 0;
 }
+
+/*----------------------------------------Botones General-------------------------------*/
+button.mat-round-but{
+  transition: all 0.2s ease-in-out;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 60px;
+  z-index: 10;
+  margin-left: 10px;
+  background-repeat: no-repeat;
+  background-position: 12px;
+  float: left;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  overflow: visible;
+}
+button.pass{
+  background-color: #607D8B;
+  background-image: url('../imagenes/security.png');    
+  top:0px;
+  left:0px;
+  background-position: 8px;
+  float: right;
+}
+button.act{
+  background-color: #607D8B;
+  background-image: url('../imagenes/act_usu.png');    
+  top:0px;
+  left:0px;
+  background-position: 8px;
+  float: right;
+}
+button.mat-text-but{
+  border: transparent;
+  background-color: transparent;
+  float: right;
+  transition: all 0.3s linear;
+  padding: 2px;
+  margin-right: 20px;
+  font-weight: bold;
+  color: #607D8B;
+}
 /*----------------------------------------Modal Window-------------------------------*/
 div[capa]{
   transition:all 0.5s ease-in-out;
@@ -61,10 +103,27 @@ div[capa='contenido'] section[cabecera]{
   padding: 20px;
   font-size: 25px;
 }
+div[capa='contenido'] section[cabecera].error,
+div[capa='contenido'] section[cabecera].informacion,
+div[capa='contenido'] section[cabecera].advertencia{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  background-repeat: no-repeat;
+  background-position: 4px;
+  padding-left: 60px;
+}
 div[capa='contenido'] section[cabecera].error{
   background-color: #f44336;
+  background-image: url('../imagenes/error_white.png');
+}
+div[capa='contenido'] section[cabecera].informacion{
+  background-color: #3F51B5;
+  background-image: url('../imagenes/info_white.png');
 }
 div[capa='contenido'] section[cabecera].advertencia{
+  background-image: url('../imagenes/warning_white.png');
   background-color: #FFC107;
   color:#212121;
 }
@@ -83,13 +142,6 @@ div[capa='contenido'] section[cuerpo]{
   margin-top: 18px;
   overflow: visible;
 }
-div[capa='contenido'] section[cuerpo] label{
-  background-color: transparent;
-  padding: 10px;
-  font-size: 20px;
-  text-transform: capitalize;
-  float: left;
-}
 div[capa='contenido'] section[cuerpo] option{
 
 }
@@ -99,6 +151,7 @@ div[capa='contenido'] section[pie]{
   background-color: #A5D6A7;
   position: absolute;
   bottom: 0px;
+  transition: all 0.3s linear;
 }
 div[capa='contenido'] section[pie] section[modalbuttons]{
 
@@ -148,53 +201,31 @@ div[capaForm]{
     background-color: white;
 }
 div[capaForm] section[titulo]{
+  position: relative;
+    transition: all 0.5s ease-in-out;
     padding: 10px 0px 0px 50px;
     font-size: 23px;
     background-color: #4CAF50;
     color:white;
 }
+div[capaform] section[titulo] div{
+  width: calc(100% - 90px);
+}
 div[capaForm] section[sector]{
     padding: 30px 0px 0px 15px;
-    margin: 0px auto;
     max-width: 600px;
 }
-
-div[capaForm] section[sector]:last-child{
-    bottom: 1px;
+div[capaForm] section[operaciones]{
+  height: 50px;
+  padding-top:15px; 
+  padding-right:15px; 
+  border-top:1px solid rgba(160,160,160,0.5); 
 }
-div[capaForm] section[sector] div:not(.group){
-  margin-left: 20px;
-}
-div[capaForm] section[contenedor]{
-    overflow-y: auto;
-    max-height: 35px;
-}
-div[capaForm] section[contenedor] article{
-  width: auto;
-  background-color: midnightblue;
-  color:white;
-  padding: 5px;
-  float: left;
-  margin: 3px 0px 3px 5px;
-}
-div[capaForm] article:first-child{
-  margin-left: 10px;
-}
-div[capaForm] section[contenedor] article[add]{
-  width: 18px;
-  height: 21px;
-  padding: 1px;
-  background-image: url('../imagenes/plus_16.png');
-  background-repeat: no-repeat;
-  background-position: 2px;
-  background-color: forestgreen;
-  float:left;
-  transform: scale(1.4);
-  margin-top: 7px;
-}
+/*---------------funcionamiento boton update-----------*/
 div[capaForm] article[update]{
-  transition:all 0.5s ease-in-out;
+  transition:all 0.3s ease-in-out;
   transition:background-position 0s;
+  transition:background-image 0.5s;
   width: 24px;
   height: 24px;
   padding: 1px;
@@ -202,7 +233,7 @@ div[capaForm] article[update]{
   background-color: white;
   background-repeat: no-repeat;
   background-position: 5px;
-  float:left;
+  float:right;
   border-radius: 100px;
 }
 div[capaForm] article[update]:hover{
@@ -237,25 +268,47 @@ div[capaForm] section[titulo] article[update].edicion:hover{
   background-color: white;
   background-position: 1px;
 }
-div[capaform] span{
+div[capaForm] section[sector]:last-child{
+    bottom: 1px;
+}
+div[capaForm] section[sector] div:not(.group){
+  margin-left: 20px;
+}
+div[capaForm] section[contenedor]{
+    overflow-y: auto;
+    max-height: 35px;
+}
+div[capaForm] section[contenedor] article{
+  width: auto;
+  background-color: midnightblue;
+  color:white;
+  padding: 5px;
   float: left;
-  transition:all 0.5s ease-in-out;
-  max-width: calc(100% - 32px);
+  margin: 3px 0px 3px 5px;
 }
-div[capaForm] section textarea{
-  transition:all 0.5s ease-in-out;
-  border:none;
-  padding: 0px;
-  opacity: 0;
-  resize:none;
-  width: 0px;
-  height: 0px;
-  font-size: 15px;
-  display: none;
-  color:inherit;
-  background-color: transparent;
-  font-size: inherit;
+div[capaForm] article:first-child{
+  margin-left: 10px;
 }
+div[capaForm] section[contenedor] article[add]{
+  width: 18px;
+  height: 21px;
+  padding: 1px;
+  background-image: url('../imagenes/plus_16.png');
+  background-repeat: no-repeat;
+  background-position: 2px;
+  background-color: forestgreen;
+  float:left;
+  transform: scale(1.4);
+  margin-top: 7px;
+}
+div[capaForm] section[titulo] > article[update]{
+  transition: all 0.2s ease-in-out;
+  margin-right: -30px;
+}
+div[capaForm] section[titulo]:hover > article[update]{
+  margin-right: 3px;
+}
+
 /*----------------------------------------Capa Listado-------------------------------*/
 div[capaList]{
    width: 300px;
@@ -563,7 +616,7 @@ div[area]{
   background-color:white;
 }
 /*----------------------Input Text y TextArea-------------------*/
-div[capaForm] div.group input{
+div.group input{
   font-size: 14px;
   padding:10px 10px 10px 5px;
   display:block;
@@ -571,7 +624,7 @@ div[capaForm] div.group input{
   border:none;
   border-bottom:1px solid #757575;
 }
-div[capaForm] div.group textarea{
+div.group textarea{
   font-size:14px;
   padding:10px 10px 10px 5px;
   display:block;
@@ -581,8 +634,7 @@ div[capaForm] div.group textarea{
   opacity: 1;
   height: 24px;
 }
-div
-div[capaForm] div.group input:focus{ outline:none; }
+div.group input:focus{ outline:none; }
 
 /* LABEL ======================================= */
 div.group label                {
@@ -599,12 +651,12 @@ div.group label                {
 }
 
 /* active state */
-div[capaForm] div.group input:focus ~ label, div[capaForm] div.group input:valid ~ label        {
+div.group input:focus ~ label, div[capaForm] div.group input:valid ~ label        {
   top:-20px;
   font-size:12px;
   color:#4CAF50;
 }
-div[capaForm] div.group textarea:focus ~ label, div[capaForm] div.group textarea:valid ~ label        {
+div.group textarea:focus ~ label, div[capaForm] div.group textarea:valid ~ label        {
   top:-20px;
   font-size:12px;
   color:#4CAF50;
@@ -800,6 +852,9 @@ div[tooltip]:before{
 }
 
 /*--------------------------ELEMENTOS DE EDICION-------------------------------*/
+div[capaform] section[titulo] div[display]{
+  float: left;
+}
 div[formUpdate]{
   position: relative;
   width: 40%;
@@ -809,29 +864,51 @@ div[formUpdate]{
 div[formUpdate][area]{
   width: 80%;
 }
-div[formUpdate] div:not([clear]){
+div[formUpdate] div[cont]{
   padding-top: 5px;
   padding-bottom: 5px;
   padding-left: 10px;
   border-left: 1px solid #7b7b7b;
   background-color: white;
+  position: relative;
+}
+section[titulo] div[cont]{
+  float:left;
 }
 div[formUpdate] label{
   color:#1B5E20;
 }
 div[formUpdate] div input[type='text']{
+  position: absolute;
+  transition:all 0.5s ease-in-out;
+  border:none;
+  padding: 0px;
+  opacity: 0;
+  resize: none;
+  width: calc(100%);
+  height: calc(100% - 10px);
+  font-size: 15px;
+  color: inherit;
+  background-color: transparent;
+  font-size: inherit;
+  z-index: 1;
+}
+div[capaForm] section textarea{
+  position: absolute;
   transition:all 0.5s ease-in-out;
   border:none;
   padding: 0px;
   opacity: 0;
   resize:none;
-  width: 0px;
-  height: 0px;
-  font-size: 15px;
-  display: none;
+  width: calc(100% - 90px);
+  height: calc(100% - 20px);
   color:inherit;
   background-color: transparent;
   font-size: inherit;
+  z-index: 1;
+}
+div[capaForm] section[titulo] textarea{
+  height: 100%;
 }
 div[formUpdate] div span{
   font-size:13px; 
@@ -844,6 +921,36 @@ div[formUpdate] article[update]{
 }
 div[formUpdate]:hover article[update]{
   margin-left: 0px;
+}
+div[capaForm] section[sector] div[formupdate]:not([area]) div:not([clear]){
+  max-height:40px;
+  min-height:40px; 
+}
+
+div[capaForm] section[sector] div[formupdate][area] div:not([clear]){
+  max-height:80px;
+  min-height:80px; 
+}
+
+div[capaForm] section[sector] div[formupdate] > div div[display]{
+  position: absolute;
+  transition:all 1s linear;
+  width: calc(100%);
+  float:right;
+  z-index: 2;
+  margin-left: 0px;
+}
+
+/*------------Funcionamiento edicion-----------*/
+div[capaForm] section[sector] div[formupdate].edicion div div[display],div[capaForm] section[titulo].edicion div div[display]{
+  opacity: 0;
+  z-index: 1;
+}
+div[capaForm] section[sector] div[formupdate].edicion div[cont] textarea,
+div[capaForm] section[sector] div[formupdate].edicion div[cont] input[type='text'],
+div[capaForm] section[titulo].edicion div[cont] textarea{
+  opacity: 1;
+  z-index: 2;
 }
 /*-----------------------------------Media Query-------------------------------*/
 @media (max-width: 1000px){

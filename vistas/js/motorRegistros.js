@@ -1,7 +1,10 @@
+/*----------------------------------------------------------------------------------------------------*/
+/*------------------------------Objeto Sesion----------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 var Sesion = function(){
 
 	this.estado = 'cerrada';
-	this.nombre;
+	this.nombre = '';
 	this.privilegios = null;
 	this.arbol = null;
 
@@ -32,8 +35,8 @@ var Sesion = function(){
 				var respuesta=JSON.parse(conexionAcc.responseText);
 				if(respuesta.success==1){
 					location.href='index.html';
-				}            
-		    }
+				}
+		  }
 		};
 		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
@@ -68,22 +71,30 @@ var Sesion = function(){
 		}
 		return hijos;
 	}
-};	
+};
+/*----------------------------------------------------------------------------------------------------*/
+/*------------------------------Objeto Motor----------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 var Motor = function(entidadActiva){
-	
+
 	this.estado='apagado';
 	//entidad activa es decir la entidad que inicio el motor o la que esta en uso en el momento
 	this.entidadActiva=entidadActiva;
-	//todos los registros que tiene la entidad activa entidad activa 
+	//todos los registros que tiene la entidad activa entidad activa
 	this.registrosEntAct = null;
 	//resultado busqueda
 	this.resultadoBusqueda;
-	
+
 	//funcion de arranque del objeto
 	this.ignition = function(){
-		if(this.entidadActiva!='acceso'){
+		if((this.entidadActiva!='acceso')&&(typeof(this.entidadActiva)!=='undefined')){
 			this.buscarRegistros(this.entidadActiva,function(respuesta){
-				torque.registrosEntAct=respuesta.registros;
+				if(respuesta.success===1){
+					torque.registrosEntAct=respuesta.registros;
+				}else{
+					UI.crearMensaje('error',respuesta.mensaje);
+					UI.elementos.cuadroCarga.terminarCarga();
+				}
 			});
 		}
 	};
@@ -115,54 +126,88 @@ var Motor = function(entidadActiva){
 		envio+="&codigo="+encodeURIComponent(info.codigo);
 		conexionBusqueda.send(envio);
 	};
-	this.Operacion = function(info,callback){
+	this.Operacion = function(peticion,callback){
+
+		//si no se le paso el valor de la entidad a afectar en la peticion el tomara por defecto a
+		//la entidad que se encuentra activa en el momento de la misma
+		peticion.entidad = peticion.entidad || this.entidadActiva;
+
+		//lo mismo sucede con el codigo si no se le pasa en el objeto el tomara por defecto el codigo
+		//del registro que esta activo en el formulario
+		peticion.codigo = peticion.codigo || UI.elementos.formulario.ventanaForm.registroId;
+
+		//si no recive el parametro de manejarCarga toma por defecto el valor de falso
+		peticion.manejarOperacion = peticion.manejarOperacion || false;
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
-		            callback(JSON.parse(conexionMotor.responseText));
+				//si el manejar carga es verdadero culmino la carga
+				if(peticion.manejarOperacion === true){
+					UI.elementos.cuadroCarga.terminarCarga();
+					let respuesta = JSON.parse(conexionMotor.responseText);
+					callback(respuesta);
+				}else{
+					let respuesta = JSON.parse(conexionMotor.responseText);
+					if(respuesta.success === 1){
+		            	callback(respuesta);
+					}else{
+						UI.crearMensaje('error',respuesta.mensaje);
+						UI.elementos.formulario.ventanaForm.destruirNodo();
+					}
+				}
 		    }
 		};
 		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio='';
-		for(var llave in info){
-			envio+=llave.toLowerCase()+'='+encodeURIComponent(info[llave])+'&';
+		for(var llave in peticion){
+			envio+=llave.toLowerCase()+'='+encodeURIComponent(peticion[llave])+'&';
 		}
 		conexionMotor.send(envio);
 	};
-	//--------------------------------------------funciones de bd--------------------------------
+	this.manejarOperacion = function(peticion,cuadroCarga,callback){
+		//------------Cuadro Carga-------------------------------
+			cuadroCarga.nodo.innerHTML='';
+			var cuadroDeCarga = UI.crearCuadroDeCarga(cuadroCarga.cuadro,cuadroCarga.nodo);
+			cuadroDeCarga.style.marginTop = '80px';
+		//-----------------------------------------------------------
+
+		//le digo que la peticion fue por manejarOperacion
+		peticion.manejarOperacion = true;
+		this.Operacion(peticion,callback);
+	}
 	this.guardar = function(entidad,info,callback){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
-		            callback(JSON.parse(conexionMotor.responseText));
+		        let respuesta = JSON.parse(conexionMotor.responseText);
+				if(respuesta.success === 1){
+	            	callback(respuesta);
+				}else{
+					UI.crearMensaje('error',respuesta.mensaje);
+					UI.elementos.formulario.ventanaForm.destruirNodo();
+				}
 		    }
 		};
 		conexionMotor.open('POST','../controladores/cor_Motor.php', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-		var envio="operacion="+encodeURIComponent('guardar')+'&entidad='+encodeURIComponent(entidad);+'&';
+		var envio="operacion="+encodeURIComponent('guardar')+'&entidad='+encodeURIComponent(entidad)+'&';
 		for(var x=0;x<info.length;x++){
 			envio+=info[x].nombre.toLowerCase()+'='+encodeURIComponent(info[x].valor)+'&';
 		}
-		console.log(envio);
-		//conexionMotor.send(envio);
+		conexionMotor.send(envio);
 	};
-	this.editarCampo= function(id,campo,valor){
-		var registro=torque.buscarRegistro(id);
-		//editar campo
-		return registro;
-	};
-	//funcion de arranque 
+	//funcion de arranque
 	this.ignition();
 };
 //--------------------------------AJAX---------------------------------------
-function crearXMLHttpRequest() 
+function crearXMLHttpRequest()
 {
   var xmlHttp=null;
-  if (window.ActiveXObject) 
+  if (window.ActiveXObject)
     xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-  else 
-    if (window.XMLHttpRequest) 
+  else
+    if (window.XMLHttpRequest)
       xmlHttp = new XMLHttpRequest();
   return xmlHttp;
 }

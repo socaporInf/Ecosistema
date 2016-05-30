@@ -268,19 +268,18 @@
 								cuadroDeCarga.style.width='150px';
 								//--------------------------------------------------------
 
-								var info={
+								var peticion={
 									operacion:'eliminarDetalle',
 									cod_emp:this.getAttribute('codigo'),
 									codigo:UI.elementos.formulario.ventanaForm.registroId,
 									entidad:'rol'
 								}
 								//ejecuto operacion
-								torque.Operacion(info,function(respuesta){
+								torque.Operacion(peticion,function(respuesta){
 
 									var cuadroDeCarga=UI.elementos.cuadroCarga;
 									//culmino carga
 									cuadroCarga.culminarCarga(respuesta,function(respuesta){
-										console.log('entrando');
 										var empresa={
 											codigo:respuesta.cod_emp
 										}
@@ -303,16 +302,7 @@
 						//armo la estructura de la ventana modal
 						var dataTemp = {
 							cabecera:'Asignar Empresa',
-							cuerpo:'<label>'+registro.nombre+'</label><div clear></div>\
-									<div formElements area>\
-										<article capaSelect></article><select name="listaEmpresas" id="listaEmpresas">\
-											<option value="-">Selecione un Valor</option>\
-											<option value="1">SocaServicios</option>\
-											<option value="2">SocaPortuguesa</option>\
-											<option value="3">Probioagro</option>\
-											<option value="4">E/S Piedritas Blancas</option>\
-										</select>\
-									</div>',
+							cuerpo:'<label>'+registro.nombre+'</label>',
 							pie:'<section modalButtons>\
 									<button type="button" cancelar id="modalButtonCancelar"></button>\
 									<button type="button" aceptar  id="modalButtonAceptar"></button>\
@@ -321,28 +311,12 @@
 
 						//creo la ventana modal
 						UI.crearVentanaModal(dataTemp);
+						var capaEnUso=UI.elementos.modalWindow.buscarUltimaCapaContenido();
+						capaEnUso.partes.cuerpo.nodo.style.height='250px';
 						
-						UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.style.height='200px';
-						
-						//armo la lista de valores no permitidos para el combo
-						var empresas=registro.detalle;
-						var valoresNoPermitidos= Array();
-						for(var x=0;x<empresas.length;x++){
-							valoresNoPermitidos.push(empresas[x].codigo);
-						}
-						//valido el combo box con los valores recopilados
-						UI.elementos.formulario.validarCombo(valoresNoPermitidos,document.getElementById('listaEmpresas'));
-						
-
 						//agrego funcionamiento a los botones
 						var btnCancelar = document.getElementById("modalButtonCancelar");
 						var btnAceptar 	= document.getElementById("modalButtonAceptar");
-						var comboEmpresas = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.getElementsByTagName('select')[0];
-
-						comboEmpresas.previousSibling.onclick = function(){
-							construirCapaSelect(this);
-						}
-
 						btnCancelar.onclick=function(){
 							UI.elementos.modalWindow.eliminarUltimaCapa();
 						}
@@ -352,20 +326,23 @@
 							//guardo el empresa
 							if(lista.value!='-'){
 								if(lista.value!='cerrar'){
-									var info= {	
+									var peticion= {	
 										cod_emp: lista.value,
 										codigo: UI.elementos.formulario.ventanaForm.registroId,
 										entidad: 'rol',
 										Operacion:'guardarDetalle'
 									}
-									torque.Operacion(info,function(respuesta){
-
-										var empresa={
-											codigo:lista.value,
-											nombre:lista.options[lista.selectedIndex].textContent
+									torque.Operacion(peticion,function(respuesta){
+										if(respuesta.success===1){
+											//actualizo el detalle del registro activo
+											UI.elementos.formulario.ventanaForm.registroAct.detalle.push(respuesta.registro);											
+											var empresa={
+												codigo:lista.value,
+												nombre:lista.options[lista.selectedIndex].textContent
+											}
+											
+											UI.elementos.formulario.ventanaForm.agregarEmpresa(empresa,document.getElementById('contenedorPri'));
 										}
-										
-										UI.elementos.formulario.ventanaForm.agregarEmpresa(empresa,document.getElementById('contenedorPri'));
 										//cierro capa
 										UI.elementos.modalWindow.eliminarUltimaCapa();
 									});
@@ -378,6 +355,40 @@
 							}
 							
 						}
+						//---------------------------------------fin funcionamiento botones ------------------------------------------------------
+						//------------Cuadro Carga---------------------------------------------------------
+						var infoCuadro = {
+							mensaje:'Cargando'
+						}
+						var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,capaEnUso.partes.cuerpo.nodo);
+						cuadroDeCarga.style.marginTop='80px';
+						//-----------------------------------------------------------------------------------
+						
+						torque.buscarRegistros('empresa',function(respuesta){
+							//--------------------------creo el combo-----------------
+							var comboData={
+								nombre:'empresas',
+								eslabon:'area',
+								id:'listaEmpresas',
+								opciones:respuesta.registros
+							}
+							var comboBox = new ComboBox(comboData);
+							//--------------------------------------------------------
+							
+							var capaEnUso=UI.elementos.modalWindow.buscarUltimaCapaContenido();
+							capaEnUso.partes.cuerpo.nodo.innerHTML='<label>'+registro.nombre+'</label><div clear></div>';
+							capaEnUso.partes.cuerpo.nodo.appendChild(comboBox.nodo);
+
+							//armo la lista de valores no permitidos para el combo
+							var empresas=UI.elementos.formulario.ventanaForm.registroAct.detalle;
+							var valoresNoPermitidos= Array();
+							for(var x=0;x<empresas.length;x++){
+								valoresNoPermitidos.push(empresas[x].codigo);
+							}
+							//valido el combo box con los valores recopilados
+							UI.elementos.formulario.validarCombo(valoresNoPermitidos,document.getElementById('listaEmpresas'));
+						});
+						
 					}
 				}else if(lista[x].getAttribute('capaSelect')!==null){
 					lista[x].onclick=function(){

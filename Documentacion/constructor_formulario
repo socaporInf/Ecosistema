@@ -1,0 +1,70 @@
+formulario(entidad): {
+  ventanaForm:{
+    tipo: string,
+    estado: string,
+    titulo: string,
+    nodo: DOM, ------------------------------------- nodo de interfaz
+    formNode: DOM, --------------------------------- nodo de formulario(<form>)
+    --------------------------------------------
+    registroId: string, ---------------------------- codigo del registro activo en este momento en el formulario
+    registroAct: Object, --------------------------- el registro activo completo en forma de objeto JSON
+
+    Metodos
+      construirNodo(data)
+      destruirNodo() ------------------------------- cierra la ventanaForm
+      edicion() ------------------------------------ activa el modo edicion de los campos tipo edicion
+      finEdicion() --------------------------------- culmina el proceso de edicion y envia cambio a la BD
+      agregarCampo(campo) -------------------------- agregar un campo a la interfaz del formulario que recibe en forma de objeto
+      crearEstructuraBasicaNuevo(titulo,altura) ----
+      crearEstructuraBasicaModificar(titulo,altura)
+      agregarSectorOperaciones() -------------------  agrega un sector en la parte inferior del formulario para operaciones adicionales
+  }
+
+  ventanaList(entidadActiva):{
+    slot(data){
+      atributos: Object, --- objeto con todos los parametro recibidos
+      estado: string,
+      nodo: DOM,
+      rol: string, --------- en desuso
+
+      Metodos
+        construirNodo(titulo) ------ parametro en posible desuso
+        funcionamiento() ----------- agrega el funcionamiento de los Slots
+        destruirNodo()
+        reconstruirNodo() ---------- reconstruye el nodo con los datos logicos del slot
+        activar() ------------------ emula el click sobre el nodo
+    }
+    Slots: array,
+    nodo: DOM,
+    entidadActiva: string,
+
+    Metodos
+      abrirCampoBusqueda() ---------- activa el campo busqueda en la parte superior dela ventana listado
+      buscarElementos() ------------- busca un elemento dentro de la listar mejorar para que busque NOTA: en la base de datos
+      listarSlots() ----------------- muestra una cadena con todos los slots en la listar
+      agregarSlot() ----------------- agrega un slot a la lista tan logica como fiscamemte
+      cargarRegistros(registros) ---- arma la lista con los registros que le pases
+      controlLista(nodo) ------------ acomodala lista de slots colocando como activo el que le pases
+      buscarSlot(registro) ---------- busca y retorna el slot con el codigo igual aldel objeto que le pases como parametro
+      buscarSlotPorNombre(registro) - busca y retorna el slot con el nombre igual aldel objeto que le pases como parametro
+      cambiarTextoSlots(cambio) ----- si ecambio es por mediaQuery reduce el texto del titulo de los slots a 28 carateres
+      actualizarLista(cambios) ------ ejecuta los cambios sobre la lista de slots NOTA: sin terminar
+      actualizarSlot(registro) ------ ejecuta el cambio sobre un slot
+      obtenerSeleccionado() --------- retorna el slot activo
+      construir()
+  }
+
+  ventanaList: VentanaList, ---- objeto de tipo ventana Lista
+  ventanaForm: VentanaForm, ---- objeto de tipo Ventana formulario
+  estado: string,
+  entidadActiva: string,
+  interval: numeric, ----------- posiblemente en desuso
+
+  Metodos
+    validarCombo(valoresNoPermitidos,lista)
+    abrirtooltipInput(event)
+    cerrartooltipInput(event)
+    eliminar(slot) ---------------------------- sin terminar y con errores
+    agregarVentanaForm()
+    construirUI(data)
+}

@@ -28,13 +28,13 @@ var handleMediaChange = function (mediaQueryList) {
 };
 
 /*----------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------Objeto Botonera ----------------------------------------*/
+/*--------------------------------------------Objeto Botonera-----------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
 var Botonera = function(estructura){
-	
+
 	var Boton = function(tipo){
 		this.tipo = tipo.toLowerCase();
-		this.nodo;
+		this.nodo =  null;
 		this.estado = 'porConstruir';
 
 		this.construirNodo = function(){
@@ -77,9 +77,9 @@ var Botonera = function(estructura){
 
 	this.estructura = estructura;
 	this.estado = 'porConstruir';
-	this.nodo;
+	this.nodo = null;
 
-	this.botones = []; 
+	this.botones = [];
 
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
@@ -161,8 +161,8 @@ var Botonera = function(estructura){
 						}
 					}
 				};
-			}	
-		}	
+			}
+		}
 	};
 	this.buscarBoton = function(tipo){
 		var botones = this.botones;
@@ -208,7 +208,7 @@ var Menu = function(){
 			this.codigo = data.codigo;
 			this.estado = 'porConstriur';
 			this.contenido = data.nombre;
-			this.nodo;
+			this.nodo = null;
 			this.enlace = data.enlace || '#';
 
 			this.construirNodo = function(){
@@ -228,13 +228,13 @@ var Menu = function(){
 			};
 			this.construirNodo();
 		};
-    
+
 		/*---------------------Fin Objeto elemento ----------------------------*/
 		this.estado='porConstruir';
-		this.nodo;
+		this.nodo = null;
 		this.elementos=[];
 		this.codigo = yo.codigo;
-		
+
 		//funcionamiento arbol
 		this.padre = padre;
 		this.yo = yo;
@@ -244,16 +244,16 @@ var Menu = function(){
 			var nodo = document.createElement('div');
 			nodo.setAttribute('subCapaMenu',this.yo.codigo);
 			this.nodo=nodo;
-			
+
 			//estilos
-			this.nodo.style.marginLeft='calc(100%)';
+			this.nodo.classList.add('siguiente');
 
 			//creacion de hijos
 			var hijos=this.yo.hijos;
 			UI.elementos.menu.nodo.appendChild(this.nodo);
-      
+
 			//se arma la primera capa
-			
+
 			var capaNueva;
 			for(var x=0;x<hijos.length;x++){
 				//verifico el url del nodo u hoja
@@ -264,14 +264,14 @@ var Menu = function(){
 					nombre:hijos[x].titulo,
 					enlace:hijos[x].URL
 				};
-				
+
 				this.agregarElemento(data);
-				//creo las capas 
+				//creo las capas
 				capaNueva = new SubCapa(hijos[x],this);
 				//agrego las capas al padre
 				this.hijos.push(capaNueva);
 			}
-				
+
 		};
 		this.agregarElemento = function(contenido,enlace,seleccionado){
 			var elementoNuevo = new Elemento(contenido,enlace);
@@ -294,16 +294,13 @@ var Menu = function(){
 	};
 	/*---------------------Fin Objeto SubCapa ---------------------------------*/
 	this.estado = 'porConstriur';
-
 	this.capaActiva;
-
 	this.partes = [];
-	//nodo de DOM
-	this.nodo;
+	this.nodo = null;
 
 	this.intervaloCarga=null;
 
-	this.construir = function(){	
+	this.construir = function(){
 		var contenedor = obtenerContenedor();
 		var nodo = document.createElement('div');
 		nodo.setAttribute('capaMenu','');
@@ -312,6 +309,7 @@ var Menu = function(){
 		contenedor.insertBefore(nodo,contenedor.firstChild);
 		this.nodo = nodo;
 		this.estado='enUso';
+
 		//creo la titulo
 		var titulo=document.createElement('section');
 		titulo.textContent='Menu';
@@ -340,12 +338,12 @@ var Menu = function(){
 					capaNueva = new SubCapa(sesion.arbol,null);
 					UI.elementos.menu.activarCapa(capaNueva);
 				}
-			},30);		
-			html+='<article off onclick="sesion.cerrarSesion()"></article>';	
-			
+			},30);
+			html+='<article off onclick="sesion.cerrarSesion()"></article>';
+
 		}
 		html+='<article contac></article>';
-		html+='<article seguridad></article>';
+		html+='<article seguridad onclick="location.href=\'vis_Cuenta.html\'"></article>';
 		html+='<article books></article>';
 		pie.innerHTML=html;
 	};
@@ -357,24 +355,36 @@ var Menu = function(){
 		btnMenu.click();
 	};
 	this.activarCapa = function(capa){
-		if(this.capaActiva!==undefined){
-			this.capaActiva.nodo.classList.toggle('visible');
+		if(this.capaActiva===undefined){
+			capa.nodo.classList.remove('siguiente');
 		}
-		capa.nodo.classList.toggle('visible');
-		this.capaActiva=capa;
+		this.capaActiva = capa;
+		this.capaActiva.nodo.classList.add('capaActiva');
+
+		//reviso si tiene las clases siguiente o anterior y se las remuevo
+		if(this.capaActiva.nodo.classList.contains('siguiente')){
+			this.capaActiva.nodo.classList.remove('siguiente');
+		}
+		if(this.capaActiva.nodo.classList.contains('anterior')){
+			this.capaActiva.nodo.classList.remove('anterior');
+		}
+
 	};
 	this.avanzar = function(nodo){
 		var codigo = nodo.getAttribute('enlace').substring(1,nodo.getAttribute('enlace').length);
 		var lista = this.capaActiva.hijos;
-		for(var x=0;x<lista.length;x++){
+		this.capaActiva.nodo.classList.remove('capaActiva');
+		this.capaActiva.nodo.classList.add('anterior');
+		for(var x = 0; x < lista.length; x++){
 			if(lista[x].codigo==codigo){
-				this.capaActiva.nodo.style.marginLeft='-100%';
 				this.activarCapa(lista[x]);
 				this.cambiarTitulo(lista[x].yo.titulo);
 			}
 		}
 	};
 	this.regresar = function(){
+		this.capaActiva.nodo.classList.remove('capaActiva');
+		this.capaActiva.nodo.classList.add('siguiente');
 		this.activarCapa(this.capaActiva.padre);
 		var titulo = (this.capaActiva.padre!==null)?this.capaActiva.yo.titulo:'Menu';
 		this.cambiarTitulo(titulo);
@@ -387,10 +397,10 @@ var Menu = function(){
 			titulo.classList.add('retroceso');
 			titulo.onclick = function(){
 				UI.elementos.menu.regresar();
-			}
+			};
 		}
 		titulo.textContent = texto;
-	}
+	};
 	this.construir();
 };
 
@@ -405,7 +415,7 @@ var Cabecera = function(){
 		var contenedor = obtenerContenedor();
 		var elemento = document.createElement('div');
 		elemento.setAttribute('cabecera','');
-		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'></button><div titulo>SOCA-PORTUGUESA</div>"; 
+		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'></button><div titulo>SOCA-PORTUGUESA</div>";
 		contenedor.insertBefore(elemento,contenedor.firstChild);
 		//funcionamiento boton
 		var botonMenu=document.getElementById('menuBtn');
@@ -433,15 +443,15 @@ var Formulario = function(entidad){
 	var VentanaForm = function(){
 
 		this.tipo = 'noPosee';
-
-		this.nodo;
-
+		this.nodo = null;
 		this.estado = 'sinConstruir';
+		this.formNode = null;
+		this.titulo = null;
 
 		//este es el registro que se esta editando
 		this.registroId='';
 		//el registro despues de buscarlo
-		this.registroAct; 
+		this.registroAct;
 
 		this.construirNodo = function(data){
 			var nodo = document.createElement('div');
@@ -471,88 +481,122 @@ var Formulario = function(entidad){
 				vf.estado='sinConstruir';
 			},510);
 		};
-		this.edicion=function(){
-			var nodo=this;
-			var campo=this.previousSibling;
-			var campoEdicion=campo.previousSibling;
-			var contenedor=nodo.parentNode;
-			
-			contenedor.style.maxHeight='1000px';
 
-			campoEdicion.value=campo.textContent;
-			campoEdicion.style.display='inline-block';
+		this.edicion = function(){
+			var formulario =  UI.elementos.formulario.ventanaForm;
+			var lista = Array.prototype.slice.call(formulario.formNode.childNodes);
+			lista.splice(lista.length,0,formulario.titulo);
+			for(var x = 0; x < lista.length; x++){
+				lista[x].classList.add('edicion');
 
-			campo.style.width=window.getComputedStyle(campo,null).getPropertyValue("width");
-			campo.style.maxHeight=window.getComputedStyle(campo,null).getPropertyValue("height");
-			nodo.classList.toggle('edicion');
+				//contenedor
+				var contenedorEdit = lista[x].querySelector('div[cont]');
 
-			setTimeout(function(){
-				campo.style.width='0px';
-				campo.style.opacity='0';
+				//campo donde se muestra el valor del campo pero de solo lectura
+				var display = contenedorEdit.getElementsByTagName('div')[0];
 
-				campoEdicion.style.width='calc(100% - 62px)';
-				campoEdicion.style.opacity='1';
-				if(nodo.getAttribute('update')=='campo'){
-					campoEdicion.style.height="32px";
-				}else if(nodo.getAttribute('update')=='area'){
-					campoEdicion.style.height="40px";
-					campoEdicion.style.padding='5px';
+				//campo donde se edita la informacion
+				var campoEdit = null;
+
+				if(lista[x].getAttribute('area')===null){
+					campoEdit = contenedorEdit.querySelector('input');
+				}else{
+					campoEdit = contenedorEdit.querySelector('textarea');
 				}
-			},10);
-			setTimeout(function(){
-				nodo.onclick=UI.elementos.formulario.ventanaForm.finEdicion;
-				if(nodo.getAttribute('update')=='area'){
-					campoEdicion.style.height="150px";
-					campoEdicion.style.padding="15px";
-				}
-			},520);
-			setTimeout(function(){
-				campoEdicion.focus();
-			},1010);
-
+				campoEdit.value = display.textContent;
+				campoEdit.focus();
+			}
+			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
+			boton.classList.add('edicion');
+			boton.onclick = UI.elementos.formulario.ventanaForm.finEdicion;
 		};
+
 		this.finEdicion = function(){
-			var nodo=this;
-			var campo=this.previousSibling;
-			var campoEdicion=campo.previousSibling;
-			var contenedor=nodo.parentNode;
+			let formulario =  UI.elementos.formulario.ventanaForm;
+			let newReg = {};
+			let lista = Array.prototype.slice.call(formulario.formNode.childNodes);
+			lista.splice(lista.length,0,formulario.titulo);
+			for(var x = 0; x < lista.length; x++){
+				lista[x].classList.remove('edicion');
 
-			contenedor.style.maxHeight='150px';
-			campo.style.maxHeight='150px';
+				//contenedor
+				var contenedorEdit = lista[x].querySelector('div[cont]');
 
-			var id=UI.elementos.formulario.ventanaForm.registroId;
-			var nombreCampo=campoEdicion.name;
-			var valorCampo=campoEdicion.value;
+				//campo donde se muestra el valor del campo pero de solo lectura
+				let display = contenedorEdit.getElementsByTagName('div')[0];
 
-			console.log('se disparo una edicion con id:'+UI.elementos.formulario.ventanaForm.registroId+' en campo:'+campoEdicion.name);
-			var registro=torque.editarCampo(id,nombreCampo,valorCampo);
-			UI.elementos.formulario.ventanaList.actualizarLista(registro);
+				//campo donde se edita la informacion
+				let campoEdit = null;
 
-			campo.textContent=campoEdicion.value;
-			
-			nodo.classList.toggle('edicion');
-			campo.style.width='calc(100% - 62px)';
-			campo.style.opacity='1';
+				if(lista[x].getAttribute('area')===null){
+					campoEdit = contenedorEdit.querySelector('input');
+				}else{
+					campoEdit = contenedorEdit.querySelector('textarea');
+				}
+				display.textContent = campoEdit.value;
 
-			campoEdicion.style.width='0px';
-			campoEdicion.style.opacity='0';
-			campoEdicion.style.height='0px';
-			setTimeout(function(){
-				campoEdicion.style.width='auto';
-				campoEdicion.style.display='none';
-				nodo.onclick=UI.elementos.formulario.ventanaForm.edicion;
-				campoEdicion.style.width=window.getComputedStyle(campoEdicion,null).getPropertyValue("width");
-				campo.style.width=campoEdicion.style.width;
-				campoEdicion.style.width='0px';
-				campoEdicion.value='';
-			},510);
+				//creo el nuevo registro para posteriormete verificar cambios
+				let propiedad = campoEdit.name;
+				newReg[propiedad] = campoEdit.value;
+			}
+			//verifico si hubo algun cambio y en que campo y armo la peticion
+			let oldReg = UI.elementos.formulario.ventanaForm.registroAct;
+			let peticion = { cambios:0, codigo:oldReg.codigo, operacion:'modificar', entidad:torque.entidadActiva};
+			for (let oldPropiedad in oldReg){
+
+				for(let newPropiedad in newReg){
+
+					if(oldPropiedad.toLowerCase() == newPropiedad.toLowerCase()){
+
+						if(oldReg[oldPropiedad] !== newReg[newPropiedad]){
+							peticion[oldPropiedad] = newReg[newPropiedad];
+							peticion.cambios++;
+						}
+					}
+				}
+			}
+			//en caso de haber cambios envio a la base de datos y actualizo dicho cambio en el registro local
+			if(peticion.cambios!==0){
+				let contenedor = UI.elementos.formulario.ventanaForm.nodo;
+				contenedor.innerHTML = '';
+				//------------Cuadro Carga-------------------------------
+				var infoCuadro = {
+					mensaje:'Guardando cambios',
+					contenedor:contenedor,
+				};
+				var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,contenedor);
+				cuadroDeCarga.style.marginTop='80px';
+				//------------Cuadro Carga-------------------------------
+
+				torque.Operacion(peticion,function(respuesta){
+					UI.elementos.cuadroCarga.culminarCarga(respuesta,function(respuesta){
+						if(respuesta.success===0){
+							let ventana = {
+								tipo : 'error',
+								cabecera: 'Error interno del Servidor',
+								cuerpo: respuesta.mensaje,
+							}
+							UI.crearVentanaModal(ventana);
+							UI.elementos.formulario.ventanaForm.destruirNodo();
+						}else{
+							UI.elementos.formulario.ventanaList.actualizarSlot(respuesta.registro);
+							UI.elementos.formulario.ventanaList.obtenerSeleccionado().activar();
+						}
+					});
+				});
+			}
+
+
+			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
+			boton.classList.remove('edicion');
+			boton.onclick = UI.elementos.formulario.ventanaForm.edicion;
 		};
+
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
-			console.log(campo.tipo);
 			var campoNuevo;
 			var contenedor = this.nodo.getElementsByTagName('form')[0];
-			switch(campo.tipo.toLowerCase()){ 
+			switch(campo.tipo.toLowerCase()){
 				case 'campodetexto':
 					campoNuevo = new CampoDeTexto(campo.parametros);
 					break;
@@ -562,7 +606,7 @@ var Formulario = function(entidad){
 				case 'radio':
 					campoNuevo = new Radio(campo.parametros);
 					break;
-				case 'campoedicion': 
+				case 'campoedicion':
 					campoNuevo = new CampoEdicion(campo.parametros);
 					break;
 				case 'saltodelinea':
@@ -581,30 +625,49 @@ var Formulario = function(entidad){
 
 		this.crearEstructuraBasicaNuevo = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html='\
-				<section titulo>Nuevo '+titulo+'</section>\
-					<section sector>\
-						<form name ="formNuevo">\
-						</form>\
-					</section>\
-				</section>';
+				var html='<section titulo>Nuevo '+titulo+'</section>\
+							<section sector>\
+								<form name ="formNuevo"></form>\
+							</section>\
+						</section>';
 				this.nodo.innerHTML=html;
+				//asigno el nodo formulario de html
+				this.formNode = this.nodo.getElementsByTagName('form')[0];
+				//asigo el titulo del formulario
+				this.titulo = this.nodo.getElementsByTagName('section')[0];
 		};
 
 		this.crearEstructuraBasicaModificar = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html="<section titulo>\
-								<textarea  name='"+titulo.nombre+"'></textarea>\
-								<span>"+titulo.valor+"</span>\
+				var html="<section titulo area>\
+								<div cont>\
+									<textarea  name='"+titulo.nombre+"'></textarea>\
+									<div display>"+titulo.valor+"</div>\
+								</div>\
 								<article update='campo'></article>\
 						</section>\
 						<section sector>\
 							<!-- Aqui va el contenido -->\
-							<form name ='formModificar'>\
-							</form>\
+							<form name ='formModificar'></form>\
 						</section>";
 				this.nodo.innerHTML=html;
+				//asigno el nodo formulario de html
+				this.formNode = this.nodo.getElementsByTagName('form')[0];
+				//asigo el titulo del formulario
+				this.titulo = this.nodo.querySelector('section[titulo]');
+				//agrego funcionamiento del boton editar
+				let article = this.titulo.querySelector('article[update]');
+				article.onclick=function(){
+					UI.elementos.formulario.ventanaForm.edicion();
+				}
 		};
+
+		this.agregarSectorOperaciones = function(){
+			let operaciones = document.createElement('section');
+			operaciones.setAttribute('operaciones','');
+			operaciones.innerHTML='<section contOp ></section>';
+			this.nodo.appendChild(operaciones);
+		}
 	};
 
 	/*------------------------------Objeto VentanaList-------------------------------------------------------------*/
@@ -613,12 +676,9 @@ var Formulario = function(entidad){
 		var Slot = function(data){
 
 			this.atributos = data;
-
 			this.estado = 'sinInicializar';
-
 			this.rol = 'lista';
-
-			this.nodo;
+			this.nodo = null;
 
 			this.construirNodo = function(nombre){
 				var nodo = document.createElement('section');
@@ -651,12 +711,11 @@ var Formulario = function(entidad){
 							codigo:newSelec.atributos.codigo
 						};
 					formulario.construirUI(data);
-					
+
 					agregarRippleEvent(this.parentNode,e);
 				};
 				btnEliminar.onclick=function(){
-					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id});
-					var registro = slot.atributos;
+					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id})
 					if(slot.estado=='seleccionado'){
 						var ventana = {
 							tipo : 'error',
@@ -686,7 +745,7 @@ var Formulario = function(entidad){
 					slot.funcionamiento();
 					UI.elementos.formulario.ventanaList.controlLista(nodo);
 				},510);
-				
+
 			};
 			this.destruirNodo = function(){
 				var nodo = this.nodo;
@@ -704,6 +763,9 @@ var Formulario = function(entidad){
 					UI.elementos.formulario.ventanaList.Slots.splice(indice,1);
 				},1110);
 			};
+			this.activar = function(){
+				this.nodo.getElementsByTagName('article')[0].click();
+			}
 			this.construirNodo();
 		};
 		/*--------------------------Fin Objeto Slot-------------------*/
@@ -736,7 +798,7 @@ var Formulario = function(entidad){
 			if(formulario.ventanaForm.estado!='sinConstruir'){
 				formulario.ventanaForm.destruirNodo();
 			}
-			
+
 			var botonBusqueda=formulario.ventanaList.nodo.getElementsByTagName('button')[1];
 			var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
 
@@ -747,7 +809,7 @@ var Formulario = function(entidad){
 				if(registros[x].nombre.toLowerCase().search(valorBusqueda)!=-1){
 					contRegEnc++;
 					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='0px';
-					
+
 					if(contRegEnc==1){
 						formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='51px';
 					}
@@ -778,18 +840,17 @@ var Formulario = function(entidad){
 		};
 		this.controlLista = function(nodo){
 			var obj=false;
-			var oldSelecinado=this.obtenerSeleccionado();
 			for(var x=0;x<this.Slots.length;x++){
 				if(this.Slots[x].nodo==nodo){
 					this.Slots[x].estado='seleccionado';
 					this.Slots[x].nodo.style.marginLeft='20px';
 					obj=this.Slots[x];
-				}else{	
+				}else{
 					this.Slots[x].estado='enUso';
-					this.Slots[x].nodo.style.marginLeft='0px';	
+					this.Slots[x].nodo.style.marginLeft='0px';
 				}
 			}
-		};	
+		};
 		this.buscarSlot = function(registro){
 			for(x=0;x<this.Slots.length;x++){
 				if(this.Slots[x].atributos.codigo==registro.codigo){
@@ -892,7 +953,7 @@ var Formulario = function(entidad){
 				campoBusqueda.style.width='0px';
 				campoBusqueda.style.height='0px';
 				campoBusqueda.firstChild.value='';
-				
+
 				botonBusqueda.click();
 				UI.elementos.formulario.ventanaList.controlLista();
 
@@ -911,17 +972,17 @@ var Formulario = function(entidad){
 			};
 			var cuadroDeCarga=UI.iniciarCarga(infoCuadro,function(){
 				if(torque.registrosEntAct!==null){
-					UI.elementos.cuadroCarga.nodo.parentNode.removeChild(UI.elementos.cuadroCarga.nodo);
 					UI.elementos.cuadroCarga.terminarCarga();
 					ventanaForm.cargarRegistros(torque.registrosEntAct);
 				}
 			});
 			cuadroDeCarga.style.marginTop='80px';
+			//------------Cuadro Carga-------------------------------
 		};
 		this.construir();
 	};
 	/*--------------------------Fin Objeto VentanaList-----------------------------------*/
-	
+
 	this.ventanaList = new VentanaList(entidad);
 	this.ventanaForm = new VentanaForm();
 
@@ -930,17 +991,17 @@ var Formulario = function(entidad){
 	this.entidadActiva=entidad;
 
 	this.interval=null;
-	
+
 	//metodo para hacer el objeto ventana form capaz de recibir funciones en forma de herencia
 	this.ventanaForm.prototype = VentanaForm.prototype;
 	this.ventanaForm.prototype.constructor = this.ventanaForm;
-	//----------------------------------------------------------------------------------------
+	//-----------------------------Metodos----------------------------------------------
 
 	this.construirVentanaForm=function(data){
 		this.ventanaForm.registroId=data.codigo;
 		this.ventanaForm.construirNodo(data);
 	};
-		
+
 	this.validarCombo = function(valoresNoPermitidos,lista){
 		normalizarNodo(lista);
 		for(var x=0;x<lista.length;x++){
@@ -977,9 +1038,9 @@ var Formulario = function(entidad){
 					tooltip.style.top=40+'px';
 					tooltip.style.transform='scale(1)';
 				},10);
-			},1000);	
+			},1000);
 		}
-		
+
 	};
 	this.cerrartooltipInput = function(event){
 		var parent = this;
@@ -996,9 +1057,9 @@ var Formulario = function(entidad){
 						tooltip.style.opacity=0;
 						tooltip.style.top='-20px';
 						tooltip.style.transform='scale(0)';
-					setTimeout(function(){						
+					setTimeout(function(){
 						parent.style.zIndex=null;
-						parent.removeChild(parent.lastChild);	
+						parent.removeChild(parent.lastChild);
 					},310);
 				}
 			}
@@ -1006,7 +1067,7 @@ var Formulario = function(entidad){
 	};
 	//------------------------------------Funciones Operacionales de Formulario-----------------------------------
 	this.eliminar = function(slot){
-		if(slot instanceof MouseEvent){				
+		if(slot instanceof MouseEvent){
 			var registro =torque.buscarRegistro(UI.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
 			slot = UI.elementos.formulario.ventanaList.buscarSlot(registro);
 		}
@@ -1019,9 +1080,9 @@ var Formulario = function(entidad){
 						<button type="button" aceptar registro="'+slot.atributos.codigo+'" id="modalButtonAceptar"></button>\
 					</section>'
 		};
-		
+
 		UI.crearVentanaModal(verificacion);
-		
+
 		var btnAceptar = document.getElementById('modalButtonAceptar');
 		var btnCancelar = document.getElementById('modalButtonCancelar');
 
@@ -1030,19 +1091,19 @@ var Formulario = function(entidad){
 		};
 		btnAceptar.onclick=function(){
 
-			var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.getAttribute('registro')});
+			var slot = UI.elementos.formulario.ventanaList.buscarSlot({codigo:this.getAttribute('registro')});
 			var nodo = slot.nodo;
 
 			UI.elementos.modalWindow.eliminarUltimaCapa();
 			torque.eliminar(registro,torque.entidadActiva);
 
 			slot.destruirNodo();
-		};		
+		};
 	};
 	//-------------------------------------Manejo de UI-----------------------------------------------------------
 	this.agregarVentanaForm = function(){
 		this.ventanaForm.estado='agregado';
-		this.ventanaList.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.ventanaList.nodo.nextSibling);		
+		this.ventanaList.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.ventanaList.nodo.nextSibling);
 	};
 	this.construirUI = function(data){
 		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
@@ -1065,38 +1126,68 @@ var Formulario = function(entidad){
 /*----------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------Objeto Ventana Modal------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
-var modalWindow = function(bloqueo){
+var modalWindow = function(){
 
 	var capaContenido = function(){
 
+		//------------------- Partes-------------------------------------
 		var Cabecera = function(){
 
-			this.estado='sinConstruir';
-			this.nodo;
+			this.estado = 'sinConstruir';
+			this.nodo = null;
 
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('cabecera','');
-				this.nodo=nodo;
+				this.nodo = nodo;
 			};
 			this.construirNodo();
 		};
 
 		var Cuerpo = function(){
 			this.estado='sinConstruir';
-			this.nodo;
+			this.nodo = null;
 
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('cuerpo','');
 				this.nodo=nodo;
 			};
+			this.agregarCampos = function(campos){
+				for(let x = 0;x < campos.length; x++){
+					this.agregarCampos(campos[x]);
+				}
+			};
+			this.agregarCampo = function(campo){
+				let campoNuevo;
+				let contenedor = this.nodo;
+				switch(campo.tipo.toLowerCase()){
+					case 'campodetexto':
+						campoNuevo = new CampoDeTexto(campo.parametros);
+						break;
+					case 'combobox':
+						campoNuevo = new ComboBox(campo.parametros);
+						break;
+					case 'radio':
+						campoNuevo = new Radio(campo.parametros);
+						break;
+					case 'campoedicion':
+						campoNuevo = new CampoEdicion(campo.parametros);
+						break;
+					case 'saltodelinea':
+						campoNuevo = new SaltoDeLinea();
+						break;
+
+				}
+				contenedor.appendChild(campoNuevo.nodo);
+			};
+
 			this.construirNodo();
 		};
 
 		var Pie = function(){
-			this.estado='sinConstruir';
-			this.nodo;
+			this.estado = 'sinConstruir';
+			this.nodo = null;
 			//funcion para agregar funcionamiento a los elementos hijos
 			this.funcionamiento;
 			this.construirNodo = function(){
@@ -1104,13 +1195,17 @@ var modalWindow = function(bloqueo){
 				nodo.setAttribute('pie','');
 				this.nodo=nodo;
 			};
+			this.desaparecer = function(){
+				this.nodo.style.height = '0px';
+				this.nodo.innerHTML='';
+			}
 			this.construirNodo();
 		};
-
-		this.estado='sinConstruir';
-		this.partes={};
-		this.nodo;
-		this.tipo='contenido';
+		//------------------- Partes-------------------------------------
+		this.estado = 'sinConstruir';
+		this.partes = {};
+		this.nodo = null;
+		this.tipo = 'contenido';
 
 		this.construirNodo = function(){
 			var nodo=document.createElement('div');
@@ -1147,34 +1242,47 @@ var modalWindow = function(bloqueo){
 			if(data.cabecera!==undefined){
 				this.agregarParte('cabecera');
 				this.partes.cabecera.nodo.innerHTML=data.cabecera;
-			}
-			if(data.cuerpo!==undefined){
-				this.agregarParte('cuerpo');
-				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
 				switch(data.tipo.toLowerCase()){
 					case 'advertencia':
-						this.partes.cabecera.nodo.classList.toggle('advertencia');	
+						this.partes.cabecera.nodo.classList.toggle('advertencia');
 					break;
 					case 'error':
 						this.partes.cabecera.nodo.classList.toggle('error');
 					break;
 				}
 			}
+			if(data.cuerpo!==undefined){
+				this.agregarParte('cuerpo');
+				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
+			}
 			if(data.pie!==undefined){
 				this.agregarParte('pie');
 				this.partes.pie.nodo.innerHTML=data.pie;
 				switch(data.tipo.toLowerCase()){
 					case 'advertencia':
-						this.partes.pie.nodo.classList.toggle('advertencia');	
+						this.partes.pie.nodo.classList.toggle('advertencia');
 					break;
 					case 'error':
 						this.partes.pie.nodo.classList.toggle('error');
 					break;
 				}
-			}	
+			}
 		};
+		this.convertirEnMensaje = function(mensaje){
+			this.partes.cabecera.nodo.class='';
+			this.partes.cabecera.nodo.classList.add(mensaje.tipo);
+			this.partes.cabecera.nodo.textContent = mensaje.titulo;
+
+			//cambio el cuerpo
+			this.partes.cuerpo.nodo.innerHTML='<strong>'+mensaje.mensaje+'</strong>';
+			this.partes.cuerpo.nodo.style.height = '50px'
+
+			//cambio pie
+			this.partes.pie.desaparecer();
+		}
 		this.construirNodo();
 	};
+	//-------------------Fin CapaContenido-------------------------------------
 
 	var capaExterior = function(bloqueo){
 
@@ -1192,10 +1300,11 @@ var modalWindow = function(bloqueo){
 			setTimeout(function(){
 				nodo.style.opacity='0.8';
 			},10);
-			
+
 		};
 		this.construirNodo();
 	};
+	//-------------------Fin CapaExterior-------------------------------------
 
 	this.estado='sinConstruir';
 	this.capas = [];
@@ -1257,7 +1366,7 @@ var modalWindow = function(bloqueo){
 				},810);
 			}else{
 				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
-				//los saco de vista con la trancision
+				//los saco de vista con la transcision
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
 				capaContenido.nodo.style.opacity='0';
@@ -1273,7 +1382,7 @@ var modalWindow = function(bloqueo){
 					UI.elementos.modalWindow.capas.splice(indice,1);
 					indice = UI.elementos.modalWindow.capas.indexOf(capaExterior);
 					UI.elementos.modalWindow.capas.splice(indice,1);
-					
+
 				},810);
 			}
 		}
@@ -1323,7 +1432,7 @@ var modalWindow = function(bloqueo){
 				}
 			}
 		}else{
-			contenedor.style.position='inherit';	
+			contenedor.style.position='inherit';
 		}
 	};
 	this.eliminarUltimaCapa = function(){
@@ -1333,7 +1442,7 @@ var modalWindow = function(bloqueo){
 				this.capas[x].nodo.click();
 				break;
 			}
-		} 
+		}
 	};
 };
 /*----------------------------------------------------------------------------------------------------*/
@@ -1344,7 +1453,7 @@ var CuadroCarga = function(info,callback){
 	//manejo de interfaz
 	this.contenedor=info.contenedor;
 	this.tipo=info.tipo || 'carga';
-	this.nodo;
+	this.nodo = null;
 
 	//maenjo de carga
 	this.intervalID;
@@ -1354,7 +1463,7 @@ var CuadroCarga = function(info,callback){
 	this.estado = 'sinIniciar';
 
 	this.construirNodo = function(){
-		
+
 		var cuadro = document.createElement('div');
 		cuadro.classList.toggle('ContenedorCarga');
 
@@ -1368,13 +1477,14 @@ var CuadroCarga = function(info,callback){
 			</div>';
 		this.contenedor.appendChild(cuadro);
 		var circulo=document.querySelector('.path');
+
 		//asigno color al circulo de carga
 		if(this.tipo.toLowerCase()=='advertencia'){
 			circulo.classList.toggle('pathAdvertencia');
 		}else if(this.tipo.toLowerCase()=='carga'){
 			circulo.classList.toggle('pathCarga');
 		}
-		this.estado = 'iniciado'
+		this.estado = 'iniciado';
 		this.nodo = cuadro;
 	};
 	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
@@ -1384,25 +1494,27 @@ var CuadroCarga = function(info,callback){
 		this.intervalID=setInterval(function(){
 			var callback = UI.elementos.cuadroCarga.callback;
 			UI.elementos.cuadroCarga.contEspera++;
-			if(callback!=null){
+			if(callback!==null){
 				callback();
 			}
 			if(UI.elementos.cuadroCarga!==undefined){
+
 				if(UI.elementos.cuadroCarga.contEspera>=500){
-					console.log('tiempo de espera culminado');
+					//cuando el tiempo de espera es exedido muestro el mensaje
+					console.log('tiempo de espera exedido');
 					clearInterval(UI.elementos.cuadroCarga.intervalID);
 					var ventana = {
 						tipo:'error',
 						bloqueo:true,
 						cabecera:'Error de Conexion',
 						cuerpo:'Tiempo de espera Culminado por Favor Refresque la Pagina'
-					}
+					};
 					UI.crearVentanaModal(ventana);
 					//funcionamiento de recarga
 					var capaContenido=UI.elementos.modalWindow.buscarUltimaCapaContenido();
 					capaContenido.partes.cuerpo.nodo.onclick=function(){
 						location.reload();
-					}
+					};
 				}
 			}
 		},50);
@@ -1410,30 +1522,31 @@ var CuadroCarga = function(info,callback){
 	//funcion en la cual se le pasa parametros al callback al culminar la carga
 	// y muestra un mensaje al culminar la carga
 	this.culminarCarga = function(respuesta,callback){
-		callback= callback || null;
+		callback = callback || null;
 		this.estado = 'cargaCulminada';
 		var titulo = this.nodo.firstChild;
 		var circulo = this.nodo.getElementsByTagName('circle')[0];
 		circulo.parentNode.removeChild(circulo);
 		titulo.textContent = respuesta.mensaje;
-		if(callback!=null){
+		if(callback!==null){
 			callback(respuesta);
 		}
 	};
 	//esta funcion mata el intervalo al ejecultarce el callback de dicha carga
-	this.terminarCarga = function(){					
+	this.terminarCarga = function(){
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
+		UI.elementos.cuadroCarga.nodo.parentNode.removeChild(UI.elementos.cuadroCarga.nodo);
 		UI.elementos.cuadroCarga=undefined;
-	}
+	};
 	this.construirNodo();
-}
+};
 /*----------------------------------------------------------------------------------------------------*/
 /*-----------------------------------------Objeto Constructor-----------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
 var Arquitecto = function(){
 
-	this.elementos = new Array();
+	this.elementos = [];
 
 	this.estado = 'sinInicializar';
 
@@ -1444,7 +1557,7 @@ var Arquitecto = function(){
 			 cabecera : new Cabecera(),
 			 formulario : 'noPosee',
 			 botonera : 'noPosee'
-		}
+		};
 		this.estado='inicializado';
 		var mql = window.matchMedia("(max-width: 1000px)");
 		mql.addListener(handleMediaChange);
@@ -1452,43 +1565,53 @@ var Arquitecto = function(){
 		document.body.onmousedown=this.activarEfecto;
 	};
 
-	this.crearVentanaModal= function(data,bloqueo){
+	this.crearVentanaModal = function(data){
 		//creo la venta modal
 		if(!this.elementos.modalWindow){
-			this.elementos.modalWindow=new modalWindow(bloqueo);		
+			this.elementos.modalWindow = new modalWindow();
 		}
 		var capaContenido=this.elementos.modalWindow.arranque(data);
 		return capaContenido;
 	};
+
+	this.crearMensaje = function(tipo,mensaje){
+		let ventana = {
+			tipo: tipo,
+			cabecera: tipo.toUpperCase(),
+			cuerpo: mensaje
+		};
+		this.crearVentanaModal(ventana);
+	}
+
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
 	this.crearCuadroDeCarga = function(info,contenedor){
-		info.contenedor=contenedor;
-		cuadroCarga=new CuadroCarga(info,null);
-		this.elementos.cuadroCarga=cuadroCarga;
+		info.contenedor = contenedor;
+		cuadroCarga = new CuadroCarga(info,null);
+		this.elementos.cuadroCarga = cuadroCarga;
 		return cuadroCarga.nodo;
-	}
+	};
 	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
 	this.iniciarCarga = function(info,callback){
 		console.log('inicio carga');
-		cuadroCarga=new CuadroCarga(info,callback);
+		cuadroCarga = new CuadroCarga(info,callback);
 		this.elementos.cuadroCarga=cuadroCarga;
 		this.elementos.cuadroCarga.manejarCarga();
 		return cuadroCarga.nodo;
-	}
-}
+	};
+};
 /*---------------Objetos de interfaz---------------------------------------------*/
 var Radio = function(info){
 	//nombre,opciones,seleccionado
 	this.data = info;
 	this.estado = 'porConstriur';
-	this.nodo;
+	this.nodo = null;
 
 	this.construirNodo = function(){
 		var nodo = document.createElement('div');
 		nodo.setAttribute('formElements','');
 		this.nodo = nodo;
 		this.agregarOpciones();
-	}
+	};
 	this.agregarOpcion = function(opcion){
 		var nodoOpcion = document.createElement('label');
 		nodoOpcion.classList.toggle('radio');
@@ -1496,56 +1619,59 @@ var Radio = function(info){
 		html+='<input type="radio" name="'+this.data.nombre+'" value="'+opcion.valor+'"><span class="outer"><span class="inner"></span></span>'+opcion.nombre;
 		nodoOpcion.innerHTML=html;
 		this.nodo.appendChild(nodoOpcion);
-	}
+	};
 	this.agregarOpciones = function(){
-		for(var x=0; x<this.opciones.length;x++){
-			this.agregarOpcion(this.opciones[x]);
+		for(var x=0; x<this.data.opciones.length;x++){
+			this.agregarOpcion(this.data.opciones[x]);
 		}
-	}
+	};
 	this.construirNodo();
-}
+};
+
 //--------------------------Combo Box -------------------------------------
 var ComboBox = function(info){
-	console.log(info);
 	//nombre,opciones,seleccionado,eslabon
 	this.data = info;
 	this.estado = 'porConstriur';
 	this.data.eslabon = info.eslabon||'simple';
 	this.data.seleccionado = info.seleccionado||'-';
-	this.nodo;
+	this.nodo = null;
 
 	this.construir = function(){
 		var nodo=document.createElement('div');
 		nodo.setAttribute(this.data.eslabon,'');
 		nodo.setAttribute('formElements','');
-		
+
 		//se crea el article
 		var article=document.createElement('article');
 		article.setAttribute('capaSelect','');
 		article.onclick=function(){
 			construirCapaSelect(this);
-		}
+		};
 		nodo.appendChild(article);
 
 		//se crea el select
 		var select=document.createElement('select');
 		select.name=this.data.nombre;
+		if(this.data.id!==undefined){
+			select.id=this.data.id;
+		}
+
 		nodo.appendChild(select);
 		this.nodo=nodo;
 
 		//creo la primera opcion
 		var opcion = {
-			id : '-',
-			nombre : 'Elija un '+this.data.nombre
-		}
-		this.agregarOpcion(opcion)
+			codigo : '-',
+			nombre : 'Elija un '+this.data.titulo
+		};
+		this.agregarOpcion(opcion);
 
 		//genero y asigno el resto de las opciones
 		this.agregarOpciones(this.data.opciones);
 		this.estado='enUso';
 	};
 	this.agregarOpciones = function(opciones){
-		console.log(opciones);
 		for(var x=0;x<opciones.length;x++){
 			this.agregarOpcion(opciones[x]);
 		}
@@ -1557,27 +1683,28 @@ var ComboBox = function(info){
 		nuevaOp.value=opcion.codigo;
 		select.appendChild(nuevaOp);
 	};
-	
-	this.construir();
 
-}
+	this.construir();
+};
+
 //-------------------- Salto de linea ---------------
 var SaltoDeLinea = function(){
-	this.nodo;
+	this.nodo = null;
 	this.construirNodo = function(){
 		var nodo = document.createElement('div');
 		nodo.setAttribute('clear','');
-		this.nodo=nodo;
-	}
+		this.nodo = nodo;
+	};
 	this.construirNodo();
-}
+};
+
 //-------------------- Campo  de Texto ---------------------------
 var CampoDeTexto = function(info){
 	this.data = info;
 	this.estado = 'porConstriur';
 	this.data.eslabon = info.eslabon || 'simple';
-	this.data.usaTooltip = info.usaTooltip ||  false;
-	this.nodo;
+	this.data.usaToolTip = info.usaToolTip ||  false;
+	this.nodo = null;
 
 	this.construir = function(){
 		var CampoDeTexto = document.createElement('div');
@@ -1586,79 +1713,80 @@ var CampoDeTexto = function(info){
 		var html='';
 		if(this.data.tipo=='simple'){
 			html+='<input type="text" name="'+this.data.nombre+'" required>';
+		}else if(this.data.tipo=='password'){
+			html+='<input type="password" name="'+this.data.nombre+'" required>';
 		}else if(this.data.tipo=='area'){
 			html+='<textarea name="Descripcion" required></textarea>';
 		}else{
 			console.log(this.data.tipo);
 		}
-		
+
 		html+='<span class="highlight"></span>\
 		      <span class="bar"></span>\
 		      <label>'+this.data.titulo+'</label>';
 
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
-		if(this.usaTooltip!=false){
+		if(this.data.usaToolTip!==false){
 			this.nodo.onmouseover=UI.elementos.formulario.abrirtooltipInput;
 			this.nodo.onmouseout=UI.elementos.formulario.cerrartooltipInput;
 		}
 		this.estado='enUso';
-	}
+	};
 	this.construir();
-}
+};
 //-------------------- Campo Edicion----------------------------------------------------------
 var CampoEdicion = function(info){
-	
+
 	this.data =  info;
 	this.nodo;
 	this.tipo = info.tipo || 'simple';
-	
+
 	this.construirNodo = function(){
 		var nodo =  document.createElement('div');
 		var campo = '';
 		var html = '';
 		nodo.setAttribute('formUpdate','');
 		if(this.tipo=='simple'){
-			campo+="<input  type='text' name='"+this.data.nombre+"'>";
+			campo+="<input  type='text' edit name='"+this.data.nombre+"'>";
 		}else if(this.tipo=='area'){
 			campo+="<textarea name='"+this.data.nombre+"'></textarea>";
 			nodo.setAttribute('area','');
 		}
 		html+="<label>"+this.data.titulo+"</label>";
 		html+="<div clear></div>";
-		html+="<article update='area'></article>";
-		html+="<div >";
+		html+="<div cont>";
 		html+=	campo;
-		html+=	"<span >"+this.data.valor+"</span>";
+		html+=	"<div display>"+this.data.valor+"</div>";
 		html+="</div>";
 		nodo.innerHTML=html;
 		this.nodo=nodo;
-		this.darVida();
-	}
+	};
+
 	this.darVida = function(){
-		//aqui quede
-		var article = this.nodo.getElementsByTagName('article')[0];
-	}
+
+	};
 	this.construirNodo();
-}
+};
+
 /*----------------------------------Funciones del Objeto Select-------------------------------*/
 		construirCapaSelect= function(capaSelect){
 			capaSelect.onclick=function(){};
-			var opciones= new Array();
-			var opcion;
-			var nodo;
+			var opciones =[];
+			var opcion = null;
+			var nodo = null;
 			var select = capaSelect.nextSibling;
 			while(select.nodeName=='#text'){
 				select=select.nextSibling;
 			}
 			var margen;
 			for(var x = 0; x < select.options.length;x++){
-				
+
 				opcion = {
 					nombre:select.options[x].textContent,
 					value:select.options[x].value,
 					nodo:null
-				}
+				};
 
 				nodo=document.createElement('div');
 				nodo.setAttribute('option','');
@@ -1668,10 +1796,10 @@ var CampoEdicion = function(info){
 					margen='-'+parseInt(opciones.length*41)+'px';
 					capaSelect.style.marginTop=margen;
 				}
-				
+
 				nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
 				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
-				
+
 				nodo.setAttribute('valor',opcion.value);
 				nodo.onclick= function(e){
 					//agrego el efecto Ripple
@@ -1682,7 +1810,7 @@ var CampoEdicion = function(info){
 					}
 					select.value=this.getAttribute('valor');
 					destruirCapaSelect(this.parentNode);
-				}
+				};
 				opcion.nodo=nodo;
 				opciones.push(opcion);
 				capaSelect.appendChild(nodo);
@@ -1691,9 +1819,9 @@ var CampoEdicion = function(info){
 			//creo el contenedor de las opciones
 			capaSelect.style.opacity='1';
 			capaSelect.style.height=parseInt(opciones.length*41)+'px';
-			capaSelect.style.width='60px'
-
+			capaSelect.style.width='60px';
 		};
+
 		destruirCapaSelect = function(capaSelect){
 			var lista = capaSelect.childNodes;
 			var opcion;
@@ -1711,11 +1839,11 @@ var CampoEdicion = function(info){
 				}
 				capaSelect.onclick=function(){
 					construirCapaSelect(this);
-				}
-			},300)
-			
-		}
+				};
+			},300);
+		};
 	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
+
 //---------------------------Ink Event------------------------
 	agregarRippleEvent= function(parent,evento){
 		var html;
@@ -1723,19 +1851,19 @@ var CampoEdicion = function(info){
 		//se crea el elemento si no existe
 		if(parent.getElementsByTagName('div')[0]===undefined){
 			ink=document.createElement('div');
-			ink.classList.toggle('ink')
+			ink.classList.toggle('ink');
 			parent.insertBefore(ink,parent.firstChild);
 		}
 		ink=parent.getElementsByTagName('div')[0];
 
-		//en caso de doble click rapido remuevo la clase 
+		//en caso de doble click rapido remuevo la clase
 		ink.classList.remove('animated');
 
-		//guardo todo el estilo del elemento 
+		//guardo todo el estilo del elemento
 		var style = window.getComputedStyle(ink);
 
 		//se guardan los valores de akto y ancho
-		if(parseInt(style.height.substring(0,style.height.length-2))==0 && parseInt(style.width.substring(0,style.width.length-2))==0){
+		if(parseInt(style.height.substring(0,style.height.length-2))===0 && parseInt(style.width.substring(0,style.width.length-2))===0){
 			//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
 			d = Math.max(parent.offsetHeight, parent.offsetWidth);
 			ink.style.height=d+'px';
@@ -1747,13 +1875,13 @@ var CampoEdicion = function(info){
 		parent.offset={
 		  top: rect.top + document.body.scrollTop,
 		  left: rect.left + document.body.scrollLeft
-		}
+		};
 		//re evaluo los valores de alto y ancho del ink
 		style = window.getComputedStyle(ink);
 
 		//ubico el lugar donde se dispara el click
-		var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2
-		var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2
+		var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2;
+		var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2;
 		//cambio los valores de ink para iniciar la animacion
 		ink.style.top=y+'px';
 		ink.style.left=x+'px';
@@ -1777,7 +1905,7 @@ function normalizarNodo(nodo){
 	var hijo=null;
 	var eliminar;
 	while(hijo!=nodo.lastChild){
-		if(hijo==null){
+		if(hijo===null){
 			hijo=nodo.firstChild;
 		}
 		if(hijo.nodeName=='#text'){

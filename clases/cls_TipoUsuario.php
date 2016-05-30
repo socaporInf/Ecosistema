@@ -1,9 +1,9 @@
  <?php 
 include_once('cls_Conexion.php');
-class cls_Empresa extends cls_Conexion{
+class cls_TipoUSuario extends cls_Conexion{
 	
 	private $aa_Atributos = array();
-	private $aa_Campos = array('cod_emp','rif','nombre','nombre_abr','dir_fis','telefono','correo');
+	private $aa_Campos = array('cod_tip_usu','nom','des');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -34,8 +34,13 @@ class cls_Empresa extends cls_Conexion{
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
+					$this->f_Buscar();
+					$respuesta['registros'] = $this->aa_Atributos['registro'];
 					$respuesta['mensaje'] = 'Insercion realizada con exito';
-					$success=1;
+					$success = 1;
+				}else{
+					$respuesta['mensaje'] = 'Error al ejecutar la insercion';
+					$success = 0;
 				}
 				break;
 
@@ -56,13 +61,12 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM global.empresa ";
+		$ls_Sql="SELECT * FROM seguridad.tip_usu ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['cod_emp'];
-			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
-			$la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+			$la_respuesta[$x]['codigo']=$la_registros['cod_tip_usu'];
+			$la_respuesta[$x]['nombre']=$la_registros['nom'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -73,17 +77,14 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * FROM global.empresa where cod_emp='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT * FROM seguridad.tip_usu where cod_tip_usu='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['cod_emp'];
-			$la_respuesta['rif']=$la_registros['rif'];
-			$la_respuesta['nombre']=$la_registros['nombre'];
-			$la_respuesta['dir_fis']=$la_registros['dir_fis'];
-			$la_respuesta['telefono']=$la_registros['telefono'];
-			$la_respuesta['nombre_abr']=$la_registros['nombre_abr'];
-			$la_respuesta['correo']=$la_registros['correo'];
+			$la_respuesta['codigo']=$la_registros['cod_tip_usu'];
+			$la_respuesta['nombre']=$la_registros['nom'];
+			$la_respuesta['nom']=$la_registros['nom'];
+			$la_respuesta['des']=$la_registros['des'];
 			$lb_Enc=true;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -98,10 +99,14 @@ class cls_Empresa extends cls_Conexion{
 	}
 	
 	private function f_Guardar(){
+		//encripto la contraseña
+		include_once('cls_acceso.php');
+		$lobj_Acceso = new cls_acceso;
+		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['clave']);
+
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO global.empresa (nombre,rif,dir_fis,telefono,correo,nombre_br) values 
-				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['rif']."','".$this->aa_Atributos['dir_fis']."',
-				'".$this->aa_Atributos['telefono']."','".$this->aa_Atributos['correo']."','".$this->aa_Atributos['nombre_abr']."')";
+		$ls_Sql="INSERT INTO seguridad.tip_usu (cod_tip_usu,nom,des) values 
+				('".$this->aa_Atributos['codigo']."','".$this->aa_Atributos['nom']."','".$this->aa_Atributos['des']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
@@ -111,12 +116,15 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Modificar(){
 		$lb_Hecho=false;
 		$contCampos = 0;
-		$ls_Sql="UPDATE global.empresa SET ";
+		if(isset($this->aa_Atributos['nombre'])){
+			$this->aa_Atributos['nom'] = $this->aa_Atributos['nombre'];
+		}
+		$ls_Sql="UPDATE seguridad.tip_usu SET ";
 
 		//arma la cadena sql en base a los campos pasados en la peticion
 		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-		$ls_Sql.="WHERE cod_emp ='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.="WHERE cod_tip_usu ='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
