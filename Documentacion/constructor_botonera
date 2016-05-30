@@ -1,0 +1,24 @@
+Botonera(estructura): {
+  boton(tipo):{
+    tipo: string,
+    nodo: DOM,
+    estado: string,
+
+    metodos
+      construirNodo()
+  }
+  estructura: array,
+  estado: string,
+  nodo: DOM,
+  botones: array,
+
+  metodos
+    construir()
+    inicializarBotones()
+    agregarBoton(tipo) ------- agrega un boto del tipo pasado como parametro
+    agregarEfectos()
+    buscarBoton(tipo) -------- busca si existe un boton del tipo y lo retorna
+    listarBotones()
+    quitarBoton(tipo) -------- buscar el tipo de boton y lo elimina de la interfaz y del arreglo
+    getEstado()
+}

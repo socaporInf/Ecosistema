@@ -1,0 +1,15 @@
+cuadroCarga(info,callback): {
+  contenedor: DOM, ----- parte de la interfaz donde se mostrara el gif de cuadroCarga
+  tipo: string, -------- trae por defecto el valor de carga, por ahora en desuso
+  nodo: DOM,
+  intervalID: numeric,
+  contEspera; numeric, - conta dor con el cual se lleva control del tiempo de espera de la peticion
+  callaback: function, - funcion que se ejecutara al finalizar la carga
+  estado: string,
+
+  metodos:
+    construirNodo()
+    manejarCarga() -------------------- crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
+    culminarCarga(respuesta,callback) - funcion en la cual se le pasa parametros al callback al culminar la carga y muestra un mensaje al culminar la carga
+    terminarCarga() ------------------- mata el intervalo al ejecultarce el callback de dicha carga
+}

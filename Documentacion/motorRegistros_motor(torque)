@@ -1,0 +1,15 @@
+Motor(entidadActiva): {
+  estado: string,
+  entidadActiva: string, ---- entidad activa en el motor para ejecutar busquedas
+  registrosEntAct: array, --- arreglo con los registros de la entidad activa Nota: trabajar Paginacion
+  resultadoBusqueda: object,- en desuso
+
+  Metodos
+    ignition() -------------------------------------- se ejecuta al arrancar el motor
+    buscarRegistros(entidad,callback) --------------- ejecuta una peticion al servidor con la operacion buscar de la entidad pasada como parametro que al recibir la respuesta ejecuta el callback
+    busqueda(info,callback) ------------------------- ejecuta una peticion al servidor pero solo maneja 3 parametros entidad,operacion y codigo. al recibir respuesta ejecuta el callback
+    Operacion(peticion,callback) -------------------- ejecuta una peticion al servidor  y maneja cualquier cantidad de parametros que se le pasen en la peticion. dicha peticion maneja 2 valores por defecto si no son pasadas la entidad(entidadActiva) y el codigo. este ultimo lo toma del formulario
+    manejarOperacion(peticion,cuadroCarga,callback) - esta funcion maneja todo el proceso de peticion, tiempo de espera y respuesta y al igual que operacion maneja cualquier cantidad de parametros pasados dentro de peticion
+    guardar(entidad,info,callback) ------------------ ejecuta una peticion al servidor con la operacion guardar. NOTA: integrar con operacion
+
+}

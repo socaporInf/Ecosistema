@@ -1,0 +1,13 @@
+Sesion: {
+  estado: string,
+  nombre: string,
+  pribiliegios: array,
+  arbol: Object(nodeTree), - aqui se guardan todos los pribilegios de acceso del usuario en forma de arbol
+
+  Metodos:
+    obtenerSesion() --------------- envia una peticion al servidor y retorna si existe una sesion activa ademas de montarla en el cliente
+    cerrarSesion() ---------------- cierra la sesion en el cliente y en el Servidor
+    mostrarSesion() --------------- muestra por consola los datos de la sesion activa si existe
+    armarPrivilegios(privilegios) - recive los privilegios del usuario y arma el arbol de acceso
+    buscarHijos(codigoPadre) ------ funcion recursiva que busca los hijos del codigo suministrado en el arreglo de privilegios y los hijos de estos hasta que no quede ninguno
+}
