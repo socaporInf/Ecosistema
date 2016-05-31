@@ -6,6 +6,7 @@ class cls_Rol extends cls_Conexion{
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
+		$this->setDatosConexion($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
 	}
 
 	public function getAtributos(){

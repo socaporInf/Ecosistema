@@ -1,4 +1,5 @@
 <?php
+session_start();
 if(isset($_POST['operacion'])){
 	$la_Form=$_POST;
 } else {

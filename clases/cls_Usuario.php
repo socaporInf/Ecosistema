@@ -1,13 +1,13 @@
  <?php 
-session_start(); 
 include_once('cls_Conexion.php');
 class cls_Usuario extends cls_Conexion{
 	
 	private $aa_Atributos = array();
-	private $aa_Campos = array('nombre','clave','cedula','correo','session_abierta','estado');
+	private $aa_Campos = array('nombre','contrasena','cedula','correo','session_abierta','estado');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
+		$this->setDatosConexion($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
 	}
 
 	public function getAtributos(){
@@ -80,7 +80,7 @@ class cls_Usuario extends cls_Conexion{
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM seguridad.usuario ";
+		$ls_Sql="SELECT * FROM seguridad.vusuario ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -96,7 +96,7 @@ class cls_Usuario extends cls_Conexion{
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * FROM seguridad.usuario where nombre='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT * FROM seguridad.vusuario where nombre='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -105,7 +105,7 @@ class cls_Usuario extends cls_Conexion{
 			$la_respuesta['cedula']=$la_registros['cedula'];
 			$la_respuesta['correo']=$la_registros['correo'];
 			$la_respuesta['estado']=$la_registros['estado'];
-			$la_respuesta['tipoUsuario']=$la_registros['cod_tip_usu'];
+			$la_respuesta['tipoUsuario']=$la_registros['codigo_tipo_usuario'];
 			$lb_Enc=true;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -126,9 +126,9 @@ class cls_Usuario extends cls_Conexion{
 		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['clave']);
 
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO seguridad.usuario (nombre,correo,cedula,clave,cod_tip_usu,estado) values 
+		$ls_Sql="INSERT INTO seguridad.vusuario (nombre,correo,cedula,contrasena,codigo_tipo_usuario,estado) values 
 				('".$this->aa_Atributos['codigo']."','".$this->aa_Atributos['correo']."','".$this->aa_Atributos['cedula']."',
-				'".$this->aa_Atributos['clave']."','".$this->aa_Atributos['tipousuario']."','".$this->aa_Atributos['estado']."')";
+				'".$this->aa_Atributos['contrasena']."','".$this->aa_Atributos['tipousuario']."','".$this->aa_Atributos['estado']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
@@ -138,7 +138,7 @@ class cls_Usuario extends cls_Conexion{
 	private function f_Modificar(){
 		$lb_Hecho=false;
 		$contCampos = 0;
-		$ls_Sql="UPDATE seguridad.usuario SET ";
+		$ls_Sql="UPDATE seguridad.vusuario SET ";
 
 		//arma la cadena sql en base a los campos pasados en la peticion
 		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
@@ -147,8 +147,6 @@ class cls_Usuario extends cls_Conexion{
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
-
-
 		if($lb_Hecho){
 			$this->f_Buscar();
 			$respuesta['registro'] = $this->aa_Atributos['registro'];
@@ -182,10 +180,10 @@ class cls_Usuario extends cls_Conexion{
 		include_once('cls_acceso.php');
 		$lobj_Acceso = new cls_acceso;
 		$la_peticion = array('Pass' => $this->aa_Atributos['clave'],'Nombre' => $_SESSION['Usuario']['Nombre']);
-		$lobj_Acceso->setForm($la_peticion);
-		$lb_Enc = $lobj_Acceso->f_VerificarAcceso();
+		$lobj_Acceso->setPeticion($la_peticion);
+		$lb_Enc = $lobj_Acceso->f_VerificarAcceso($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
 		if($lb_Enc){
-			$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['codigo']);
+			$this->aa_Atributos['contrasena'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['codigo']);
 			$respuesta = $this->f_Modificar();
 			$respuesta['titulo'] = 'Informacion';
 		}else{
