@@ -18,14 +18,14 @@ if($la_Form['Operacion']=='acceso'){
 		//armo datos para siguientes conexiones
 		$_SESSION['Con']['Nombre'] = $la_Form['Nombre'];
 		$_SESSION['Con']['Pass'] = $la_Form['Pass'];
-
-		unset($la_Form);
 		
 		$respuesta=array(
 			'mensaje'=>'Inicio de sesion exitoso',
 			'usuario'=>$la_Form['Nombre'],
 			'success'=>1
 			);
+
+		unset($la_Form);
 	}else{
 		$respuesta=array(
 			'mensaje'=>'Usuario o clave incorrecto',

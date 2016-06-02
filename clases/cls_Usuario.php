@@ -7,7 +7,7 @@ class cls_Usuario extends cls_Conexion{
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
-		$this->setDatosConexion($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
+		$this->setDatosConexion('soca','1234');
 	}
 
 	public function getAtributos(){
@@ -123,14 +123,20 @@ class cls_Usuario extends cls_Conexion{
 		//encripto la contraseña
 		include_once('cls_acceso.php');
 		$lobj_Acceso = new cls_acceso;
-		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['clave']);
+		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['contrasena']);
 
 		$lb_Hecho=false;
 		$ls_Sql="INSERT INTO seguridad.vusuario (nombre,correo,cedula,contrasena,codigo_tipo_usuario,estado) values 
 				('".$this->aa_Atributos['codigo']."','".$this->aa_Atributos['correo']."','".$this->aa_Atributos['cedula']."',
-				'".$this->aa_Atributos['contrasena']."','".$this->aa_Atributos['tipousuario']."','".$this->aa_Atributos['estado']."')";
+				'".$this->aa_Atributos['clave']."','".$this->aa_Atributos['tipousuario']."','".$this->aa_Atributos['estado']."')";
 		$this->f_Con();
+		$this->f_Begin();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
+		if($lb_Hecho){
+			$lb_Hecho = $this->f_CrearLoginRol();
+		}else{
+			$this->f_RollBack();
+		}
 		$this->f_Des();
 		return $lb_Hecho;
 	}
@@ -179,11 +185,12 @@ class cls_Usuario extends cls_Conexion{
 		*/
 		include_once('cls_acceso.php');
 		$lobj_Acceso = new cls_acceso;
-		$la_peticion = array('Pass' => $this->aa_Atributos['clave'],'Nombre' => $_SESSION['Usuario']['Nombre']);
+		$la_peticion = array('Pass' => $this->aa_Atributos['contrasena'],'Nombre' => $_SESSION['Usuario']['Nombre']);
 		$lobj_Acceso->setPeticion($la_peticion);
 		$lb_Enc = $lobj_Acceso->f_VerificarAcceso($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
 		if($lb_Enc){
 			$this->aa_Atributos['contrasena'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['codigo']);
+			$this->f_ModificarPassLoginRol();
 			$respuesta = $this->f_Modificar();
 			$respuesta['titulo'] = 'Informacion';
 		}else{
@@ -194,5 +201,30 @@ class cls_Usuario extends cls_Conexion{
 		}
 		return $respuesta;
 	}	
+	//----------------------------------------------------- Funciones de Manejo de Roles------------------------------
+	private function f_CrearLoginRol(){
+		//encripto la contraseña
+		$lb_Hecho=false;
+		$ls_Sql="CREATE ROLE ".$this->aa_Atributos['codigo']." LOGIN ENCRYPTED PASSWORD '".$this->aa_Atributos['contrasena']."';
+				GRANT usuarios_sistema TO ".$this->aa_Atributos['codigo'].";";
+		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
+		if($lb_Hecho){
+			$this->f_Commit();
+		}else{
+			$this->f_RollBack();
+		}
+		return $lb_Hecho;
+	}
+
+	private function f_ModificarPassLoginRol(){
+		//encripto la contraseña
+		$lb_Hecho=false;
+		$ls_Sql="ALTER ROLE ".$this->aa_Atributos['codigo']." WITH ENCRYPTED PASSWORD '".$this->aa_Atributos['codigo']."'";
+		$this->f_Con();
+		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
+		$this->f_Des();
+		
+		return $lb_Hecho;
+	}
 }
 ?>

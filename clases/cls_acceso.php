@@ -22,20 +22,19 @@ class cls_Acceso extends cls_Conexion{
 	}
 
 	public function f_VerificarAcceso($ps_Nombre,$ps_Pass){
-		$this->aa_Atributos['PassBD'] = $this->encriptarPass($this->aa_Atributos['Pass']);
+		$ls_PassBD = $this->encriptarPass($ps_Pass);
 		$lb_Enc=false;
-		$ls_Sql="SELECT * FROM seguridad.vusuario where nombre='".$this->aa_Atributos['Nombre']."'";
+		$ls_Sql="SELECT * FROM seguridad.vusuario where nombre='".$ps_Nombre."'";
 		$this->setDatosConexion($ps_Nombre,$ps_Pass);
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registro=$this->f_Arreglo($lr_tabla)){
-			if($la_registro['contrasena']==$this->aa_Atributos['PassBD']){
+			if($la_registro['contrasena']==$ls_PassBD){
 				$lb_Enc=true;
 			}
 		}
 		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
-		unset($this->aa_Atributos['PassBD']);
 		return $lb_Enc;
 	}
 }
