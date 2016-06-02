@@ -92,7 +92,7 @@ var Motor = function(entidadActiva){
 				if(respuesta.success===1){
 					torque.registrosEntAct=respuesta.registros;
 				}else{
-					UI.crearMensaje('error',respuesta.mensaje);
+					UI.crearMensaje(respuesta.tipo,respuesta.mensaje);
 					UI.elementos.cuadroCarga.terminarCarga();
 				}
 			});

@@ -1724,7 +1724,7 @@ var CampoDeTexto = function(info){
 		html+='<span class="highlight"></span>\
 		      <span class="bar"></span>\
 		      <label>'+this.data.titulo+'</label>';
-
+		console.log(CampoDeTexto);
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
 		if(this.data.usaToolTip!==false){

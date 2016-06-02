@@ -35,6 +35,13 @@ switch ($la_Form['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+	case 'variedad':
+		include_once('../clases/cls_Variedad.php');
+		$lobj_Entidad = new cls_Variedad;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	default:
 		$respuesta['success'] = 0;
 		$respuesta['mensaje'] = 'Entidad '.$la_Form['entidad'].' no se encuentra soportada por esta aplicacion';

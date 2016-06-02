@@ -633,6 +633,7 @@ div.group textarea{
   border-bottom:1px solid #757575;
   opacity: 1;
   height: 24px;
+  resize: none;
 }
 div.group input:focus{ outline:none; }
 
@@ -893,7 +894,7 @@ div[formUpdate] div input[type='text']{
   font-size: inherit;
   z-index: 1;
 }
-div[capaForm] section textarea{
+div[capaForm] section div[cont] textarea{
   position: absolute;
   transition:all 0.5s ease-in-out;
   border:none;
