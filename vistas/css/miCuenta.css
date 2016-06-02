@@ -11,7 +11,7 @@ div[mat-window].columna{
 }
 
 div[mat-window].formulario{
-	width: calc(80%);
+	width: calc(80% + 50px);
 	float:left;
 }
 /*-----------------------------titulo---------------------------------------*/
@@ -62,4 +62,28 @@ aside.interrogacion-grande{
 	background-repeat: no-repeat;
 	background-position: 4px;
 	background-image:url(../imagenes/help.png);
+}
+/*-----------------------------Division Operaciones--------------------------------*/
+div[division-operaciones]{
+	float: left;
+	width: 100%;
+}
+div[division-formulario]{
+	float: left;
+	width: 100%;
+}
+@media (min-width: 1000px){
+	div[division-operaciones]{
+		float: left;
+		width: 30%;
+	}
+	div[division-formulario]{
+		float: left;
+		width: 70%;
+	}
+	div[division-operaciones] div[mat-window]{
+		width:calc(100% - 50px);
+		margin-bottom: 10px;
+	}
+
 }

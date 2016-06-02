@@ -1,5 +1,5 @@
 function construirUI(){
-	contenedor = obtenerContenedor();
+	let divOperaciones = document.querySelector('div[division-operaciones]');
 	let seguridad = new Ventana({
 		tipo: 'columna',
 		titulo: {
@@ -21,13 +21,15 @@ function construirUI(){
 		let formulario = new Ventana({
 			tipo: 'formulario',
 			titulo:{
-				texto: cambiarClave.nodo.querySelector('sector[texto]')
+				texto: cambiarClave.nodo.querySelector('section[texto]').textContent
 			}
 		});
+		let divFormulario = document.querySelector('div[division-formulario]');
+		divFormulario.appendChild(formulario.nodo);
 	}
 
-	contenedor.appendChild(seguridad.nodo);
-	contenedor.appendChild(datosPersonales.nodo);
+	divOperaciones.appendChild(seguridad.nodo);
+	divOperaciones.appendChild(datosPersonales.nodo);
 }
 
 var Ventana = function(atributos){
