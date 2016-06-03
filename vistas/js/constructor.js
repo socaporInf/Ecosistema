@@ -6,14 +6,14 @@ var handleMediaChange = function (mediaQueryList) {
 			if(formulario.ventanaForm.nodo!==undefined){
 				if (mediaQueryList.matches) {
 			    	//cambio UI Ventana Form
-			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
-			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
+			        //formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
+			        //formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
 			        formulario.ventanaList.cambiarTextoSlots('completa');
 			    }
 			    else {
 			    	//cambio UI Ventana Form
-			        formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(100% - 450px)':null;
-			        formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
+			        //formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(100% - 450px)':null;
+			        //formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
 			        formulario.ventanaList.cambiarTextoSlots('mediaQuery');
 			    }
 			}else{
