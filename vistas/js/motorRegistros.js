@@ -100,7 +100,7 @@ var Motor = function(entidadActiva){
 	};
 
 	//busqueda en bd
-	this.buscarRegistros =function(entidad,callback){
+	this.buscarRegistros = function(entidad,callback){
 		var conexionBuscar=crearXMLHttpRequest();
 		conexionBuscar.onreadystatechange = function(){
 			if (conexionBuscar.readyState == 4){

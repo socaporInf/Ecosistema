@@ -1,9 +1,9 @@
  <?php
 include_once('cls_Conexion.php');
-class cls_Variedad extends cls_Conexion{
+class cls_Clase extends cls_Conexion{
 	
 	private $aa_Atributos = array();
-	private $aa_Campos = array('codigo_variedad','nombre','descripcion','codigo_variedad_capca','dias_punto_maduracion');
+	private $aa_Campos = array('codigo_clase','nombre','descripcion');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -67,11 +67,11 @@ class cls_Variedad extends cls_Conexion{
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM agronomia.vvariedad ";
+		$ls_Sql="SELECT * FROM agronomia.vclase ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_variedad'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_clase'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
 			$x++;
 		}
@@ -83,15 +83,13 @@ class cls_Variedad extends cls_Conexion{
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * FROM agronomia.vvariedad where codigo_variedad='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT * FROM agronomia.vclase where codigo_clase='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['codigo_variedad'];
+			$la_respuesta['codigo']=$la_registros['codigo_clase'];
 			$la_respuesta['nombre']=$la_registros['nombre'];
 			$la_respuesta['descripcion']=$la_registros['descripcion'];
-			$la_respuesta['codigo_variedad_capca']=$la_registros['codigo_variedad_capca'];
-			$la_respuesta['dias_punto_maduracion']=$la_registros['dias_punto_maduracion'];
 			$lb_Enc=true;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -112,9 +110,8 @@ class cls_Variedad extends cls_Conexion{
 		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['clave']);
 
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO agronomia.vvariedad (nombre,descripcion,codigo_variedad_capca,dias_punto_maduracion) values 
-				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."',";
-		$ls_Sql.="'".$this->aa_Atributos['codigo_variedad_capca']."','".$this->aa_Atributos['dias_punto_maduracion']."')";
+		$ls_Sql="INSERT INTO agronomia.vclase (nombre,descripcion) values 
+				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
@@ -124,15 +121,13 @@ class cls_Variedad extends cls_Conexion{
 	private function f_BuscarUltimo(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * from agronomia.vvariedad WHERE codigo_variedad = (SELECT MAX(codigo_variedad) from agronomia.vvariedad) ";
+		$ls_Sql="SELECT * from agronomia.vclase WHERE codigo_clase = (SELECT MAX(codigo_clase) from agronomia.vclase) ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['codigo_variedad'];
+			$la_respuesta['codigo']=$la_registros['codigo_clase'];
 			$la_respuesta['nombre']=$la_registros['nombre'];
 			$la_respuesta['descripcion']=$la_registros['descripcion'];
-			$la_respuesta['codigo_variedad_capca']=$la_registros['codigo_variedad_capca'];
-			$la_respuesta['dias_punto_maduracion']=$la_registros['dias_punto_maduracion'];
 			$lb_Enc=true;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -152,12 +147,12 @@ class cls_Variedad extends cls_Conexion{
 		if(isset($this->aa_Atributos['nombre'])){
 			$this->aa_Atributos['nom'] = $this->aa_Atributos['nombre'];
 		}
-		$ls_Sql="UPDATE agronomia.vvariedad SET ";
+		$ls_Sql="UPDATE agronomia.vclase SET ";
 
 		//arma la cadena sql en base a los campos pasados en la peticion
 		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-		$ls_Sql.="WHERE codigo_variedad ='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.="WHERE codigo_clase ='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();

@@ -909,7 +909,7 @@ div[capaForm] section div[cont] textarea{
   z-index: 1;
 }
 div[capaForm] section[titulo] textarea{
-  height: 100%;
+  height: 100% !important;
 }
 div[formUpdate] div span{
   font-size:13px; 

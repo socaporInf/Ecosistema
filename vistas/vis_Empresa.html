@@ -51,9 +51,9 @@
 				if(formulario.elements[x].value==''){
 					validacion=true;
 				}
-				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
-				data.push(elemento);
 			}
+			elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
+			data.push(elemento);
 		}
 		if(!validacion){
 			//guardo en base de datos

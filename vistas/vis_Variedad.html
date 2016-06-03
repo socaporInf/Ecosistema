@@ -50,15 +50,14 @@
 				if(formulario.elements[x].value==''){
 					validacion=true;
 				}
-				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
-				data.push(elemento);
 			}
+			elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
+			data.push(elemento);
 		}
 		if(!validacion){
 			//guardo en base de datos
 			torque.guardar(torque.entidadActiva,data,function(respuesta){
-				console.log(respuesta);
-				var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
+				var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(respuesta.registros);
 
 				//cambio a modificacion
 				nuevoSlot.firstChild.click();
@@ -91,9 +90,6 @@
 				//creo los campos que va a usar el formulario 
 				var campos = [
 					{
-						tipo : 'campoDeTexto',
-						parametros : {titulo:'Codigo',nombre:'codigo',tipo:'simple',eslabon:'simple',usaToolTip:true}
-					},{
 						tipo : 'campoDeTexto',
 						parametros : {titulo:'Codigo CAPCA',nombre:'codigo_variedad_capca',tipo:'simple',eslabon:'simple',usaToolTip:true}
 					},{
