@@ -18,6 +18,7 @@ formulario(entidad): {
       crearEstructuraBasicaNuevo(titulo,altura) ----
       crearEstructuraBasicaModificar(titulo,altura)
       agregarSectorOperaciones() -------------------  agrega un sector en la parte inferior del formulario para operaciones adicionales
+      agregarSector() -------------------  agrega un sector en la parte inferior del formulario y lo retorna para su uso
   }
 
   ventanaList(entidadActiva):{

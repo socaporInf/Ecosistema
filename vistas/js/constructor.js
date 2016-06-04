@@ -668,6 +668,20 @@ var Formulario = function(entidad){
 			operaciones.innerHTML='<section contOp ></section>';
 			this.nodo.appendChild(operaciones);
 		}
+
+		this.agregarSector = function(sector){
+			let newSector = document.createElement('section');
+			newSector.setAttribute('sector','');
+			this.nodo.appendChild(newSector);
+			//operaciones dependiendo de los datos
+			if(sector.html){
+				newSector.innerHTML = sector.html;
+			}
+			if(sector.division){
+				newSector.classList.add('division');
+			}
+			return newSector;
+		}
 	};
 
 	/*------------------------------Objeto VentanaList-------------------------------------------------------------*/
