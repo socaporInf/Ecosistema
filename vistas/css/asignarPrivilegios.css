@@ -1,0 +1,10 @@
+r{
+	float:right;
+	margin-right: 20px;
+}
+l{
+	float: left;
+}
+div[mat-window].not-first{
+	margin-top: 10px;
+}
