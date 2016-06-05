@@ -13,7 +13,7 @@ switch ($la_Form['entidad']) {
 		$lobj_Entidad->setPeticion($la_Form);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;	
-
+//--------------------------seguridad-----------------------------------------------
 	case 'rol':
 		include_once('../clases/cls_Rol.php');
 		$lobj_Entidad = new cls_Rol;
@@ -21,6 +21,13 @@ switch ($la_Form['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 	
+	case 'privilegio':
+		include_once('../clases/cls_AsignarPrivilegios.php');
+		$lobj_Entidad = new cls_AsignarPrivilegios;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'usuario':
 		include_once('../clases/cls_Usuario.php');
 		$lobj_Entidad = new cls_Usuario;
@@ -34,7 +41,6 @@ switch ($la_Form['entidad']) {
 		$lobj_Entidad->setPeticion($la_Form);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
-
 //--------------------------agronomia-----------------------------------------------
 	case 'clase':
 		include_once('../clases/cls_Clase.php');

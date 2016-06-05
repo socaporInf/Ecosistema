@@ -179,10 +179,11 @@
 			}
 		};
 		objForm.prototype.agregarEmpresas=function(contenedor,elementos){
+			elementos = elementos || [];
 			var html="";
 			html+='<article add="empresa"></article>';
 			for(var x=0;x<elementos.length;x++){
-				html+="<article empresa='"+elementos[x].codigo+"' codigo='"+elementos[x].codigoRelacion+"'>"+elementos[x].nombre+"</article>";
+				html+="<article rol='"+elementos[x].codigo_rol+"' empresa='"+elementos[x].codigo+"' codigo='"+elementos[x].codigoRelacion+"'>"+elementos[x].nombre+"</article>";
 			}
 			contenedor.innerHTML=html;
 			this.agregarFuncionamiento();
@@ -275,7 +276,7 @@
 
 								var peticion={
 									operacion:'eliminarDetalle',
-									cod_emp:this.getAttribute('codigo'),
+									codigo_empresa:this.getAttribute('codigo'),
 									codigo:UI.elementos.formulario.ventanaForm.registroId,
 									entidad:'rol'
 								}
@@ -286,7 +287,7 @@
 									//culmino carga
 									cuadroCarga.culminarCarga(respuesta,function(respuesta){
 										var empresa={
-											codigo:respuesta.cod_emp
+											codigo:respuesta.codigo_empresa
 										}
 										UI.elementos.formulario.ventanaForm.eliminarEmpresa(empresa,document.getElementById('contenedorPri'));
 										UI.elementos.modalWindow.eliminarUltimaCapa();
@@ -296,7 +297,7 @@
 							}
 						}
 						btnModificar.onclick= function(){
-							location.href=this.getAttribute('enlace');
+							location.href='vis_AsignarPrivilegios.html?ruta='+this.getAttribute('ruta');
 						}
 					}
 				}else if(lista[x].getAttribute('add')!==null){
@@ -332,7 +333,7 @@
 							if(lista.value!='-'){
 								if(lista.value!='cerrar'){
 									var peticion= {	
-										cod_emp: lista.value,
+										codigo_empresa: lista.value,
 										codigo: UI.elementos.formulario.ventanaForm.registroId,
 										entidad: 'rol',
 										Operacion:'guardarDetalle'
