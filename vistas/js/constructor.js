@@ -1588,11 +1588,12 @@ var Arquitecto = function(){
 		return capaContenido;
 	};
 
-	this.crearMensaje = function(tipo,mensaje){
+	this.crearMensaje = function(mensaje){
+		let titulo = mensaje.titulo || mensaje.tipo.toUpperCase()
 		let ventana = {
-			tipo: tipo,
-			cabecera: tipo.toUpperCase(),
-			cuerpo: mensaje
+			tipo: mensaje.tipo,
+			cabecera: titulo,
+			cuerpo: mensaje.mensaje
 		};
 		this.crearVentanaModal(ventana);
 	}
@@ -1604,6 +1605,7 @@ var Arquitecto = function(){
 		this.elementos.cuadroCarga = cuadroCarga;
 		return cuadroCarga.nodo;
 	};
+
 	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
 	this.iniciarCarga = function(info,callback){
 		console.log('inicio carga');
@@ -1612,8 +1614,127 @@ var Arquitecto = function(){
 		this.elementos.cuadroCarga.manejarCarga();
 		return cuadroCarga.nodo;
 	};
+
+	this.agregarVentana = function(ventana,contenedor){
+		if(!this.elementos.ventanas){
+			this.elementos.ventanas = [];
+		}
+		let newVentana = new Ventana(ventana);
+		this.elementos.ventanas.push(newVentana);
+		contenedor.appendChild(newVentana.nodo);
+		return newVentana;
+	}
+
+	this.buscarVentana = function(nombre){
+		let ventanas =this.elementos.ventanas;
+		for(let x = 0; x < ventanas.length; x++){
+			if(ventanas[x].atributos.nombre===nombre){
+				return ventanas[x];
+			}
+		}
+		return false;
+	}
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
+var Ventana = function(atributos){
+	//-----------------Titulo---------------------------
+	var Titulo = function(atributos){
+
+		this.nodo = null;
+		this.atributos = atributos;
+		//valores por defecto
+		atributos.tipo = atributos.tipo || 'basico';
+
+		this.construirNodo = function(){
+			
+			let nodo = document.createElement('section');
+			nodo.setAttribute('titulo','');
+
+			nodo.innerHTML = atributos.texto || atributos.html;
+			nodo.classList.add(atributos.tipo);
+
+			this.nodo = nodo;
+		}
+		this.construirNodo();
+	};
+	//--------------------Sector----------------------------
+	var Sector = function(atributos){
+		this.nodo = null;
+		this.atributos = atributos;
+
+		this.construirNodo = function(){
+			
+			let nodo = document.createElement('section');
+			nodo.setAttribute('sector','');
+
+			if(atributos.html){
+				nodo.innerHTML = atributos.html;
+			}
+			this.nodo = nodo;
+		};
+
+		this.destruirNodo = function(){
+			this.nodo.parentNode.removeChild(this.nodo);
+		};
+		this.construirNodo();	
+	}
+
+	this.atributos = atributos;
+	this.estado = 'porConstruir';
+	this.sectores = [];
+	this.nodo = null;
+
+	this.construirNodo = function(){
+		let nodo = document.createElement('div');
+		nodo.setAttribute('mat-window','');
+		nodo.classList.add(this.atributos.tipo);
+		this.nodo = nodo;
+
+		if(atributos.titulo){
+			this.agregarTitulo(this.atributos.titulo);
+		}
+
+		if(atributos.sectores){
+			for(let x = 0; x < atributos.sectores.length; x++){
+				this.agregarSector(atributos.sectores[x]);
+			}
+		}
+	};
+
+	this.agregarSector = function(atributos){
+		let sector = new Sector(atributos);
+		this.sectores.push(sector);
+		this.nodo.appendChild(sector.nodo);
+		return sector;
+	};
+
+	this.buscarSector = function(nombre){
+		for(let x = 0; x < this.sectores.length; x++){
+			if(this.sectores[x].atributos.nombre){
+				if(this.sectores[x].atributos.nombre===nombre){
+					return this.sectores[x];
+				}	
+			}
+		}
+		return false;
+	}
+
+	this.quitarSector = function(nombre){
+		let sector = this.buscarSector(nombre);
+		sector.destruirNodo();
+		this.sectores.splice(this.sectores.indexOf(sector),1);
+	}
+
+	this.agregarTitulo = function(atributos){
+		let titulo = new Titulo(atributos);
+		this.nodo.appendChild(titulo.nodo);
+		this.titulo = titulo;
+	}
+
+	this.construirNodo();
+}
+
+//-----------------------------Objeto Radio----------------------------
 var Radio = function(info){
 	//nombre,opciones,seleccionado
 	this.data = info;

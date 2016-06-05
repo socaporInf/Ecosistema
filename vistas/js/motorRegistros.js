@@ -92,7 +92,7 @@ var Motor = function(entidadActiva){
 				if(respuesta.success===1){
 					torque.registrosEntAct=respuesta.registros;
 				}else{
-					UI.crearMensaje(respuesta.tipo,respuesta.mensaje);
+					UI.crearMensaje(respuesta);
 					UI.elementos.cuadroCarga.terminarCarga();
 				}
 			});
@@ -134,7 +134,8 @@ var Motor = function(entidadActiva){
 
 		//lo mismo sucede con el codigo si no se le pasa en el objeto el tomara por defecto el codigo
 		//del registro que esta activo en el formulario
-		peticion.codigo = peticion.codigo || UI.elementos.formulario.ventanaForm.registroId;
+		codigoPorDefecto = (UI.elementos.formulario!=='noPosee')?UI.elementos.formulario.ventanaForm.registroId:''
+		peticion.codigo = peticion.codigo || codigoPorDefecto;
 
 		//si no recive el parametro de manejarCarga toma por defecto el valor de falso
 		peticion.manejarOperacion = peticion.manejarOperacion || false;
@@ -151,7 +152,10 @@ var Motor = function(entidadActiva){
 					if(respuesta.success === 1){
 		            	callback(respuesta);
 					}else{
-						UI.crearMensaje('error',respuesta.mensaje);
+						UI.crearMensaje({
+							tipo:'error',
+							mensaje: respuesta.mensaje
+						});
 						UI.elementos.formulario.ventanaForm.destruirNodo();
 					}
 				}
@@ -184,7 +188,10 @@ var Motor = function(entidadActiva){
 				if(respuesta.success === 1){
 	            	callback(respuesta);
 				}else{
-					UI.crearMensaje('error',respuesta.mensaje);
+					UI.crearMensaje({
+							tipo:'error',
+							mensaje: respuesta.mensaje
+						});
 					UI.elementos.formulario.ventanaForm.destruirNodo();
 				}
 		    }

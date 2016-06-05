@@ -953,6 +953,53 @@ div[capaForm] section[titulo].edicion div[cont] textarea{
   opacity: 1;
   z-index: 2;
 }
+/*--------------------ventana material------------------------------------------------------------*/
+div[mat-window]{
+  box-shadow:0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  margin-top: 70px;
+  margin-left: 50px;
+  margin-bottom: 100px;
+}
+div[mat-window].columna{
+  width: calc(40%);
+  float:left;
+}
+
+div[mat-window].formulario{
+  width: calc(80% + 50px);
+  float:left;
+}
+
+div[mat-window].titulo{
+  width: calc(80% + 50px);
+  float:left;
+  margin-bottom: 10px;
+}
+/*-----------------------------titulo---------------------------------------*/
+div[mat-window] section[titulo]{
+  position: relative;
+    transition: all 0.5s ease-in-out;
+    padding: 10px 0px 0px 50px;
+    font-size: 21px;
+    color: white;
+    min-height: 40px; 
+}
+div[mat-window] section[titulo].basico{
+    color: white;
+    background-color: #4CAF50;
+}
+div[mat-window] section[titulo].inverso{
+    color: #4CAF50;
+    background-color: white;
+    border-bottom: 1px solid rgba(160,160,160,0.5);
+}
+/*-------------------------------Sector----------------------------------------*/
+div[mat-window] section[sector]{
+  width: 100%;
+  min-height: 40px;
+    border-bottom: 1px solid rgba(160,160,160,0.5);
+}
 /*-----------------------------------Media Query-------------------------------*/
 @media (max-width: 1000px){
   /*modal window*/
