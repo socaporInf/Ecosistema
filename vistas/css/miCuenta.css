@@ -1,0 +1,50 @@
+
+div[mat-window] section[sector] section[texto].lateral-icono{
+	margin-left: 10px;
+	height: 50px;
+	width: calc(100% - 60px);
+	float: left;
+	display: flex;
+  	justify-content: center;
+  	align-content: center;
+  	flex-direction: column;
+}
+div[mat-window] section[sector] aside{
+	width: 50px;
+	height: 50px;
+	float: left;
+}
+aside.clave-grande{
+	background-repeat: no-repeat;
+	background-position: 4px;
+	background-image:url(../imagenes/clave_grande.png);
+}
+aside.interrogacion-grande{	
+	background-repeat: no-repeat;
+	background-position: 4px;
+	background-image:url(../imagenes/help.png);
+}
+/*-----------------------------Division Operaciones--------------------------------*/
+div[division-operaciones]{
+	float: left;
+	width: 100%;
+}
+div[division-formulario]{
+	float: left;
+	width: 100%;
+}
+@media (min-width: 1000px){
+	div[division-operaciones]{
+		float: left;
+		width: 30%;
+	}
+	div[division-formulario]{
+		float: left;
+		width: 70%;
+	}
+	div[division-operaciones] div[mat-window]{
+		width:calc(100% - 50px);
+		margin-bottom: 10px;
+	}
+
+}

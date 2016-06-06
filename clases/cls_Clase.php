@@ -1,9 +1,9 @@
  <?php
 include_once('cls_Conexion.php');
-class cls_Empresa extends cls_Conexion{
+class cls_Clase extends cls_Conexion{
 	
 	private $aa_Atributos = array();
-	private $aa_Campos = array('codigo_empresa','rif','nombre','nombre_abreviado','direccion_fiscal','telefono','correo');
+	private $aa_Campos = array('codigo_clase','nombre','descripcion');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -21,6 +21,11 @@ class cls_Empresa extends cls_Conexion{
 				if(count($registros)!=0){
 					$success=1;
 					$respuesta['registros']=$registros;
+				}else{
+					$respuesta['success'] = 0;
+					$respuesta['mensaje'] = 'no hay registros';
+					$respuesta['tipo'] = 'advertencia';
+					$respuesta['titulo'] = 'advertencia';	
 				}
 				break;
 
@@ -35,8 +40,13 @@ class cls_Empresa extends cls_Conexion{
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
+					$this->f_BuscarUltimo();
+					$respuesta['registros'] = $this->aa_Atributos['registro'];
 					$respuesta['mensaje'] = 'Insercion realizada con exito';
-					$success=1;
+					$success = 1;
+				}else{
+					$respuesta['mensaje'] = 'Error al ejecutar la insercion';
+					$success = 0;
 				}
 				break;
 
@@ -57,13 +67,12 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM global.vempresa ";
+		$ls_Sql="SELECT * FROM agronomia.vclase ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_empresa'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_clase'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
-			$la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -74,17 +83,13 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * FROM global.vempresa where codigo_empresa='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT * FROM agronomia.vclase where codigo_clase='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['codigo_empresa'];
-			$la_respuesta['rif']=$la_registros['rif'];
+			$la_respuesta['codigo']=$la_registros['codigo_clase'];
 			$la_respuesta['nombre']=$la_registros['nombre'];
-			$la_respuesta['direccion_fiscal']=$la_registros['direccion_fiscal'];
-			$la_respuesta['telefono']=$la_registros['telefono'];
-			$la_respuesta['nombre_abreviado']=$la_registros['nombre_abreviado'];
-			$la_respuesta['correo']=$la_registros['correo'];
+			$la_respuesta['descripcion']=$la_registros['descripcion'];
 			$lb_Enc=true;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -99,25 +104,51 @@ class cls_Empresa extends cls_Conexion{
 	}
 	
 	private function f_Guardar(){
+
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO global.vempresa (nombre,rif,direccion_fiscal,telefono,correo,nombre_abreviado) values 
-				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['rif']."','".$this->aa_Atributos['direccion_fiscal']."',
-				'".$this->aa_Atributos['telefono']."','".$this->aa_Atributos['correo']."','".$this->aa_Atributos['nombre_abreviado']."')";
+		$ls_Sql="INSERT INTO agronomia.vclase (nombre,descripcion) values 
+				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
 		return $lb_Hecho;
 	}
 
+	private function f_BuscarUltimo(){
+		$lb_Enc=false;
+		//Busco El rol
+		$ls_Sql="SELECT * from agronomia.vclase WHERE codigo_clase = (SELECT MAX(codigo_clase) from agronomia.vclase) ";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		if($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta['codigo']=$la_registros['codigo_clase'];
+			$la_respuesta['nombre']=$la_registros['nombre'];
+			$la_respuesta['descripcion']=$la_registros['descripcion'];
+			$lb_Enc=true;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+
+		if($lb_Enc){
+			//guardo en atributo de la clase
+			$this->aa_Atributos['registro']=$la_respuesta;
+		}
+
+		return $lb_Enc;
+	}
+
 	private function f_Modificar(){
 		$lb_Hecho=false;
 		$contCampos = 0;
-		$ls_Sql="UPDATE global.vempresa SET ";
+		if(isset($this->aa_Atributos['nombre'])){
+			$this->aa_Atributos['nom'] = $this->aa_Atributos['nombre'];
+		}
+		$ls_Sql="UPDATE agronomia.vclase SET ";
 
 		//arma la cadena sql en base a los campos pasados en la peticion
 		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-		$ls_Sql.="WHERE codigo_empresa ='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.="WHERE codigo_clase ='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();

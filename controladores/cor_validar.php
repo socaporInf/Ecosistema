@@ -9,16 +9,23 @@ if($la_Form['Operacion']=='acceso'){
 
 	include_once('../clases/cls_Acceso.php');
 	$lobj_Acceso = new cls_Acceso;
-	$lobj_Acceso->setForm($la_Form);
+	$lobj_Acceso->setPeticion($la_Form);
 	$lb_Enc=$lobj_Acceso->f_Accesar();
 	if($lb_Enc){
-		$la_Form=$lobj_Acceso->getForm();
+		$la_Form=$lobj_Acceso->getAtributos();
 		$_SESSION['Usuario']['Nombre']=$la_Form['Nombre'];
+
+		//armo datos para siguientes conexiones
+		$_SESSION['Con']['Nombre'] = $la_Form['Nombre'];
+		$_SESSION['Con']['Pass'] = $la_Form['Pass'];
+		
 		$respuesta=array(
 			'mensaje'=>'Inicio de sesion exitoso',
 			'usuario'=>$la_Form['Nombre'],
 			'success'=>1
 			);
+
+		unset($la_Form);
 	}else{
 		$respuesta=array(
 			'mensaje'=>'Usuario o clave incorrecto',
@@ -30,7 +37,7 @@ if($la_Form['Operacion']=='acceso'){
 
 	include_once('../clases/cls_Permisos.php');
 	$lobj_Permisos = new cls_Permisos;
-	$lobj_Permisos->setForm($la_Form);
+	$lobj_Permisos->setPeticion($la_Form);
 	$privilegios=$lobj_Permisos->f_ObtenerPrivilegios();
 	if(count($privilegios)==0){
 		$respuesta=array(

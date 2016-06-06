@@ -21,7 +21,7 @@
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('tipoUsuario');
+	var torque = new Motor('clase');
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
@@ -57,8 +57,7 @@
 		if(!validacion){
 			//guardo en base de datos
 			torque.guardar(torque.entidadActiva,data,function(respuesta){
-				console.log(respuesta);
-				var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
+				var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(respuesta.registros);
 
 				//cambio a modificacion
 				nuevoSlot.firstChild.click();
@@ -84,16 +83,13 @@
 				//guardo el objeto venana formulario para mejor entendimiento y acceso rapido
 				var capaForm=UI.elementos.formulario.ventanaForm;
 				//inicializo los datos del titulo del formulario y la altura del mismo
-				var titulo = 'Tipo de Usuario';
+				var titulo = 'Clase';
 				var altura = 210;
 				capaForm.crearEstructuraBasicaNuevo(titulo,altura);
 
 				//creo los campos que va a usar el formulario 
 				var campos = [
 					{
-						tipo : 'campoDeTexto',
-						parametros : {titulo:'Codigo',nombre:'codigo',tipo:'simple',eslabon:'simple',usaToolTip:true}
-					},{
 						tipo : 'campoDeTexto',
 						parametros : {titulo:'Nombre',nombre:'nombre',tipo:'simple',eslabon:'simple',usaToolTip:true}
 					},{

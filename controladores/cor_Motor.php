@@ -1,4 +1,5 @@
 <?php
+session_start();
 if(isset($_POST['operacion'])){
 	$la_Form=$_POST;
 } else {
@@ -12,7 +13,7 @@ switch ($la_Form['entidad']) {
 		$lobj_Entidad->setPeticion($la_Form);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;	
-
+//--------------------------seguridad-----------------------------------------------
 	case 'rol':
 		include_once('../clases/cls_Rol.php');
 		$lobj_Entidad = new cls_Rol;
@@ -20,6 +21,13 @@ switch ($la_Form['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 	
+	case 'privilegio':
+		include_once('../clases/cls_AsignarPrivilegios.php');
+		$lobj_Entidad = new cls_AsignarPrivilegios;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'usuario':
 		include_once('../clases/cls_Usuario.php');
 		$lobj_Entidad = new cls_Usuario;
@@ -33,10 +41,25 @@ switch ($la_Form['entidad']) {
 		$lobj_Entidad->setPeticion($la_Form);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
+//--------------------------agronomia-----------------------------------------------
+	case 'clase':
+		include_once('../clases/cls_Clase.php');
+		$lobj_Entidad = new cls_Clase;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
+	case 'variedad':
+		include_once('../clases/cls_Variedad.php');
+		$lobj_Entidad = new cls_Variedad;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
 
 	default:
 		$respuesta['success'] = 0;
 		$respuesta['mensaje'] = 'Entidad '.$la_Form['entidad'].' no se encuentra soportada por esta aplicacion';
+		$respuesta['tipo'] = 'error';
 		break;
 }
 header('Content-type: application/json; charset=utf-8');

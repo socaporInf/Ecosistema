@@ -1,9 +1,9 @@
  <?php
 include_once('cls_Conexion.php');
-class cls_TipoUSuario extends cls_Conexion{
+class cls_Variedad extends cls_Conexion{
 	
 	private $aa_Atributos = array();
-	private $aa_Campos = array('codigo_tipo_usuario','nom','des');
+	private $aa_Campos = array('codigo_variedad','nombre','descripcion','codigo_variedad_capca','dias_punto_maduracion');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -21,6 +21,11 @@ class cls_TipoUSuario extends cls_Conexion{
 				if(count($registros)!=0){
 					$success=1;
 					$respuesta['registros']=$registros;
+				}else{
+					$respuesta['success'] = 0;
+					$respuesta['mensaje'] = 'no hay registros';
+					$respuesta['tipo'] = 'advertencia';
+					$respuesta['titulo'] = 'advertencia';	
 				}
 				break;
 
@@ -35,7 +40,7 @@ class cls_TipoUSuario extends cls_Conexion{
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
-					$this->f_Buscar();
+					$this->f_BuscarUltimo();
 					$respuesta['registros'] = $this->aa_Atributos['registro'];
 					$respuesta['mensaje'] = 'Insercion realizada con exito';
 					$success = 1;
@@ -62,11 +67,11 @@ class cls_TipoUSuario extends cls_Conexion{
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM seguridad.vtipo_usuario ";
+		$ls_Sql="SELECT * FROM agronomia.vvariedad ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_tipo_usuario'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_variedad'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
 			$x++;
 		}
@@ -78,13 +83,15 @@ class cls_TipoUSuario extends cls_Conexion{
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * FROM seguridad.vtipo_usuario where codigo_tipo_usuario='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT * FROM agronomia.vvariedad where codigo_variedad='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['codigo_tipo_usuario'];
+			$la_respuesta['codigo']=$la_registros['codigo_variedad'];
 			$la_respuesta['nombre']=$la_registros['nombre'];
 			$la_respuesta['descripcion']=$la_registros['descripcion'];
+			$la_respuesta['codigo_variedad_capca']=$la_registros['codigo_variedad_capca'];
+			$la_respuesta['dias_punto_maduracion']=$la_registros['dias_punto_maduracion'];
 			$lb_Enc=true;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -105,12 +112,38 @@ class cls_TipoUSuario extends cls_Conexion{
 		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['clave']);
 
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO seguridad.vtipo_usuario (codigo_tipo_usuario,nombre,descripcion) values 
-				('".$this->aa_Atributos['codigo']."','".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
+		$ls_Sql="INSERT INTO agronomia.vvariedad (nombre,descripcion,codigo_variedad_capca,dias_punto_maduracion) values 
+				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."',";
+		$ls_Sql.="'".$this->aa_Atributos['codigo_variedad_capca']."','".$this->aa_Atributos['dias_punto_maduracion']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
 		return $lb_Hecho;
+	}
+
+	private function f_BuscarUltimo(){
+		$lb_Enc=false;
+		//Busco El rol
+		$ls_Sql="SELECT * from agronomia.vvariedad WHERE codigo_variedad = (SELECT MAX(codigo_variedad) from agronomia.vvariedad) ";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		if($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta['codigo']=$la_registros['codigo_variedad'];
+			$la_respuesta['nombre']=$la_registros['nombre'];
+			$la_respuesta['descripcion']=$la_registros['descripcion'];
+			$la_respuesta['codigo_variedad_capca']=$la_registros['codigo_variedad_capca'];
+			$la_respuesta['dias_punto_maduracion']=$la_registros['dias_punto_maduracion'];
+			$lb_Enc=true;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+
+		if($lb_Enc){
+			//guardo en atributo de la clase
+			$this->aa_Atributos['registro']=$la_respuesta;
+		}
+
+		return $lb_Enc;
 	}
 
 	private function f_Modificar(){
@@ -119,12 +152,12 @@ class cls_TipoUSuario extends cls_Conexion{
 		if(isset($this->aa_Atributos['nombre'])){
 			$this->aa_Atributos['nom'] = $this->aa_Atributos['nombre'];
 		}
-		$ls_Sql="UPDATE seguridad.vtipo_usuario SET ";
+		$ls_Sql="UPDATE agronomia.vvariedad SET ";
 
 		//arma la cadena sql en base a los campos pasados en la peticion
 		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-		$ls_Sql.="WHERE codigo_tipo_usuario ='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.="WHERE codigo_variedad ='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
