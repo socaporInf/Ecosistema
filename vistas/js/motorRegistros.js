@@ -58,15 +58,15 @@ var Sesion = function(){
 				this.privilegios = privilegios;
 			}
 		}
-		arbol.hijos = this.buscarHijos(arbol.codigo);
+		arbol.hijos = this.buscarHijos(arbol.codigo,this.privilegios);
 		this.arbol = arbol;
 	};
-	this.buscarHijos = function(codigoPadre){
+	this.buscarHijos = function(codigoPadre,privilegios){
 		var hijos = [];
-		for(var x = 0; x < this.privilegios.length; x++){
-			if(this.privilegios[x].padre==codigoPadre){
-				this.privilegios[x].hijos=this.buscarHijos(this.privilegios[x].codigo);
-				hijos.push(this.privilegios[x]);
+		for(var x = 0; x < privilegios.length; x++){
+			if(privilegios[x].padre==codigoPadre){
+				privilegios[x].hijos=this.buscarHijos(privilegios[x].codigo,privilegios);
+				hijos.push(privilegios[x]);
 			}
 		}
 		return hijos;

@@ -1,0 +1,54 @@
+div[hoja]{
+	transition: all 0.3s linear;
+	margin: 0px 0px 0px 10px;
+	height: 30px;
+	width: 100%;
+}
+div[hoja].abierto{
+	height: calc(100% - 0px);
+}
+div[hoja] div[titulo-hoja]{
+	transition: all 0.3s linear;
+	width: calc(100% - 33px);
+	float: left;
+	padding: 4px 0px 4px 0px;
+}
+div[hoja] div[titulo-hoja].asignado,
+div[hoja] div[peciolo].asignado,
+div[hoja] div[peciolo].asignado button{
+	background-color: #4CAF50;
+	color:white;
+}
+div[hoja] div[peciolo]{
+	transition: all 0.3s linear;
+	float: left;
+	width: 24px;
+	height: 27px;
+	border:none;
+	padding-top: 3px;
+	padding-left: 3px;
+	padding-right: 3px
+}
+
+button[little-mat-button-invisible]{
+	transition: all 0.3s linear;
+	border: none;
+	border-radius: 50px;
+	width: 24px;
+	height: 24px;
+	background-color: white; 
+}
+button[little-mat-button-invisible]:hover{
+	background-color: #424242 !important;
+}
+button.arrow_down_gray{
+	background-repeat: no-repeat;
+	background-image: url('../imagenes/arrow_down_gray.png');
+	background-position: 0px 2px;
+}
+button.arrow_down_gray:hover{
+	background-image: url('../imagenes/arrow_down_white.png');
+}
+button.arrow_down_gray.activo{
+		transform: rotate(180deg);
+}

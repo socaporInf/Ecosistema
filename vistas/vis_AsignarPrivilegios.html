@@ -29,6 +29,9 @@
 	var UI = new Arquitecto();
 	UI.configure();
 
+	let botones = ['nuevo','abrir'];
+	UI.elementos.botonera = new Botonera(botones);
+	
 	sesion.obtenerSesion();
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 construirUI();
