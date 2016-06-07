@@ -1646,6 +1646,36 @@ var Arquitecto = function(){
 		}
 		return false;
 	}
+
+	//funcion para agregar de forma dinamica campos a la interfaz
+	this.agregarCampo = function(campo,contenedor){
+		var campoNuevo;
+		switch(campo.tipo.toLowerCase()){
+			case 'campodetexto':
+				campoNuevo = new CampoDeTexto(campo.parametros);
+				break;
+			case 'combobox':
+				campoNuevo = new ComboBox(campo.parametros);
+				break;
+			case 'radio':
+				campoNuevo = new Radio(campo.parametros);
+				break;
+			case 'campoedicion':
+				campoNuevo = new CampoEdicion(campo.parametros);
+				break;
+			case 'saltodelinea':
+				campoNuevo = new SaltoDeLinea();
+				break;
+
+		}
+		contenedor.appendChild(campoNuevo.nodo);
+	};
+	//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
+	this.agregarCampos = function(campos,contenedor){
+		for(var x=0;x<campos.length;x++){
+			this.agregarCampo(campos[x],contenedor);
+		}
+	};
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
 var Ventana = function(atributos){
@@ -1681,6 +1711,11 @@ var Ventana = function(atributos){
 
 			if(atributos.html){
 				nodo.innerHTML = atributos.html;
+			}
+
+			if(atributos.campos){
+				nodo.style.paddingTop='60px';
+				UI.agregarCampos(atributos.campos,nodo);
 			}
 			this.nodo = nodo;
 		};
