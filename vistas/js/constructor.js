@@ -88,19 +88,21 @@ var Botonera = function(estructura){
 		contenedor.parentNode.insertBefore(nodo,contenedor.nextSibling);
 		this.nodo = nodo;
 		this.inicializarBotones();
-		//boton buscar
-		this.buscarBoton('nuevo').nodo.onclick=function(){
-			console.log('presiono Nuevo');
-			var data = {
-				tipo:'nuevo'
-			};
-			var formulario = UI.elementos.formulario;
-			formulario.construirUI(data);
-		};
 		//boton nuevo
-		this.buscarBoton('buscar').nodo.onclick=function(){
-			UI.elementos.formulario.ventanaList.nodo.firstChild.getElementsByTagName('button')[1].click();
-		};
+		if(UI.elementos.formulario!=='noPosee'){
+			this.buscarBoton('nuevo').nodo.onclick=function(){
+				console.log('presiono Nuevo');
+				var data = {
+					tipo:'nuevo'
+				};
+				var formulario = UI.elementos.formulario;
+				formulario.construirUI(data);
+			};
+			//boton buscar
+			this.buscarBoton('buscar').nodo.onclick=function(){
+				UI.elementos.formulario.ventanaList.nodo.firstChild.getElementsByTagName('button')[1].click();
+			};
+		}
 	};
 	this.inicializarBotones = function(){
 		var botones = this.estructura;
@@ -1564,7 +1566,8 @@ var Arquitecto = function(){
 
 	this.estado = 'sinInicializar';
 
-	this.configure = function(){
+	this.configure = function(objetoInicializar){
+		objetoInicializar = objetoInicializar || {};
 
 		this.elementos = {
 			 menu : new Menu(),
@@ -1572,6 +1575,15 @@ var Arquitecto = function(){
 			 formulario : 'noPosee',
 			 botonera : 'noPosee'
 		};
+
+		if(objetoInicializar.formulario){
+			this.elementos.formulario = new Formulario(objetoInicializar.formulario.entidad);
+		}
+
+		if(objetoInicializar.botonera){
+			this.elementos.botonera = new Botonera(objetoInicializar.botonera.botones);
+		}
+		
 		this.estado='inicializado';
 		var mql = window.matchMedia("(max-width: 1000px)");
 		mql.addListener(handleMediaChange);
