@@ -33,9 +33,41 @@ function costruccionInicial(respuesta){
 			tipo:'basico'
 		});
 
-		let formulario = UI.agregarVentana({
+		let formularioPrivilegios = UI.agregarVentana({
 			tipo: 'columna',
-			nombre: 'formulario',
+			nombre: 'formularioPrivilegios',
+			titulo:{
+				html: 'Privilegios',
+				tipo:'inverso'
+			},sectores:[
+				{
+					nombre:'campos',
+					campos:[
+						{
+							tipo : 'campoDeTexto',
+							parametros : {titulo:'Titulo',nombre:'titulo',tipo:'simple',eslabon:'area',usaToolTip:true}
+						},{
+							tipo : 'campoDeTexto',
+							parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
+						},{
+							tipo: 'comboBox',
+							parametros : {
+								nombre:'tipoComponente',
+								titulo:'Tipos de Componente',
+								eslabon : 'area',
+								opciones: {codigo:'S',valor:'Sistemas'}
+							}
+						}	
+					]
+				}
+			]
+		},document.querySelector('div[contenedor]'));
+
+		
+
+		let formularioArbol = UI.agregarVentana({
+			tipo: 'columna',
+			nombre: 'formularioArbol',
 			titulo:{
 				html: 'Asignacion de Privilegios',
 				tipo: 'inverso'
@@ -48,8 +80,12 @@ function costruccionInicial(respuesta){
 			]
 		},document.querySelector('div[contenedor]'));
 
-		formulario.nodo.classList.add('not-first');
+		formularioArbol.nodo.classList.add('not-first');
+		formularioPrivilegios.nodo.classList.add('not-first');
 
+		//formulario arbol
+		formularioArbol.buscarSector('arbol').nodo.style.overflow='auto';
+		formularioArbol.buscarSector('arbol').nodo.style.minHeight='100px';
 		let Peticion = {
 			entidad: 'privilegio',
 			operacion: 'buscarArbol',
@@ -57,14 +93,14 @@ function costruccionInicial(respuesta){
 		}
 
 		let infoCuadroCarga = {
-			nodo: formulario.buscarSector('arbol').nodo,
+			nodo: formularioArbol.buscarSector('arbol').nodo,
 			cuadro:{
 				mensaje:'Cargando Arbol'
 			}
 		}
 
 		torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
-			let arbol = new Arbol(respuesta.registros,UI.buscarVentana('formulario').buscarSector('arbol').nodo);
+			let arbol = new Arbol(respuesta.registros,UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo);
 		});
 	}else{
 		UI.crearMensaje(respuesta);
@@ -114,7 +150,10 @@ var Arbol = function  construirArbol(nodos,contenedor){
 				
 				nodo.appendChild(boton);				
 				this.nodo = nodo;
-			}
+			};
+			this.removerBoton = function(){
+				this.nodo.innerHTML='';
+			};
 			this.construirNodo();
 		}
 		//------------------fin peciolo -----------
@@ -133,7 +172,12 @@ var Arbol = function  construirArbol(nodos,contenedor){
 			nodo.appendChild(this.titulo.nodo);
 
 			this.nodo =  nodo;
-		}
+		};
+		
+		this.removerTallos = function(){
+			this.peciolo.removerBoton();
+		};
+
 		this.construirNodo(titulo);
 	}
 	//----------------fin hoja-----------------------
@@ -158,7 +202,7 @@ var Arbol = function  construirArbol(nodos,contenedor){
 
 	this.armarHojas =  function(rama){
 		let hoja = new Hoja(rama.titulo);
-		if(rama.hijos){
+		if(rama.hijos.length){
 
 			for(let x = 0; x < rama.hijos.length; x++){
 				let hijo = this.armarHojas(rama.hijos[x]);
@@ -171,33 +215,4 @@ var Arbol = function  construirArbol(nodos,contenedor){
 		return hoja;
 	}
 	this.construirNodo();
-}
-
-// transformar un arbol de nodos en una lista
-function construirLista(nodos,contenedor){
-	var arbol = {};
-	for(var x = 0; x < nodos.length; x++ ){
-		if(nodos[x].codigo==0){
-			arbol = nodos[x];
-			nodos.splice(x,1);
-		}
-	}
-	arbol.hijos = sesion.buscarHijos(arbol.codigo,nodos);
-	let contenedorLista = document.createElement('ul');
-	arbolUI = armarNodo(arbol);
-	contenedorLista.appendChild(arbolUI);
-	contenedor.appendChild(contenedorLista);
-}
-function armarNodo(rama){
-	let nodo =  document.createElement('li');
-	nodo.textContent = rama.titulo;
-	if(rama.hijos){
-		let contenedorHijos = document.createElement('ul');
-		nodo.appendChild(contenedorHijos);
-		for(let x = 0; x < rama.hijos.length; x++){
-			let hijo = armarNodo(rama.hijos[x]);
-			contenedorHijos.appendChild(hijo);
-		}
-	}
-	return nodo;
 }

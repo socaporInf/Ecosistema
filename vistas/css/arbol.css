@@ -5,7 +5,7 @@ div[hoja]{
 	width: 100%;
 }
 div[hoja].abierto{
-	height: calc(100% - 0px);
+	height: auto;
 }
 div[hoja] div[titulo-hoja]{
 	transition: all 0.3s linear;
@@ -50,5 +50,5 @@ button.arrow_down_gray:hover{
 	background-image: url('../imagenes/arrow_down_white.png');
 }
 button.arrow_down_gray.activo{
-		transform: rotate(180deg);
+		transform: rotate(-180deg);
 }

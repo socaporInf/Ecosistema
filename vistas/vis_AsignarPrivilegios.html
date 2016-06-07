@@ -27,10 +27,11 @@
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.configure();
-
-	let botones = ['nuevo','abrir'];
-	UI.elementos.botonera = new Botonera(botones);
+	UI.configure({
+		botonera :{
+			botones:['nuevo','abrir']
+		}
+	});
 	
 	sesion.obtenerSesion();
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
