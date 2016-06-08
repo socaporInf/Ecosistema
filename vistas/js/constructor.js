@@ -64,9 +64,14 @@ var Botonera = function(estructura){
 				case 'redactar':
 					nodo.setAttribute('btnRedactar','');
 				break;
+				case 'cancelar':
+					nodo.setAttribute('btnCancelar','');
+				break;
 				case 'guardar':
 					nodo.setAttribute('btnGuardar','');
-					nodo.onclick=guardar;
+					if(typeof(guardar)!=='undefined'){
+						nodo.onclick=guardar;
+					}
 				break;
 			}
 			this.nodo = nodo;
@@ -135,7 +140,17 @@ var Botonera = function(estructura){
 			}
 			this.botones.push(boton);
 		}
+		return boton;
 	};
+	this.agregarBotones = function(botones){
+		let tiempo = 20;
+		for(let x = 0; x < botones.length; x++){
+			setTimeout(function espera(){
+				UI.elementos.botonera.agregarBoton(botones[x]);
+			},tiempo);
+			tiempo+=20;
+		}
+	}
 	this.agregarEfectos = function(){
 		var botones = this.botones;
 		if(botones.length>1){
@@ -1583,6 +1598,7 @@ var Arquitecto = function(){
 		if(objetoInicializar.botonera){
 			this.elementos.botonera = new Botonera(objetoInicializar.botonera.botones);
 		}
+
 		
 		this.estado='inicializado';
 		var mql = window.matchMedia("(max-width: 1000px)");
@@ -1645,6 +1661,14 @@ var Arquitecto = function(){
 			}
 		}
 		return false;
+	}
+
+	this.quitarVentana = function(nombre){
+		let ventana = this.buscarVentana(nombre);
+		if(ventana){
+			ventana.destruirNodo();
+			this.elementos.ventanas.splice(this.elementos.ventanas.indexOf(ventana),1);
+		}
 	}
 
 	//funcion para agregar de forma dinamica campos a la interfaz
@@ -1714,7 +1738,7 @@ var Ventana = function(atributos){
 			}
 
 			if(atributos.campos){
-				nodo.style.paddingTop='60px';
+				nodo.style.paddingTop='30px';
 				UI.agregarCampos(atributos.campos,nodo);
 			}
 			this.nodo = nodo;
@@ -1745,6 +1769,10 @@ var Ventana = function(atributos){
 			for(let x = 0; x < atributos.sectores.length; x++){
 				this.agregarSector(atributos.sectores[x]);
 			}
+		}
+
+		if(atributos.alto){
+			this.nodo.style.height = atributos.alto+'px'
 		}
 	};
 
@@ -1778,6 +1806,13 @@ var Ventana = function(atributos){
 		this.titulo = titulo;
 	}
 
+	this.destruirNodo = function(){
+		this.nodo.style.height='0px';
+		var v = this; 
+		setTimeout(function(){
+			v.nodo.parentNode.removeChild(v.nodo);
+		},510);
+	}
 	this.construirNodo();
 }
 
@@ -1906,7 +1941,6 @@ var CampoDeTexto = function(info){
 		html+='<span class="highlight"></span>\
 		      <span class="bar"></span>\
 		      <label>'+this.data.titulo+'</label>';
-		console.log(CampoDeTexto);
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
 		if(this.data.usaToolTip!==false){

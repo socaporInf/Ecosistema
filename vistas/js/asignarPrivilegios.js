@@ -31,39 +31,7 @@ function costruccionInicial(respuesta){
 		titulo.agregarTitulo({
 			html:'<l><strong>ROL:</strong> '+respuesta.registro.rol+'</l> <r><strong>EMPRESA:</strong> '+respuesta.registro.empresa+'</r>',
 			tipo:'basico'
-		});
-
-		let formularioPrivilegios = UI.agregarVentana({
-			tipo: 'columna',
-			nombre: 'formularioPrivilegios',
-			titulo:{
-				html: 'Privilegios',
-				tipo:'inverso'
-			},sectores:[
-				{
-					nombre:'campos',
-					campos:[
-						{
-							tipo : 'campoDeTexto',
-							parametros : {titulo:'Titulo',nombre:'titulo',tipo:'simple',eslabon:'area',usaToolTip:true}
-						},{
-							tipo : 'campoDeTexto',
-							parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
-						},{
-							tipo: 'comboBox',
-							parametros : {
-								nombre:'tipoComponente',
-								titulo:'Tipos de Componente',
-								eslabon : 'area',
-								opciones: {codigo:'S',valor:'Sistemas'}
-							}
-						}	
-					]
-				}
-			]
-		},document.querySelector('div[contenedor]'));
-
-		
+		});		
 
 		let formularioArbol = UI.agregarVentana({
 			tipo: 'columna',
@@ -81,7 +49,6 @@ function costruccionInicial(respuesta){
 		},document.querySelector('div[contenedor]'));
 
 		formularioArbol.nodo.classList.add('not-first');
-		formularioPrivilegios.nodo.classList.add('not-first');
 
 		//formulario arbol
 		formularioArbol.buscarSector('arbol').nodo.style.overflow='auto';
@@ -105,6 +72,63 @@ function costruccionInicial(respuesta){
 	}else{
 		UI.crearMensaje(respuesta);
 	}
+	//funcionamiento botones
+	let btnNuevo = document.querySelector('button[btnnuevo]');
+	btnNuevo.onclick = construirFormulario;
+}
+//----------------------------------- Formulario de Privilegios -----------------------
+function construirFormulario(){
+	let formularioPrivilegios = UI.agregarVentana({
+		tipo: 'columna',
+		alto: '340',
+		nombre: 'formularioPrivilegios',
+		titulo:{
+			html: 'Privilegios',
+			tipo:'inverso'
+		},sectores:[
+			{
+				nombre:'campos',
+				campos:[
+					{
+						tipo : 'campoDeTexto',
+						parametros : {titulo:'Titulo',nombre:'titulo',tipo:'simple',eslabon:'area',usaToolTip:true}
+					},{
+						tipo : 'campoDeTexto',
+						parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
+					},{
+						tipo: 'comboBox',
+						parametros : {
+							nombre:'tipoComponente',
+							titulo:'Tipos de Componente',
+							eslabon : 'area',
+							opciones: [{codigo:'S',nombre:'Sistemas'}]
+						}
+					}	
+				]
+			}
+		]
+	},document.querySelector('div[contenedor]'));
+	formularioPrivilegios.nodo.classList.add('not-first');
+	//cambios botonera
+	UI.elementos.botonera.agregarBotones(['guardar','cancelar']);
+	UI.elementos.botonera.quitarBoton('nuevo');
+	//debido al tiempo que tarda la transicion de entrada de los botones le coloco un tiempo de 20 extra por cada boton
+	
+	setTimeout(function(){
+		UI.elementos.botonera.buscarBoton('guardar').nodo.onclick = guardarPrivilegios;
+		UI.elementos.botonera.buscarBoton('cancelar').nodo.onclick = cancelarPrivilegios;
+	},80)
+	
+}
+function guardarPrivilegios(){
+	console.log('entro');
+}
+
+function cancelarPrivilegios(){
+	UI.quitarVentana('formularioPrivilegios');
+	UI.elementos.botonera.quitarBoton('cancelar');
+	UI.elementos.botonera.quitarBoton('guardar');
+	UI.elementos.botonera.agregarBoton('nuevo').nodo.onclick = construirFormulario;
 }
 
 //transformar un arbol de nodos en una estructura interactiva
