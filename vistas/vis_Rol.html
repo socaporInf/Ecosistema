@@ -26,22 +26,24 @@
 	//arranca el motor de registros que se comunica con BD
 	var torque = new Motor('rol');
 	
-	//Inicialiazion de UI(Interfaz De Usuario)
-	var UI = new Arquitecto();
-	UI.configure();
 	//se cargan los registros necesarios que no forman parte de la entidad activa pero
 	//que de igual forma se utilizaran dentro del maestro
 	var empresas
 	torque.Busqueda({entidad:'empresa',operacion:'buscar'},function(respuesta){
 		empresas=respuesta.registros;
 	});
-	
-	//Se inicializa la botonera con sus respectivos botones
-	var botones = ['buscar','nuevo','abrir'];
-	UI.elementos.botonera = new Botonera(botones);
 
-	//se inicializa el formulario
-	UI.elementos.formulario = new Formulario(torque.entidadActiva);
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.configure({
+		formulario:{
+			entidad: torque.entidadActiva
+		}, 
+		botonera:{
+			botones:['buscar','nuevo','abrir']
+		}
+	});
+	
 
 	sesion.obtenerSesion();
 

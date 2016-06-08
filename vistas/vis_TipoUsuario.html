@@ -25,14 +25,14 @@
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.configure();
-
-	//botones que van a ser utilizados en la UI
-	let botones = ['buscar','nuevo','abrir'];
-	UI.elementos.botonera = new Botonera(botones);
-
-	//se inicializa el formulario
-	UI.elementos.formulario = new Formulario(torque.entidadActiva);
+	UI.configure({
+		formulario:{
+			entidad: torque.entidadActiva
+		}, 
+		botonera:{
+			botones:['buscar','nuevo','abrir']
+		}
+	});
 
 	sesion.obtenerSesion();
 
