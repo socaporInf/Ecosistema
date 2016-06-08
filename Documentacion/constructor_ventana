@@ -27,6 +27,7 @@ Ventana(atributos): {
     buscarSector(nombre)
     quitarSector(nombre)
     agregarTitulo(atributos)
+    destruirNodo()
 }
 
 NOTA: si se pasa como parametros los sectores en un arreglo de esta manera

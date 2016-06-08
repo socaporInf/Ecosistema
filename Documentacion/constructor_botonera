@@ -15,6 +15,7 @@ Botonera(estructura): {
   metodos
     construir()
     inicializarBotones()
+    agregarBotones(botones) -- esta funcion permite agregar mas de un boton a la vez y arregla el error que sucede cuando se hace varios individualmente
     agregarBoton(tipo) ------- agrega un boto del tipo pasado como parametro
     agregarEfectos()
     buscarBoton(tipo) -------- busca si existe un boton del tipo y lo retorna
@@ -22,3 +23,7 @@ Botonera(estructura): {
     quitarBoton(tipo) -------- buscar el tipo de boton y lo elimina de la interfaz y del arreglo
     getEstado()
 }
+
+los botones que ya estan predefinidos son:
+
+abrir,nuevo,guardar,listar,redactar,modificar y eliminar
