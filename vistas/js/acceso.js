@@ -71,7 +71,7 @@ function iniciarSession(nodo){
 	        var respuesta = JSON.parse(conexionAcc.responseText);
 	        var html='';
 	        if(respuesta.success==1){	
-	        	location.href='vis_Empresa.html';
+	        	location.href='vis_Landing.html';
 	        }else{
 	        	console.log(respuesta.mensaje);
 	        	html+="<atricle>"+respuesta.mensaje+"</article>";
