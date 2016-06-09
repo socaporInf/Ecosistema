@@ -14,8 +14,7 @@ div[hoja] div[titulo-hoja]{
 	padding: 4px 0px 4px 0px;
 }
 div[hoja] div[titulo-hoja].asignado,
-div[hoja] div[peciolo].asignado,
-div[hoja] div[peciolo].asignado button{
+div[hoja] div[peciolo].asignado{
 	background-color: #4CAF50;
 	color:white;
 }
@@ -36,7 +35,7 @@ button[little-mat-button-invisible]{
 	border-radius: 50px;
 	width: 24px;
 	height: 24px;
-	background-color: white; 
+	background-color: transparent; 
 }
 button[little-mat-button-invisible]:hover{
 	background-color: #424242 !important;

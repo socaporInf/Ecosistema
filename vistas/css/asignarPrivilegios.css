@@ -6,6 +6,13 @@ r{
 l{
 	float: left;
 }
-div[mat-window].not-first{
-	margin-top: 10px;
+
+div[mat-window].arbol{
+  width: calc(40% - 50px);
+  float:left;
+}
+
+div[mat-window].form-lat{
+  width: calc(40% + 50px);
+  float:left;
 }
