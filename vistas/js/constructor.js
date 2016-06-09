@@ -6,14 +6,10 @@ var handleMediaChange = function (mediaQueryList) {
 			if(formulario.ventanaForm.nodo!==undefined){
 				if (mediaQueryList.matches) {
 			    	//cambio UI Ventana Form
-			        //formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
-			        //formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
 			        formulario.ventanaList.cambiarTextoSlots('completa');
 			    }
 			    else {
 			    	//cambio UI Ventana Form
-			        //formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(100% - 450px)':null;
-			        //formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
 			        formulario.ventanaList.cambiarTextoSlots('mediaQuery');
 			    }
 			}else{
@@ -69,8 +65,9 @@ var Botonera = function(estructura){
 				break;
 				case 'guardar':
 					nodo.setAttribute('btnGuardar','');
-					if(typeof(guardar)!=='undefined'){
-						nodo.onclick=guardar;
+					//configuracion por defecto para cuando existe el formulario es decir que es un maestro
+					if(UI.elementos.formulario!=='noPosee'){
+						nodo.onclick=UI.elementos.formulario.ventanaForm.validar	
 					}
 				break;
 			}
@@ -698,6 +695,43 @@ var Formulario = function(entidad){
 				newSector.classList.add('division');
 			}
 			return newSector;
+		}
+
+		this.validar = function(){
+			funcionGuardar =(typeof(guardar)==='undefined')?UI.elementos.formulario.ventanaForm.guardarPorDefecto:guardar;
+			let formulario = document.formNuevo;
+			let data = new Array();
+			let elemento;
+			let validacion=false;
+			for(var x=0;x<formulario.elements.length;x++){
+				if((formulario.elements[x].type=='text')||(formulario.elements[x].type=='password')){
+					if(formulario.elements[x].value==''){
+						validacion=true;
+					}
+				}
+				if(formulario.elements[x].type=='select-one'){
+					if(formulario.elements[x].value=='-'){
+						validacion=true;
+					}
+				}	
+				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
+				data.push(elemento);
+			}
+			if(!validacion){
+				//guardo en base de datos
+				funcionGuardar(data);				
+			}else{
+				console.log('formulario no paso la validacion');
+			}
+		}
+
+		this.guardarPorDefecto =  function(data){
+			torque.guardar(torque.entidadActiva,data,function(respuesta){
+				var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(respuesta.registros);
+
+				//cambio a modificacion
+				nuevoSlot.firstChild.click();
+			});
 		}
 	};
 
@@ -1741,6 +1775,11 @@ var Ventana = function(atributos){
 				nodo.style.paddingTop='30px';
 				UI.agregarCampos(atributos.campos,nodo);
 			}
+
+			if(atributos.alto){
+				nodo.style.height=atributos.alto+'px'
+			}
+
 			this.nodo = nodo;
 		};
 

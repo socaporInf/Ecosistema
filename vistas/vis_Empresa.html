@@ -38,37 +38,6 @@
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 
-
-	//funcionamiento exclusivo del formulario
-	function guardar(){
-		var formulario = document.formNuevo;
-		var data = new Array();
-		var elemento;
-		var validacion=false;
-		for(var x=0;x<formulario.elements.length;x++){
-			if(formulario.elements[x].type='text'){
-				if(formulario.elements[x].value==''){
-					validacion=true;
-				}
-			}
-			elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
-			data.push(elemento);
-		}
-		if(!validacion){
-			//guardo en base de datos
-			torque.guardar('empresa',data,function(){
-				var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
-
-				//cambio a modificacion
-				nuevoSlot.firstChild.click();
-			});
-			//creo un nuevo slot en la UI
-			
-		}else{
-			console.log('formulario no paso la validacion');
-		}
-	}
-	
 	//------------------------------------------Funciones Propias de la UI de este formulario---------------------------
 	//declaro el objeto donde se encuentra la UI del formulario 
 	var objForm=UI.elementos.formulario.ventanaForm;

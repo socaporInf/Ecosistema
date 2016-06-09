@@ -803,6 +803,9 @@ div[mat-window].columna{
   width: calc(40%);
   float:left;
 }
+div[mat-window].not-first{
+  margin-top: 10px;
+}
 
 div[mat-window].formulario{
   width: calc(80% + 50px);
