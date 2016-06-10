@@ -1,50 +1,114 @@
-div[mat-window].column-1{
-	width: calc((100% / 8) - 3px);
-  float:left;
-  margin-left: 3px;
+@import url('card.css');
+/*------------------ calendario-------------------*/
+#calendar {
+		max-width: 900px;
+		margin: 0 auto;
+		color:#4CAF50;
+	}
+#calendar div.fc-widget-header{
+	border-right: 0px !important;
+	margin-right: 0px !important;
+}
+#calendar div.fc-day-grid-container{
+	height: 410px;
+}
+/*----------------- fin Calendario -------------------*/
+div[mat-window] section[titulo].liso{
+    color: #212121;
+    background-color: white;
 }
 
-div[mat-window].column-2{
-	width: calc((100%  * 2 / 8) - 3px);
-  float:left;
-  margin-left: 3px;
-}
-
-div[mat-window].column-3{
-	width: calc((100%  * 3 / 8) - 3px);
- 	float:left;
- 	margin-left: 3px;
-}
-
-div[mat-window].column-4{
-	width: calc((100%  * 4 / 8) - 3px);
-  float:left;
-  margin-left: 3px;
-}
-
-div[mat-window].column-5{
-  width: calc((100%  * 5 / 8) - 3px);
-  float:left;
-  margin-left: 3px;
-}
-
-div[mat-window].column-6{
-	width: calc((100%  * 6 / 8) - 3px);
-  float:left;
-  margin-left: 3px;
-}
-
-div[mat-window].column-7{
-	width: calc((100%  * 7 / 8) - 3px);
-  float:left;
-  margin-left: 3px;
-}
-
-div[mat-window].column-8{
-  width: calc(100% - 6px);
-  float:left;
-  margin-left: 3px;
-}
 div[mat-window].not-margin{
-	margin-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+div[mat-window].notificaciones{
+  width: calc(100% - 40px);
+  float:left;
+  margin-left: 20px;
+}
+
+div[mat-window].cumpleaneros{
+	width: calc((100%  * 3 / 8) - 20px);
+ 	float:left;
+ 	margin-left: 20px;
+}
+
+div[mat-window].noticias{
+  width: calc((100%  * 5 / 8) - 40px);
+  float:left;
+  margin-left: 20px;
+  height: 470px;
+  overflow-y:auto;
+}
+
+div[contenedorNoticias]{
+	margin: 0px auto;
+	display:flex;
+  	flex-direction: row;
+  	align-items: flex-start;
+  	flex-wrap: wrap;
+  	align-content: center;
+  	justify-content: space-around;
+  	height: 360px;
+  	padding-top: 59px;
+  	overflow-y: auto;
+}
+
+div[not-titulo]{
+	transition:all 0.5s ease-in-out;
+	width: calc(100% - 2px);
+    text-align: center;
+    font-size: 12px;
+    background-color: rgba(224, 224, 224, 0.51);
+    padding-bottom: 6px;
+    margin-left: 1px;
+    color: #e6e6e6;
+    height: calc(10%);
+}
+div[mat-card].cuadrada:hover div[not-titulo]{
+	padding-top: 24px;
+	height: calc(100% - 31px);
+    font-size: 20px;
+    color: #e6e6e6;
+}
+/*---------------------------Media Query-------------------------------------------*/
+@media (max-width: 1000px){
+	div[mat-window].cumpleaneros{
+		width: calc(50%  - 40px);
+	}
+	div[mat-window].noticias{
+		width: calc(50% - 20px);
+	}
+}
+@media (max-width: 1000px){
+	div[mat-window].cumpleaneros{
+		width: calc(50%  - 40px);
+	}
+	div[mat-window].noticias{
+		width: calc(50% - 20px);
+	}
+}
+
+@media (max-width: 800px){
+	div[mat-window].cumpleaneros{
+		width: calc(100%  - 40px);
+		margin-top: 10px;
+	}
+	div[mat-window].noticias{
+		width: calc(100% - 40px);
+	}
+	#calendar{
+		height: 600px;
+	}
+	#calendar .fc-view-container,#calendar .fc-day-grid-container{
+		height: 550px !important;
+	}
+}
+
+@media (max-width: 700px){
+	div[mat-window].cumpleaneros,div[mat-window].noticias,div[mat-window].notificaciones{
+		width: calc(100%);
+		margin-left: 0px
+	}
 }
