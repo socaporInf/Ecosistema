@@ -8,6 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="css/menu.css">
 	<link rel="stylesheet" type="text/css" href="css/formulario.css">
 	<link rel="stylesheet" type="text/css" href="css/landing.css">
+	<link rel="stylesheet" type="text/css" href="css/listaNotificaciones.css">
 	<!-- Calendario -->
 	<link href='../lib/fullcalendar/fullcalendar.css' rel='stylesheet' />
 	<link href='../lib/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -17,17 +18,21 @@
 	<script src='../lib/fullcalendar/lang/es.js'></script>
 </head>
 <body>
-	<div enlaces></div>
-	<div not-cum></div>
-	<div notificaciones></div>
+	<div contenedor>
+		<div enlaces></div>
+		<div notificaciones></div>
+		<div not-cum></div>
+	</div>
 </body>
 <!-- scripts que construyen la interfaz y su funcionamiento -->
 <script type="text/javascript" src='js/motorRegistros.js'></script>
 <script type="text/javascript" src='js/constructor.js'></script>
+<script type="text/javascript" src='js/O_lista.js'></script>
 <script type="text/javascript" src='js/landing.js'></script>
 
+
 <script type="text/javascript">
-/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/	
+/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
 	//arranca la sesion
 	var sesion = new Sesion();
 
@@ -37,11 +42,9 @@
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
 	UI.configure({
-		botonera :{
-			botones:['nuevo','abrir']
-		}
+
 	});
-	
+
 	sesion.obtenerSesion();
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 construirUI();

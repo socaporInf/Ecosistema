@@ -1,10 +1,29 @@
 function construirUI(){
-	let secEnlaces = document.querySelector('div[enlaces]');
-	let secNotCum = document.querySelector('div[not-cum]');
-	let secNot = document.querySelector('div[notificaciones]');
+	var secEnlaces = document.querySelector('div[enlaces]');
+	var secNotCum = document.querySelector('div[not-cum]');
+	var secNot = document.querySelector('div[notificaciones]');
+	//notificaciones
+	var notificaciones = UI.agregarLista({
+		titulo: 'notificaciones',
+		clase: 'notificaciones',
+		elementos : [
+			{codigo: 1,nombre:'carga realizada con exito',codigo_tipo:1,cuerpo:'carga de listado de pago a cañicultores realizado de manera exitosa',prioridad: 'N',fecha_hora:"2016-06-14 07:57:59.888"},
+			{codigo: 2,nombre:'error en validacion CAPCA',codigo_tipo:1,cuerpo:'error 103: fechas no concuerdan en cargar 2016-06-14',prioridad: 'E',fecha_hora:"2016-06-14 07:57:59.888"},
+			{codigo: 3,nombre:'listado de validacion en espera de Autorizacion ',codigo_tipo:1,cuerpo:' listado de validacion de cañicultores de fecha:2016-06-14 en espera de Autorizacion',prioridad: 'A',fecha_hora:"2016-06-14 07:57:59.888"},
+			{codigo: 4,nombre:'notificacion 4',codigo_tipo:1,cuerpo:'texto4',prioridad: 'B',fecha_hora:"2016-06-14 07:57:59.888"}
+		],
+		carga: {
+			uso:false
+		},
+		paginacion: {
+			uso:false
+		}
+	},secNot);
+	notificaciones.nodo.classList.add('not-margin');
+	gestionarNotificaciones();
 
 	//noticias-Cumpleañeros del mes
-	let noticias =  UI.agregarVentana({
+	var noticias =  UI.agregarVentana({
 		tipo: 'noticias',
 		nombre: 'noticias',
 		titulo:{
@@ -19,9 +38,10 @@ function construirUI(){
 		]
 	},secNotCum);
 	noticias.nodo.classList.add('not-margin');
+	noticias.nodo.classList.add('not-first');
 	cargarNoticias(noticias.buscarSector('Noticias').nodo.querySelector('div[contenedorNoticias]'));
 
-	let cumpleanerosDelMes = UI.agregarVentana({
+	var cumpleanerosDelMes = UI.agregarVentana({
 		tipo: 'cumpleaneros',
 		nombre: 'cumpleanerosDelMes',
 		sectores:[
@@ -32,69 +52,59 @@ function construirUI(){
 		]
 	},secNotCum);
 	cumpleanerosDelMes.nodo.classList.add('not-margin');
-	
+	cumpleanerosDelMes.nodo.classList.add('not-first');
+
 	//llenar calendario
 	cargarCalendario();
+}
 
-	//notificaciones
-	let notificaciones = UI.agregarVentana({
-		tipo: 'notificaciones',
-		nombre: 'notificacioens',
-		titulo:{
-			html: 'Notificaciones',
-			tipo: 'basico'
-		},
-		sectores:[
-			{
-				nombre:'notificaciones',
-				html:'aqui va la lista de notificaciones'
-			}
-		]
-	},secNot);
-	notificaciones.nodo.classList.add('not-first');
+function gestionarNotificaciones(){
+	var slot = null;
+	var lista = UI.buscarVentana('notificaciones');
+	for(var x = 0; x < lista.Slots.length;x++){
+		slot = lista.Slots[x];
+		slot.nodo.setAttribute('prioridad',slot.atributos.prioridad);
+		slot.nodo.setAttribute('codigo_tipo',slot.atributos.codigo_tipo);
+		slot.nodo.setAttribute('nombre_tipo',slot.atributos.nombre_tipo);
+		slot.nodo.onclick = mostrarNoticia;
+	}
+}
+
+function mostrarNoticia(){
+	var codigo = this.id;
+	var slot = UI.buscarVentana('notificaciones').buscarSlot({codigo:codigo});
+	var tipo;
+	switch (slot.atributos.prioridad) {
+		case 'E':
+			tipo = 'error';
+			break;
+		case 'A':
+			tipo = 'advertencia';
+			break;
+		case 'B':
+			tipo = 'informacion';
+			break;
+	}
+	UI.crearVentanaModal({
+		tipo: tipo,
+		cabecera: slot.atributos.nombre,
+		cuerpo: '<label>'+slot.atributos.cuerpo+'</label>'+
+						'<div fecha_hora> <span separacion>Fecha: '+slot.atributos.fecha_hora.substr(0,10)+'</span><span> Hora:'+slot.atributos.fecha_hora.substr(10,9)+'</span></div>',
+	});
 }
 
 function cargarNoticias(contenedor){
-	let noticias = [
-		{
-			titulo: 'Actualiadad',
-			cuerpo: 'el dia de hoy se vendera a traves de punto de venta un carton de huevos por trabajador',
-			usuario: 'vmleon',
-			tipo: 'A',
-			color: '0097A7'
-		},{
-			titulo: '13 de Junio',
-			cuerpo: '',
-			usuario: 'vmleon',
-			tipo: 'E',
-			color: '4CAF50'
-		},{
-			titulo: 'Servicios',
-			cuerpo: 'el dia de hoy se vendera a traves de punto de venta un carton de huevos por trabajador',
-			usuario: 'vmleon',
-			tipo: 'S',
-			color: '1976D2'
-		},{
-			titulo: 'Complementarias',
-			cuerpo: 'el dia de hoy se vendera a traves de punto de venta un carton de huevos por trabajador',
-			usuario: 'vmleon',
-			tipo: 'C',
-			color: '303F9F'
-		},{
-			titulo: 'Venta de Huevos por nomina',
-			cuerpo: 'el dia de hoy se vendera a traves de punto de venta un carton de huevos por trabajador',
-			usuario: 'vmleon',
-			tipo: 'V',
-			color: 'F57C00'
-		}
-
-	]
-	for( let x = 0; x < noticias.length; x++){
-		let noticia = new NoticiaUI(noticias[x]);
-
-		contenedor.appendChild(noticia.nodo);	
+	var noticias = [
+		{titulo: 'Actualiadad',cuerpo: '',usuario: 'vmleon',tipo: 'A',color: '0097A7'},
+		{titulo: '13 de Junio',cuerpo: '',usuario: 'vmleon',tipo: 'E',color: '4CAF50'},
+		{titulo: 'Servicios',cuerpo: '',usuario: 'vmleon',tipo: 'S',color: '1976D2'},
+		{titulo: 'Complementarias',cuerpo: '',usuario: 'vmleon',tipo: 'C',color: '303F9F'},
+		{titulo: 'Venta de Huevos por nomina',cuerpo: '',usuario: 'vmleon',tipo: 'V',color: 'F57C00'}
+	];
+	for( var x = 0; x < noticias.length; x++){
+		var noticia = new NoticiaUI(noticias[x]);
+		contenedor.appendChild(noticia.nodo);
 	}
-	
 }
 
 function cargarCalendario(){
@@ -117,25 +127,25 @@ function cargarCalendario(){
 			}
 		});
 
-	let contenedorfechas = document.querySelector('div.fc-day-grid-container,div.fc-scroller');
+	var contenedorfechas = document.querySelector('div.fc-day-grid-container,div.fc-scroller');
 	contenedorfechas.classList.remove('fc-scroller');
 	contenedorfechas.style.height='390px';
 }
 
+/*--------------------------- Noticia ----------------------------------*/
 var NoticiaUI = function(noticia){
-
-	let Titulo = function(titulo){
+	var Titulo = function(titulo){
 		this.texto = titulo;
 		this.nodo = null;
 
 		this.construirNodo = function(){
-			let nodo = document.createElement('div');
+			var nodo = document.createElement('div');
 			nodo.setAttribute('not-titulo','');
 
 			nodo.textContent = this.texto;
 
 			this.nodo = nodo;
-		}
+		};
 		this.construirNodo();
 	};
 
@@ -144,7 +154,7 @@ var NoticiaUI = function(noticia){
 	this.titulo = null;
 
 	this.construirNodo = function(){
-		let nodo = document.createElement('div');
+		var nodo = document.createElement('div');
 		nodo.setAttribute('mat-card','');
 		nodo.classList.add('cuadrada');
 		nodo.classList.add('viewver');
@@ -153,11 +163,11 @@ var NoticiaUI = function(noticia){
 		this.nodo = nodo;
 
 		this.agregarTitulo();
-	}
+	};
 	this.agregarTitulo = function(){
-		let titulo = new Titulo(this.atributos.titulo);
+		var titulo = new Titulo(this.atributos.titulo);
 		this.nodo.appendChild(titulo.nodo);
-		this.titulo = titulo; 
-	}
+		this.titulo = titulo;
+	};
 	this.construirNodo();
-}
+};
