@@ -1,4 +1,5 @@
 @import url('botonera.css');
+@import url('lista.css');
 *{
     outline: none;
     overflow: hidden;
@@ -49,7 +50,7 @@ button.mat-round-but{
 }
 button.pass{
   background-color: #607D8B;
-  background-image: url('../imagenes/security.png');    
+  background-image: url('../imagenes/security.png');
   top:0px;
   left:0px;
   background-position: 8px;
@@ -57,7 +58,7 @@ button.pass{
 }
 button.act{
   background-color: #607D8B;
-  background-image: url('../imagenes/act_usu.png');    
+  background-image: url('../imagenes/act_usu.png');
   top:0px;
   left:0px;
   background-position: 8px;
@@ -181,14 +182,14 @@ div[capa='contenido'] section[pie] section[modalbuttons] button[aceptar]{
   background-image: url('../imagenes/check-green.png');
 }
 div[capa='contenido'] section[pie] section[modalbuttons] button[cancelar]{
-  background-image: url('../imagenes/close.png'); 
+  background-image: url('../imagenes/close.png');
 }
  div[capa='contenido'] section[pie] section[modalbuttons] button[eliminar]{
-  background-image: url('../imagenes/trash_red_16.png'); 
+  background-image: url('../imagenes/trash_red_16.png');
   background-position: 12px 11px;
 }
 div[capa='contenido'] section[pie] section[modalbuttons] button[modificar]{
-  background-image: url('../imagenes/pencil_green_16.png'); 
+  background-image: url('../imagenes/pencil_green_16.png');
   background-position: 12px 11px;
 }
 /*----------------------------------------Capa Formulario-------------------------------*/
@@ -218,9 +219,9 @@ div[capaForm] section[sector]{
 }
 div[capaForm] section[operaciones]{
   height: 50px;
-  padding-top:15px; 
-  padding-right:15px; 
-  border-top:1px solid rgba(160,160,160,0.5); 
+  padding-top:15px;
+  padding-right:15px;
+  border-top:1px solid rgba(160,160,160,0.5);
 }
 /*---------------funcionamiento boton update-----------*/
 div[capaForm] article[update]{
@@ -317,10 +318,10 @@ div[capaList]{
    height: auto;
    overflow-x: hidden;
    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-   margin: 50px 0px 50px 50px;  
+   margin: 50px 0px 50px 50px;
    float:left;
     max-height: 510px;
-    overflow-y:auto;  
+    overflow-y:auto;
 }
 div[capaList] section{
     width: 100%;
@@ -334,7 +335,7 @@ div[capaList] section{
 div[capaList] section[busqueda]{
   background-color: #4CAF50;
   position: absolute;
-  width: inherit; 
+  width: inherit;
   z-index: 2;
   padding: 10px 0px;
 }
@@ -432,7 +433,7 @@ div[capaList] section button[btnEliminar]{
 /*---------------------------Contenedores-----------------------*/
 div[formElements]{
   margin-bottom:45px;
-  margin-left: 0px !important; 
+  margin-left: 0px !important;
   float: left;
   overflow:visible;
   min-width: 140px;
@@ -443,8 +444,8 @@ div[formElements]{
 div[area]{
   width: calc(100% - 24px) !important;
 }
-.group            { 
-  position:relative; 
+.group            {
+  position:relative;
   margin-bottom:45px;
   float: left;
   overflow:visible;
@@ -476,15 +477,15 @@ div.group input:focus{ outline:none; }
 
 /* LABEL ======================================= */
 div.group label                {
-  color:#999; 
+  color:#999;
   font-size: 14px;
   font-weight:normal;
   position:absolute;
   pointer-events:none;
   left:5px;
   top:10px;
-  transition:0.2s ease all; 
-  -moz-transition:0.2s ease all; 
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
   -webkit-transition:0.2s ease all;
 }
 
@@ -504,34 +505,34 @@ div.group textarea:focus ~ label, div[capaForm] div.group textarea:valid ~ label
 .bar    { position:relative; display:block; width:100%; overflow: visible;max-width: 100% !important}
 .bar:before, .bar:after     {
   content:'';
-  height:2px; 
+  height:2px;
   width:0px;
-  bottom:1px; 
+  bottom:1px;
   position:absolute;
-  background:#4CAF50; 
-  transition:0.2s ease all; 
-  -moz-transition:0.2s ease all; 
+  background:#4CAF50;
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
   -webkit-transition:0.2s ease all;
 }
 .bar:before {
   left:50%;
 }
 .bar:after {
-  right:50%; 
+  right:50%;
 }
 
 /* active state */
 input:focus ~ .bar:before, input:focus ~ .bar:after,textarea:focus ~ .bar:before, textarea:focus ~ .bar:after {
-  width:50%; 
+  width:50%;
 }
 
 
 /* HIGHLIGHTER ================================== */
 .highlight {
   position:absolute;
-  height:60%; 
-  width:100px; 
-  top:25%; 
+  height:60%;
+  width:100px;
+  top:25%;
   left:0;
   pointer-events:none;
   opacity:0.5;
@@ -659,7 +660,7 @@ div[option]{
 }
 /*------------------------------ToolTip--------------------------------------*/
 div[tooltip]{
-  transition:all 0.3s ease-in-out; 
+  transition:all 0.3s ease-in-out;
   transform: scale(0);
   top:-30px;
   opacity: 0;
@@ -749,7 +750,7 @@ div[capaForm] section[titulo] textarea{
   height: 100% !important;
 }
 div[formUpdate] div span{
-  font-size:13px; 
+  font-size:13px;
   background-color: white;
   max-width: 100%;
 }
@@ -762,12 +763,12 @@ div[formUpdate]:hover article[update]{
 }
 div[capaForm] section[sector] div[formupdate]:not([area]) div:not([clear]){
   max-height:40px;
-  min-height:40px; 
+  min-height:40px;
 }
 
 div[capaForm] section[sector] div[formupdate][area] div:not([clear]){
   max-height:80px;
-  min-height:80px; 
+  min-height:80px;
 }
 
 div[capaForm] section[sector] div[formupdate] > div div[display]{
@@ -824,7 +825,7 @@ div[mat-window] section[titulo]{
     padding: 10px 0px 0px 50px;
     font-size: 21px;
     color: white;
-    min-height: 40px; 
+    min-height: 40px;
 }
 div[mat-window] section[titulo].basico{
     color: white;
@@ -880,7 +881,7 @@ div[mat-window] section[sector]{
   }
 }
 @media (max-width: 700px){
-  
+
   div[capaList]{
     width: 100%;
     margin-left: 0px;

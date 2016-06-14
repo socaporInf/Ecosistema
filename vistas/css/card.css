@@ -13,4 +13,5 @@ div[mat-card].viewver{
   display:flex;
   flex-direction: row;
   align-items: flex-end;
+  margin-left: 0px; 
 }

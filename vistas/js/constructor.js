@@ -67,7 +67,7 @@ var Botonera = function(estructura){
 					nodo.setAttribute('btnGuardar','');
 					//configuracion por defecto para cuando existe el formulario es decir que es un maestro
 					if(UI.elementos.formulario!=='noPosee'){
-						nodo.onclick=UI.elementos.formulario.ventanaForm.validar	
+						nodo.onclick=UI.elementos.formulario.ventanaForm.validar;
 					}
 				break;
 			}
@@ -124,7 +124,7 @@ var Botonera = function(estructura){
 		}
 		if(!existe){
 
-			var boton = new Boton(tipo);
+			boton = new Boton(tipo);
 			botonera.appendChild(boton.nodo);
 			//esta parte es solo para cuando se agrega un boton en un momento posterior a la inicializacion
 			if(this.buscarBoton('abrir')!=-1){
@@ -140,14 +140,14 @@ var Botonera = function(estructura){
 		return boton;
 	};
 	this.agregarBotones = function(botones){
-		let tiempo = 20;
-		for(let x = 0; x < botones.length; x++){
+		var tiempo = 20;
+		for(var x = 0; x < botones.length; x++){
 			setTimeout(function espera(){
 				UI.elementos.botonera.agregarBoton(botones[x]);
 			},tiempo);
 			tiempo+=20;
 		}
-	}
+	};
 	this.agregarEfectos = function(){
 		var botones = this.botones;
 		if(botones.length>1){
@@ -168,9 +168,9 @@ var Botonera = function(estructura){
 					}else{
 						this.classList.toggle('apertura');
 						this.setAttribute('estado','oculto');
-						for(var x = 0; x < botones.length; x++){
-							if(botones[x].tipo!='abrir'){
-								botones[x].nodo.style.top = 0+'px';
+						for(var i = 0; i < botones.length; i++){
+							if(botones[i].tipo!='abrir'){
+								botones[i].nodo.style.top = 0+'px';
 							}
 						}
 					}
@@ -308,7 +308,7 @@ var Menu = function(){
 	};
 	/*---------------------Fin Objeto SubCapa ---------------------------------*/
 	this.estado = 'porConstriur';
-	this.capaActiva;
+	this.capaActiva = null;
 	this.partes = [];
 	this.nodo = null;
 
@@ -465,7 +465,7 @@ var Formulario = function(entidad){
 		//este es el registro que se esta editando
 		this.registroId='';
 		//el registro despues de buscarlo
-		this.registroAct;
+		this.registroAct = null;
 
 		this.construirNodo = function(data){
 			var nodo = document.createElement('div');
@@ -526,9 +526,9 @@ var Formulario = function(entidad){
 		};
 
 		this.finEdicion = function(){
-			let formulario =  UI.elementos.formulario.ventanaForm;
-			let newReg = {};
-			let lista = Array.prototype.slice.call(formulario.formNode.childNodes);
+			var formulario =  UI.elementos.formulario.ventanaForm;
+			var newReg = {};
+			var lista = Array.prototype.slice.call(formulario.formNode.childNodes);
 			lista.splice(lista.length,0,formulario.titulo);
 			for(var x = 0; x < lista.length; x++){
 				lista[x].classList.remove('edicion');
@@ -537,10 +537,10 @@ var Formulario = function(entidad){
 				var contenedorEdit = lista[x].querySelector('div[cont]');
 
 				//campo donde se muestra el valor del campo pero de solo lectura
-				let display = contenedorEdit.getElementsByTagName('div')[0];
+				var display = contenedorEdit.getElementsByTagName('div')[0];
 
 				//campo donde se edita la informacion
-				let campoEdit = null;
+				var campoEdit = null;
 
 				if(lista[x].getAttribute('area')===null){
 					campoEdit = contenedorEdit.querySelector('input');
@@ -550,15 +550,15 @@ var Formulario = function(entidad){
 				display.textContent = campoEdit.value;
 
 				//creo el nuevo registro para posteriormete verificar cambios
-				let propiedad = campoEdit.name;
+				var propiedad = campoEdit.name;
 				newReg[propiedad] = campoEdit.value;
 			}
 			//verifico si hubo algun cambio y en que campo y armo la peticion
-			let oldReg = UI.elementos.formulario.ventanaForm.registroAct;
-			let peticion = { cambios:0, codigo:oldReg.codigo, operacion:'modificar', entidad:torque.entidadActiva};
-			for (let oldPropiedad in oldReg){
+			var oldReg = UI.elementos.formulario.ventanaForm.registroAct;
+			var peticion = { cambios:0, codigo:oldReg.codigo, operacion:'modificar', entidad:torque.entidadActiva};
+			for (var oldPropiedad in oldReg){
 
-				for(let newPropiedad in newReg){
+				for(var newPropiedad in newReg){
 
 					if(oldPropiedad.toLowerCase() == newPropiedad.toLowerCase()){
 
@@ -571,7 +571,7 @@ var Formulario = function(entidad){
 			}
 			//en caso de haber cambios envio a la base de datos y actualizo dicho cambio en el registro local
 			if(peticion.cambios!==0){
-				let contenedor = UI.elementos.formulario.ventanaForm.nodo;
+				var contenedor = UI.elementos.formulario.ventanaForm.nodo;
 				contenedor.innerHTML = '';
 				//------------Cuadro Carga-------------------------------
 				var infoCuadro = {
@@ -585,11 +585,11 @@ var Formulario = function(entidad){
 				torque.Operacion(peticion,function(respuesta){
 					UI.elementos.cuadroCarga.culminarCarga(respuesta,function(respuesta){
 						if(respuesta.success===0){
-							let ventana = {
+							var ventana = {
 								tipo : 'error',
 								cabecera: 'Error interno del Servidor',
 								cuerpo: respuesta.mensaje,
-							}
+							};
 							UI.crearVentanaModal(ventana);
 							UI.elementos.formulario.ventanaForm.destruirNodo();
 						}else{
@@ -670,21 +670,21 @@ var Formulario = function(entidad){
 				//asigo el titulo del formulario
 				this.titulo = this.nodo.querySelector('section[titulo]');
 				//agrego funcionamiento del boton editar
-				let article = this.titulo.querySelector('article[update]');
+				var article = this.titulo.querySelector('article[update]');
 				article.onclick=function(){
 					UI.elementos.formulario.ventanaForm.edicion();
-				}
+				};
 		};
 
 		this.agregarSectorOperaciones = function(){
-			let operaciones = document.createElement('section');
+			var operaciones = document.createElement('section');
 			operaciones.setAttribute('operaciones','');
 			operaciones.innerHTML='<section contOp ></section>';
 			this.nodo.appendChild(operaciones);
-		}
+		};
 
 		this.agregarSector = function(sector){
-			let newSector = document.createElement('section');
+			var newSector = document.createElement('section');
 			newSector.setAttribute('sector','');
 			this.nodo.appendChild(newSector);
 			//operaciones dependiendo de los datos
@@ -695,17 +695,17 @@ var Formulario = function(entidad){
 				newSector.classList.add('division');
 			}
 			return newSector;
-		}
+		};
 
 		this.validar = function(){
 			funcionGuardar =(typeof(guardar)==='undefined')?UI.elementos.formulario.ventanaForm.guardarPorDefecto:guardar;
-			let formulario = document.formNuevo;
-			let data = new Array();
-			let elemento;
-			let validacion=false;
+			var formulario = document.formNuevo;
+			var data = [];
+			var elemento;
+			var validacion=false;
 			for(var x=0;x<formulario.elements.length;x++){
 				if((formulario.elements[x].type=='text')||(formulario.elements[x].type=='password')){
-					if(formulario.elements[x].value==''){
+					if(formulario.elements[x].value===''){
 						validacion=true;
 					}
 				}
@@ -713,26 +713,26 @@ var Formulario = function(entidad){
 					if(formulario.elements[x].value=='-'){
 						validacion=true;
 					}
-				}	
+				}
 				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
 				data.push(elemento);
 			}
 			if(!validacion){
 				//guardo en base de datos
-				funcionGuardar(data);				
+				funcionGuardar(data);
 			}else{
 				console.log('formulario no paso la validacion');
 			}
-		}
+		};
 
 		this.guardarPorDefecto =  function(data){
 			torque.guardar(torque.entidadActiva,data,function(respuesta){
 				var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(respuesta.registros);
 
-				//cambio a modificacion
+				//cambio al slot modificado
 				nuevoSlot.firstChild.click();
 			});
-		}
+		};
 	};
 
 	/*------------------------------Objeto VentanaList-------------------------------------------------------------*/
@@ -780,7 +780,7 @@ var Formulario = function(entidad){
 					agregarRippleEvent(this.parentNode,e);
 				};
 				btnEliminar.onclick=function(){
-					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id})
+					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id});
 					if(slot.estado=='seleccionado'){
 						var ventana = {
 							tipo : 'error',
@@ -830,14 +830,14 @@ var Formulario = function(entidad){
 			};
 			this.activar = function(){
 				this.nodo.getElementsByTagName('article')[0].click();
-			}
+			};
 			this.construirNodo();
 		};
 		/*--------------------------Fin Objeto Slot-------------------*/
 
 		this.Slots = [];
 
-		this.nodo;
+		this.nodo = null;
 
 		this.entidadActiva=entidadActiva;
 
@@ -951,13 +951,11 @@ var Formulario = function(entidad){
 					slot.funcionamiento();
 				}
 			}else{
-				for(var x=0;x<this.Slots.length;x++){
-					var nodo=this.Slots[x].nodo;
-					var slot=this.Slots[x];
-					var html="<article  title>"+slot.atributos.nombre+"</article>\
-					<button type='button' btnEliminar></button>";
-					nodo.innerHTML=html;
-					slot.funcionamiento();
+				for(var i=0;i<this.Slots.length;i++){
+					var contenido="<article  title>"+this.Slots[i].atributos.nombre+"</article>";
+					contenido+="<button type='button' btnEliminar></button>";
+					this.Slots[i].nodo.innerHTML=contenido;
+					this.Slots[i].funcionamiento();
 				}
 			}
 		};
@@ -1069,8 +1067,8 @@ var Formulario = function(entidad){
 
 	this.validarCombo = function(valoresNoPermitidos,lista){
 		normalizarNodo(lista);
-		for(var x=0;x<lista.length;x++){
-			lista[x].style.display='block';
+		for(var i=0;i<lista.length;i++){
+			lista[i].style.display='block';
 		}
 		for(var x=0;x<lista.length;x++){
 			for(var y=0;y<valoresNoPermitidos.length;y++){
@@ -1219,13 +1217,13 @@ var modalWindow = function(){
 				this.nodo=nodo;
 			};
 			this.agregarCampos = function(campos){
-				for(let x = 0;x < campos.length; x++){
+				for(var x = 0;x < campos.length; x++){
 					this.agregarCampos(campos[x]);
 				}
 			};
 			this.agregarCampo = function(campo){
-				let campoNuevo;
-				let contenedor = this.nodo;
+				var campoNuevo;
+				var contenedor = this.nodo;
 				switch(campo.tipo.toLowerCase()){
 					case 'campodetexto':
 						campoNuevo = new CampoDeTexto(campo.parametros);
@@ -1254,7 +1252,7 @@ var modalWindow = function(){
 			this.estado = 'sinConstruir';
 			this.nodo = null;
 			//funcion para agregar funcionamiento a los elementos hijos
-			this.funcionamiento;
+			this.funcionamiento = null;
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('pie','');
@@ -1263,7 +1261,7 @@ var modalWindow = function(){
 			this.desaparecer = function(){
 				this.nodo.style.height = '0px';
 				this.nodo.innerHTML='';
-			}
+			};
 			this.construirNodo();
 		};
 		//------------------- Partes-------------------------------------
@@ -1307,14 +1305,7 @@ var modalWindow = function(){
 			if(data.cabecera!==undefined){
 				this.agregarParte('cabecera');
 				this.partes.cabecera.nodo.innerHTML=data.cabecera;
-				switch(data.tipo.toLowerCase()){
-					case 'advertencia':
-						this.partes.cabecera.nodo.classList.toggle('advertencia');
-					break;
-					case 'error':
-						this.partes.cabecera.nodo.classList.toggle('error');
-					break;
-				}
+				this.partes.cabecera.nodo.classList.toggle(data.tipo.toLowerCase());
 			}
 			if(data.cuerpo!==undefined){
 				this.agregarParte('cuerpo');
@@ -1323,14 +1314,7 @@ var modalWindow = function(){
 			if(data.pie!==undefined){
 				this.agregarParte('pie');
 				this.partes.pie.nodo.innerHTML=data.pie;
-				switch(data.tipo.toLowerCase()){
-					case 'advertencia':
-						this.partes.pie.nodo.classList.toggle('advertencia');
-					break;
-					case 'error':
-						this.partes.pie.nodo.classList.toggle('error');
-					break;
-				}
+				this.partes.pie.nodo.classList.toggle(data.tipo.toLowerCase());
 			}
 		};
 		this.convertirEnMensaje = function(mensaje){
@@ -1340,11 +1324,11 @@ var modalWindow = function(){
 
 			//cambio el cuerpo
 			this.partes.cuerpo.nodo.innerHTML='<strong>'+mensaje.mensaje+'</strong>';
-			this.partes.cuerpo.nodo.style.height = '50px'
+			this.partes.cuerpo.nodo.style.height = '50px';
 
 			//cambio pie
 			this.partes.pie.desaparecer();
-		}
+		};
 		this.construirNodo();
 	};
 	//-------------------Fin CapaContenido-------------------------------------
@@ -1352,7 +1336,7 @@ var modalWindow = function(){
 	var capaExterior = function(bloqueo){
 
 		this.estado='sinConstruir';
-		this.nodo;
+		this.nodo = null;
 		this.tipo='exterior';
 		this.bloqueo=bloqueo || false;
 
@@ -1521,8 +1505,8 @@ var CuadroCarga = function(info,callback){
 	this.nodo = null;
 
 	//maenjo de carga
-	this.intervalID;
-	this.contEspera;
+	this.intervalID = null;
+	this.contEspera = 0;
 	this.callback = callback || null;
 
 	this.estado = 'sinIniciar';
@@ -1633,7 +1617,7 @@ var Arquitecto = function(){
 			this.elementos.botonera = new Botonera(objetoInicializar.botonera.botones);
 		}
 
-		
+
 		this.estado='inicializado';
 		var mql = window.matchMedia("(max-width: 1000px)");
 		mql.addListener(handleMediaChange);
@@ -1651,14 +1635,14 @@ var Arquitecto = function(){
 	};
 
 	this.crearMensaje = function(mensaje){
-		let titulo = mensaje.titulo || mensaje.tipo.toUpperCase()
-		let ventana = {
+		var titulo = mensaje.titulo || mensaje.tipo.toUpperCase();
+		var ventana = {
 			tipo: mensaje.tipo,
 			cabecera: titulo,
 			cuerpo: mensaje.mensaje
 		};
 		this.crearVentanaModal(ventana);
-	}
+	};
 
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
 	this.crearCuadroDeCarga = function(info,contenedor){
@@ -1681,29 +1665,40 @@ var Arquitecto = function(){
 		if(!this.elementos.ventanas){
 			this.elementos.ventanas = [];
 		}
-		let newVentana = new Ventana(ventana);
+		var newVentana = new Ventana(ventana);
 		this.elementos.ventanas.push(newVentana);
 		contenedor.appendChild(newVentana.nodo);
 		return newVentana;
-	}
+	};
+
+	this.agregarLista = function(lista,contenedor){
+		if(!this.elementos.ventanas){
+			this.elementos.ventanas = [];
+		}
+		var nuevaLista = new Lista(lista);
+		contenedor.appendChild(nuevaLista.nodo);
+		nuevaLista.atributos.nombre = nuevaLista.atributos.titulo;
+		this.elementos.ventanas.push(nuevaLista);
+		return nuevaLista;
+	};
 
 	this.buscarVentana = function(nombre){
-		let ventanas =this.elementos.ventanas;
-		for(let x = 0; x < ventanas.length; x++){
+		var ventanas =this.elementos.ventanas;
+		for(var x = 0; x < ventanas.length; x++){
 			if(ventanas[x].atributos.nombre===nombre){
 				return ventanas[x];
 			}
 		}
 		return false;
-	}
+	};
 
 	this.quitarVentana = function(nombre){
-		let ventana = this.buscarVentana(nombre);
+		var ventana = this.buscarVentana(nombre);
 		if(ventana){
 			ventana.destruirNodo();
 			this.elementos.ventanas.splice(this.elementos.ventanas.indexOf(ventana),1);
 		}
-	}
+	};
 
 	//funcion para agregar de forma dinamica campos a la interfaz
 	this.agregarCampo = function(campo,contenedor){
@@ -1746,15 +1741,15 @@ var Ventana = function(atributos){
 		atributos.tipo = atributos.tipo || 'basico';
 
 		this.construirNodo = function(){
-			
-			let nodo = document.createElement('section');
+
+			var nodo = document.createElement('section');
 			nodo.setAttribute('titulo','');
 
 			nodo.innerHTML = atributos.texto || atributos.html;
 			nodo.classList.add(atributos.tipo);
 
 			this.nodo = nodo;
-		}
+		};
 		this.construirNodo();
 	};
 	//--------------------Sector----------------------------
@@ -1763,8 +1758,8 @@ var Ventana = function(atributos){
 		this.atributos = atributos;
 
 		this.construirNodo = function(){
-			
-			let nodo = document.createElement('section');
+
+			var nodo = document.createElement('section');
 			nodo.setAttribute('sector','');
 
 			if(atributos.html){
@@ -1777,7 +1772,7 @@ var Ventana = function(atributos){
 			}
 
 			if(atributos.alto){
-				nodo.style.height=atributos.alto+'px'
+				nodo.style.height=atributos.alto+'px';
 			}
 
 			this.nodo = nodo;
@@ -1786,16 +1781,16 @@ var Ventana = function(atributos){
 		this.destruirNodo = function(){
 			this.nodo.parentNode.removeChild(this.nodo);
 		};
-		this.construirNodo();	
-	}
-
+		this.construirNodo();
+	};
+	//--------------------fin Objeto Sector--------------------
 	this.atributos = atributos;
 	this.estado = 'porConstruir';
 	this.sectores = [];
 	this.nodo = null;
 
 	this.construirNodo = function(){
-		let nodo = document.createElement('div');
+		var nodo = document.createElement('div');
 		nodo.setAttribute('mat-window','');
 		nodo.classList.add(this.atributos.tipo);
 		this.nodo = nodo;
@@ -1805,55 +1800,55 @@ var Ventana = function(atributos){
 		}
 
 		if(atributos.sectores){
-			for(let x = 0; x < atributos.sectores.length; x++){
+			for(var x = 0; x < atributos.sectores.length; x++){
 				this.agregarSector(atributos.sectores[x]);
 			}
 		}
 
 		if(atributos.alto){
-			this.nodo.style.height = atributos.alto+'px'
+			this.nodo.style.height = atributos.alto+'px';
 		}
 	};
 
 	this.agregarSector = function(atributos){
-		let sector = new Sector(atributos);
+		var sector = new Sector(atributos);
 		this.sectores.push(sector);
 		this.nodo.appendChild(sector.nodo);
 		return sector;
 	};
 
 	this.buscarSector = function(nombre){
-		for(let x = 0; x < this.sectores.length; x++){
+		for(var x = 0; x < this.sectores.length; x++){
 			if(this.sectores[x].atributos.nombre){
 				if(this.sectores[x].atributos.nombre===nombre){
 					return this.sectores[x];
-				}	
+				}
 			}
 		}
 		return false;
-	}
+	};
 
 	this.quitarSector = function(nombre){
-		let sector = this.buscarSector(nombre);
+		var sector = this.buscarSector(nombre);
 		sector.destruirNodo();
 		this.sectores.splice(this.sectores.indexOf(sector),1);
-	}
+	};
 
 	this.agregarTitulo = function(atributos){
-		let titulo = new Titulo(atributos);
+		var titulo = new Titulo(atributos);
 		this.nodo.appendChild(titulo.nodo);
 		this.titulo = titulo;
-	}
+	};
 
 	this.destruirNodo = function(){
 		this.nodo.style.height='0px';
-		var v = this; 
+		var v = this;
 		setTimeout(function(){
 			v.nodo.parentNode.removeChild(v.nodo);
 		},510);
-	}
+	};
 	this.construirNodo();
-}
+};
 
 //-----------------------------Objeto Radio----------------------------
 var Radio = function(info){
@@ -1994,7 +1989,7 @@ var CampoDeTexto = function(info){
 var CampoEdicion = function(info){
 
 	this.data =  info;
-	this.nodo;
+	this.nodo = null;
 	this.tipo = info.tipo || 'simple';
 
 	this.construirNodo = function(){
