@@ -126,6 +126,7 @@ var Motor = function(entidadActiva){
 		envio+="&codigo="+encodeURIComponent(info.codigo);
 		conexionBusqueda.send(envio);
 	};
+	
 	this.Operacion = function(peticion,callback){
 
 		//si no se le paso el valor de la entidad a afectar en la peticion el tomara por defecto a
@@ -169,6 +170,7 @@ var Motor = function(entidadActiva){
 		}
 		conexionMotor.send(envio);
 	};
+
 	this.manejarOperacion = function(peticion,cuadroCarga,callback){
 		//------------Cuadro Carga-------------------------------
 			cuadroCarga.nodo.innerHTML='';
