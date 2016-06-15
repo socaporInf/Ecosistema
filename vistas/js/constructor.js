@@ -142,12 +142,15 @@ var Botonera = function(estructura){
 	this.agregarBotones = function(botones){
 		var tiempo = 20;
 		for(var x = 0; x < botones.length; x++){
-			setTimeout(function espera(){
-				UI.elementos.botonera.agregarBoton(botones[x]);
-			},tiempo);
+			espera(x,tiempo,botones);
 			tiempo+=20;
 		}
 	};
+	function espera(x,tiempo,botones){
+		setTimeout(function(){
+			UI.elementos.botonera.agregarBoton(botones[x]);
+		},tiempo);
+	}
 	this.agregarEfectos = function(){
 		var botones = this.botones;
 		if(botones.length>1){
@@ -639,11 +642,11 @@ var Formulario = function(entidad){
 
 		this.crearEstructuraBasicaNuevo = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html='<section titulo>Nuevo '+titulo+'</section>\
-							<section sector>\
-								<form name ="formNuevo"></form>\
-							</section>\
-						</section>';
+				var html='<section titulo>Nuevo '+titulo+'</section>'+
+							'<section sector>'+
+								'<form name ="formNuevo"></form>'+
+							'</section>'+
+						'</section>';
 				this.nodo.innerHTML=html;
 				//asigno el nodo formulario de html
 				this.formNode = this.nodo.getElementsByTagName('form')[0];
@@ -653,17 +656,17 @@ var Formulario = function(entidad){
 
 		this.crearEstructuraBasicaModificar = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html="<section titulo area>\
-								<div cont>\
-									<textarea  name='"+titulo.nombre+"'></textarea>\
-									<div display>"+titulo.valor+"</div>\
-								</div>\
-								<article update='campo'></article>\
-						</section>\
-						<section sector>\
-							<!-- Aqui va el contenido -->\
-							<form name ='formModificar'></form>\
-						</section>";
+				var html="<section titulo area>"+
+								"<div cont>"+
+									"<textarea  name='"+titulo.nombre+"'></textarea>"+
+									"<div display>"+titulo.valor+"</div>"+
+								"</div>"+
+								"<article update='campo'></article>"+
+						"</section>"+
+						"<section sector>"+
+							"<!-- Aqui va el contenido -->"+
+							"<form name ='formModificar'></form>"+
+						"</section>";
 				this.nodo.innerHTML=html;
 				//asigno el nodo formulario de html
 				this.formNode = this.nodo.getElementsByTagName('form')[0];
@@ -756,8 +759,8 @@ var Formulario = function(entidad){
 				}else{
 					titulo=this.atributos.nombre;
 				}
-				html+="<article  title>"+titulo+"</article>\
-					<button type='button' btnEliminar></button>";
+				html+="<article  title>"+titulo+"</article>"+
+					"<button type='button' btnEliminar></button>";
 				nodo.innerHTML=html;
 				this.nodo = nodo;
 				this.estado='enUso';
@@ -803,8 +806,8 @@ var Formulario = function(entidad){
 				}else{
 					titulo=this.atributos.nombre;
 				}
-				var html="<article  title>"+titulo+"</article>\
-				<button type='button' btnEliminar></button>";
+				var html="<article  title>"+titulo+"</article>"+
+				"<button type='button' btnEliminar></button>";
 				setTimeout(function(){
 					nodo.innerHTML=html;
 					slot.funcionamiento();
@@ -945,8 +948,8 @@ var Formulario = function(entidad){
 					}else{
 						titulo=slot.atributos.nombre;
 					}
-					var html="<article  title>"+titulo+"</article>\
-					<button type='button' btnEliminar></button>";
+					var html="<article  title>"+titulo+"</article>"+
+					"<button type='button' btnEliminar></button>";
 					nodo.innerHTML=html;
 					slot.funcionamiento();
 				}
@@ -1138,10 +1141,10 @@ var Formulario = function(entidad){
 			tipo : 'advertencia',
 			cabecera : 'Advertencia',
 			cuerpo : '¿Desea eliminar '+slot.atributos.nombre+' ?',
-			pie : '<section modalButtons>\
-						<button type="button" cancelar id="modalButtonCancelar"></button>\
-						<button type="button" aceptar registro="'+slot.atributos.codigo+'" id="modalButtonAceptar"></button>\
-					</section>'
+			pie : '<section modalButtons>'+
+						'<button type="button" cancelar id="modalButtonCancelar"></button>'+
+						'<button type="button" aceptar registro="'+slot.atributos.codigo+'" id="modalButtonAceptar"></button>'+
+					'</section>'
 		};
 
 		UI.crearVentanaModal(verificacion);
@@ -1367,9 +1370,10 @@ var modalWindow = function(){
 	};
 	this.agregarCapa = function(tipo,bloqueo){
 		var capaNueva=false;
+		var zIndex;
 		if(tipo=='exterior'){
 			if(this.existeExterior()){
-				var zIndex=window.getComputedStyle(this.buscarUltimaCapaContenido().nodo,null).getPropertyValue("z-index");
+				zIndex = window.getComputedStyle(this.buscarUltimaCapaContenido().nodo,null).getPropertyValue("z-index");
 				capaNueva=new capaExterior(bloqueo);
 				this.capas.push(capaNueva);
 				capaNueva.nodo.style.zIndex=parseInt(zIndex)+1;
@@ -1379,8 +1383,8 @@ var modalWindow = function(){
 			}
 		}else if(tipo=='contenido'){
 			if(this.existeExterior()){
-				var zIndex=window.getComputedStyle(this.obtenerUltimaCapa().nodo,null).getPropertyValue("z-index");
-				capaNueva=new capaContenido();
+				zIndex = window.getComputedStyle(this.obtenerUltimaCapa().nodo,null).getPropertyValue("z-index");
+				capaNueva = new capaContenido();
 				this.capas.push(capaNueva);
 				capaNueva.nodo.style.zIndex=parseInt(zIndex)+1;
 			}
@@ -1391,9 +1395,10 @@ var modalWindow = function(){
 	};
 	this.removerCapa = function(){
 		var capaExterior=UI.elementos.modalWindow.buscarCapa(this);
+		var capaContenido = null;
 		if(capaExterior){
 			if(capaExterior==UI.elementos.modalWindow.capas[0]){
-				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+				capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 				//los saco de vista con la trancision
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
@@ -1414,7 +1419,7 @@ var modalWindow = function(){
 					obtenerContenedor().style.position='inherit';
 				},810);
 			}else{
-				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+				capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 				//los saco de vista con la transcision
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
@@ -1516,14 +1521,14 @@ var CuadroCarga = function(info,callback){
 		var cuadro = document.createElement('div');
 		cuadro.classList.toggle('ContenedorCarga');
 
-		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center">'+info.mensaje+'</article>\
-			<div class="showbox">\
-			  <div class="loader">\
-			    <svg class="circular" viewBox="25 25 50 50">\
-			      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>\
-			    </svg>\
-			  </div>\
-			</div>';
+		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center">'+info.mensaje+'</article>'+
+		'<div class="showbox">'+
+			'<div class="loader">'+
+				'<svg class="circular" viewBox="25 25 50 50">'+
+					'<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>'+
+			    '</svg>'+
+			  '</div>'+
+			'</div>';
 		this.contenedor.appendChild(cuadro);
 		var circulo=document.querySelector('.path');
 
@@ -1728,6 +1733,10 @@ var Arquitecto = function(){
 		for(var x=0;x<campos.length;x++){
 			this.agregarCampo(campos[x],contenedor);
 		}
+	};
+	//agrega mensaje pequeño
+	this.agregarToasts = function(atributos){
+		var toast = new Toasts(atributos);
 	};
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
@@ -1972,9 +1981,9 @@ var CampoDeTexto = function(info){
 			console.log(this.data.tipo);
 		}
 
-		html+='<span class="highlight"></span>\
-		      <span class="bar"></span>\
-		      <label>'+this.data.titulo+'</label>';
+		html+='<span class="highlight"></span>'+
+		      '<span class="bar"></span>'+
+		    	'<label>'+this.data.titulo+'</label>';
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
 		if(this.data.usaToolTip!==false){
@@ -2018,7 +2027,34 @@ var CampoEdicion = function(info){
 	};
 	this.construirNodo();
 };
+//-------------------- Toasts ------------------------------------------------------------
+var Toasts = function(atributos){
+	this.atributos = atributos;
+	this.nodo = null;
+	this.atributos.efecto = atributos.efecto || 'mostrar';
+	this.atributos.tipo = atributos.tipo || 'mobile';
+	this.construirNodo = function(){
+		var nodo = document.createElement('div');
+		nodo.setAttribute('toasts-'+this.atributos.tipo,'');
+		nodo.textContent = this.atributos.texto;
+		var contenedor = this.atributos.contenedor || document.body;
+		contenedor.appendChild(nodo);
 
+		var toasts = this;
+		setTimeout(function aparecerToasts(){
+			toasts.nodo.classList.toggle(toasts.atributos.efecto);
+		},10);
+
+		setTimeout(function desaparecerToasts(){
+			toasts.nodo.classList.toggle(toasts.atributos.efecto);
+			setTimeout(function eliminarToast(){
+				toasts.nodo.parentNode.removeChild(toasts.nodo);
+			},500);
+		},3000);
+		this.nodo = nodo;
+	};
+	this.construirNodo();
+};
 /*----------------------------------Funciones del Objeto Select-------------------------------*/
 		construirCapaSelect= function(capaSelect){
 			capaSelect.onclick=function(){};
@@ -2051,16 +2087,7 @@ var CampoEdicion = function(info){
 				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
 
 				nodo.setAttribute('valor',opcion.value);
-				nodo.onclick= function(e){
-					//agrego el efecto Ripple
-					agregarRippleEvent(this,e);
-					var select = this.parentNode.nextSibling;
-					while(select.nodeName=='#text'){
-						select=select.nextSibling;
-					}
-					select.value=this.getAttribute('valor');
-					destruirCapaSelect(this.parentNode);
-				};
+				nodo.onclick = capaClick;
 				opcion.nodo=nodo;
 				opciones.push(opcion);
 				capaSelect.appendChild(nodo);
@@ -2071,6 +2098,18 @@ var CampoEdicion = function(info){
 			capaSelect.style.height=parseInt(opciones.length*41)+'px';
 			capaSelect.style.width='60px';
 		};
+
+		//funcion extraida de un bucle
+		function capaClick(e){
+			//agrego el efecto Ripple
+			agregarRippleEvent(this,e);
+			var select = this.parentNode.nextSibling;
+			while(select.nodeName=='#text'){
+				select=select.nextSibling;
+			}
+			select.value=this.getAttribute('valor');
+			destruirCapaSelect(this.parentNode);
+		}
 
 		destruirCapaSelect = function(capaSelect){
 			var lista = capaSelect.childNodes;
