@@ -88,7 +88,7 @@ function mostrarNoticia(){
 	UI.crearVentanaModal({
 		tipo: tipo,
 		cabecera: slot.atributos.nombre,
-		cuerpo: '<label>'+slot.atributos.cuerpo+'</label>'+
+		cuerpo: '<div texto>'+slot.atributos.cuerpo+'</div>'+
 						'<div fecha_hora> <span separacion>Fecha: '+slot.atributos.fecha_hora.substr(0,10)+'</span><span> Hora:'+slot.atributos.fecha_hora.substr(10,9)+'</span></div>',
 	});
 }
