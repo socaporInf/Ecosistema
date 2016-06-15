@@ -2,10 +2,14 @@ div[hoja]{
 	transition: all 0.3s linear;
 	margin: 0px 0px 0px 10px;
 	height: 30px;
-	width: 100%;
+	width: calc(100% - 10px);
 }
 div[hoja].abierto{
 	height: auto;
+}
+div[hoja].raiz{
+	margin-left: 0px;
+	width: 100%;
 }
 div[hoja] div[titulo-hoja]{
 	transition: all 0.3s linear;
@@ -35,7 +39,7 @@ button[little-mat-button-invisible]{
 	border-radius: 50px;
 	width: 24px;
 	height: 24px;
-	background-color: transparent; 
+	background-color: transparent;
 }
 button[little-mat-button-invisible]:hover{
 	background-color: #424242 !important;

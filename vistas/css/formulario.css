@@ -1,200 +1,85 @@
 @import url('botonera.css');
 @import url('lista.css');
-*{
+@import url('ventanaModal.css');
+@import url('toasts.css');
+* {
     outline: none;
     overflow: hidden;
     font-family: 'Open Sans', sans-serif;
 }
-html{
-  overflow: auto;
-  height: 100%;
-  background-color: #f1f1f1;
+html {
+    overflow: auto;
+    height: 100%;
+    background-color: #f1f1f1;
 }
-form{
-  overflow: visible;
+form {
+    overflow: visible;
 }
-div[clear]{
-  clear:both;
+div[clear] {
+    clear: both;
 }
-div[contenedor]{
-  width: 100%;
+div[contenedor] {
+    width: 100%;
 }
-div.ink{
-  display: block;
-  position: absolute;
-  transform:scale(0);
-  border-radius: 100%;
-  opacity: 0.3;
-  background-color: #4CAF50;
+div.ink {
+    display: block;
+    position: absolute;
+    transform: scale(0);
+    border-radius: 100%;
+    opacity: 0.3;
+    background-color: #4CAF50;
 }
-div.ink.animate{
-  transition:all 0.65s linear;
-  transform:scale(2.5);
-  opacity: 0;
+div.ink.animate {
+    transition: all 0.65s linear;
+    transform: scale(2.5);
+    opacity: 0;
 }
 
 /*----------------------------------------Botones General-------------------------------*/
-button.mat-round-but{
-  transition: all 0.2s ease-in-out;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 60px;
-  z-index: 10;
-  margin-left: 10px;
-  background-repeat: no-repeat;
-  background-position: 12px;
-  float: left;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-  overflow: visible;
-}
-button.pass{
-  background-color: #607D8B;
-  background-image: url('../imagenes/security.png');
-  top:0px;
-  left:0px;
-  background-position: 8px;
-  float: right;
-}
-button.act{
-  background-color: #607D8B;
-  background-image: url('../imagenes/act_usu.png');
-  top:0px;
-  left:0px;
-  background-position: 8px;
-  float: right;
-}
-button.mat-text-but{
-  border: transparent;
-  background-color: transparent;
-  float: right;
-  transition: all 0.3s linear;
-  padding: 2px;
-  margin-right: 20px;
-  font-weight: bold;
-  color: #607D8B;
-}
-/*----------------------------------------Modal Window-------------------------------*/
-div[capa]{
-  transition:all 0.5s ease-in-out;
-}
-div[capa='exterior']{
-  width: calc(100%);
-  height: calc(100%);
-  background-color: black;
-  position: fixed;
-  z-index: 10;
-  opacity: 0;
-}
-div[capa='contenido']{
-  background-color: white;
-  top: 100%;
-  left:calc(50% - 30%);
-  width: 60%;
-  height:auto;
-  position: absolute;
-  z-index: 12;
-  margin-bottom: 50px;
-  opacity: 0;
-}
-div[capa='contenido'] section[cabecera]{
-  width: 100%;
-  height: 20px;
-  background-color: #4CAF50;
-  color: white;
-  padding: 20px;
-  font-size: 25px;
-}
-div[capa='contenido'] section[cabecera].error,
-div[capa='contenido'] section[cabecera].informacion,
-div[capa='contenido'] section[cabecera].advertencia{
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-  background-repeat: no-repeat;
-  background-position: 4px;
-  padding-left: 60px;
-}
-div[capa='contenido'] section[cabecera].error{
-  background-color: #f44336;
-  background-image: url('../imagenes/error_white.png');
-}
-div[capa='contenido'] section[cabecera].informacion{
-  background-color: #3F51B5;
-  background-image: url('../imagenes/info_white.png');
-}
-div[capa='contenido'] section[cabecera].advertencia{
-  background-image: url('../imagenes/warning_white.png');
-  background-color: #FFC107;
-  color:#212121;
-}
-div[capa='contenido'] section[pie].error{
-  background-color: #E57373;
-}
-div[capa='contenido'] section[pie].advertencia{
-  background-color: #FFD54F;
-}
-div[capa='contenido'] section[cuerpo]{
-  transition:all 0.3s ease-in-out;
-  width: auto;
-  height: auto;
-  padding: 10px;
-  margin-bottom: 50px;
-  margin-top: 18px;
-  overflow: visible;
-}
-div[capa='contenido'] section[cuerpo] option{
 
-}
-div[capa='contenido'] section[pie]{
-  width: 100%;
-  height: 60px;
-  background-color: #A5D6A7;
-  position: absolute;
-  bottom: 0px;
-  transition: all 0.3s linear;
-}
-div[capa='contenido'] section[pie] section[modalbuttons]{
-
-}
-div[capa='contenido'] section[pie] section[modalbuttons] button{
+button.mat-round-but {
     transition: all 0.2s ease-in-out;
     border: none;
     width: 40px;
     height: 40px;
     border-radius: 60px;
     z-index: 10;
-    margin-right: 10px;
+    margin-left: 10px;
     background-repeat: no-repeat;
+    background-position: 12px;
+    float: left;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    overflow: visible;
+}
+button.pass {
+    background-color: #607D8B;
+    background-image: url('../imagenes/security.png');
+    top: 0px;
+    left: 0px;
     background-position: 8px;
     float: right;
-    overflow: visible;
-    margin-top: 10px;
-    background-color: white;
-    margin-bottom: 10px;
-    box-shadow: 0px 2px 5px 0 rgba(0,0,0,0.26);
 }
-div[capa='contenido'] section[pie] section[modalbuttons] button:hover{
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+button.act {
+    background-color: #607D8B;
+    background-image: url('../imagenes/act_usu.png');
+    top: 0px;
+    left: 0px;
+    background-position: 8px;
+    float: right;
 }
-div[capa='contenido'] section[pie] section[modalbuttons] button[aceptar]{
-  background-image: url('../imagenes/check-green.png');
-}
-div[capa='contenido'] section[pie] section[modalbuttons] button[cancelar]{
-  background-image: url('../imagenes/close.png');
-}
- div[capa='contenido'] section[pie] section[modalbuttons] button[eliminar]{
-  background-image: url('../imagenes/trash_red_16.png');
-  background-position: 12px 11px;
-}
-div[capa='contenido'] section[pie] section[modalbuttons] button[modificar]{
-  background-image: url('../imagenes/pencil_green_16.png');
-  background-position: 12px 11px;
+button.mat-text-but {
+    border: transparent;
+    background-color: transparent;
+    float: right;
+    transition: all 0.3s linear;
+    padding: 2px;
+    margin-right: 20px;
+    font-weight: bold;
+    color: #607D8B;
 }
 /*----------------------------------------Capa Formulario-------------------------------*/
-div[capaForm]{
-    transition:all 0.6s ease-in-out;
+div[capaForm] {
+    transition: all 0.6s ease-in-out;
     width: 600px;
     height: 0px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
@@ -202,164 +87,167 @@ div[capaForm]{
     margin: 50px 0px 100px 50px;
     background-color: white;
 }
-div[capaForm] section[titulo]{
-  position: relative;
+div[capaForm] section[titulo] {
+    position: relative;
     transition: all 0.5s ease-in-out;
     padding: 10px 0px 0px 50px;
     font-size: 23px;
     background-color: #4CAF50;
-    color:white;
+    color: white;
 }
-div[capaform] section[titulo] div{
-  width: calc(100% - 90px);
+div[capaform] section[titulo] div {
+    width: calc(100% - 90px);
 }
-div[capaForm] section[sector]{
+div[capaForm] section[sector] {
     padding: 30px 0px 0px 15px;
     max-width: 600px;
 }
-div[capaForm] section[operaciones]{
-  height: 50px;
-  padding-top:15px;
-  padding-right:15px;
-  border-top:1px solid rgba(160,160,160,0.5);
+div[capaForm] section[operaciones] {
+    height: 50px;
+    padding-top: 15px;
+    padding-right: 15px;
+    border-top: 1px solid rgba(160, 160, 160, 0.5);
 }
+
 /*---------------funcionamiento boton update-----------*/
-div[capaForm] article[update]{
-  transition:all 0.3s ease-in-out;
-  transition:background-position 0s;
-  transition:background-image 0.5s;
-  width: 24px;
-  height: 24px;
-  padding: 1px;
-  background-image: url('../imagenes/pencil_green_16.png');
-  background-color: white;
-  background-repeat: no-repeat;
-  background-position: 5px;
-  float:right;
-  border-radius: 100px;
+
+div[capaForm] article[update] {
+    transition: all 0.3s ease-in-out;
+    transition: background-position 0s;
+    transition: background-image 0.5s;
+    width: 24px;
+    height: 24px;
+    padding: 1px;
+    background-image: url('../imagenes/pencil_green_16.png');
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: 5px;
+    float: right;
+    border-radius: 100px;
 }
-div[capaForm] article[update]:hover{
-  background-image: url('../imagenes/pencil_white_16.png');
-  background-color: #4CAF50;
+div[capaForm] article[update]:hover {
+    background-image: url('../imagenes/pencil_white_16.png');
+    background-color: #4CAF50;
 }
-div[capaForm] article[update].edicion{
-  background-image: url('../imagenes/save_green.png');
-  background-color: #fff;
-  background-position: 1px;
+div[capaForm] article[update].edicion {
+    background-image: url('../imagenes/save_green.png');
+    background-color: #fff;
+    background-position: 1px;
 }
-div[capaForm] article[update].edicion:hover{
-  background-image: url('../imagenes/save.png');
-  background-color: #4CAF50;
-  background-position: 1px;
+div[capaForm] article[update].edicion:hover {
+    background-image: url('../imagenes/save.png');
+    background-color: #4CAF50;
+    background-position: 1px;
 }
-div[capaForm] section[titulo] article[update]{
-   background-image: url('../imagenes/pencil_white_16.png');
-  background-color: #4CAF50;
+div[capaForm] section[titulo] article[update] {
+    background-image: url('../imagenes/pencil_white_16.png');
+    background-color: #4CAF50;
 }
-div[capaForm] section[titulo] article[update]:hover{
-  background-image: url('../imagenes/pencil_green_16.png');
-  background-color: white;
+div[capaForm] section[titulo] article[update]:hover {
+    background-image: url('../imagenes/pencil_green_16.png');
+    background-color: white;
 }
-div[capaForm] section[titulo] article[update].edicion{
-  background-image: url('../imagenes/save.png');
-  background-color: #4CAF50;
-  background-position: 1px;
+div[capaForm] section[titulo] article[update].edicion {
+    background-image: url('../imagenes/save.png');
+    background-color: #4CAF50;
+    background-position: 1px;
 }
-div[capaForm] section[titulo] article[update].edicion:hover{
-  background-image: url('../imagenes/save_green.png');
-  background-color: white;
-  background-position: 1px;
+div[capaForm] section[titulo] article[update].edicion:hover {
+    background-image: url('../imagenes/save_green.png');
+    background-color: white;
+    background-position: 1px;
 }
-div[capaForm] section[sector]:last-child{
+div[capaForm] section[sector]:last-child {
     bottom: 1px;
 }
-div[capaForm] section[sector] div:not(.group){
-  margin-left: 20px;
+div[capaForm] section[sector] div:not(.group) {
+    margin-left: 20px;
 }
-div[capaForm] section[contenedor]{
+div[capaForm] section[contenedor] {
     overflow-y: auto;
     max-height: 35px;
 }
-div[capaForm] section[contenedor] article{
-  width: auto;
-  background-color: midnightblue;
-  color:white;
-  padding: 5px;
-  float: left;
-  margin: 3px 0px 3px 5px;
+div[capaForm] section[contenedor] article {
+    width: auto;
+    background-color: midnightblue;
+    color: white;
+    padding: 5px;
+    float: left;
+    margin: 3px 0px 3px 5px;
 }
-div[capaForm] article:first-child{
-  margin-left: 10px;
+div[capaForm] article:first-child {
+    margin-left: 10px;
 }
-div[capaForm] section[contenedor] article[add]{
-  width: 18px;
-  height: 21px;
-  padding: 1px;
-  background-image: url('../imagenes/plus_16.png');
-  background-repeat: no-repeat;
-  background-position: 2px;
-  background-color: forestgreen;
-  float:left;
-  transform: scale(1.4);
-  margin-top: 7px;
+div[capaForm] section[contenedor] article[add] {
+    width: 18px;
+    height: 21px;
+    padding: 1px;
+    background-image: url('../imagenes/plus_16.png');
+    background-repeat: no-repeat;
+    background-position: 2px;
+    background-color: forestgreen;
+    float: left;
+    transform: scale(1.4);
+    margin-top: 7px;
 }
-div[capaForm] section[titulo] > article[update]{
-  transition: all 0.2s ease-in-out;
-  margin-right: -30px;
+div[capaForm] section[titulo]> article[update] {
+    transition: all 0.2s ease-in-out;
+    margin-right: -30px;
 }
-div[capaForm] section[titulo]:hover > article[update]{
-  margin-right: 3px;
+div[capaForm] section[titulo]:hover> article[update] {
+    margin-right: 3px;
 }
 
 /*----------------------------------------Capa Listado-------------------------------*/
-div[capaList]{
-   width: 300px;
-   background-color: white;
-   height: auto;
-   overflow-x: hidden;
-   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-   margin: 50px 0px 50px 50px;
-   float:left;
+
+div[capaList] {
+    width: 300px;
+    background-color: white;
+    height: auto;
+    overflow-x: hidden;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    margin: 50px 0px 50px 50px;
+    float: left;
     max-height: 510px;
-    overflow-y:auto;
+    overflow-y: auto;
 }
-div[capaList] section{
+div[capaList] section {
     width: 100%;
     background-color: white;
     height: 30px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     padding: 10px 0px 10px 10px;
     transition: all 0.2s ease-in-out;
     margin-bottom: 1px
 }
-div[capaList] section[busqueda]{
-  background-color: #4CAF50;
-  position: absolute;
-  width: inherit;
-  z-index: 2;
-  padding: 10px 0px;
+div[capaList] section[busqueda] {
+    background-color: #4CAF50;
+    position: absolute;
+    width: inherit;
+    z-index: 2;
+    padding: 10px 0px;
 }
-section[busqueda] + section[slot]{
+section[busqueda]+ section[slot] {
     margin-top: 51px !important;
-  }
-div[capaList] section[busqueda] div[listBuscar]{
-  transition:all 0.3s ease-in-out;
-  float: left;
-  width: 0px;
-  height: 0px;
 }
-div[capaList] section[busqueda] div[tituloForm]{
-    transition:all 0.3s ease-in-out;
+div[capaList] section[busqueda] div[listBuscar] {
+    transition: all 0.3s ease-in-out;
+    float: left;
+    width: 0px;
+    height: 0px;
+}
+div[capaList] section[busqueda] div[tituloForm] {
+    transition: all 0.3s ease-in-out;
     border: none;
     padding: 3px 3px 3px 30px;
     font-size: 20px;
     float: left;
     width: calc(100% - 103px);
-    color:white;
+    color: white;
     height: 32px;
 }
-div[capaList] section[busqueda] input[campBusq]{
-    transition:all 0.3s ease-in-out;
+div[capaList] section[busqueda] input[campBusq] {
+    transition: all 0.3s ease-in-out;
     border: none;
     padding: 8px;
     font-size: 15px;
@@ -368,23 +256,23 @@ div[capaList] section[busqueda] input[campBusq]{
     height: 20px;
     margin-left: 10px;
 }
-div[capaList] section[busqueda] button[cerrarBusq]{
-  transition:inherit;
-  border:none;
-  border-radius: 100px;
-  width: 32px;
-  height:32px;
-  background-image: url('../imagenes/close.png');
-  background-position: 4px;
-  float: right;
-  margin-top: -34px;
-  background-color: transparent;
-  margin-right: 3px
+div[capaList] section[busqueda] button[cerrarBusq] {
+    transition: inherit;
+    border: none;
+    border-radius: 100px;
+    width: 32px;
+    height: 32px;
+    background-image: url('../imagenes/close.png');
+    background-position: 4px;
+    float: right;
+    margin-top: -34px;
+    background-color: transparent;
+    margin-right: 3px
 }
-div[capaList] section[busqueda] button[cerrarBusq]:hover{
-  box-shadow: 0px 2px 5px 0 rgba(0,0,0,0.26);
+div[capaList] section[busqueda] button[cerrarBusq]:hover {
+    box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
-div[capaList] section[busqueda] button[btnBusq]{
+div[capaList] section[busqueda] button[btnBusq] {
     border: none;
     /* border-radius: 100px; */
     width: 50px;
@@ -397,7 +285,7 @@ div[capaList] section[busqueda] button[btnBusq]{
     margin: -10px 10px;
     border-left: 1px solid silver;
 }
-div[capaList] section:not([busqueda]) button{
+div[capaList] section:not([busqueda]) button {
     background-position: 12px;
     background-repeat: no-repeat;
     width: 40px;
@@ -412,487 +300,526 @@ div[capaList] section:not([busqueda]) button{
     border-radius: 50px;
     border-left: none;
 }
-div[capaList] section:not([busqueda]){
-  height: 30px;
-  position: relative;
+div[capaList] section:not([busqueda]) {
+    height: 30px;
+    position: relative;
 }
-div[capaList] section[slot] article[title]{
-  width: 100%;
-  height: 100%;
-  margin: 0px;
+div[capaList] section[slot] article[title] {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
 }
-div[capaList] section button[btnModificar]{
+div[capaList] section button[btnModificar] {
     background-color: #4CAF50;
     background-image: url('../imagenes/pencil_white_16.png');
 }
-div[capaList] section button[btnEliminar]{
+div[capaList] section button[btnEliminar] {
     background-color: #e57373;
     background-image: url('../imagenes/trash_white_16.png');
 }
+
 /*------------------------MATERIAL ELEMENTs---------------------*/
+
+
 /*---------------------------Contenedores-----------------------*/
-div[formElements]{
-  margin-bottom:45px;
-  margin-left: 0px !important;
-  float: left;
-  overflow:visible;
-  min-width: 140px;
-  position: relative;
-  z-index: 4;
-  width: 32%
+
+div[formElements] {
+    margin-bottom: 45px;
+    margin-left: 0px !important;
+    float: left;
+    overflow: visible;
+    min-width: 140px;
+    position: relative;
+    z-index: 4;
+    width: 32%
 }
-div[area]{
-  width: calc(100% - 24px) !important;
+div[area] {
+    width: calc(100% - 24px) !important;
 }
-.group            {
-  position:relative;
-  margin-bottom:45px;
-  float: left;
-  overflow:visible;
-  z-index:3;
-  width: 32%;
-  background-color:white;
+.group {
+    position: relative;
+    margin-bottom: 45px;
+    float: left;
+    overflow: visible;
+    z-index: 3;
+    width: 32%;
+    background-color: white;
 }
+
 /*----------------------Input Text y TextArea-------------------*/
-div.group input{
-  font-size: 14px;
-  padding:10px 10px 10px 5px;
-  display:block;
-  width:calc(100% - 15px);
-  border:none;
-  border-bottom:1px solid #757575;
+
+div.group input {
+    font-size: 14px;
+    padding: 10px 10px 10px 5px;
+    display: block;
+    width: calc(100% - 15px);
+    border: none;
+    border-bottom: 1px solid #757575;
 }
-div.group textarea{
-  font-size:14px;
-  padding:10px 10px 10px 5px;
-  display:block;
-  width:calc(100% - 15px);
-  border:none;
-  border-bottom:1px solid #757575;
-  opacity: 1;
-  height: 24px;
-  resize: none;
+div.group textarea {
+    font-size: 14px;
+    padding: 10px 10px 10px 5px;
+    display: block;
+    width: calc(100% - 15px);
+    border: none;
+    border-bottom: 1px solid #757575;
+    opacity: 1;
+    height: 24px;
+    resize: none;
 }
-div.group input:focus{ outline:none; }
+div.group input:focus {
+    outline: none;
+}
 
 /* LABEL ======================================= */
-div.group label                {
-  color:#999;
-  font-size: 14px;
-  font-weight:normal;
-  position:absolute;
-  pointer-events:none;
-  left:5px;
-  top:10px;
-  transition:0.2s ease all;
-  -moz-transition:0.2s ease all;
-  -webkit-transition:0.2s ease all;
+
+div.group label {
+    color: #999;
+    font-size: 14px;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 10px;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
 }
 
 /* active state */
-div.group input:focus ~ label, div[capaForm] div.group input:valid ~ label        {
-  top:-20px;
-  font-size:12px;
-  color:#4CAF50;
+
+div.group input:focus~ label, div[capaForm] div.group input:valid~ label {
+    top: -20px;
+    font-size: 12px;
+    color: #4CAF50;
 }
-div.group textarea:focus ~ label, div[capaForm] div.group textarea:valid ~ label        {
-  top:-20px;
-  font-size:12px;
-  color:#4CAF50;
+div.group textarea:focus~ label, div[capaForm] div.group textarea:valid~ label {
+    top: -20px;
+    font-size: 12px;
+    color: #4CAF50;
 }
 
 /* BOTTOM BARS ================================= */
-.bar    { position:relative; display:block; width:100%; overflow: visible;max-width: 100% !important}
-.bar:before, .bar:after     {
-  content:'';
-  height:2px;
-  width:0px;
-  bottom:1px;
-  position:absolute;
-  background:#4CAF50;
-  transition:0.2s ease all;
-  -moz-transition:0.2s ease all;
-  -webkit-transition:0.2s ease all;
+
+.bar {
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow: visible;
+    max-width: 100% !important
+}
+.bar:before, .bar:after {
+    content: '';
+    height: 2px;
+    width: 0px;
+    bottom: 1px;
+    position: absolute;
+    background: #4CAF50;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
 }
 .bar:before {
-  left:50%;
+    left: 50%;
 }
 .bar:after {
-  right:50%;
+    right: 50%;
 }
 
 /* active state */
-input:focus ~ .bar:before, input:focus ~ .bar:after,textarea:focus ~ .bar:before, textarea:focus ~ .bar:after {
-  width:50%;
-}
 
+input:focus~ .bar:before, input:focus~ .bar:after, textarea:focus~ .bar:before, textarea:focus~ .bar:after {
+    width: 50%;
+}
 
 /* HIGHLIGHTER ================================== */
+
 .highlight {
-  position:absolute;
-  height:60%;
-  width:100px;
-  top:25%;
-  left:0;
-  pointer-events:none;
-  opacity:0.5;
+    position: absolute;
+    height: 60%;
+    width: 100px;
+    top: 25%;
+    left: 0;
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 /* active state */
-input:focus ~ .highlight,textarea:focus ~ .highlight {
-  -webkit-animation:inputHighlighter 0.3s ease;
-  -moz-animation:inputHighlighter 0.3s ease;
-  animation:inputHighlighter 0.3s ease;
+
+input:focus~ .highlight, textarea:focus~ .highlight {
+    -webkit-animation: inputHighlighter 0.3s ease;
+    -moz-animation: inputHighlighter 0.3s ease;
+    animation: inputHighlighter 0.3s ease;
 }
 
 /* ANIMATIONS ================ */
+
 @-webkit-keyframes inputHighlighter {
-    from { background:#5264AE; }
-  to    { width:0; background:transparent; }
+    from {
+        background: #5264AE;
+    }
+    to {
+        width: 0;
+        background: transparent;
+    }
 }
 @-moz-keyframes inputHighlighter {
-    from { background:#5264AE; }
-  to    { width:0; background:transparent; }
+    from {
+        background: #5264AE;
+    }
+    to {
+        width: 0;
+        background: transparent;
+    }
 }
 @keyframes inputHighlighter {
-    from { background:#5264AE; }
-  to    { width:0; background:transparent; }
+    from {
+        background: #5264AE;
+    }
+    to {
+        width: 0;
+        background: transparent;
+    }
 }
+
 /*------------------------------Radio Box--------------------------------------*/
+
 .radio {
-  display: inline-block;
-  font-size: 14px;
-  line-height: 44px;
-  cursor: pointer;
-  padding-right: 3px;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 44px;
+    cursor: pointer;
+    padding-right: 3px;
 }
-
 .radio:hover .inner {
-  -webkit-transform: scale(0.5);
-  -ms-transform: scale(0.5);
-  transform: scale(0.5);
-  opacity: .5;
+    -webkit-transform: scale(0.5);
+    -ms-transform: scale(0.5);
+    transform: scale(0.5);
+    opacity: .5;
 }
-
 .radio input {
-  width: 1px;
-  height: 1px;
-  opacity: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
 }
-
-.radio input:checked + .outer .inner {
-  -webkit-transform: scale(1);
-  -ms-transform: scale(1);
-  transform: scale(1);
-  opacity: 1;
+.radio input:checked+ .outer .inner {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
 }
-
-.radio input:checked + .outer { border: 2px solid #f08b3b; }
-
-.radio input:focus + .outer .inner {
-  -webkit-transform: scale(1);
-  -ms-transform: scale(1);
-  transform: scale(1);
-  opacity: 1;
-  background-color: #e67012;
+.radio input:checked+ .outer {
+    border: 2px solid #f08b3b;
 }
-
+.radio input:focus+ .outer .inner {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    background-color: #e67012;
+}
 .radio .outer {
-  width: 15px;
-  height: 15px;
-  display: block;
-  float: left;
-  margin:12px -4px 0px 0px;
-  border: 2px solid #0c70b4;
-  border-radius: 50%;
-  background-color: #fff;
+    width: 15px;
+    height: 15px;
+    display: block;
+    float: left;
+    margin: 12px -4px 0px 0px;
+    border: 2px solid #0c70b4;
+    border-radius: 50%;
+    background-color: #fff;
+}
+.radio .inner {
+    -webkit-transition: all 0.25s ease-in-out;
+    transition: all 0.25s ease-in-out;
+    width: 11px;
+    height: 11px;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0);
+    display: block;
+    margin: 2px;
+    border-radius: 50%;
+    background-color: #f08b3b;
+    opacity: 0;
+    max-width: 100% !important;
 }
 
-.radio .inner {
-  -webkit-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-  width: 11px;
-  height: 11px;
-  -webkit-transform: scale(0);
-  -ms-transform: scale(0);
-  transform: scale(0);
-  display: block;
-  margin: 2px;
-  border-radius: 50%;
-  background-color: #f08b3b;
-  opacity: 0;
-  max-width: 100% !important;
-}
 /*------------------------------Combo Box--------------------------------------*/
-select{
-  border-bottom: 1px solid #757575;
-  padding: 9px;
-  outline: none;
-  border-top:none;
-  border-left: none;
-  border-right: none;
-  font-size: 14px;
-  width: 100%;
-  z-index: inherit;
+
+select {
+    border-bottom: 1px solid #757575;
+    padding: 9px;
+    outline: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-size: 14px;
+    width: 100%;
+    z-index: inherit;
 }
-article[capaSelect]{
-  transition:all 0.3s linear ;
-  margin: 0px;
-  width: 100% !important;
-  height: 100%;
-  background-color: transparent !important;
-  position: absolute;
-  opacity: 0;
-  z-index: 4;
+article[capaSelect] {
+    transition: all 0.3s linear;
+    margin: 0px;
+    width: 100% !important;
+    height: 100%;
+    background-color: transparent !important;
+    position: absolute;
+    opacity: 0;
+    z-index: 4;
 }
-div[option]{
-  color:black;
-  font-size: 12px;
-  width: calc(100% - 15px) !important;
-  background-color: white;
-  height: 30px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-  padding: 10px 0px 0px 10px !important;
-  transition: all 0.2s ease-in-out;
-  margin-bottom: 1px;
-  margin-left:0px !important;
-  position: absolute;
+div[option] {
+    color: black;
+    font-size: 12px;
+    width: calc(100% - 15px) !important;
+    background-color: white;
+    height: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    padding: 10px 0px 0px 10px !important;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 1px;
+    margin-left: 0px !important;
+    position: absolute;
 }
+
 /*------------------------------ToolTip--------------------------------------*/
-div[tooltip]{
-  transition:all 0.3s ease-in-out;
-  transform: scale(0);
-  top:-30px;
-  opacity: 0;
-  padding:5px;
-  position: absolute;
-  margin: 10px 0px 0px 0px !important;
-  z-index: 11;
-  width: 100%;
-  height: 40px;
-  font-size: 10px;
-  background-color: #4CAF50;
-  border-radius: 3px;
-  overflow: visible;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 2px 1px;
-  color:white;
+
+div[tooltip] {
+    transition: all 0.3s ease-in-out;
+    transform: scale(0);
+    top: -30px;
+    opacity: 0;
+    padding: 5px;
+    position: absolute;
+    margin: 10px 0px 0px 0px !important;
+    z-index: 11;
+    width: 100%;
+    height: 40px;
+    font-size: 10px;
+    background-color: #4CAF50;
+    border-radius: 3px;
+    overflow: visible;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 2px 1px;
+    color: white;
 }
-div[tooltip]:before{
-  content: "";
-  position: absolute;
-  box-shadow: rgba(0, 0, 0, 0.3) -1px -1px 2px;
-  -moz-transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  top:-10px;
-  left: 50px;
-  border-width: 10px;
-  border-style: solid;
-  border-color: #4CAF50 transparent transparent #4CAF50;
+div[tooltip]:before {
+    content: "";
+    position: absolute;
+    box-shadow: rgba(0, 0, 0, 0.3) -1px -1px 2px;
+    -moz-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    top: -10px;
+    left: 50px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: #4CAF50 transparent transparent #4CAF50;
 }
 
 /*--------------------------ELEMENTOS DE EDICION-------------------------------*/
-div[capaform] section[titulo] div[display]{
-  float: left;
-}
-div[formUpdate]{
-  position: relative;
-  width: 40%;
-  float: left;
-  margin: 0px 3% 15px 3%;
-}
-div[formUpdate][area]{
-  width: 80%;
-}
-div[formUpdate] div[cont]{
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 10px;
-  border-left: 1px solid #7b7b7b;
-  background-color: white;
-  position: relative;
-}
-section[titulo] div[cont]{
-  float:left;
-}
-div[formUpdate] label{
-  color:#1B5E20;
-}
-div[formUpdate] div input[type='text']{
-  position: absolute;
-  transition:all 0.5s ease-in-out;
-  border:none;
-  padding: 0px;
-  opacity: 0;
-  resize: none;
-  width: calc(100%);
-  height: calc(100% - 10px);
-  font-size: 15px;
-  color: inherit;
-  background-color: transparent;
-  font-size: inherit;
-  z-index: 1;
-}
-div[capaForm] section div[cont] textarea{
-  position: absolute;
-  transition:all 0.5s ease-in-out;
-  border:none;
-  padding: 0px;
-  opacity: 0;
-  resize:none;
-  width: calc(100% - 90px);
-  height: calc(100% - 20px);
-  color:inherit;
-  background-color: transparent;
-  font-size: inherit;
-  z-index: 1;
-}
-div[capaForm] section[titulo] textarea{
-  height: 100% !important;
-}
-div[formUpdate] div span{
-  font-size:13px;
-  background-color: white;
-  max-width: 100%;
-}
-div[formUpdate] article[update]{
-  transition: all 0.3s ease-in-out;
-  margin-left: -25px;
-}
-div[formUpdate]:hover article[update]{
-  margin-left: 0px;
-}
-div[capaForm] section[sector] div[formupdate]:not([area]) div:not([clear]){
-  max-height:40px;
-  min-height:40px;
-}
 
-div[capaForm] section[sector] div[formupdate][area] div:not([clear]){
-  max-height:80px;
-  min-height:80px;
+div[capaform] section[titulo] div[display] {
+    float: left;
 }
-
-div[capaForm] section[sector] div[formupdate] > div div[display]{
-  position: absolute;
-  transition:all 1s linear;
-  width: calc(100%);
-  float:right;
-  z-index: 2;
-  margin-left: 0px;
+div[formUpdate] {
+    position: relative;
+    width: 40%;
+    float: left;
+    margin: 0px 3% 15px 3%;
+}
+div[formUpdate][area] {
+    width: 80%;
+}
+div[formUpdate] div[cont] {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    border-left: 1px solid #7b7b7b;
+    background-color: white;
+    position: relative;
+}
+section[titulo] div[cont] {
+    float: left;
+}
+div[formUpdate] label {
+    color: #1B5E20;
+}
+div[formUpdate] div input[type='text'] {
+    position: absolute;
+    transition: all 0.5s ease-in-out;
+    border: none;
+    padding: 0px;
+    opacity: 0;
+    resize: none;
+    width: calc(100%);
+    height: calc(100% - 10px);
+    font-size: 15px;
+    color: inherit;
+    background-color: transparent;
+    font-size: inherit;
+    z-index: 1;
+}
+div[capaForm] section div[cont] textarea {
+    position: absolute;
+    transition: all 0.5s ease-in-out;
+    border: none;
+    padding: 0px;
+    opacity: 0;
+    resize: none;
+    width: calc(100% - 90px);
+    height: calc(100% - 20px);
+    color: inherit;
+    background-color: transparent;
+    font-size: inherit;
+    z-index: 1;
+}
+div[capaForm] section[titulo] textarea {
+    height: 100% !important;
+}
+div[formUpdate] div span {
+    font-size: 13px;
+    background-color: white;
+    max-width: 100%;
+}
+div[formUpdate] article[update] {
+    transition: all 0.3s ease-in-out;
+    margin-left: -25px;
+}
+div[formUpdate]:hover article[update] {
+    margin-left: 0px;
+}
+div[capaForm] section[sector] div[formupdate]:not([area]) div:not([clear]) {
+    max-height: 40px;
+    min-height: 40px;
+}
+div[capaForm] section[sector] div[formupdate][area] div:not([clear]) {
+    max-height: 80px;
+    min-height: 80px;
+}
+div[capaForm] section[sector] div[formupdate]> div div[display] {
+    position: absolute;
+    transition: all 1s linear;
+    width: calc(100%);
+    float: right;
+    z-index: 2;
+    margin-left: 0px;
 }
 
 /*------------Funcionamiento edicion-----------*/
-div[capaForm] section[sector] div[formupdate].edicion div div[display],div[capaForm] section[titulo].edicion div div[display]{
-  opacity: 0;
-  z-index: 1;
+
+div[capaForm] section[sector] div[formupdate].edicion div div[display], div[capaForm] section[titulo].edicion div div[display] {
+    opacity: 0;
+    z-index: 1;
 }
-div[capaForm] section[sector] div[formupdate].edicion div[cont] textarea,
-div[capaForm] section[sector] div[formupdate].edicion div[cont] input[type='text'],
-div[capaForm] section[titulo].edicion div[cont] textarea{
-  opacity: 1;
-  z-index: 2;
+div[capaForm] section[sector] div[formupdate].edicion div[cont] textarea, div[capaForm] section[sector] div[formupdate].edicion div[cont] input[type='text'], div[capaForm] section[titulo].edicion div[cont] textarea {
+    opacity: 1;
+    z-index: 2;
 }
+
 /*--------------------ventana material------------------------------------------------------------*/
-div[mat-window]{
-  transition: height 0.3s linear;
-  box-shadow:0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-  background-color: white;
-  margin-top: 70px;
-  margin-left: 50px;
-  margin-bottom: 100px;
+
+div[mat-window] {
+    transition: height 0.3s linear;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    margin-top: 70px;
+    margin-left: 50px;
+    margin-bottom: 100px;
 }
-div[mat-window].columna{
-  width: calc(40%);
-  float:left;
+div[mat-window].columna {
+    width: calc(40%);
+    float: left;
 }
-div[mat-window].not-first{
-  margin-top: 10px;
+div[mat-window].not-first {
+    margin-top: 10px;
+}
+div[mat-window].formulario {
+    width: calc(80%+ 50px);
+    float: left;
+}
+div[mat-window].titulo {
+    width: calc(80% + 50px);
+    float: left;
+    margin-bottom: 10px;
 }
 
-div[mat-window].formulario{
-  width: calc(80% + 50px);
-  float:left;
-}
-
-div[mat-window].titulo{
-  width: calc(80% + 50px);
-  float:left;
-  margin-bottom: 10px;
-}
 /*-----------------------------titulo---------------------------------------*/
-div[mat-window] section[titulo]{
-  position: relative;
+
+div[mat-window] section[titulo] {
+    position: relative;
     transition: all 0.5s ease-in-out;
     padding: 10px 0px 0px 50px;
     font-size: 21px;
     color: white;
     min-height: 40px;
 }
-div[mat-window] section[titulo].basico{
+div[mat-window] section[titulo].basico {
     color: white;
     background-color: #4CAF50;
 }
-div[mat-window] section[titulo].inverso{
+div[mat-window] section[titulo].inverso {
     color: #4CAF50;
     background-color: white;
-    border-bottom: 1px solid rgba(160,160,160,0.5);
+    border-bottom: 1px solid rgba(160, 160, 160, 0.5);
 }
-/*-------------------------------Sector----------------------------------------*/
-div[mat-window] section[sector]{
-  width: 100%;
-  min-height: 40px;
-    border-bottom: 1px solid rgba(160,160,160,0.5);
-}
-/*-----------------------------------Media Query-------------------------------*/
-@media (max-width: 1000px){
-  /*modal window*/
-  div[capa='contenido']{
-    background-color: white;
-    top: 100%;
-    left:23%;
-    height:auto;
-    position: absolute;
-    z-index: 12;
-  }
-  /*fin modal*/
-  div[capaList]{
-    width: 85%;
-    margin-bottom: 10px;
-    min-height: 50px;
-  }
-  div[capaList] section:not([busqueda]) button{
-    display:inline-block;
-    z-index: 1;
-  }
-  div[capaform]{
-    width: 85%;
-    margin-top: 10px;
-  }
-  div[capaForm] section[sector]{
-    max-width: 830px;
-  }
-  div[capaForm] section[sector]:not(div.grupo){
-    margin-left: 20px;
-  }
-  div[capaForm] section[sector] div.grupo{
-    margin-left: 5%;
-  }
-  div[capaList] section[slot] article[title]{
-    width: calc(100% - 60px);
-  }
-}
-@media (max-width: 700px){
 
-  div[capaList]{
+/*-------------------------------Sector----------------------------------------*/
+
+div[mat-window] section[sector] {
     width: 100%;
-    margin-left: 0px;
-    min-height: 50px;
-  }
-  div[capaList] section:not([busqueda]) button{
-    display:inline-block;
-    z-index: 1;
-  }
-  div[capaform]{
-    width: 100%;
-    margin-left: 0px;
-  }
+    min-height: 40px;
+    border-bottom: 1px solid rgba(160, 160, 160, 0.5);
+}
+
+/*-----------------------------------Media Query-------------------------------*/
+
+@media (max-width: 1000px) {
+    /*modal window*/
+    div[capa='contenido'] {
+        background-color: white;
+        top: 100%;
+        left: 23%;
+        height: auto;
+        position: absolute;
+        z-index: 12;
+    }
+    /*fin modal*/
+    div[capaList] {
+        width: 85%;
+        margin-bottom: 10px;
+        min-height: 50px;
+    }
+    div[capaList] section:not([busqueda]) button {
+        display: inline-block;
+        z-index: 1;
+    }
+    div[capaform] {
+        width: 85%;
+        margin-top: 10px;
+    }
+    div[capaForm] section[sector] {
+        max-width: 830px;
+    }
+    div[capaForm] section[sector]:not(div.grupo) {
+        margin-left: 20px;
+    }
+    div[capaForm] section[sector] div.grupo {
+        margin-left: 5%;
+    }
+    div[capaList] section[slot] article[title] {
+        width: calc(100% - 60px);
+    }
+}
+@media (max-width: 700px) {
+    div[capaList] {
+        width: 100%;
+        margin-left: 0px;
+        min-height: 50px;
+    }
+    div[capaList] section:not([busqueda]) button {
+        display: inline-block;
+        z-index: 1;
+    }
+    div[capaform] {
+        width: 100%;
+        margin-left: 0px;
+    }
 }
