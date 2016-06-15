@@ -1,25 +1,80 @@
-//se usa rel objeto arbol del archivo arbolRecursivo.js
+//se usa el objeto arbol del archivo arbolRecursivo.js
+var Privilegios = function(){
+	this.privilegios = [];
+
+	this.validarPadre = function(privilegio) {
+		if(privilegio.padre === null){
+			console.log('es la raiz');
+			return true;
+		}else if(this.buscar(privilegio.padre)){
+			//en los casos que no sea la raiz
+			return true;
+		}else{
+			UI.agregarToasts({
+				texto: 'no existe rama que lo una al arbol de privilegios',
+				tipo: 'web-arriba-derecha-alto'
+			});
+			return false;
+		}
+	};
+	this.buscar = function(codigo){
+		for (var i = 0; i < this.privilegios.length; i++) {
+			if(this.privilegios[i].codigo == codigo){
+				return this.privilegios[i];
+			}
+		}
+		return false;
+	};
+	this.agregar = function(privilegio){
+		if(this.validarPadre(privilegio)){
+			if(!this.buscar(privilegio.codigo)){
+				this.privilegios.push(privilegio);
+				return true;
+			}else{
+				UI.agregarToasts({
+					texto: 'privilegio ya esta agregado'
+				});
+				return false;
+			}
+		}
+	};
+	this.remover = function(codigo){
+		var privilegio = this.buscar(codigo);
+		this.privilegios.splice(this.privilegios.indexOf(privilegio),1);
+		return true;
+	};
+	this.cambio = function(privilegio){
+		var resultado;
+		if(this.buscar(privilegio.codigo)){
+			resultado = this.remover(privilegio.codigo);
+		}else{
+			resultado = this.agregar(privilegio);
+		}
+		return resultado;
+	};
+};
+
 function construirUI(){
-	let contenedor = document.querySelector('div[contenedor]');
-	let venCarga = UI.agregarVentana({
+	var contenedor = document.querySelector('div[contenedor]');
+	var venCarga = UI.agregarVentana({
 		tipo: 'titulo',
 		nombre:'titulo'
 	},contenedor);
 
-	let carga = venCarga.agregarSector({nombre:'carga'});
+	var carga = venCarga.agregarSector({nombre:'carga'});
 
-	let Peticion = {
+	var Peticion = {
 		entidad: 'privilegio',
 		operacion: 'buscarRegistro',
 		codigo: location.search.substring(6,location.search.length)
-	}
+	};
 
-	let infoCuadroCarga = {
+	var infoCuadroCarga = {
 		nodo: carga.nodo,
 		cuadro:{
 			mensaje:'Cargando'
 		}
-	}
+	};
 
 	torque.manejarOperacion(Peticion,infoCuadroCarga,costruccionInicial);
 }
@@ -27,14 +82,14 @@ function construirUI(){
 function costruccionInicial(respuesta){
 	if(respuesta.success){
 		//acomodo el titulo del formulario
-		let titulo = UI.buscarVentana('titulo');
+		var titulo = UI.buscarVentana('titulo');
 		titulo.quitarSector('carga');
 		titulo.agregarTitulo({
 			html:'<l><strong>ROL:</strong> '+respuesta.registro.rol+'</l> <r><strong>EMPRESA:</strong> '+respuesta.registro.empresa+'</r>',
 			tipo:'basico'
-		});		
+		});
 
-		let formularioArbol = UI.agregarVentana({
+		var formularioArbol = UI.agregarVentana({
 			tipo: 'arbol',
 			nombre: 'formularioArbol',
 			titulo:{
@@ -54,32 +109,41 @@ function costruccionInicial(respuesta){
 		//formulario arbol
 		formularioArbol.buscarSector('arbol').nodo.style.overflow='auto';
 		formularioArbol.buscarSector('arbol').nodo.style.minHeight='100px';
-		let Peticion = {
+		var Peticion = {
 			entidad: 'privilegio',
 			operacion: 'buscarArbol',
 			codigo: ''
-		}
+		};
 
-		let infoCuadroCarga = {
+		var infoCuadroCarga = {
 			nodo: formularioArbol.buscarSector('arbol').nodo,
 			cuadro:{
 				mensaje:'Cargando Arbol'
 			}
-		}
+		};
 
 		torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
-			let arbol = new Arbol(respuesta.registros,UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo);
+			var arbol = new Arbol({
+				nodos: respuesta.registros,
+				contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo,
+				hojaOnClick: function asignar(hoja){
+					if(privilegiosTemp.cambio(hoja.atributos)){
+						hoja.titulo.nodo.classList.toggle('asignado');
+						hoja.titulo.nodo.previousSibling.classList.toggle('asignado');
+					}
+				}
+			});
 		});
 	}else{
 		UI.crearMensaje(respuesta);
 	}
 	//funcionamiento botones
-	let btnNuevo = document.querySelector('button[btnnuevo]');
+	var btnNuevo = document.querySelector('button[btnnuevo]');
 	btnNuevo.onclick = construirFormulario;
 }
 //----------------------------------- Formulario de Privilegios -----------------------
 function construirFormulario(){
-	let formularioPrivilegios = UI.agregarVentana({
+	var formularioPrivilegios = UI.agregarVentana({
 		tipo: 'form-lat',
 		alto: '400',
 		nombre: 'formularioPrivilegios',
@@ -110,7 +174,7 @@ function construirFormulario(){
 					},{
 						tipo : 'campoDeTexto',
 						parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
-					}	
+					}
 				]
 			}
 		]
@@ -121,12 +185,12 @@ function construirFormulario(){
 	UI.elementos.botonera.agregarBotones(['guardar','cancelar']);
 	UI.elementos.botonera.quitarBoton('nuevo');
 	//debido al tiempo que tarda la transicion de entrada de los botones le coloco un tiempo de 20 extra por cada boton
-	
+
 	setTimeout(function(){
 		UI.elementos.botonera.buscarBoton('guardar').nodo.onclick = guardarPrivilegios;
 		UI.elementos.botonera.buscarBoton('cancelar').nodo.onclick = cancelarPrivilegios;
-	},80)
-	
+	},80);
+
 }
 function guardarPrivilegios(){
 	console.log('entro');
