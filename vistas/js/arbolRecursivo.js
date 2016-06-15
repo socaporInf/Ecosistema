@@ -1,35 +1,30 @@
 //transformar un arbol de nodos en una estructura interactiva
-var Arbol = function  construirArbol(nodos,contenedor){
-	
-	var Hoja = function(titulo){
+var Arbol = function(atributos){
+
+	var Hoja = function(atributos){
 
 		var Titulo = function(texto){
 			this.nodo = null;
 			this.construirNodo = function(texto){
-				let nodo = document.createElement('div');
+				var nodo = document.createElement('div');
 				nodo.setAttribute('titulo-hoja','');
 				nodo.textContent = texto;
-
-				nodo.onclick = function asignar(){
-					this.classList.toggle('asignado');
-					this.previousSibling.classList.toggle('asignado');
-				}
 				this.nodo = nodo;
-			}
+			};
 			this.construirNodo(texto);
-		}
+		};
 		//------------------fin titulo -----------
-		
+
 		var Peciolo =  function(){
 
 			this.nodo = null;
 
 			this.construirNodo = function(){
 				//peciolo se llama la parte de la hoja que la une con el tallo
-				let nodo = document.createElement('div');
+				var nodo = document.createElement('div');
 				nodo.setAttribute('peciolo','');
 
-				let boton = document.createElement('button');
+				var boton = document.createElement('button');
 				boton.setAttribute('little-mat-button-invisible','');
 				boton.classList.add('arrow_down_gray');
 
@@ -37,65 +32,75 @@ var Arbol = function  construirArbol(nodos,contenedor){
 					this.parentNode.parentNode.classList.toggle('abierto');
 					this.classList.toggle('activo');
 				};
-				
-				nodo.appendChild(boton);				
+
+				nodo.appendChild(boton);
 				this.nodo = nodo;
 			};
 			this.removerBoton = function(){
 				this.nodo.innerHTML='';
 			};
 			this.construirNodo();
-		}
+		};
 		//------------------fin peciolo -----------
+		this.atributos = atributos;
 		this.titulo = null;
 		this.nodo = null;
 		this.peciolo = null;
-		
-		this.construirNodo = function(titulo){
-			let nodo =  document.createElement('div');
+
+		this.construirNodo = function(){
+			var nodo =  document.createElement('div');
 			nodo.setAttribute('hoja','');
 
 			this.peciolo = new Peciolo();
 			nodo.appendChild(this.peciolo.nodo);
 
-			this.titulo = new Titulo(titulo);
+			this.titulo = new Titulo(this.atributos.titulo);
 			nodo.appendChild(this.titulo.nodo);
 
 			this.nodo =  nodo;
 		};
-		
+
 		this.removerTallos = function(){
 			this.peciolo.removerBoton();
 		};
 
-		this.construirNodo(titulo);
-	}
+		this.construirNodo();
+	};
 	//----------------fin hoja-----------------------
-	this.nodos = nodos;
-	this.contenedor = contenedor;
-	this.nodo = null; 
+	this.nodos = atributos.nodos;
+	this.contenedor = atributos.contenedor;
+	this.hojaOnClick = atributos.hojaOnClick;
+	this.hojas = null;
 
-	this.construirNodo = function(){		
+	this.construirNodo = function(){
 		var arbol = {};
-		for(var x = 0; x < nodos.length; x++ ){
-			if(nodos[x].codigo==0){
-				arbol = nodos[x];
-				nodos.splice(x,1);
+		for(var x = 0; x < this.nodos.length; x++ ){
+			if(this.nodos[x].codigo==='0'){
+				arbol = this.nodos[x];
+				this.nodos.splice(x,1);
 			}
 		}
-		arbol.hijos = sesion.buscarHijos(arbol.codigo,nodos);
+		arbol.hijos = sesion.buscarHijos(arbol.codigo,this.nodos);
 
 		arbolUI = this.armarHojas(arbol);
-		
-		contenedor.appendChild(arbolUI.nodo);
-	}
+
+		this.contenedor.appendChild(arbolUI.nodo);
+		this.raiz = arbolUI;
+		this.raiz.nodo.classList.add('raiz');
+	};
 
 	this.armarHojas =  function(rama){
-		let hoja = new Hoja(rama.titulo);
+		var hoja = new Hoja({
+			codigo: rama.codigo,
+			titulo: rama.titulo,
+			padre: rama.padre,
+			tit_padre: rama.tit_padre
+		});
+		this.asignarOnClickHoja(hoja);
 		if(rama.hijos.length){
 
-			for(let x = 0; x < rama.hijos.length; x++){
-				let hijo = this.armarHojas(rama.hijos[x]);
+			for(var x = 0; x < rama.hijos.length; x++){
+				var hijo = this.armarHojas(rama.hijos[x]);
 				hoja.nodo.appendChild(hijo.nodo);
 			}
 
@@ -103,6 +108,15 @@ var Arbol = function  construirArbol(nodos,contenedor){
 			hoja.removerTallos();
 		}
 		return hoja;
-	}
+	};
+
+	this.asignarOnClickHoja = function(hoja){
+		var arbol = this;
+		hoja.titulo.nodo.onclick = function asignar(){
+			if(arbol.hojaOnClick){
+				arbol.hojaOnClick(hoja);
+			}
+		};
+	};
 	this.construirNodo();
-}
+};
