@@ -10,7 +10,8 @@ Arquitecto: {
     iniciarCarga(info,callback) --------- se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
     agregarVentana(ventana) ------------- agrega una ventana a la interfaz y la guarda en una arreglo UI.elementos.ventanas par su facil acceso
     buscarVentana(nombre) --------------- retorna la ventana del arreglo de UI donde el nombre sea igual al pasado
-    quitarVentana(nombre) --------------- quita la ventana de la interfaz ademas del arreglo temporal 
+    quitarVentana(nombre) --------------- quita la ventana de la interfaz ademas del arreglo temporal
     agregarCampos(campos,contenedor) ---- permite añadir los campos pasados como paramtetro al contenedor especificado
     agregarCampos(campo,contenedor) ----- recibe un objeto
+    agregarToasts(atributos) ------------ agrega un mensaje pequeño en la parte inferior de la pantalla
 }
