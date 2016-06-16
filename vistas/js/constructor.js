@@ -1197,7 +1197,7 @@ var modalWindow = function(){
 	var capaContenido = function(){
 
 		//------------------- Partes-------------------------------------
-		var Cabecera = function(){
+		var Cabecera = function(contenido){
 
 			this.estado = 'sinConstruir';
 			this.nodo = null;
@@ -1206,24 +1206,60 @@ var modalWindow = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('cabecera','');
 				this.nodo = nodo;
+				this.manejoDeContenido(contenido);
+			};
+			this.manejoDeContenido = function(contenido){
+				var porConstruir;
+				if(typeof contenido == 'string'){
+						porConstruir = {html: contenido};
+				}else{
+					porConstruir = contenido;
+				}
+				if(porConstruir.html){
+					this.nodo.innerHTML = porConstruir.html;
+				}
 			};
 			this.construirNodo();
 		};
 
-		var Cuerpo = function(){
+		var Cuerpo = function(contenido){
 			this.estado='sinConstruir';
 			this.nodo = null;
+			this.campos = [];
 
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('cuerpo','');
 				this.nodo=nodo;
+				this.manejoDeContenido(contenido);
 			};
+			//esta funcion revisa el contenido y construye la interfaz que le
+			//fue pasada y la construye
+			this.manejoDeContenido = function(contenido){
+				var porConstruir;
+				if(typeof contenido == 'string'){
+						porConstruir = {html: contenido};
+				}else{
+					porConstruir = contenido;
+				}
+				if(porConstruir.campos){
+					this.agregarCampos(porConstruir.campos);
+				}
+				if(porConstruir.html){
+					this.nodo.innerHTML = porConstruir.html;
+				}
+				if(porConstruir.alto){
+					this.nodo.style.height = porConstruir.alto + 'px';
+				}
+
+			};
+
 			this.agregarCampos = function(campos){
 				for(var x = 0;x < campos.length; x++){
-					this.agregarCampos(campos[x]);
+					this.agregarCampo(campos[x]);
 				}
 			};
+
 			this.agregarCampo = function(campo){
 				var campoNuevo;
 				var contenedor = this.nodo;
@@ -1246,12 +1282,13 @@ var modalWindow = function(){
 
 				}
 				contenedor.appendChild(campoNuevo.nodo);
+				this.campos.push(campoNuevo);
 			};
 
 			this.construirNodo();
 		};
 
-		var Pie = function(){
+		var Pie = function(contenido){
 			this.estado = 'sinConstruir';
 			this.nodo = null;
 			//funcion para agregar funcionamiento a los elementos hijos
@@ -1260,6 +1297,18 @@ var modalWindow = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('pie','');
 				this.nodo=nodo;
+				this.manejoDeContenido(contenido);
+			};
+			this.manejoDeContenido = function(contenido){
+				var porConstruir;
+				if(typeof contenido == 'string'){
+						porConstruir = {html: contenido};
+				}else{
+					porConstruir = contenido;
+				}
+				if(porConstruir.html){
+					this.nodo.innerHTML = porConstruir.html;
+				}
 			};
 			this.desaparecer = function(){
 				this.nodo.style.height = '0px';
@@ -1286,18 +1335,18 @@ var modalWindow = function(){
 			},300);
 		};
 
-		this.agregarParte = function(parte){
+		this.agregarParte = function(parte,contenido){
 			switch(parte){
 				case 'cabecera':
-					this.partes.cabecera=new Cabecera();
+					this.partes.cabecera=new Cabecera(contenido);
 					this.nodo.appendChild(this.partes.cabecera.nodo);
 				break;
 				case 'cuerpo':
-					this.partes.cuerpo=new Cuerpo();
+					this.partes.cuerpo=new Cuerpo(contenido);
 					this.nodo.appendChild(this.partes.cuerpo.nodo);
 				break;
 				case 'pie':
-					this.partes.pie=new Pie();
+					this.partes.pie=new Pie(contenido);
 					this.nodo.appendChild(this.partes.pie.nodo);
 				break;
 			}
@@ -1305,19 +1354,20 @@ var modalWindow = function(){
 
 		this.dibujarUI = function(data){
 			data.tipo=data.tipo || 'contenedor';
+			data.contenido = data.contenido || 'normal';
 			if(data.cabecera!==undefined){
-				this.agregarParte('cabecera');
-				this.partes.cabecera.nodo.innerHTML=data.cabecera;
+				this.agregarParte('cabecera',data.cabecera);
 				this.partes.cabecera.nodo.classList.toggle(data.tipo.toLowerCase());
 			}
 			if(data.cuerpo!==undefined){
-				this.agregarParte('cuerpo');
-				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
+				this.agregarParte('cuerpo',data.cuerpo);
 			}
 			if(data.pie!==undefined){
-				this.agregarParte('pie');
-				this.partes.pie.nodo.innerHTML=data.pie;
+				this.agregarParte('pie',data.pie);
 				this.partes.pie.nodo.classList.toggle(data.tipo.toLowerCase());
+			}
+			if(data.contenido.toLowerCase() === 'ancho' ){
+				this.nodo.classList.add('ancho');
 			}
 		};
 		this.convertirEnMensaje = function(mensaje){
@@ -1736,8 +1786,26 @@ var Arquitecto = function(){
 	};
 	//agrega mensaje pequeño
 	this.agregarToasts = function(atributos){
-		var toast = new Toasts(atributos);
+		if(!this.elementos.toasts){
+			this.elementos.toasts = [
+				{cont:1}
+			];
+		}else{
+			this.elementos.toasts[0].cont++;
+		}
+		var tiempo= 5000 * (this.elementos.toasts[0].cont - 1);
+		setTimeout(function(){
+			var toast = new Toasts(atributos);
+			UI.elementos.toasts.push(toast);
+			setTimeout(function(){
+				removerToasts(toast);
+			},5000);
+		},tiempo);
 	};
+	function removerToasts(toast){
+		UI.elementos.toasts.splice(UI.elementos.toasts.indexOf(toast),1);
+		UI.elementos.toasts[0].cont--;
+	}
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
 var Ventana = function(atributos){
@@ -1765,11 +1833,12 @@ var Ventana = function(atributos){
 	var Sector = function(atributos){
 		this.nodo = null;
 		this.atributos = atributos;
+		this.atributos.tipo = atributos.tipo || 'sector';
 
 		this.construirNodo = function(){
 
 			var nodo = document.createElement('section');
-			nodo.setAttribute('sector','');
+			nodo.setAttribute(this.atributos.tipo,'');
 
 			if(atributos.html){
 				nodo.innerHTML = atributos.html;
@@ -1885,6 +1954,14 @@ var Radio = function(info){
 			this.agregarOpcion(this.data.opciones[x]);
 		}
 	};
+
+	this.captarValor = function(){
+		var valor = (this.nodo.querySelector('radio').value==='')?null:this.nodo.querySelector('radio').value;
+		return valor;
+	};
+	this.captarNombre = function(){
+		return this.nodo.querySelector('radio').name;
+	};
 	this.construirNodo();
 };
 
@@ -1943,7 +2020,13 @@ var ComboBox = function(info){
 		nuevaOp.value=opcion.codigo;
 		select.appendChild(nuevaOp);
 	};
-
+	this.captarValor = function(){
+		var valor = (this.nodo.querySelector('select').value==='-')?null:this.nodo.querySelector('select').value;
+		return valor;
+	};
+	this.captarNombre = function(){
+		return this.nodo.querySelector('select').name;
+	};
 	this.construir();
 };
 
@@ -1972,9 +2055,9 @@ var CampoDeTexto = function(info){
 		CampoDeTexto.setAttribute(this.data.eslabon,'');
 		var html='';
 		if(this.data.tipo=='simple'){
-			html+='<input type="text" name="'+this.data.nombre+'" required>';
+			html+='<input type="text" name="'+this.data.nombre+'" value="" required>';
 		}else if(this.data.tipo=='password'){
-			html+='<input type="password" name="'+this.data.nombre+'" required>';
+			html+='<input type="password" name="'+this.data.nombre+'" value="" required>';
 		}else if(this.data.tipo=='area'){
 			html+='<textarea name="Descripcion" required></textarea>';
 		}else{
@@ -1991,6 +2074,29 @@ var CampoDeTexto = function(info){
 			this.nodo.onmouseout=UI.elementos.formulario.cerrartooltipInput;
 		}
 		this.estado='enUso';
+	};
+	this.captarValor = function(){
+		var tipo = this.captarTipo();
+		var valor;
+		if(this.nodo.querySelector(tipo).value===''){
+			valor = null;
+		}else{
+			valor = this.nodo.querySelector(tipo).value;
+		}
+		return valor;
+	};
+	this.captarNombre = function(){
+		var tipo = this.captarTipo();
+		return this.nodo.querySelector(tipo).name;
+	};
+	this.captarTipo = function(){
+		var tipo;
+		if(this.data.tipo==='area'){
+			tipo = 'textarea';
+		}else{
+			tipo = 'input';
+		}
+		return tipo;
 	};
 	this.construir();
 };
@@ -2050,7 +2156,7 @@ var Toasts = function(atributos){
 			setTimeout(function eliminarToast(){
 				toasts.nodo.parentNode.removeChild(toasts.nodo);
 			},500);
-		},3000);
+		},5000);
 		this.nodo = nodo;
 	};
 	this.construirNodo();
