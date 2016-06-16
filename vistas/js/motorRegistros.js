@@ -70,7 +70,7 @@ var Sesion = function(){
 			}
 		}
 		return hijos;
-	}
+	};
 };
 /*----------------------------------------------------------------------------------------------------*/
 /*------------------------------Objeto Motor----------------------------------------------------------*/
@@ -82,8 +82,6 @@ var Motor = function(entidadActiva){
 	this.entidadActiva=entidadActiva;
 	//todos los registros que tiene la entidad activa entidad activa
 	this.registrosEntAct = null;
-	//resultado busqueda
-	this.resultadoBusqueda;
 
 	//funcion de arranque del objeto
 	this.ignition = function(){
@@ -126,7 +124,7 @@ var Motor = function(entidadActiva){
 		envio+="&codigo="+encodeURIComponent(info.codigo);
 		conexionBusqueda.send(envio);
 	};
-	
+
 	this.Operacion = function(peticion,callback){
 
 		//si no se le paso el valor de la entidad a afectar en la peticion el tomara por defecto a
@@ -135,7 +133,7 @@ var Motor = function(entidadActiva){
 
 		//lo mismo sucede con el codigo si no se le pasa en el objeto el tomara por defecto el codigo
 		//del registro que esta activo en el formulario
-		codigoPorDefecto = (UI.elementos.formulario!=='noPosee')?UI.elementos.formulario.ventanaForm.registroId:''
+		codigoPorDefecto = (UI.elementos.formulario!=='noPosee')?UI.elementos.formulario.ventanaForm.registroId:'';
 		peticion.codigo = peticion.codigo || codigoPorDefecto;
 
 		//si no recive el parametro de manejarCarga toma por defecto el valor de falso
@@ -143,13 +141,14 @@ var Motor = function(entidadActiva){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
+				var respuesta;
 				//si el manejar carga es verdadero culmino la carga
 				if(peticion.manejarOperacion === true){
 					UI.elementos.cuadroCarga.terminarCarga();
-					let respuesta = JSON.parse(conexionMotor.responseText);
+					respuesta = JSON.parse(conexionMotor.responseText);
 					callback(respuesta);
 				}else{
-					let respuesta = JSON.parse(conexionMotor.responseText);
+					respuesta = JSON.parse(conexionMotor.responseText);
 					if(respuesta.success === 1){
 		            	callback(respuesta);
 					}else{
@@ -181,12 +180,12 @@ var Motor = function(entidadActiva){
 		//le digo que la peticion fue por manejarOperacion
 		peticion.manejarOperacion = true;
 		this.Operacion(peticion,callback);
-	}
+	};
 	this.guardar = function(entidad,info,callback){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
-		        let respuesta = JSON.parse(conexionMotor.responseText);
+		        var respuesta = JSON.parse(conexionMotor.responseText);
 				if(respuesta.success === 1){
 	            	callback(respuesta);
 				}else{

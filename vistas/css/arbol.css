@@ -3,6 +3,15 @@ div[hoja]{
 	margin: 0px 0px 0px 10px;
 	height: 30px;
 	width: calc(100% - 10px);
+	cursor: pointer;
+}
+div[hoja]:hover > div[peciolo],
+div[hoja]:hover > div[titulo-hoja]{
+	background-color: #607D8B;
+	color:white;
+}
+div[hoja]:first-of-type(div[hoja]){
+	background-color: black;
 }
 div[hoja].abierto{
 	height: auto;
@@ -17,10 +26,11 @@ div[hoja] div[titulo-hoja]{
 	float: left;
 	padding: 4px 0px 4px 0px;
 }
-div[hoja] div[titulo-hoja].asignado,
-div[hoja] div[peciolo].asignado{
+div[hoja] div[peciolo].asignado button{
 	background-color: #4CAF50;
-	color:white;
+}
+div[hoja] div[peciolo].asignado button.arrow_down_gray{
+	background-image: url('../imagenes/arrow_down_white.png');
 }
 div[hoja] div[peciolo]{
 	transition: all 0.3s linear;

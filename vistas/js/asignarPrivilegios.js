@@ -1,6 +1,6 @@
 //se usa el objeto arbol del archivo arbolRecursivo.js
-var Privilegios = function(){
-	this.privilegios = [];
+var ArbolTemp = function(){
+	this.hojas = [];
 
 	this.validarPadre = function(privilegio) {
 		if(privilegio.padre === null){
@@ -17,18 +17,29 @@ var Privilegios = function(){
 			return false;
 		}
 	};
+	this.buscarHijos = function(hoja){
+		var hijos = [];
+		for (var i = 0; i < this.hojas.length; i++) {
+			if(this.hojas[i].atributos.padre == hoja.atributos.codigo){
+				hijos.push(this.hojas[i]);
+				hijos = hijos.concat(this.buscarHijos(this.hojas[i]));
+			}
+		}
+		return hijos;
+	};
 	this.buscar = function(codigo){
-		for (var i = 0; i < this.privilegios.length; i++) {
-			if(this.privilegios[i].codigo == codigo){
-				return this.privilegios[i];
+		for (var i = 0; i < this.hojas.length; i++) {
+			if(this.hojas[i].atributos.codigo == codigo){
+				return this.hojas[i];
 			}
 		}
 		return false;
 	};
-	this.agregar = function(privilegio){
-		if(this.validarPadre(privilegio)){
-			if(!this.buscar(privilegio.codigo)){
-				this.privilegios.push(privilegio);
+	this.agregar = function(hoja){
+		if(this.validarPadre(hoja.atributos)){
+			if(!this.buscar(hoja.atributos.codigo)){
+				this.hojas.push(hoja);
+				hoja.peciolo.nodo.classList.toggle('asignado');
 				return true;
 			}else{
 				UI.agregarToasts({
@@ -39,21 +50,47 @@ var Privilegios = function(){
 		}
 	};
 	this.remover = function(codigo){
-		var privilegio = this.buscar(codigo);
-		this.privilegios.splice(this.privilegios.indexOf(privilegio),1);
-		return true;
+		var hoja = this.buscar(codigo);
+		if(hoja){
+			var hijos = this.buscarHijos(hoja);
+			if(hijos){
+				for(var x = 0;x < hijos.length;x++){
+					this.remover(hijos[x].atributos.codigo);
+				}
+			}
+			hoja.peciolo.nodo.classList.toggle('asignado');
+			this.hojas.splice(this.hojas.indexOf(hoja),1);
+			return true;
+		}
 	};
-	this.cambio = function(privilegio){
+	this.cambio = function(hoja){
 		var resultado;
-		if(this.buscar(privilegio.codigo)){
-			resultado = this.remover(privilegio.codigo);
+		if(this.buscar(hoja.atributos.codigo)){
+			resultado = this.remover(hoja.atributos.codigo);
+			if(resultado){
+				resultado = 'removida';
+			}
 		}else{
-			resultado = this.agregar(privilegio);
+			resultado = this.agregar(hoja);
+			if(resultado){
+				resultado = 'agregada';
+			}
 		}
 		return resultado;
 	};
+	this.exportarArreglo = function(){
+		var arreglo = [];
+		for(var i = 0; i < this.hojas.length;i++){
+			arreglo.push(this.hojas[i].atributos);
+		}
+		UI.agregarToasts({
+			texto: 'Exportacion realizada con exito',
+			tipo: 'web-arriba-derecha'
+		});
+		return arreglo;
+	};
 };
-
+//--------------------------Fin Objeto Privilegios ---------------------------
 function construirUI(){
 	var contenedor = document.querySelector('div[contenedor]');
 	var venCarga = UI.agregarVentana({
@@ -100,6 +137,10 @@ function costruccionInicial(respuesta){
 				{
 					nombre:'arbol',
 					html:'aqui va el arbol'
+				},{
+					nombre:'operaciones',
+					html: '<button class="mat-text-but">Guardar cambios</button>'+
+								'<button class="mat-text-but">Cancelar</button>'
 				}
 			]
 		},document.querySelector('div[contenedor]'));
@@ -125,13 +166,10 @@ function costruccionInicial(respuesta){
 		torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
 			var arbol = new Arbol({
 				nodos: respuesta.registros,
-				contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo,
 				hojaOnClick: function asignar(hoja){
-					if(privilegiosTemp.cambio(hoja.atributos)){
-						hoja.titulo.nodo.classList.toggle('asignado');
-						hoja.titulo.nodo.previousSibling.classList.toggle('asignado');
-					}
-				}
+					var accion = arbolTemp.cambio(hoja);
+				},
+				contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo
 			});
 		});
 	}else{
@@ -141,64 +179,73 @@ function costruccionInicial(respuesta){
 	var btnNuevo = document.querySelector('button[btnnuevo]');
 	btnNuevo.onclick = construirFormulario;
 }
-//----------------------------------- Formulario de Privilegios -----------------------
+//----------------------------------- Formulario de Componente -----------------------
 function construirFormulario(){
-	var formularioPrivilegios = UI.agregarVentana({
-		tipo: 'form-lat',
-		alto: '400',
-		nombre: 'formularioPrivilegios',
-		titulo:{
-			html: 'Privilegios',
-			tipo:'inverso'
-		},sectores:[
-			{
-				nombre:'campos',
-				alto: '350',
-				campos:[
-					{
-						tipo : 'campoDeTexto',
-						parametros : {titulo:'Titulo',nombre:'titulo',tipo:'simple',eslabon:'area',usaToolTip:true}
-					},{
-						tipo: 'comboBox',
-						parametros : {
-							nombre:'tipoComponente',
-							titulo:'Tipos de Componente',
-							eslabon : 'area',
-							opciones: [
-								{codigo:'S',nombre:'Sistemas'},
-								{codigo:'F',nombre:'Formulario'},
-								{codigo:'R',nombre:'Reporte'},
-								{codigo:'M',nombre:'Modulo'}
-							]
-						}
-					},{
-						tipo : 'campoDeTexto',
-						parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
+	UI.elementos.botonera.buscarBoton('abrir').nodo.click();
+	UI.crearVentanaModal({
+		contenido: 'ancho',
+		cabecera:'Nuevo Componente',
+		cuerpo:{
+			alto:300,
+			campos:[
+				{
+					tipo : 'campoDeTexto',
+					parametros : {titulo:'Titulo',nombre:'titulo',tipo:'simple',eslabon:'simple',usaToolTip:true}
+				},{
+					tipo : 'campoDeTexto',
+					parametros : {titulo:'Color',nombre:'color',tipo:'simple',eslabon:'simple',usaToolTip:false}
+				},{
+					tipo : 'campoDeTexto',
+					parametros : {titulo:'Enlace',nombre:'enlace',tipo:'simple',eslabon:'simple',usaToolTip:false}
+				},{
+					tipo: 'comboBox',
+					parametros : {
+						nombre:'tipoComponente',
+						titulo:'Tipos de Componente',
+						eslabon : 'area',
+						opciones: [
+							{codigo:'S',nombre:'Sistemas'},
+							{codigo:'F',nombre:'Formulario'},
+							{codigo:'R',nombre:'Reporte'},
+							{codigo:'M',nombre:'Modulo'}
+						]
 					}
-				]
-			}
-		]
-	},document.querySelector('div[contenedor]'));
-
-	formularioPrivilegios.nodo.classList.add('not-first');
-	//cambios botonera
-	UI.elementos.botonera.agregarBotones(['guardar','cancelar']);
-	UI.elementos.botonera.quitarBoton('nuevo');
-	//debido al tiempo que tarda la transicion de entrada de los botones le coloco un tiempo de 20 extra por cada boton
-
-	setTimeout(function(){
-		UI.elementos.botonera.buscarBoton('guardar').nodo.onclick = guardarPrivilegios;
-		UI.elementos.botonera.buscarBoton('cancelar').nodo.onclick = cancelarPrivilegios;
-	},80);
-
+				},{
+					tipo : 'campoDeTexto',
+					parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
+				}
+			]
+		},
+		pie:{
+			html: '<section modalButtons>'+
+						'<button type="button" cancelar </button>'+
+						'<button type="button" guardar </button>'+
+					'</section>'
+		}
+	});
+	var cerrar = document.querySelector('button[cancelar]');
+	cerrar.onclick = function cerrarVentanta(){
+		UI.elementos.modalWindow.eliminarUltimaCapa();
+	};
+	var guardar = document.querySelector('button[guardar]');
+	guardar.onclick = guardarComponente;
 }
-function guardarPrivilegios(){
-	console.log('entro');
-}
-
-function cancelarPrivilegios(){
-	UI.quitarVentana('formularioPrivilegios');
-	UI.elementos.botonera.quitarBoton('cancelar');
-	UI.elementos.botonera.quitarBoton('guardar');
-	UI.elementos.botonera.agregarBoton('nuevo').nodo.onclick = construirFormulario;
+function guardarComponente(){
+	var campos = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.campos;
+	var data = [];
+	for (var i = 0; i < campos.length; i++) {
+		if(campos[i].captarValor()){
+			data.push({nombre:campos[i].captarNombre(),valor:campos[i].captarValor()});
+		}
+	}
+	if(data.length){
+		torque.guardar('componente',data,function guardar(respuesta){
+			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+		});
+	}else{
+		UI.agregarToasts({
+			texto:'debe llenar el formulario para guardar',
+			tipo: 'web-arriba-derecha-alto'
+		});
+	}
 }

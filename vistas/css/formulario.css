@@ -388,12 +388,12 @@ div.group label {
 
 /* active state */
 
-div.group input:focus~ label, div[capaForm] div.group input:valid~ label {
+div.group input:focus~ label, div.group input:valid~ label {
     top: -20px;
     font-size: 12px;
     color: #4CAF50;
 }
-div.group textarea:focus~ label, div[capaForm] div.group textarea:valid~ label {
+div.group textarea:focus~ label, div.group textarea:valid~ label {
     top: -20px;
     font-size: 12px;
     color: #4CAF50;
@@ -767,6 +767,12 @@ div[mat-window] section[sector] {
     width: 100%;
     min-height: 40px;
     border-bottom: 1px solid rgba(160, 160, 160, 0.5);
+}
+div[mat-window] section[operaciones] {
+    height: 50px;
+    padding-top: 15px;
+    padding-right: 15px;
+    border-top: 1px solid rgba(160, 160, 160, 0.5);
 }
 
 /*-----------------------------------Media Query-------------------------------*/

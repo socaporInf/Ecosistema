@@ -32,12 +32,12 @@ var Arbol = function(atributos){
 					this.parentNode.parentNode.classList.toggle('abierto');
 					this.classList.toggle('activo');
 				};
-
 				nodo.appendChild(boton);
 				this.nodo = nodo;
 			};
 			this.removerBoton = function(){
-				this.nodo.innerHTML='';
+				var button = this.nodo.querySelector('button');
+				button.classList.remove('arrow_down_gray');
 			};
 			this.construirNodo();
 		};
@@ -94,7 +94,8 @@ var Arbol = function(atributos){
 			codigo: rama.codigo,
 			titulo: rama.titulo,
 			padre: rama.padre,
-			tit_padre: rama.tit_padre
+			tit_padre: rama.tit_padre,
+			tipo: rama.tipo
 		});
 		this.asignarOnClickHoja(hoja);
 		if(rama.hijos.length){

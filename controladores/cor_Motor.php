@@ -12,7 +12,7 @@ switch ($la_Form['entidad']) {
 		$lobj_Entidad = new cls_Empresa;
 		$lobj_Entidad->setPeticion($la_Form);
 		$respuesta = $lobj_Entidad->gestionar();
-		break;	
+		break;
 //--------------------------seguridad-----------------------------------------------
 	case 'rol':
 		include_once('../clases/cls_Rol.php');
@@ -20,10 +20,17 @@ switch ($la_Form['entidad']) {
 		$lobj_Entidad->setPeticion($la_Form);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
-	
+
 	case 'privilegio':
-		include_once('../clases/cls_AsignarPrivilegios.php');
-		$lobj_Entidad = new cls_AsignarPrivilegios;
+		include_once('../clases/cls_Privilegio.php');
+		$lobj_Entidad = new cls_Privilegio;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
+	case 'componente':
+		include_once('../clases/cls_Componente.php');
+		$lobj_Entidad = new cls_Privilegio;
 		$lobj_Entidad->setPeticion($la_Form);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;

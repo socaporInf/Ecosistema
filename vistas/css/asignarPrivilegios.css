@@ -8,7 +8,7 @@ l{
 }
 
 div[mat-window].arbol{
-  width: calc(40% - 50px);
+  width: calc(80% + 50px);
   float:left;
 }
 
