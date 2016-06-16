@@ -7,6 +7,8 @@ combobox(info): {
     construir()
     agregarOpciones()  ---- agrega todas los opciones pasadas como parametro
     agregarOpcion(opcion) - agrega la opcion al combo
+    captarValor()
+    captarNombre()
 }
 
 ejemplo de campo combo box
