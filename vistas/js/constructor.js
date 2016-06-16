@@ -270,7 +270,6 @@ var Menu = function(){
 			UI.elementos.menu.nodo.appendChild(this.nodo);
 
 			//se arma la primera capa
-
 			var capaNueva;
 			for(var x=0;x<hijos.length;x++){
 				//verifico el url del nodo u hoja
@@ -283,10 +282,12 @@ var Menu = function(){
 				};
 
 				this.agregarElemento(data);
-				//creo las capas
-				capaNueva = new SubCapa(hijos[x],this);
-				//agrego las capas al padre
-				this.hijos.push(capaNueva);
+				//creo las capas de aquellas que su URL sea continuar 
+				if(hijos[x].URL.substring(0,1)==='>'){
+					capaNueva = new SubCapa(hijos[x],this);
+					//agrego las capas al padre
+					this.hijos.push(capaNueva);
+				}
 			}
 
 		};

@@ -68,14 +68,19 @@ button.act {
     float: right;
 }
 button.mat-text-but {
-    border: transparent;
+    border: 1px solid transparent;
     background-color: transparent;
     float: right;
-    transition: all 0.3s linear;
-    padding: 2px;
+    transition: all 0.5s linear;
+    padding: 8px;
     margin-right: 20px;
     font-weight: bold;
     color: #607D8B;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+button.mat-text-but:hover {
+    border: 1px solid #607D8B;
 }
 /*----------------------------------------Capa Formulario-------------------------------*/
 div[capaForm] {
