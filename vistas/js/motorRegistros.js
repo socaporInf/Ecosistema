@@ -38,7 +38,7 @@ var Sesion = function(){
 				}
 		  }
 		};
-		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		conexionAcc.open('POST','../controladores/cor_validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="Operacion="+encodeURIComponent("cerrarSesion");
 		conexionAcc.send(envio);
@@ -47,6 +47,19 @@ var Sesion = function(){
 		console.log('Sesion Activa:');
 		console.log('Nombre de Usuario: '+this.nombre);
 		console.log('Estado de la Sesion: '+this.estado);
+	};
+	this.obtenerLlaves = function(){
+		conexionAcc=crearXMLHttpRequest();
+		conexionAcc.onreadystatechange = function(){
+			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
+				var respuesta=JSON.parse(conexionAcc.responseText);
+				console.log(respuesta);
+		  }
+		};
+		conexionAcc.open('POST','../controladores/cor_validar.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("obtenerLlaves");
+		conexionAcc.send(envio);
 	};
 	this.armarPrivilegios =function(privilegios){
 		//rellenar la variable this.privilegios
@@ -91,7 +104,7 @@ var Motor = function(entidadActiva){
 					torque.registrosEntAct=respuesta.registros;
 				}else{
 					UI.crearMensaje(respuesta);
-					UI.elementos.cuadroCarga.terminarCarga();
+					UI.buscarCuadroCarga('iniciarSession').terminarCarga();
 				}
 			});
 		}
@@ -144,7 +157,7 @@ var Motor = function(entidadActiva){
 				var respuesta;
 				//si el manejar carga es verdadero culmino la carga
 				if(peticion.manejarOperacion === true){
-					UI.elementos.cuadroCarga.terminarCarga();
+					UI.buscarCuadroCarga(peticion.nombreCuadro).terminarCarga();
 					respuesta = JSON.parse(conexionMotor.responseText);
 					callback(respuesta);
 				}else{
@@ -172,13 +185,13 @@ var Motor = function(entidadActiva){
 
 	this.manejarOperacion = function(peticion,cuadroCarga,callback){
 		//------------Cuadro Carga-------------------------------
-			cuadroCarga.nodo.innerHTML='';
-			var cuadroDeCarga = UI.crearCuadroDeCarga(cuadroCarga.cuadro,cuadroCarga.nodo);
+			cuadroCarga.contenedor.innerHTML='';
+			var cuadroDeCarga = UI.crearCuadroDeCarga(cuadroCarga.cuadro,cuadroCarga.contenedor);
 			cuadroDeCarga.style.marginTop = '80px';
 		//-----------------------------------------------------------
-
 		//le digo que la peticion fue por manejarOperacion
 		peticion.manejarOperacion = true;
+		peticion.nombreCuadro = cuadroCarga.cuadro.nombre;
 		this.Operacion(peticion,callback);
 	};
 	this.guardar = function(entidad,info,callback){
