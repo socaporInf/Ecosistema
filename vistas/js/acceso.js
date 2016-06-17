@@ -86,6 +86,7 @@ function iniciarSession(nodo){
 	conexionAcc.send(envio);
 	var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 	var info={
+		nombre: 'iniciarSession',
 		mensaje:'Iniciar Sesion'
 	};
 	capaContenido.partes.cuerpo.nodo.innerHTML='';

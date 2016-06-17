@@ -282,7 +282,7 @@ var Menu = function(){
 				};
 
 				this.agregarElemento(data);
-				//creo las capas de aquellas que su URL sea continuar 
+				//creo las capas de aquellas que su URL sea continuar
 				if(hijos[x].URL.substring(0,1)==='>'){
 					capaNueva = new SubCapa(hijos[x],this);
 					//agrego las capas al padre
@@ -579,6 +579,7 @@ var Formulario = function(entidad){
 				contenedor.innerHTML = '';
 				//------------Cuadro Carga-------------------------------
 				var infoCuadro = {
+					nombre: 'guardarEdicion',
 					mensaje:'Guardando cambios',
 					contenedor:contenedor,
 				};
@@ -587,7 +588,7 @@ var Formulario = function(entidad){
 				//------------Cuadro Carga-------------------------------
 
 				torque.Operacion(peticion,function(respuesta){
-					UI.elementos.cuadroCarga.culminarCarga(respuesta,function(respuesta){
+					UI.buscarCuadroCarga('guardarEdicion').culminarCarga(respuesta,function(respuesta){
 						if(respuesta.success===0){
 							var ventana = {
 								tipo : 'error',
@@ -1034,12 +1035,13 @@ var Formulario = function(entidad){
 			var ventanaForm=this;
 			//------------Cuadro Carga-------------------------------
 			var infoCuadro = {
+				nombre: 'cargaVentanaList',
 				mensaje:'Buscando',
 				contenedor:this.nodo,
 			};
 			var cuadroDeCarga=UI.iniciarCarga(infoCuadro,function(){
 				if(torque.registrosEntAct!==null){
-					UI.elementos.cuadroCarga.terminarCarga();
+					UI.buscarCuadroCarga('cargaVentanaList').terminarCarga();
 					ventanaForm.cargarRegistros(torque.registrosEntAct);
 				}
 			});
@@ -1558,7 +1560,9 @@ var CuadroCarga = function(info,callback){
 	//manejo de interfaz
 	this.contenedor=info.contenedor;
 	this.tipo=info.tipo || 'carga';
+	this.clases=info.clases || [];
 	this.nodo = null;
+	this.nombre = info.nombre || 'unico';
 
 	//maenjo de carga
 	this.intervalID = null;
@@ -1591,23 +1595,46 @@ var CuadroCarga = function(info,callback){
 		}
 		this.estado = 'iniciado';
 		this.nodo = cuadro;
+		this.manejoDeClases();
+	};
+	this.manejoDeClases = function(){
+		this.eliminarClasesRepetidas();
+		for (var i = 0; i < this.clases.length; i++) {
+			this.nodo.classList.add(this.clases[i]);
+		}
+	};
+	this.eliminarClasesRepetidas = function(){
+		var clasesValidadas = [];
+		var existe;
+		for (var i = 0; i < this.clases.length; i++) {
+			existe = false;
+			for (var x = 0; x < clasesValidadas.length; x++) {
+				if(clasesValidadas[x]==this.clases[i]){
+					existe = true;
+				}
+			}
+			if(!existe){
+				clasesValidadas.push(this.clases[i]);
+			}
+		}
+		this.clases = clasesValidadas;
 	};
 	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
-	this.manejarCarga = function(){
+	this.manejarCarga = function(nombre){
 		console.log('comienza manejo de carga');
-		UI.elementos.cuadroCarga.contEspera=0;
+		UI.buscarCuadroCarga(nombre).contEspera=0;
 		this.intervalID=setInterval(function(){
-			var callback = UI.elementos.cuadroCarga.callback;
-			UI.elementos.cuadroCarga.contEspera++;
+			var callback = UI.buscarCuadroCarga(nombre).callback;
+			UI.buscarCuadroCarga(nombre).contEspera++;
 			if(callback!==null){
 				callback();
 			}
-			if(UI.elementos.cuadroCarga!==undefined){
+			if(!UI.buscarCuadroCarga(nombre)){
 
-				if(UI.elementos.cuadroCarga.contEspera>=500){
+				if(UI.buscarCuadroCarga(nombre).contEspera>=500){
 					//cuando el tiempo de espera es exedido muestro el mensaje
 					console.log('tiempo de espera exedido');
-					clearInterval(UI.elementos.cuadroCarga.intervalID);
+					clearInterval(UI.buscarCuadroCarga(nombre).intervalID);
 					var ventana = {
 						tipo:'error',
 						bloqueo:true,
@@ -1633,16 +1660,18 @@ var CuadroCarga = function(info,callback){
 		var circulo = this.nodo.getElementsByTagName('circle')[0];
 		circulo.parentNode.removeChild(circulo);
 		titulo.textContent = respuesta.mensaje;
+		UI.removerCuadroCarga(this.nombre);
 		if(callback!==null){
 			callback(respuesta);
 		}
 	};
 	//esta funcion mata el intervalo al ejecultarce el callback de dicha carga
 	this.terminarCarga = function(){
+		var cuadro = this;
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
-		UI.elementos.cuadroCarga.nodo.parentNode.removeChild(UI.elementos.cuadroCarga.nodo);
-		UI.elementos.cuadroCarga=undefined;
+		cuadro.nodo.parentNode.removeChild(cuadro.nodo);
+		UI.removerCuadroCarga(cuadro.nombre);
 	};
 	this.construirNodo();
 };
@@ -1680,7 +1709,7 @@ var Arquitecto = function(){
 		handleMediaChange(mql);
 		document.body.onmousedown=this.activarEfecto;
 	};
-
+//------------------------- Manejo de ventanas Modales ----------------------------
 	this.crearVentanaModal = function(data){
 		//creo la venta modal
 		if(!this.elementos.modalWindow){
@@ -1699,24 +1728,44 @@ var Arquitecto = function(){
 		};
 		this.crearVentanaModal(ventana);
 	};
-
+//------------------------- Manejo Cuadros de carga -------------------------------
+	this.agregarCuadroCarga = function(cuadroCarga){
+		if(!this.elementos.cuadroCarga){
+			this.elementos.cuadroCarga = [];
+		}
+		this.elementos.cuadroCarga.push(cuadroCarga);
+	};
+	this.removerCuadroCarga = function(nombre){
+		var cuadroCarga = this.buscarCuadroCarga(nombre);
+		this.elementos.cuadroCarga.splice(this.elementos.cuadroCarga.indexOf(cuadroCarga),1);
+	};
+	this.buscarCuadroCarga = function(nombre){
+		if(this.elementos.cuadroCarga){
+			for (var i = 0; i < this.elementos.cuadroCarga.length; i++){
+				if(this.elementos.cuadroCarga[i].nombre === nombre){
+					return this.elementos.cuadroCarga[i];
+				}
+			}
+			console.log('cuadroCarga '+nombre+' no existe');
+			return false;
+		}
+	};
+ 	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
+	this.iniciarCarga = function(info,callback){
+		console.log('inicio carga');
+		cuadroCarga = new CuadroCarga(info,callback);
+		this.agregarCuadroCarga(cuadroCarga);
+		cuadroCarga.manejarCarga(this.nombre);
+		return cuadroCarga.nodo;
+	};
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
 	this.crearCuadroDeCarga = function(info,contenedor){
 		info.contenedor = contenedor;
 		cuadroCarga = new CuadroCarga(info,null);
-		this.elementos.cuadroCarga = cuadroCarga;
+		this.agregarCuadroCarga(cuadroCarga);
 		return cuadroCarga.nodo;
 	};
-
-	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
-	this.iniciarCarga = function(info,callback){
-		console.log('inicio carga');
-		cuadroCarga = new CuadroCarga(info,callback);
-		this.elementos.cuadroCarga=cuadroCarga;
-		this.elementos.cuadroCarga.manejarCarga();
-		return cuadroCarga.nodo;
-	};
-
+//------------------------- Manejo de ventanas ------------------------------------
 	this.agregarVentana = function(ventana,contenedor){
 		if(!this.elementos.ventanas){
 			this.elementos.ventanas = [];
@@ -1755,7 +1804,7 @@ var Arquitecto = function(){
 			this.elementos.ventanas.splice(this.elementos.ventanas.indexOf(ventana),1);
 		}
 	};
-
+//------------------------- Manejo de Campos en interfaz ----------------------------
 	//funcion para agregar de forma dinamica campos a la interfaz
 	this.agregarCampo = function(campo,contenedor){
 		var campoNuevo;
@@ -1785,6 +1834,8 @@ var Arquitecto = function(){
 			this.agregarCampo(campos[x],contenedor);
 		}
 	};
+
+	//------------------------- Manejo de toast ----------------------------
 	//agrega mensaje pequeño
 	this.agregarToasts = function(atributos){
 		if(!this.elementos.toasts){

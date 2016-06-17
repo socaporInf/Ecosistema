@@ -6,21 +6,35 @@ function construirUI(){
 	var notificaciones = UI.agregarLista({
 		titulo: 'notificaciones',
 		clase: 'notificaciones',
-		elementos : [
-			{codigo: 1,nombre:'carga realizada con exito',codigo_tipo:1,cuerpo:'carga de listado de pago a cañicultores realizado de manera exitosa',prioridad: 'N',fecha_hora:"2016-06-14 07:57:59.888"},
-			{codigo: 2,nombre:'error en validacion CAPCA',codigo_tipo:1,cuerpo:'error 103: fechas no concuerdan en cargar 2016-06-14',prioridad: 'E',fecha_hora:"2016-06-14 07:57:59.888"},
-			{codigo: 3,nombre:'listado de validacion en espera de Autorizacion ',codigo_tipo:1,cuerpo:' listado de validacion de cañicultores de fecha:2016-06-14 en espera de Autorizacion',prioridad: 'A',fecha_hora:"2016-06-14 07:57:59.888"},
-			{codigo: 4,nombre:'notificacion 4',codigo_tipo:1,cuerpo:'texto4',prioridad: 'B',fecha_hora:"2016-06-14 07:57:59.888"}
-		],
 		carga: {
-			uso:false
+			uso:true,
+			peticion:{
+				entidad: 'notificacion',
+				operacion: 'buscarNotificacionesUsu'
+			},
+			espera:{
+				cuadro:{
+					nombre: 'notificaciones',
+					mensaje: 'Cargando notificaciones'
+				}
+			},
+			respuesta: function gestionarNotificaciones() {
+				var slot = null;
+				var lista = UI.buscarVentana('notificaciones');
+				for(var x = 0; x < lista.Slots.length;x++){
+					slot = lista.Slots[x];
+					slot.nodo.setAttribute('prioridad',slot.atributos.prioridad);
+					slot.nodo.setAttribute('codigo_tipo',slot.atributos.codigo_tipo);
+					slot.nodo.setAttribute('nombre_tipo',slot.atributos.nombre_tipo);
+					slot.nodo.onclick = mostrarNoticia;
+				}
+			}
 		},
 		paginacion: {
 			uso:false
 		}
 	},secNot);
 	notificaciones.nodo.classList.add('not-margin');
-	gestionarNotificaciones();
 
 	//noticias-Cumpleañeros del mes
 	var noticias =  UI.agregarVentana({
@@ -58,18 +72,6 @@ function construirUI(){
 	cargarCalendario();
 }
 
-function gestionarNotificaciones(){
-	var slot = null;
-	var lista = UI.buscarVentana('notificaciones');
-	for(var x = 0; x < lista.Slots.length;x++){
-		slot = lista.Slots[x];
-		slot.nodo.setAttribute('prioridad',slot.atributos.prioridad);
-		slot.nodo.setAttribute('codigo_tipo',slot.atributos.codigo_tipo);
-		slot.nodo.setAttribute('nombre_tipo',slot.atributos.nombre_tipo);
-		slot.nodo.onclick = mostrarNoticia;
-	}
-}
-
 function mostrarNoticia(){
 	var codigo = this.id;
 	var slot = UI.buscarVentana('notificaciones').buscarSlot({codigo:codigo});
@@ -94,17 +96,24 @@ function mostrarNoticia(){
 }
 
 function cargarNoticias(contenedor){
-	var noticias = [
-		{titulo: 'Actualiadad',cuerpo: '',usuario: 'vmleon',tipo: 'A',color: '0097A7'},
-		{titulo: '13 de Junio',cuerpo: '',usuario: 'vmleon',tipo: 'E',color: '4CAF50'},
-		{titulo: 'Servicios',cuerpo: '',usuario: 'vmleon',tipo: 'S',color: '1976D2'},
-		{titulo: 'Complementarias',cuerpo: '',usuario: 'vmleon',tipo: 'C',color: '303F9F'},
-		{titulo: 'Venta de Huevos por nomina',cuerpo: '',usuario: 'vmleon',tipo: 'V',color: 'F57C00'}
-	];
-	for( var x = 0; x < noticias.length; x++){
-		var noticia = new NoticiaUI(noticias[x]);
-		contenedor.appendChild(noticia.nodo);
-	}
+	var peticion = {
+		entidad: 'noticia',
+		operacion: 'buscar'
+	};
+	var cuadroEspera = {
+		cuadro: {
+				nombre: 'noticias',
+				mensaje: 'Cargando Noticias'
+		},
+		contenedor: contenedor
+	};
+	torque.manejarOperacion(peticion,cuadroEspera,function cargarNoticiasBD(respuesta){
+		var noticias = respuesta.registros;
+		for( var x = 0; x < noticias.length; x++){
+			var noticia = new NoticiaUI(noticias[x]);
+			contenedor.appendChild(noticia.nodo);
+		}
+	});
 }
 
 function cargarCalendario(){

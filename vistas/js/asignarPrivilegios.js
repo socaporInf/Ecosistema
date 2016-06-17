@@ -107,7 +107,7 @@ function construirUI(){
 	};
 
 	var infoCuadroCarga = {
-		nodo: carga.nodo,
+		contenedor: carga.nodo,
 		cuadro:{
 			mensaje:'Cargando'
 		}
@@ -126,30 +126,7 @@ function costruccionInicial(respuesta){
 			tipo:'basico'
 		});
 
-		var formularioArbol = UI.agregarVentana({
-			tipo: 'arbol',
-			nombre: 'formularioArbol',
-			titulo:{
-				html: 'Asignacion de Privilegios',
-				tipo: 'inverso'
-			},
-			sectores:[
-				{
-					nombre:'arbol',
-					html:'aqui va el arbol'
-				},{
-					nombre:'operaciones',
-					html: '<button class="mat-text-but">Guardar cambios</button>'+
-								'<button class="mat-text-but">Cancelar</button>'
-				}
-			]
-		},document.querySelector('div[contenedor]'));
-
-		formularioArbol.nodo.classList.add('not-first');
-
-		//formulario arbol
-		formularioArbol.buscarSector('arbol').nodo.style.overflow='auto';
-		formularioArbol.buscarSector('arbol').nodo.style.minHeight='100px';
+		var formularioArbol = armarVentanaArbol();
 		var Peticion = {
 			entidad: 'privilegio',
 			operacion: 'buscarArbol',
@@ -157,7 +134,7 @@ function costruccionInicial(respuesta){
 		};
 
 		var infoCuadroCarga = {
-			nodo: formularioArbol.buscarSector('arbol').nodo,
+			contenedor: formularioArbol.buscarSector('arbol').nodo,
 			cuadro:{
 				mensaje:'Cargando Arbol'
 			}
@@ -178,6 +155,41 @@ function costruccionInicial(respuesta){
 	//funcionamiento botones
 	var btnNuevo = document.querySelector('button[btnnuevo]');
 	btnNuevo.onclick = construirFormulario;
+}
+//----------------------------------- ventana Arbol ----------------------------------
+function armarVentanaArbol(){
+	var formularioArbol = UI.agregarVentana({
+		tipo: 'arbol',
+		nombre: 'formularioArbol',
+		titulo:{
+			html: 'Asignacion de Privilegios',
+			tipo: 'inverso'
+		},
+		sectores:[
+			{
+				nombre:'arbol',
+				html:'aqui va el arbol'
+			},{
+				nombre:'operaciones',
+				html: '<button class="mat-text-but" guardar>Guardar cambios</button>'+
+							'<button class="mat-text-but" limpiar>Limpiar</button>'
+			}
+		]
+	},document.querySelector('div[contenedor]'));
+
+	formularioArbol.nodo.classList.add('not-first');
+	formularioArbol.buscarSector('arbol').nodo.style.overflow='auto';
+	formularioArbol.buscarSector('arbol').nodo.style.minHeight='100px';
+
+	var botonGuardar = formularioArbol.nodo.querySelector('button[guardar]');
+	var botonLimpiar = formularioArbol.nodo.querySelector('button[limpiar]');
+	botonGuardar.onclick = function guardarPrivilegios(){
+		console.log(arbolTemp.exportarArreglo());
+	};
+	botonLimpiar.onclick = function limpiar(){
+		arbolTemp.buscar(0).titulo.nodo.click();
+	};
+	return formularioArbol;
 }
 //----------------------------------- Formulario de Componente -----------------------
 function construirFormulario(){
