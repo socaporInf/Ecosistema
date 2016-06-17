@@ -5,4 +5,7 @@ campodetexto(info): {
 
   Metodos
     construir()
+    captarValor()
+    captarNombre()
+    captarTipo() --- retorna si el campo de texto es un input o un textarea 
 }

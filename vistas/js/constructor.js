@@ -6,14 +6,10 @@ var handleMediaChange = function (mediaQueryList) {
 			if(formulario.ventanaForm.nodo!==undefined){
 				if (mediaQueryList.matches) {
 			    	//cambio UI Ventana Form
-			        //formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(85%)':null;
-			        //formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'50px':null;
 			        formulario.ventanaList.cambiarTextoSlots('completa');
 			    }
 			    else {
 			    	//cambio UI Ventana Form
-			        //formulario.ventanaForm.nodo.style.width=(formulario.ventanaForm)?'calc(100% - 450px)':null;
-			        //formulario.ventanaForm.nodo.style.marginLeft=(formulario.ventanaForm)?'30px':null;
 			        formulario.ventanaList.cambiarTextoSlots('mediaQuery');
 			    }
 			}else{
@@ -64,9 +60,15 @@ var Botonera = function(estructura){
 				case 'redactar':
 					nodo.setAttribute('btnRedactar','');
 				break;
+				case 'cancelar':
+					nodo.setAttribute('btnCancelar','');
+				break;
 				case 'guardar':
 					nodo.setAttribute('btnGuardar','');
-					nodo.onclick=guardar;
+					//configuracion por defecto para cuando existe el formulario es decir que es un maestro
+					if(UI.elementos.formulario!=='noPosee'){
+						nodo.onclick=UI.elementos.formulario.ventanaForm.validar;
+					}
 				break;
 			}
 			this.nodo = nodo;
@@ -88,19 +90,21 @@ var Botonera = function(estructura){
 		contenedor.parentNode.insertBefore(nodo,contenedor.nextSibling);
 		this.nodo = nodo;
 		this.inicializarBotones();
-		//boton buscar
-		this.buscarBoton('nuevo').nodo.onclick=function(){
-			console.log('presiono Nuevo');
-			var data = {
-				tipo:'nuevo'
-			};
-			var formulario = UI.elementos.formulario;
-			formulario.construirUI(data);
-		};
 		//boton nuevo
-		this.buscarBoton('buscar').nodo.onclick=function(){
-			UI.elementos.formulario.ventanaList.nodo.firstChild.getElementsByTagName('button')[1].click();
-		};
+		if(UI.elementos.formulario!=='noPosee'){
+			this.buscarBoton('nuevo').nodo.onclick=function(){
+				console.log('presiono Nuevo');
+				var data = {
+					tipo:'nuevo'
+				};
+				var formulario = UI.elementos.formulario;
+				formulario.construirUI(data);
+			};
+			//boton buscar
+			this.buscarBoton('buscar').nodo.onclick=function(){
+				UI.elementos.formulario.ventanaList.nodo.firstChild.getElementsByTagName('button')[1].click();
+			};
+		}
 	};
 	this.inicializarBotones = function(){
 		var botones = this.estructura;
@@ -120,7 +124,7 @@ var Botonera = function(estructura){
 		}
 		if(!existe){
 
-			var boton = new Boton(tipo);
+			boton = new Boton(tipo);
 			botonera.appendChild(boton.nodo);
 			//esta parte es solo para cuando se agrega un boton en un momento posterior a la inicializacion
 			if(this.buscarBoton('abrir')!=-1){
@@ -133,7 +137,20 @@ var Botonera = function(estructura){
 			}
 			this.botones.push(boton);
 		}
+		return boton;
 	};
+	this.agregarBotones = function(botones){
+		var tiempo = 20;
+		for(var x = 0; x < botones.length; x++){
+			espera(x,tiempo,botones);
+			tiempo+=20;
+		}
+	};
+	function espera(x,tiempo,botones){
+		setTimeout(function(){
+			UI.elementos.botonera.agregarBoton(botones[x]);
+		},tiempo);
+	}
 	this.agregarEfectos = function(){
 		var botones = this.botones;
 		if(botones.length>1){
@@ -154,9 +171,9 @@ var Botonera = function(estructura){
 					}else{
 						this.classList.toggle('apertura');
 						this.setAttribute('estado','oculto');
-						for(var x = 0; x < botones.length; x++){
-							if(botones[x].tipo!='abrir'){
-								botones[x].nodo.style.top = 0+'px';
+						for(var i = 0; i < botones.length; i++){
+							if(botones[i].tipo!='abrir'){
+								botones[i].nodo.style.top = 0+'px';
 							}
 						}
 					}
@@ -253,7 +270,6 @@ var Menu = function(){
 			UI.elementos.menu.nodo.appendChild(this.nodo);
 
 			//se arma la primera capa
-
 			var capaNueva;
 			for(var x=0;x<hijos.length;x++){
 				//verifico el url del nodo u hoja
@@ -266,10 +282,12 @@ var Menu = function(){
 				};
 
 				this.agregarElemento(data);
-				//creo las capas
-				capaNueva = new SubCapa(hijos[x],this);
-				//agrego las capas al padre
-				this.hijos.push(capaNueva);
+				//creo las capas de aquellas que su URL sea continuar
+				if(hijos[x].URL.substring(0,1)==='>'){
+					capaNueva = new SubCapa(hijos[x],this);
+					//agrego las capas al padre
+					this.hijos.push(capaNueva);
+				}
 			}
 
 		};
@@ -294,7 +312,7 @@ var Menu = function(){
 	};
 	/*---------------------Fin Objeto SubCapa ---------------------------------*/
 	this.estado = 'porConstriur';
-	this.capaActiva;
+	this.capaActiva = null;
 	this.partes = [];
 	this.nodo = null;
 
@@ -451,7 +469,7 @@ var Formulario = function(entidad){
 		//este es el registro que se esta editando
 		this.registroId='';
 		//el registro despues de buscarlo
-		this.registroAct;
+		this.registroAct = null;
 
 		this.construirNodo = function(data){
 			var nodo = document.createElement('div');
@@ -512,9 +530,9 @@ var Formulario = function(entidad){
 		};
 
 		this.finEdicion = function(){
-			let formulario =  UI.elementos.formulario.ventanaForm;
-			let newReg = {};
-			let lista = Array.prototype.slice.call(formulario.formNode.childNodes);
+			var formulario =  UI.elementos.formulario.ventanaForm;
+			var newReg = {};
+			var lista = Array.prototype.slice.call(formulario.formNode.childNodes);
 			lista.splice(lista.length,0,formulario.titulo);
 			for(var x = 0; x < lista.length; x++){
 				lista[x].classList.remove('edicion');
@@ -523,10 +541,10 @@ var Formulario = function(entidad){
 				var contenedorEdit = lista[x].querySelector('div[cont]');
 
 				//campo donde se muestra el valor del campo pero de solo lectura
-				let display = contenedorEdit.getElementsByTagName('div')[0];
+				var display = contenedorEdit.getElementsByTagName('div')[0];
 
 				//campo donde se edita la informacion
-				let campoEdit = null;
+				var campoEdit = null;
 
 				if(lista[x].getAttribute('area')===null){
 					campoEdit = contenedorEdit.querySelector('input');
@@ -536,15 +554,15 @@ var Formulario = function(entidad){
 				display.textContent = campoEdit.value;
 
 				//creo el nuevo registro para posteriormete verificar cambios
-				let propiedad = campoEdit.name;
+				var propiedad = campoEdit.name;
 				newReg[propiedad] = campoEdit.value;
 			}
 			//verifico si hubo algun cambio y en que campo y armo la peticion
-			let oldReg = UI.elementos.formulario.ventanaForm.registroAct;
-			let peticion = { cambios:0, codigo:oldReg.codigo, operacion:'modificar', entidad:torque.entidadActiva};
-			for (let oldPropiedad in oldReg){
+			var oldReg = UI.elementos.formulario.ventanaForm.registroAct;
+			var peticion = { cambios:0, codigo:oldReg.codigo, operacion:'modificar', entidad:torque.entidadActiva};
+			for (var oldPropiedad in oldReg){
 
-				for(let newPropiedad in newReg){
+				for(var newPropiedad in newReg){
 
 					if(oldPropiedad.toLowerCase() == newPropiedad.toLowerCase()){
 
@@ -557,10 +575,11 @@ var Formulario = function(entidad){
 			}
 			//en caso de haber cambios envio a la base de datos y actualizo dicho cambio en el registro local
 			if(peticion.cambios!==0){
-				let contenedor = UI.elementos.formulario.ventanaForm.nodo;
+				var contenedor = UI.elementos.formulario.ventanaForm.nodo;
 				contenedor.innerHTML = '';
 				//------------Cuadro Carga-------------------------------
 				var infoCuadro = {
+					nombre: 'guardarEdicion',
 					mensaje:'Guardando cambios',
 					contenedor:contenedor,
 				};
@@ -569,13 +588,13 @@ var Formulario = function(entidad){
 				//------------Cuadro Carga-------------------------------
 
 				torque.Operacion(peticion,function(respuesta){
-					UI.elementos.cuadroCarga.culminarCarga(respuesta,function(respuesta){
+					UI.buscarCuadroCarga('guardarEdicion').culminarCarga(respuesta,function(respuesta){
 						if(respuesta.success===0){
-							let ventana = {
+							var ventana = {
 								tipo : 'error',
 								cabecera: 'Error interno del Servidor',
 								cuerpo: respuesta.mensaje,
-							}
+							};
 							UI.crearVentanaModal(ventana);
 							UI.elementos.formulario.ventanaForm.destruirNodo();
 						}else{
@@ -625,11 +644,11 @@ var Formulario = function(entidad){
 
 		this.crearEstructuraBasicaNuevo = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html='<section titulo>Nuevo '+titulo+'</section>\
-							<section sector>\
-								<form name ="formNuevo"></form>\
-							</section>\
-						</section>';
+				var html='<section titulo>Nuevo '+titulo+'</section>'+
+							'<section sector>'+
+								'<form name ="formNuevo"></form>'+
+							'</section>'+
+						'</section>';
 				this.nodo.innerHTML=html;
 				//asigno el nodo formulario de html
 				this.formNode = this.nodo.getElementsByTagName('form')[0];
@@ -639,38 +658,38 @@ var Formulario = function(entidad){
 
 		this.crearEstructuraBasicaModificar = function(titulo,altura){
 				this.nodo.style.height=altura+'px';
-				var html="<section titulo area>\
-								<div cont>\
-									<textarea  name='"+titulo.nombre+"'></textarea>\
-									<div display>"+titulo.valor+"</div>\
-								</div>\
-								<article update='campo'></article>\
-						</section>\
-						<section sector>\
-							<!-- Aqui va el contenido -->\
-							<form name ='formModificar'></form>\
-						</section>";
+				var html="<section titulo area>"+
+								"<div cont>"+
+									"<textarea  name='"+titulo.nombre+"'></textarea>"+
+									"<div display>"+titulo.valor+"</div>"+
+								"</div>"+
+								"<article update='campo'></article>"+
+						"</section>"+
+						"<section sector>"+
+							"<!-- Aqui va el contenido -->"+
+							"<form name ='formModificar'></form>"+
+						"</section>";
 				this.nodo.innerHTML=html;
 				//asigno el nodo formulario de html
 				this.formNode = this.nodo.getElementsByTagName('form')[0];
 				//asigo el titulo del formulario
 				this.titulo = this.nodo.querySelector('section[titulo]');
 				//agrego funcionamiento del boton editar
-				let article = this.titulo.querySelector('article[update]');
+				var article = this.titulo.querySelector('article[update]');
 				article.onclick=function(){
 					UI.elementos.formulario.ventanaForm.edicion();
-				}
+				};
 		};
 
 		this.agregarSectorOperaciones = function(){
-			let operaciones = document.createElement('section');
+			var operaciones = document.createElement('section');
 			operaciones.setAttribute('operaciones','');
 			operaciones.innerHTML='<section contOp ></section>';
 			this.nodo.appendChild(operaciones);
-		}
+		};
 
 		this.agregarSector = function(sector){
-			let newSector = document.createElement('section');
+			var newSector = document.createElement('section');
 			newSector.setAttribute('sector','');
 			this.nodo.appendChild(newSector);
 			//operaciones dependiendo de los datos
@@ -681,7 +700,44 @@ var Formulario = function(entidad){
 				newSector.classList.add('division');
 			}
 			return newSector;
-		}
+		};
+
+		this.validar = function(){
+			funcionGuardar =(typeof(guardar)==='undefined')?UI.elementos.formulario.ventanaForm.guardarPorDefecto:guardar;
+			var formulario = document.formNuevo;
+			var data = [];
+			var elemento;
+			var validacion=false;
+			for(var x=0;x<formulario.elements.length;x++){
+				if((formulario.elements[x].type=='text')||(formulario.elements[x].type=='password')){
+					if(formulario.elements[x].value===''){
+						validacion=true;
+					}
+				}
+				if(formulario.elements[x].type=='select-one'){
+					if(formulario.elements[x].value=='-'){
+						validacion=true;
+					}
+				}
+				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
+				data.push(elemento);
+			}
+			if(!validacion){
+				//guardo en base de datos
+				funcionGuardar(data);
+			}else{
+				console.log('formulario no paso la validacion');
+			}
+		};
+
+		this.guardarPorDefecto =  function(data){
+			torque.guardar(torque.entidadActiva,data,function(respuesta){
+				var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(respuesta.registros);
+
+				//cambio al slot modificado
+				nuevoSlot.firstChild.click();
+			});
+		};
 	};
 
 	/*------------------------------Objeto VentanaList-------------------------------------------------------------*/
@@ -705,8 +761,8 @@ var Formulario = function(entidad){
 				}else{
 					titulo=this.atributos.nombre;
 				}
-				html+="<article  title>"+titulo+"</article>\
-					<button type='button' btnEliminar></button>";
+				html+="<article  title>"+titulo+"</article>"+
+					"<button type='button' btnEliminar></button>";
 				nodo.innerHTML=html;
 				this.nodo = nodo;
 				this.estado='enUso';
@@ -729,7 +785,7 @@ var Formulario = function(entidad){
 					agregarRippleEvent(this.parentNode,e);
 				};
 				btnEliminar.onclick=function(){
-					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id})
+					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id});
 					if(slot.estado=='seleccionado'){
 						var ventana = {
 							tipo : 'error',
@@ -752,8 +808,8 @@ var Formulario = function(entidad){
 				}else{
 					titulo=this.atributos.nombre;
 				}
-				var html="<article  title>"+titulo+"</article>\
-				<button type='button' btnEliminar></button>";
+				var html="<article  title>"+titulo+"</article>"+
+				"<button type='button' btnEliminar></button>";
 				setTimeout(function(){
 					nodo.innerHTML=html;
 					slot.funcionamiento();
@@ -779,14 +835,14 @@ var Formulario = function(entidad){
 			};
 			this.activar = function(){
 				this.nodo.getElementsByTagName('article')[0].click();
-			}
+			};
 			this.construirNodo();
 		};
 		/*--------------------------Fin Objeto Slot-------------------*/
 
 		this.Slots = [];
 
-		this.nodo;
+		this.nodo = null;
 
 		this.entidadActiva=entidadActiva;
 
@@ -894,19 +950,17 @@ var Formulario = function(entidad){
 					}else{
 						titulo=slot.atributos.nombre;
 					}
-					var html="<article  title>"+titulo+"</article>\
-					<button type='button' btnEliminar></button>";
+					var html="<article  title>"+titulo+"</article>"+
+					"<button type='button' btnEliminar></button>";
 					nodo.innerHTML=html;
 					slot.funcionamiento();
 				}
 			}else{
-				for(var x=0;x<this.Slots.length;x++){
-					var nodo=this.Slots[x].nodo;
-					var slot=this.Slots[x];
-					var html="<article  title>"+slot.atributos.nombre+"</article>\
-					<button type='button' btnEliminar></button>";
-					nodo.innerHTML=html;
-					slot.funcionamiento();
+				for(var i=0;i<this.Slots.length;i++){
+					var contenido="<article  title>"+this.Slots[i].atributos.nombre+"</article>";
+					contenido+="<button type='button' btnEliminar></button>";
+					this.Slots[i].nodo.innerHTML=contenido;
+					this.Slots[i].funcionamiento();
 				}
 			}
 		};
@@ -981,12 +1035,13 @@ var Formulario = function(entidad){
 			var ventanaForm=this;
 			//------------Cuadro Carga-------------------------------
 			var infoCuadro = {
+				nombre: 'cargaVentanaList',
 				mensaje:'Buscando',
 				contenedor:this.nodo,
 			};
 			var cuadroDeCarga=UI.iniciarCarga(infoCuadro,function(){
 				if(torque.registrosEntAct!==null){
-					UI.elementos.cuadroCarga.terminarCarga();
+					UI.buscarCuadroCarga('cargaVentanaList').terminarCarga();
 					ventanaForm.cargarRegistros(torque.registrosEntAct);
 				}
 			});
@@ -1018,8 +1073,8 @@ var Formulario = function(entidad){
 
 	this.validarCombo = function(valoresNoPermitidos,lista){
 		normalizarNodo(lista);
-		for(var x=0;x<lista.length;x++){
-			lista[x].style.display='block';
+		for(var i=0;i<lista.length;i++){
+			lista[i].style.display='block';
 		}
 		for(var x=0;x<lista.length;x++){
 			for(var y=0;y<valoresNoPermitidos.length;y++){
@@ -1089,10 +1144,10 @@ var Formulario = function(entidad){
 			tipo : 'advertencia',
 			cabecera : 'Advertencia',
 			cuerpo : '¿Desea eliminar '+slot.atributos.nombre+' ?',
-			pie : '<section modalButtons>\
-						<button type="button" cancelar id="modalButtonCancelar"></button>\
-						<button type="button" aceptar registro="'+slot.atributos.codigo+'" id="modalButtonAceptar"></button>\
-					</section>'
+			pie : '<section modalButtons>'+
+						'<button type="button" cancelar id="modalButtonCancelar"></button>'+
+						'<button type="button" aceptar registro="'+slot.atributos.codigo+'" id="modalButtonAceptar"></button>'+
+					'</section>'
 		};
 
 		UI.crearVentanaModal(verificacion);
@@ -1145,7 +1200,7 @@ var modalWindow = function(){
 	var capaContenido = function(){
 
 		//------------------- Partes-------------------------------------
-		var Cabecera = function(){
+		var Cabecera = function(contenido){
 
 			this.estado = 'sinConstruir';
 			this.nodo = null;
@@ -1154,27 +1209,63 @@ var modalWindow = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('cabecera','');
 				this.nodo = nodo;
+				this.manejoDeContenido(contenido);
+			};
+			this.manejoDeContenido = function(contenido){
+				var porConstruir;
+				if(typeof contenido == 'string'){
+						porConstruir = {html: contenido};
+				}else{
+					porConstruir = contenido;
+				}
+				if(porConstruir.html){
+					this.nodo.innerHTML = porConstruir.html;
+				}
 			};
 			this.construirNodo();
 		};
 
-		var Cuerpo = function(){
+		var Cuerpo = function(contenido){
 			this.estado='sinConstruir';
 			this.nodo = null;
+			this.campos = [];
 
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('cuerpo','');
 				this.nodo=nodo;
+				this.manejoDeContenido(contenido);
 			};
+			//esta funcion revisa el contenido y construye la interfaz que le
+			//fue pasada y la construye
+			this.manejoDeContenido = function(contenido){
+				var porConstruir;
+				if(typeof contenido == 'string'){
+						porConstruir = {html: contenido};
+				}else{
+					porConstruir = contenido;
+				}
+				if(porConstruir.campos){
+					this.agregarCampos(porConstruir.campos);
+				}
+				if(porConstruir.html){
+					this.nodo.innerHTML = porConstruir.html;
+				}
+				if(porConstruir.alto){
+					this.nodo.style.height = porConstruir.alto + 'px';
+				}
+
+			};
+
 			this.agregarCampos = function(campos){
-				for(let x = 0;x < campos.length; x++){
-					this.agregarCampos(campos[x]);
+				for(var x = 0;x < campos.length; x++){
+					this.agregarCampo(campos[x]);
 				}
 			};
+
 			this.agregarCampo = function(campo){
-				let campoNuevo;
-				let contenedor = this.nodo;
+				var campoNuevo;
+				var contenedor = this.nodo;
 				switch(campo.tipo.toLowerCase()){
 					case 'campodetexto':
 						campoNuevo = new CampoDeTexto(campo.parametros);
@@ -1194,25 +1285,38 @@ var modalWindow = function(){
 
 				}
 				contenedor.appendChild(campoNuevo.nodo);
+				this.campos.push(campoNuevo);
 			};
 
 			this.construirNodo();
 		};
 
-		var Pie = function(){
+		var Pie = function(contenido){
 			this.estado = 'sinConstruir';
 			this.nodo = null;
 			//funcion para agregar funcionamiento a los elementos hijos
-			this.funcionamiento;
+			this.funcionamiento = null;
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('pie','');
 				this.nodo=nodo;
+				this.manejoDeContenido(contenido);
+			};
+			this.manejoDeContenido = function(contenido){
+				var porConstruir;
+				if(typeof contenido == 'string'){
+						porConstruir = {html: contenido};
+				}else{
+					porConstruir = contenido;
+				}
+				if(porConstruir.html){
+					this.nodo.innerHTML = porConstruir.html;
+				}
 			};
 			this.desaparecer = function(){
 				this.nodo.style.height = '0px';
 				this.nodo.innerHTML='';
-			}
+			};
 			this.construirNodo();
 		};
 		//------------------- Partes-------------------------------------
@@ -1234,18 +1338,18 @@ var modalWindow = function(){
 			},300);
 		};
 
-		this.agregarParte = function(parte){
+		this.agregarParte = function(parte,contenido){
 			switch(parte){
 				case 'cabecera':
-					this.partes.cabecera=new Cabecera();
+					this.partes.cabecera=new Cabecera(contenido);
 					this.nodo.appendChild(this.partes.cabecera.nodo);
 				break;
 				case 'cuerpo':
-					this.partes.cuerpo=new Cuerpo();
+					this.partes.cuerpo=new Cuerpo(contenido);
 					this.nodo.appendChild(this.partes.cuerpo.nodo);
 				break;
 				case 'pie':
-					this.partes.pie=new Pie();
+					this.partes.pie=new Pie(contenido);
 					this.nodo.appendChild(this.partes.pie.nodo);
 				break;
 			}
@@ -1253,33 +1357,20 @@ var modalWindow = function(){
 
 		this.dibujarUI = function(data){
 			data.tipo=data.tipo || 'contenedor';
+			data.contenido = data.contenido || 'normal';
 			if(data.cabecera!==undefined){
-				this.agregarParte('cabecera');
-				this.partes.cabecera.nodo.innerHTML=data.cabecera;
-				switch(data.tipo.toLowerCase()){
-					case 'advertencia':
-						this.partes.cabecera.nodo.classList.toggle('advertencia');
-					break;
-					case 'error':
-						this.partes.cabecera.nodo.classList.toggle('error');
-					break;
-				}
+				this.agregarParte('cabecera',data.cabecera);
+				this.partes.cabecera.nodo.classList.toggle(data.tipo.toLowerCase());
 			}
 			if(data.cuerpo!==undefined){
-				this.agregarParte('cuerpo');
-				this.partes.cuerpo.nodo.innerHTML=data.cuerpo;
+				this.agregarParte('cuerpo',data.cuerpo);
 			}
 			if(data.pie!==undefined){
-				this.agregarParte('pie');
-				this.partes.pie.nodo.innerHTML=data.pie;
-				switch(data.tipo.toLowerCase()){
-					case 'advertencia':
-						this.partes.pie.nodo.classList.toggle('advertencia');
-					break;
-					case 'error':
-						this.partes.pie.nodo.classList.toggle('error');
-					break;
-				}
+				this.agregarParte('pie',data.pie);
+				this.partes.pie.nodo.classList.toggle(data.tipo.toLowerCase());
+			}
+			if(data.contenido.toLowerCase() === 'ancho' ){
+				this.nodo.classList.add('ancho');
 			}
 		};
 		this.convertirEnMensaje = function(mensaje){
@@ -1289,11 +1380,11 @@ var modalWindow = function(){
 
 			//cambio el cuerpo
 			this.partes.cuerpo.nodo.innerHTML='<strong>'+mensaje.mensaje+'</strong>';
-			this.partes.cuerpo.nodo.style.height = '50px'
+			this.partes.cuerpo.nodo.style.height = '50px';
 
 			//cambio pie
 			this.partes.pie.desaparecer();
-		}
+		};
 		this.construirNodo();
 	};
 	//-------------------Fin CapaContenido-------------------------------------
@@ -1301,7 +1392,7 @@ var modalWindow = function(){
 	var capaExterior = function(bloqueo){
 
 		this.estado='sinConstruir';
-		this.nodo;
+		this.nodo = null;
 		this.tipo='exterior';
 		this.bloqueo=bloqueo || false;
 
@@ -1332,9 +1423,10 @@ var modalWindow = function(){
 	};
 	this.agregarCapa = function(tipo,bloqueo){
 		var capaNueva=false;
+		var zIndex;
 		if(tipo=='exterior'){
 			if(this.existeExterior()){
-				var zIndex=window.getComputedStyle(this.buscarUltimaCapaContenido().nodo,null).getPropertyValue("z-index");
+				zIndex = window.getComputedStyle(this.buscarUltimaCapaContenido().nodo,null).getPropertyValue("z-index");
 				capaNueva=new capaExterior(bloqueo);
 				this.capas.push(capaNueva);
 				capaNueva.nodo.style.zIndex=parseInt(zIndex)+1;
@@ -1344,8 +1436,8 @@ var modalWindow = function(){
 			}
 		}else if(tipo=='contenido'){
 			if(this.existeExterior()){
-				var zIndex=window.getComputedStyle(this.obtenerUltimaCapa().nodo,null).getPropertyValue("z-index");
-				capaNueva=new capaContenido();
+				zIndex = window.getComputedStyle(this.obtenerUltimaCapa().nodo,null).getPropertyValue("z-index");
+				capaNueva = new capaContenido();
 				this.capas.push(capaNueva);
 				capaNueva.nodo.style.zIndex=parseInt(zIndex)+1;
 			}
@@ -1356,9 +1448,10 @@ var modalWindow = function(){
 	};
 	this.removerCapa = function(){
 		var capaExterior=UI.elementos.modalWindow.buscarCapa(this);
+		var capaContenido = null;
 		if(capaExterior){
 			if(capaExterior==UI.elementos.modalWindow.capas[0]){
-				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+				capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 				//los saco de vista con la trancision
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
@@ -1379,7 +1472,7 @@ var modalWindow = function(){
 					obtenerContenedor().style.position='inherit';
 				},810);
 			}else{
-				var capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
+				capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 				//los saco de vista con la transcision
 				//capa contenido
 				capaContenido.nodo.style.top='200%';
@@ -1467,11 +1560,13 @@ var CuadroCarga = function(info,callback){
 	//manejo de interfaz
 	this.contenedor=info.contenedor;
 	this.tipo=info.tipo || 'carga';
+	this.clases=info.clases || [];
 	this.nodo = null;
+	this.nombre = info.nombre || 'unico';
 
 	//maenjo de carga
-	this.intervalID;
-	this.contEspera;
+	this.intervalID = null;
+	this.contEspera = 0;
 	this.callback = callback || null;
 
 	this.estado = 'sinIniciar';
@@ -1481,14 +1576,14 @@ var CuadroCarga = function(info,callback){
 		var cuadro = document.createElement('div');
 		cuadro.classList.toggle('ContenedorCarga');
 
-		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center">'+info.mensaje+'</article>\
-			<div class="showbox">\
-			  <div class="loader">\
-			    <svg class="circular" viewBox="25 25 50 50">\
-			      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>\
-			    </svg>\
-			  </div>\
-			</div>';
+		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center">'+info.mensaje+'</article>'+
+		'<div class="showbox">'+
+			'<div class="loader">'+
+				'<svg class="circular" viewBox="25 25 50 50">'+
+					'<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>'+
+			    '</svg>'+
+			  '</div>'+
+			'</div>';
 		this.contenedor.appendChild(cuadro);
 		var circulo=document.querySelector('.path');
 
@@ -1500,23 +1595,46 @@ var CuadroCarga = function(info,callback){
 		}
 		this.estado = 'iniciado';
 		this.nodo = cuadro;
+		this.manejoDeClases();
+	};
+	this.manejoDeClases = function(){
+		this.eliminarClasesRepetidas();
+		for (var i = 0; i < this.clases.length; i++) {
+			this.nodo.classList.add(this.clases[i]);
+		}
+	};
+	this.eliminarClasesRepetidas = function(){
+		var clasesValidadas = [];
+		var existe;
+		for (var i = 0; i < this.clases.length; i++) {
+			existe = false;
+			for (var x = 0; x < clasesValidadas.length; x++) {
+				if(clasesValidadas[x]==this.clases[i]){
+					existe = true;
+				}
+			}
+			if(!existe){
+				clasesValidadas.push(this.clases[i]);
+			}
+		}
+		this.clases = clasesValidadas;
 	};
 	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
-	this.manejarCarga = function(){
+	this.manejarCarga = function(nombre){
 		console.log('comienza manejo de carga');
-		UI.elementos.cuadroCarga.contEspera=0;
+		UI.buscarCuadroCarga(nombre).contEspera=0;
 		this.intervalID=setInterval(function(){
-			var callback = UI.elementos.cuadroCarga.callback;
-			UI.elementos.cuadroCarga.contEspera++;
+			var callback = UI.buscarCuadroCarga(nombre).callback;
+			UI.buscarCuadroCarga(nombre).contEspera++;
 			if(callback!==null){
 				callback();
 			}
-			if(UI.elementos.cuadroCarga!==undefined){
+			if(!UI.buscarCuadroCarga(nombre)){
 
-				if(UI.elementos.cuadroCarga.contEspera>=500){
+				if(UI.buscarCuadroCarga(nombre).contEspera>=500){
 					//cuando el tiempo de espera es exedido muestro el mensaje
 					console.log('tiempo de espera exedido');
-					clearInterval(UI.elementos.cuadroCarga.intervalID);
+					clearInterval(UI.buscarCuadroCarga(nombre).intervalID);
 					var ventana = {
 						tipo:'error',
 						bloqueo:true,
@@ -1542,16 +1660,18 @@ var CuadroCarga = function(info,callback){
 		var circulo = this.nodo.getElementsByTagName('circle')[0];
 		circulo.parentNode.removeChild(circulo);
 		titulo.textContent = respuesta.mensaje;
+		UI.removerCuadroCarga(this.nombre);
 		if(callback!==null){
 			callback(respuesta);
 		}
 	};
 	//esta funcion mata el intervalo al ejecultarce el callback de dicha carga
 	this.terminarCarga = function(){
+		var cuadro = this;
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
-		UI.elementos.cuadroCarga.nodo.parentNode.removeChild(UI.elementos.cuadroCarga.nodo);
-		UI.elementos.cuadroCarga=undefined;
+		cuadro.nodo.parentNode.removeChild(cuadro.nodo);
+		UI.removerCuadroCarga(cuadro.nombre);
 	};
 	this.construirNodo();
 };
@@ -1564,7 +1684,8 @@ var Arquitecto = function(){
 
 	this.estado = 'sinInicializar';
 
-	this.configure = function(){
+	this.configure = function(objetoInicializar){
+		objetoInicializar = objetoInicializar || {};
 
 		this.elementos = {
 			 menu : new Menu(),
@@ -1572,13 +1693,23 @@ var Arquitecto = function(){
 			 formulario : 'noPosee',
 			 botonera : 'noPosee'
 		};
+
+		if(objetoInicializar.formulario){
+			this.elementos.formulario = new Formulario(objetoInicializar.formulario.entidad);
+		}
+
+		if(objetoInicializar.botonera){
+			this.elementos.botonera = new Botonera(objetoInicializar.botonera.botones);
+		}
+
+
 		this.estado='inicializado';
 		var mql = window.matchMedia("(max-width: 1000px)");
 		mql.addListener(handleMediaChange);
 		handleMediaChange(mql);
 		document.body.onmousedown=this.activarEfecto;
 	};
-
+//------------------------- Manejo de ventanas Modales ----------------------------
 	this.crearVentanaModal = function(data){
 		//creo la venta modal
 		if(!this.elementos.modalWindow){
@@ -1589,50 +1720,143 @@ var Arquitecto = function(){
 	};
 
 	this.crearMensaje = function(mensaje){
-		let titulo = mensaje.titulo || mensaje.tipo.toUpperCase()
-		let ventana = {
+		var titulo = mensaje.titulo || mensaje.tipo.toUpperCase();
+		var ventana = {
 			tipo: mensaje.tipo,
 			cabecera: titulo,
 			cuerpo: mensaje.mensaje
 		};
 		this.crearVentanaModal(ventana);
-	}
-
+	};
+//------------------------- Manejo Cuadros de carga -------------------------------
+	this.agregarCuadroCarga = function(cuadroCarga){
+		if(!this.elementos.cuadroCarga){
+			this.elementos.cuadroCarga = [];
+		}
+		this.elementos.cuadroCarga.push(cuadroCarga);
+	};
+	this.removerCuadroCarga = function(nombre){
+		var cuadroCarga = this.buscarCuadroCarga(nombre);
+		this.elementos.cuadroCarga.splice(this.elementos.cuadroCarga.indexOf(cuadroCarga),1);
+	};
+	this.buscarCuadroCarga = function(nombre){
+		if(this.elementos.cuadroCarga){
+			for (var i = 0; i < this.elementos.cuadroCarga.length; i++){
+				if(this.elementos.cuadroCarga[i].nombre === nombre){
+					return this.elementos.cuadroCarga[i];
+				}
+			}
+			console.log('cuadroCarga '+nombre+' no existe');
+			return false;
+		}
+	};
+ 	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
+	this.iniciarCarga = function(info,callback){
+		console.log('inicio carga');
+		cuadroCarga = new CuadroCarga(info,callback);
+		this.agregarCuadroCarga(cuadroCarga);
+		cuadroCarga.manejarCarga(this.nombre);
+		return cuadroCarga.nodo;
+	};
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
 	this.crearCuadroDeCarga = function(info,contenedor){
 		info.contenedor = contenedor;
 		cuadroCarga = new CuadroCarga(info,null);
-		this.elementos.cuadroCarga = cuadroCarga;
+		this.agregarCuadroCarga(cuadroCarga);
 		return cuadroCarga.nodo;
 	};
-
-	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
-	this.iniciarCarga = function(info,callback){
-		console.log('inicio carga');
-		cuadroCarga = new CuadroCarga(info,callback);
-		this.elementos.cuadroCarga=cuadroCarga;
-		this.elementos.cuadroCarga.manejarCarga();
-		return cuadroCarga.nodo;
-	};
-
+//------------------------- Manejo de ventanas ------------------------------------
 	this.agregarVentana = function(ventana,contenedor){
 		if(!this.elementos.ventanas){
 			this.elementos.ventanas = [];
 		}
-		let newVentana = new Ventana(ventana);
+		var newVentana = new Ventana(ventana);
 		this.elementos.ventanas.push(newVentana);
 		contenedor.appendChild(newVentana.nodo);
 		return newVentana;
-	}
+	};
+
+	this.agregarLista = function(lista,contenedor){
+		if(!this.elementos.ventanas){
+			this.elementos.ventanas = [];
+		}
+		var nuevaLista = new Lista(lista);
+		contenedor.appendChild(nuevaLista.nodo);
+		nuevaLista.atributos.nombre = nuevaLista.atributos.titulo;
+		this.elementos.ventanas.push(nuevaLista);
+		return nuevaLista;
+	};
 
 	this.buscarVentana = function(nombre){
-		let ventanas =this.elementos.ventanas;
-		for(let x = 0; x < ventanas.length; x++){
+		var ventanas =this.elementos.ventanas;
+		for(var x = 0; x < ventanas.length; x++){
 			if(ventanas[x].atributos.nombre===nombre){
 				return ventanas[x];
 			}
 		}
 		return false;
+	};
+
+	this.quitarVentana = function(nombre){
+		var ventana = this.buscarVentana(nombre);
+		if(ventana){
+			ventana.destruirNodo();
+			this.elementos.ventanas.splice(this.elementos.ventanas.indexOf(ventana),1);
+		}
+	};
+//------------------------- Manejo de Campos en interfaz ----------------------------
+	//funcion para agregar de forma dinamica campos a la interfaz
+	this.agregarCampo = function(campo,contenedor){
+		var campoNuevo;
+		switch(campo.tipo.toLowerCase()){
+			case 'campodetexto':
+				campoNuevo = new CampoDeTexto(campo.parametros);
+				break;
+			case 'combobox':
+				campoNuevo = new ComboBox(campo.parametros);
+				break;
+			case 'radio':
+				campoNuevo = new Radio(campo.parametros);
+				break;
+			case 'campoedicion':
+				campoNuevo = new CampoEdicion(campo.parametros);
+				break;
+			case 'saltodelinea':
+				campoNuevo = new SaltoDeLinea();
+				break;
+
+		}
+		contenedor.appendChild(campoNuevo.nodo);
+	};
+	//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
+	this.agregarCampos = function(campos,contenedor){
+		for(var x=0;x<campos.length;x++){
+			this.agregarCampo(campos[x],contenedor);
+		}
+	};
+
+	//------------------------- Manejo de toast ----------------------------
+	//agrega mensaje pequeño
+	this.agregarToasts = function(atributos){
+		if(!this.elementos.toasts){
+			this.elementos.toasts = [
+				{cont:1}
+			];
+		}else{
+			this.elementos.toasts[0].cont++;
+		}
+		var tiempo= 5000 * (this.elementos.toasts[0].cont - 1);
+		setTimeout(function(){
+			var toast = new Toasts(atributos);
+			UI.elementos.toasts.push(toast);
+			setTimeout(function(){
+				removerToasts(toast);
+			},5000);
+		},tiempo);
+	};
+	function removerToasts(toast){
+		UI.elementos.toasts.splice(UI.elementos.toasts.indexOf(toast),1);
+		UI.elementos.toasts[0].cont--;
 	}
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
@@ -1646,46 +1870,57 @@ var Ventana = function(atributos){
 		atributos.tipo = atributos.tipo || 'basico';
 
 		this.construirNodo = function(){
-			
-			let nodo = document.createElement('section');
+
+			var nodo = document.createElement('section');
 			nodo.setAttribute('titulo','');
 
 			nodo.innerHTML = atributos.texto || atributos.html;
 			nodo.classList.add(atributos.tipo);
 
 			this.nodo = nodo;
-		}
+		};
 		this.construirNodo();
 	};
 	//--------------------Sector----------------------------
 	var Sector = function(atributos){
 		this.nodo = null;
 		this.atributos = atributos;
+		this.atributos.tipo = atributos.tipo || 'sector';
 
 		this.construirNodo = function(){
-			
-			let nodo = document.createElement('section');
-			nodo.setAttribute('sector','');
+
+			var nodo = document.createElement('section');
+			nodo.setAttribute(this.atributos.tipo,'');
 
 			if(atributos.html){
 				nodo.innerHTML = atributos.html;
 			}
+
+			if(atributos.campos){
+				nodo.style.paddingTop='30px';
+				UI.agregarCampos(atributos.campos,nodo);
+			}
+
+			if(atributos.alto){
+				nodo.style.height=atributos.alto+'px';
+			}
+
 			this.nodo = nodo;
 		};
 
 		this.destruirNodo = function(){
 			this.nodo.parentNode.removeChild(this.nodo);
 		};
-		this.construirNodo();	
-	}
-
+		this.construirNodo();
+	};
+	//--------------------fin Objeto Sector--------------------
 	this.atributos = atributos;
 	this.estado = 'porConstruir';
 	this.sectores = [];
 	this.nodo = null;
 
 	this.construirNodo = function(){
-		let nodo = document.createElement('div');
+		var nodo = document.createElement('div');
 		nodo.setAttribute('mat-window','');
 		nodo.classList.add(this.atributos.tipo);
 		this.nodo = nodo;
@@ -1695,44 +1930,55 @@ var Ventana = function(atributos){
 		}
 
 		if(atributos.sectores){
-			for(let x = 0; x < atributos.sectores.length; x++){
+			for(var x = 0; x < atributos.sectores.length; x++){
 				this.agregarSector(atributos.sectores[x]);
 			}
+		}
+
+		if(atributos.alto){
+			this.nodo.style.height = atributos.alto+'px';
 		}
 	};
 
 	this.agregarSector = function(atributos){
-		let sector = new Sector(atributos);
+		var sector = new Sector(atributos);
 		this.sectores.push(sector);
 		this.nodo.appendChild(sector.nodo);
 		return sector;
 	};
 
 	this.buscarSector = function(nombre){
-		for(let x = 0; x < this.sectores.length; x++){
+		for(var x = 0; x < this.sectores.length; x++){
 			if(this.sectores[x].atributos.nombre){
 				if(this.sectores[x].atributos.nombre===nombre){
 					return this.sectores[x];
-				}	
+				}
 			}
 		}
 		return false;
-	}
+	};
 
 	this.quitarSector = function(nombre){
-		let sector = this.buscarSector(nombre);
+		var sector = this.buscarSector(nombre);
 		sector.destruirNodo();
 		this.sectores.splice(this.sectores.indexOf(sector),1);
-	}
+	};
 
 	this.agregarTitulo = function(atributos){
-		let titulo = new Titulo(atributos);
+		var titulo = new Titulo(atributos);
 		this.nodo.appendChild(titulo.nodo);
 		this.titulo = titulo;
-	}
+	};
 
+	this.destruirNodo = function(){
+		this.nodo.style.height='0px';
+		var v = this;
+		setTimeout(function(){
+			v.nodo.parentNode.removeChild(v.nodo);
+		},510);
+	};
 	this.construirNodo();
-}
+};
 
 //-----------------------------Objeto Radio----------------------------
 var Radio = function(info){
@@ -1759,6 +2005,14 @@ var Radio = function(info){
 		for(var x=0; x<this.data.opciones.length;x++){
 			this.agregarOpcion(this.data.opciones[x]);
 		}
+	};
+
+	this.captarValor = function(){
+		var valor = (this.nodo.querySelector('radio').value==='')?null:this.nodo.querySelector('radio').value;
+		return valor;
+	};
+	this.captarNombre = function(){
+		return this.nodo.querySelector('radio').name;
 	};
 	this.construirNodo();
 };
@@ -1818,7 +2072,13 @@ var ComboBox = function(info){
 		nuevaOp.value=opcion.codigo;
 		select.appendChild(nuevaOp);
 	};
-
+	this.captarValor = function(){
+		var valor = (this.nodo.querySelector('select').value==='-')?null:this.nodo.querySelector('select').value;
+		return valor;
+	};
+	this.captarNombre = function(){
+		return this.nodo.querySelector('select').name;
+	};
 	this.construir();
 };
 
@@ -1847,19 +2107,18 @@ var CampoDeTexto = function(info){
 		CampoDeTexto.setAttribute(this.data.eslabon,'');
 		var html='';
 		if(this.data.tipo=='simple'){
-			html+='<input type="text" name="'+this.data.nombre+'" required>';
+			html+='<input type="text" name="'+this.data.nombre+'" value="" required>';
 		}else if(this.data.tipo=='password'){
-			html+='<input type="password" name="'+this.data.nombre+'" required>';
+			html+='<input type="password" name="'+this.data.nombre+'" value="" required>';
 		}else if(this.data.tipo=='area'){
 			html+='<textarea name="Descripcion" required></textarea>';
 		}else{
 			console.log(this.data.tipo);
 		}
 
-		html+='<span class="highlight"></span>\
-		      <span class="bar"></span>\
-		      <label>'+this.data.titulo+'</label>';
-		console.log(CampoDeTexto);
+		html+='<span class="highlight"></span>'+
+		      '<span class="bar"></span>'+
+		    	'<label>'+this.data.titulo+'</label>';
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
 		if(this.data.usaToolTip!==false){
@@ -1868,13 +2127,36 @@ var CampoDeTexto = function(info){
 		}
 		this.estado='enUso';
 	};
+	this.captarValor = function(){
+		var tipo = this.captarTipo();
+		var valor;
+		if(this.nodo.querySelector(tipo).value===''){
+			valor = null;
+		}else{
+			valor = this.nodo.querySelector(tipo).value;
+		}
+		return valor;
+	};
+	this.captarNombre = function(){
+		var tipo = this.captarTipo();
+		return this.nodo.querySelector(tipo).name;
+	};
+	this.captarTipo = function(){
+		var tipo;
+		if(this.data.tipo==='area'){
+			tipo = 'textarea';
+		}else{
+			tipo = 'input';
+		}
+		return tipo;
+	};
 	this.construir();
 };
 //-------------------- Campo Edicion----------------------------------------------------------
 var CampoEdicion = function(info){
 
 	this.data =  info;
-	this.nodo;
+	this.nodo = null;
 	this.tipo = info.tipo || 'simple';
 
 	this.construirNodo = function(){
@@ -1903,7 +2185,34 @@ var CampoEdicion = function(info){
 	};
 	this.construirNodo();
 };
+//-------------------- Toasts ------------------------------------------------------------
+var Toasts = function(atributos){
+	this.atributos = atributos;
+	this.nodo = null;
+	this.atributos.efecto = atributos.efecto || 'mostrar';
+	this.atributos.tipo = atributos.tipo || 'mobile';
+	this.construirNodo = function(){
+		var nodo = document.createElement('div');
+		nodo.setAttribute('toasts-'+this.atributos.tipo,'');
+		nodo.textContent = this.atributos.texto;
+		var contenedor = this.atributos.contenedor || document.body;
+		contenedor.appendChild(nodo);
 
+		var toasts = this;
+		setTimeout(function aparecerToasts(){
+			toasts.nodo.classList.toggle(toasts.atributos.efecto);
+		},10);
+
+		setTimeout(function desaparecerToasts(){
+			toasts.nodo.classList.toggle(toasts.atributos.efecto);
+			setTimeout(function eliminarToast(){
+				toasts.nodo.parentNode.removeChild(toasts.nodo);
+			},500);
+		},5000);
+		this.nodo = nodo;
+	};
+	this.construirNodo();
+};
 /*----------------------------------Funciones del Objeto Select-------------------------------*/
 		construirCapaSelect= function(capaSelect){
 			capaSelect.onclick=function(){};
@@ -1936,16 +2245,7 @@ var CampoEdicion = function(info){
 				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
 
 				nodo.setAttribute('valor',opcion.value);
-				nodo.onclick= function(e){
-					//agrego el efecto Ripple
-					agregarRippleEvent(this,e);
-					var select = this.parentNode.nextSibling;
-					while(select.nodeName=='#text'){
-						select=select.nextSibling;
-					}
-					select.value=this.getAttribute('valor');
-					destruirCapaSelect(this.parentNode);
-				};
+				nodo.onclick = capaClick;
 				opcion.nodo=nodo;
 				opciones.push(opcion);
 				capaSelect.appendChild(nodo);
@@ -1956,6 +2256,18 @@ var CampoEdicion = function(info){
 			capaSelect.style.height=parseInt(opciones.length*41)+'px';
 			capaSelect.style.width='60px';
 		};
+
+		//funcion extraida de un bucle
+		function capaClick(e){
+			//agrego el efecto Ripple
+			agregarRippleEvent(this,e);
+			var select = this.parentNode.nextSibling;
+			while(select.nodeName=='#text'){
+				select=select.nextSibling;
+			}
+			select.value=this.getAttribute('valor');
+			destruirCapaSelect(this.parentNode);
+		}
 
 		destruirCapaSelect = function(capaSelect){
 			var lista = capaSelect.childNodes;

@@ -1,3 +1,4 @@
+@import url("arbol.css");
 r{
 	float:right;
 	margin-right: 20px;
@@ -5,6 +6,13 @@ r{
 l{
 	float: left;
 }
-div[mat-window].not-first{
-	margin-top: 10px;
+
+div[mat-window].arbol{
+  width: calc(80% + 50px);
+  float:left;
+}
+
+div[mat-window].form-lat{
+  width: calc(40% + 50px);
+  float:left;
 }

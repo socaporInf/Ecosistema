@@ -1,7 +1,7 @@
  <?php
 include_once('cls_Conexion.php');
-class cls_AsignarPrivilegios extends cls_Conexion{
-	
+class cls_Privilegio extends cls_Conexion{
+
 	private $aa_Atributos = array();
 	private $aa_Campos = array('codigo_clase','nombre','descripcion');
 
@@ -20,7 +20,7 @@ class cls_AsignarPrivilegios extends cls_Conexion{
 			case 'buscarRegistro':
 				$la_respuesta=$this->f_Buscar();
 				if(count($la_respuesta)!=0){
-					$respuesta['registro'] = $la_respuesta;	
+					$respuesta['registro'] = $la_respuesta;
 					$success=1;
 				}else{
 					$respuesta['mensaje'] = 'Relacion no existe';
@@ -32,7 +32,7 @@ class cls_AsignarPrivilegios extends cls_Conexion{
 			case 'buscarArbol':
 				$la_respuesta=$this->f_BuscarArbol();
 				if(count($la_respuesta)!=0){
-					$respuesta['registros'] = $la_respuesta;	
+					$respuesta['registros'] = $la_respuesta;
 					$success=1;
 				}else{
 					$respuesta['mensaje'] = 'Arbol vacio';
@@ -48,7 +48,7 @@ class cls_AsignarPrivilegios extends cls_Conexion{
 		}
 		if(!isset($respuesta['success'])){
 			$respuesta['success']=$success;
-		}	
+		}
 		return $respuesta;
 	}
 
@@ -70,7 +70,7 @@ class cls_AsignarPrivilegios extends cls_Conexion{
 
 		return $la_respuesta;
 	}
-	
+
 	private function f_BuscarArbol(){
 		$x=0;
 		$la_Privilegios=array();
@@ -82,6 +82,7 @@ class cls_AsignarPrivilegios extends cls_Conexion{
 			$la_Privilegios[$x]['codigo']=$la_registro['componente'];
 			$la_Privilegios[$x]['padre']=$la_registro['padre'];
 			$la_Privilegios[$x]['tit_padre']=$la_registro['titulo_padre'];
+			$la_Privilegios[$x]['tipo']=$la_registro['tipo'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);

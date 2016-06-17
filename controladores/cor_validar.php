@@ -18,7 +18,7 @@ if($la_Form['Operacion']=='acceso'){
 		//armo datos para siguientes conexiones
 		$_SESSION['Con']['Nombre'] = $la_Form['Nombre'];
 		$_SESSION['Con']['Pass'] = $la_Form['Pass'];
-		
+
 		$respuesta=array(
 			'mensaje'=>'Inicio de sesion exitoso',
 			'usuario'=>$la_Form['Nombre'],
@@ -39,6 +39,7 @@ if($la_Form['Operacion']=='acceso'){
 	$lobj_Permisos = new cls_Permisos;
 	$lobj_Permisos->setPeticion($la_Form);
 	$privilegios=$lobj_Permisos->f_ObtenerPrivilegios();
+	$llaves = $lobj_Permisos->f_ObtenerLlavesAcceso($privilegios);
 	if(count($privilegios)==0){
 		$respuesta=array(
 				'mensaje'=>'Este Usuario No Posee Privilegios Para Esta Empresa',
@@ -46,6 +47,7 @@ if($la_Form['Operacion']=='acceso'){
 				);
 	}else{
 		$_SESSION['Usuario']['privilegios']=array($privilegios);
+		$_SESSION['Usuario']['llaves_acceso'] = $llaves;
 		$respuesta=array(
 				'mensaje'=>'Sesion Iniciada con exito',
 				'privilegios'=>$_SESSION['Usuario']['privilegios'],
@@ -88,6 +90,19 @@ if($la_Form['Operacion']=='acceso'){
 		$respuesta=array(
 			'mensaje'=>'No existe Sesion abierta',
 			'success'=>0
+			);
+	}
+}else if($la_Form['Operacion']=='obtenerLlaves'){
+	if(count($_SESSION['Usuario']['llaves_acceso'])==0){
+		$respuesta = array(
+			'mensaje'=>'No existe Sesion abierta',
+			'success'=>0
+		);
+	}else{
+		$respuesta=array(
+			'mensaje'=>'llaves obtenidas con exito',
+			'success'=>1,
+			'llaves'=>$_SESSION['Usuario']['llaves_acceso']
 			);
 	}
 }

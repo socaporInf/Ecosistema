@@ -1,7 +1,7 @@
-<?php 
+<?php
 include_once('cls_Conexion.php');
 class cls_Permisos extends cls_Conexion{
-	
+
 	private $aa_Atributos = array();
 
 	public function setPeticion($pa_Peticion){
@@ -26,11 +26,28 @@ class cls_Permisos extends cls_Conexion{
 			$la_Privilegios[$x]['codigo']=$la_registro['componente'];
 			$la_Privilegios[$x]['padre']=$la_registro['padre'];
 			$la_Privilegios[$x]['tit_padre']=$la_registro['titulo_padre'];
+			$la_Privilegios[$x]['llave_acceso']=$la_registro['llave_acceso'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
 		return $la_Privilegios;
+	}
+
+	public function f_ObtenerLlavesAcceso($arreglo){
+		$llaves = array();
+		for($x = 0; $x < count($arreglo); $x++){
+			$existe = false;
+			for($y = 0; $y < count($llaves); $y++){
+				if($llaves[$y] == $arreglo[$x]['llave_acceso']){
+					$existe = true;
+				}
+			}
+			if(!$existe){
+				$llaves[count($llaves)] = $arreglo[$x]['llave_acceso'];
+			}
+		}
+		return $llaves;
 	}
 }
 ?>

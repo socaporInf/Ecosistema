@@ -38,7 +38,7 @@ var Sesion = function(){
 				}
 		  }
 		};
-		conexionAcc.open('POST','../controladores/cor_Validar.php', true);
+		conexionAcc.open('POST','../controladores/cor_validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="Operacion="+encodeURIComponent("cerrarSesion");
 		conexionAcc.send(envio);
@@ -47,6 +47,19 @@ var Sesion = function(){
 		console.log('Sesion Activa:');
 		console.log('Nombre de Usuario: '+this.nombre);
 		console.log('Estado de la Sesion: '+this.estado);
+	};
+	this.obtenerLlaves = function(){
+		conexionAcc=crearXMLHttpRequest();
+		conexionAcc.onreadystatechange = function(){
+			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
+				var respuesta=JSON.parse(conexionAcc.responseText);
+				console.log(respuesta);
+		  }
+		};
+		conexionAcc.open('POST','../controladores/cor_validar.php', true);
+		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		var envio="Operacion="+encodeURIComponent("obtenerLlaves");
+		conexionAcc.send(envio);
 	};
 	this.armarPrivilegios =function(privilegios){
 		//rellenar la variable this.privilegios
@@ -58,19 +71,19 @@ var Sesion = function(){
 				this.privilegios = privilegios;
 			}
 		}
-		arbol.hijos = this.buscarHijos(arbol.codigo);
+		arbol.hijos = this.buscarHijos(arbol.codigo,this.privilegios);
 		this.arbol = arbol;
 	};
-	this.buscarHijos = function(codigoPadre){
+	this.buscarHijos = function(codigoPadre,privilegios){
 		var hijos = [];
-		for(var x = 0; x < this.privilegios.length; x++){
-			if(this.privilegios[x].padre==codigoPadre){
-				this.privilegios[x].hijos=this.buscarHijos(this.privilegios[x].codigo);
-				hijos.push(this.privilegios[x]);
+		for(var x = 0; x < privilegios.length; x++){
+			if(privilegios[x].padre==codigoPadre){
+				privilegios[x].hijos=this.buscarHijos(privilegios[x].codigo,privilegios);
+				hijos.push(privilegios[x]);
 			}
 		}
 		return hijos;
-	}
+	};
 };
 /*----------------------------------------------------------------------------------------------------*/
 /*------------------------------Objeto Motor----------------------------------------------------------*/
@@ -82,8 +95,6 @@ var Motor = function(entidadActiva){
 	this.entidadActiva=entidadActiva;
 	//todos los registros que tiene la entidad activa entidad activa
 	this.registrosEntAct = null;
-	//resultado busqueda
-	this.resultadoBusqueda;
 
 	//funcion de arranque del objeto
 	this.ignition = function(){
@@ -93,7 +104,7 @@ var Motor = function(entidadActiva){
 					torque.registrosEntAct=respuesta.registros;
 				}else{
 					UI.crearMensaje(respuesta);
-					UI.elementos.cuadroCarga.terminarCarga();
+					UI.buscarCuadroCarga('iniciarSession').terminarCarga();
 				}
 			});
 		}
@@ -126,6 +137,7 @@ var Motor = function(entidadActiva){
 		envio+="&codigo="+encodeURIComponent(info.codigo);
 		conexionBusqueda.send(envio);
 	};
+
 	this.Operacion = function(peticion,callback){
 
 		//si no se le paso el valor de la entidad a afectar en la peticion el tomara por defecto a
@@ -134,7 +146,7 @@ var Motor = function(entidadActiva){
 
 		//lo mismo sucede con el codigo si no se le pasa en el objeto el tomara por defecto el codigo
 		//del registro que esta activo en el formulario
-		codigoPorDefecto = (UI.elementos.formulario!=='noPosee')?UI.elementos.formulario.ventanaForm.registroId:''
+		codigoPorDefecto = (UI.elementos.formulario!=='noPosee')?UI.elementos.formulario.ventanaForm.registroId:'';
 		peticion.codigo = peticion.codigo || codigoPorDefecto;
 
 		//si no recive el parametro de manejarCarga toma por defecto el valor de falso
@@ -142,13 +154,14 @@ var Motor = function(entidadActiva){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
+				var respuesta;
 				//si el manejar carga es verdadero culmino la carga
 				if(peticion.manejarOperacion === true){
-					UI.elementos.cuadroCarga.terminarCarga();
-					let respuesta = JSON.parse(conexionMotor.responseText);
+					UI.buscarCuadroCarga(peticion.nombreCuadro).terminarCarga();
+					respuesta = JSON.parse(conexionMotor.responseText);
 					callback(respuesta);
 				}else{
-					let respuesta = JSON.parse(conexionMotor.responseText);
+					respuesta = JSON.parse(conexionMotor.responseText);
 					if(respuesta.success === 1){
 		            	callback(respuesta);
 					}else{
@@ -169,22 +182,23 @@ var Motor = function(entidadActiva){
 		}
 		conexionMotor.send(envio);
 	};
+
 	this.manejarOperacion = function(peticion,cuadroCarga,callback){
 		//------------Cuadro Carga-------------------------------
-			cuadroCarga.nodo.innerHTML='';
-			var cuadroDeCarga = UI.crearCuadroDeCarga(cuadroCarga.cuadro,cuadroCarga.nodo);
+			cuadroCarga.contenedor.innerHTML='';
+			var cuadroDeCarga = UI.crearCuadroDeCarga(cuadroCarga.cuadro,cuadroCarga.contenedor);
 			cuadroDeCarga.style.marginTop = '80px';
 		//-----------------------------------------------------------
-
 		//le digo que la peticion fue por manejarOperacion
 		peticion.manejarOperacion = true;
+		peticion.nombreCuadro = cuadroCarga.cuadro.nombre;
 		this.Operacion(peticion,callback);
-	}
+	};
 	this.guardar = function(entidad,info,callback){
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){
-		        let respuesta = JSON.parse(conexionMotor.responseText);
+		        var respuesta = JSON.parse(conexionMotor.responseText);
 				if(respuesta.success === 1){
 	            	callback(respuesta);
 				}else{

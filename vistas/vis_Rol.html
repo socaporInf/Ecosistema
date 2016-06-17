@@ -10,7 +10,7 @@
 </head>
 <body>
 	<div contenedor>
-		
+
 	</div>
 </body>
 <script type="text/javascript" src='js/constructor.js'></script>
@@ -25,59 +25,33 @@
 
 	//arranca el motor de registros que se comunica con BD
 	var torque = new Motor('rol');
-	
-	//Inicialiazion de UI(Interfaz De Usuario)
-	var UI = new Arquitecto();
-	UI.configure();
+
 	//se cargan los registros necesarios que no forman parte de la entidad activa pero
 	//que de igual forma se utilizaran dentro del maestro
 	var empresas
 	torque.Busqueda({entidad:'empresa',operacion:'buscar'},function(respuesta){
 		empresas=respuesta.registros;
 	});
-	
-	//Se inicializa la botonera con sus respectivos botones
-	var botones = ['buscar','nuevo','abrir'];
-	UI.elementos.botonera = new Botonera(botones);
 
-	//se inicializa el formulario
-	UI.elementos.formulario = new Formulario(torque.entidadActiva);
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.configure({
+		formulario:{
+			entidad: torque.entidadActiva
+		},
+		botonera:{
+			botones:['buscar','nuevo','abrir']
+		}
+	});
+
 
 	sesion.obtenerSesion();
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 
-	//funcionamiento exclusivo del formulario
-	function guardar(){
-		var formulario = document.formNuevo;
-		var data = new Array();
-		var elemento;
-		var validacion=false;
-		for(var x=0;x<formulario.elements.length;x++){
-			if((formulario.elements[x].type=='text')||(formulario.elements[x].type=='password')){
-				if(formulario.elements[x].value==''){
-					validacion=true;
-				}
-			}
-			elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
-			data.push(elemento);
-		}
-		if(!validacion){
-			//guardo en base de datos
-			torque.guardar(torque.entidadActiva,data,function(respuesta){
-				var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(respuesta.registros);
-
-				//cambio a modificacion
-				nuevoSlot.firstChild.click();
-			});
-			
-		}else{
-			console.log('formulario no paso la validacion');
-		}
-	}
 	//------------------------------------------Funciones Propias de la UI de este formulario---------------------------
-		
-		//declaro el objeto donde se encuentra la UI del formulario 
+
+		//declaro el objeto donde se encuentra la UI del formulario
 		var objForm=UI.elementos.formulario.ventanaForm;
 
 		objForm.prototype.reconstruirUI=function(){
@@ -86,14 +60,14 @@
 			if(this.tipo=='nuevo'){
 				this.registroId='';
 				UI.elementos.formulario.ventanaList.controlLista();
-				this.nodo.style.height='0px';		
+				this.nodo.style.height='0px';
 				setTimeout(function(){
 					var capaForm=UI.elementos.formulario.ventanaForm;
 
 					//inicializo valores basicos del formulario
 					var titulo = 'Rol';
 					var altura = 210;
-					
+
 					//construyo el html
 					capaForm.crearEstructuraBasicaNuevo(titulo,altura);
 
@@ -119,9 +93,9 @@
 				//funcinamiento botones
 				UI.elementos.botonera.agregarBoton('eliminar');
 				UI.elementos.botonera.quitarBoton('guardar');
-				
+
 				this.nodo.style.height='0px';
-				
+
 				//busco informacion del registro
 				setTimeout(function(){
 					var nodo=UI.elementos.formulario.ventanaForm.nodo;
@@ -173,7 +147,7 @@
 						var contenedor = empresas.querySelector('section[contenedor]')
 						//arreglo temporal de empresas
 							UI.elementos.formulario.ventanaForm.agregarEmpresas(contenedor,data.detalle);
-						
+
 					});
 				},tiempo);
 			}
@@ -231,9 +205,9 @@
 									<button type="button" eliminar codigo="'+this.getAttribute('empresa')+'"  id="modalButtonEliminar"></button>\
 								</section>'
 						}
-						
+
 						//creo la ventana modal
-						UI.crearVentanaModal(dataTemp);						
+						UI.crearVentanaModal(dataTemp);
 
 						//agrego funcionamiento a los botones de la ventaModal
 						var btnCancelar = document.getElementById("modalButtonCancelar");
@@ -253,7 +227,7 @@
 										<button type="button" eliminar codigo="'+this.getAttribute('codigo')+'" ></button>\
 									</section>'
 							}
-						
+
 							//creo la ventana modal
 							var capaContenido=UI.crearVentanaModal(dataTemp);
 							var btnCancelar=capaContenido.nodo.getElementsByTagName('button')[0];
@@ -262,10 +236,11 @@
 								UI.elementos.modalWindow.eliminarUltimaCapa();
 							}
 							btnEliminar.onclick=function(){
-								
+
 								//------------Cuadro Carga-------------------------------
 								var contenedor = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo;
 								var infoCuadro={
+									nombre: 'rolEliminarDetalle',
 									tipo:'advertencia',
 									mensaje:'Eliminando Registro'
 								}
@@ -319,7 +294,7 @@
 						UI.crearVentanaModal(dataTemp);
 						var capaEnUso=UI.elementos.modalWindow.buscarUltimaCapaContenido();
 						capaEnUso.partes.cuerpo.nodo.style.height='250px';
-						
+
 						//agrego funcionamiento a los botones
 						var btnCancelar = document.getElementById("modalButtonCancelar");
 						var btnAceptar 	= document.getElementById("modalButtonAceptar");
@@ -332,7 +307,7 @@
 							//guardo el empresa
 							if(lista.value!='-'){
 								if(lista.value!='cerrar'){
-									var peticion= {	
+									var peticion= {
 										codigo_empresa: lista.value,
 										codigo: UI.elementos.formulario.ventanaForm.registroId,
 										entidad: 'rol',
@@ -341,12 +316,12 @@
 									torque.Operacion(peticion,function(respuesta){
 										if(respuesta.success===1){
 											//actualizo el detalle del registro activo
-											UI.elementos.formulario.ventanaForm.registroAct.detalle.push(respuesta.registro);											
+											UI.elementos.formulario.ventanaForm.registroAct.detalle.push(respuesta.registro);
 											var empresa={
 												codigo:lista.value,
 												nombre:lista.options[lista.selectedIndex].textContent
 											}
-											
+
 											UI.elementos.formulario.ventanaForm.agregarEmpresa(empresa,document.getElementById('contenedorPri'));
 										}
 										//cierro capa
@@ -355,11 +330,11 @@
 								}else{
 									UI.elementos.modalWindow.eliminarUltimaCapa();
 								}
-								
+
 							}else{
 								document.getElementById('listaEmpresas').options[document.getElementById('listaEmpresas').selectedIndex].textContent='Debe Elegir un Valor para Continuar';
 							}
-							
+
 						}
 						//---------------------------------------fin funcionamiento botones ------------------------------------------------------
 						//------------Cuadro Carga---------------------------------------------------------
@@ -369,7 +344,7 @@
 						var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,capaEnUso.partes.cuerpo.nodo);
 						cuadroDeCarga.style.marginTop='80px';
 						//-----------------------------------------------------------------------------------
-						
+
 						torque.buscarRegistros('empresa',function(respuesta){
 							//--------------------------creo el combo-----------------
 							var comboData={
@@ -381,7 +356,7 @@
 							}
 							var comboBox = new ComboBox(comboData);
 							//--------------------------------------------------------
-							
+
 							var capaEnUso=UI.elementos.modalWindow.buscarUltimaCapaContenido();
 							capaEnUso.partes.cuerpo.nodo.innerHTML='<label>'+registro.nombre+'</label><div clear></div>';
 							capaEnUso.partes.cuerpo.nodo.appendChild(comboBox.nodo);
@@ -395,7 +370,7 @@
 							//valido el combo box con los valores recopilados
 							UI.elementos.formulario.validarCombo(valoresNoPermitidos,document.getElementById('listaEmpresas'));
 						});
-						
+
 					}
 				}else if(lista[x].getAttribute('capaSelect')!==null){
 					lista[x].onclick=function(){

@@ -1,0 +1,42 @@
+div[toasts-mobile]{
+  transition:margin-bottom 0.5s ease-in-out;
+  width: calc(100% - 48px);
+  height: 20px;
+  padding: 14px 24px;
+  color: gray;
+  background-color: #333333;
+  font-size: 18px;
+  bottom: 0px;
+  position: absolute;
+  margin-bottom: -48px;
+}
+div[toasts-mobile].mostrar{
+  margin-bottom: 0px;
+}
+
+div[toasts-web-arriba-derecha],
+div[toasts-web-arriba-derecha-alto]{
+  z-index: 999;
+  transition:all 0.5s ease-in-out;
+  width: 250px;
+  padding: 14px 24px;
+  color: gray;
+  background-color: #333333;
+  font-size: 15px;
+  position: absolute;
+  float: right;
+  top: -48px;
+  right: 10px;
+  opacity:0;
+}
+div[toasts-web-arriba-derecha]{
+  height: 20px;
+}
+div[toasts-web-arriba-derecha-alto]{
+  height: 40px;
+}
+div[toasts-web-arriba-derecha].mostrar,
+div[toasts-web-arriba-derecha-alto].mostrar{
+  opacity: 1;
+  top: 60px;
+}
