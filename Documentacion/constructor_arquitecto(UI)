@@ -14,4 +14,8 @@ Arquitecto: {
     agregarCampos(campos,contenedor) ---- permite añadir los campos pasados como paramtetro al contenedor especificado
     agregarCampos(campo,contenedor) ----- recibe un objeto
     agregarToasts(atributos) ------------ agrega un mensaje pequeño en la parte inferior de la pantalla
+    agregarCuadroCarga(cuadroCarga) ----- agrega un cuadro de carga al arreglo para su  posterior utilizacion
+    removerCuadroCarga(nombre) ---------- remueve un cuadro de carga del arreglo que tenga el nombre especificado
+    buscarCuadroCarga(nombre) ----------- buscar y retorna un cuadro de carga con el nombre especificado que se encuentre en el areglo principal
+
 }

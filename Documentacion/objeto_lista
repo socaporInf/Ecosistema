@@ -1,0 +1,39 @@
+Lista(data){
+  Slot(data){
+    atributos: Objeto, - Objeto que se paso como parametro(data)
+    estado: string,
+    rol: string, ------- tiene el valor lista por defecto
+    nodo: DOM
+
+    metodos:
+      construirNodo()
+      reconstruirNodo() - permite reconstruir la interfaz del slot
+      destruirNodo() ---- desaparece el slot de la interfaz con un efecto de salida
+  }
+  atributos: Objeto, ---- guarda el objeto que se uso para construir la lista(data)
+  Slots: Array, --------- arreglo con todos los slots de la lista
+  nodo: DOM
+
+  Metodos:
+    construir() ------------------ construye la interfaz del a lista
+    manejarCarga() --------------- en caso de que el valor atributos.carga.uso sea verdadero se encarga de manejar la busqueda de
+                                   al servidor de los valores de la lista, utilizando los valores
+                                   carga.peticion, carga.espera(cuadro de espera mientras se buscan los valores),
+                                   carga.respuesta(funcion que sera utilizada como callback cuando se obtenga la respuesta)
+    crearContenedorCarga() ------- crea el nodo DOM donde se colocara el cuadro de carga
+    removerContenedorCarga() ----- remueve el nodo DOM donde esta el cuadro de carga
+    abrirCampoBusqueda() --------- abre el campo busqueda en la parte superior de la lista
+    cerrarCampoBusqueda() -------- cierra el campo busqueda en la parte superior de la lista
+    listarSlots() ---------------- muestra por consola todos los nombres de los slots de la lista
+    agregarSlot(data) ------------ agrega un slot a la lista con los datos suministrados
+    cargarElementos() ------------ permite agregar mas de un slot a la lista de un solo golpe
+    controlLista(nodo) ----------- coloca el nodo pasado como parametro como el nodo seleccionado y se lo quita a los demas
+    buscarSlot(objeto) ----------- busca y retorna el slot del objeto que tenga objeto.codigo igual al slot.atributos.codigo
+    buscarSlotPorNombre(objeto) -- busca y retorna el slot del objeto que tenga objeto.nombre igual al slot.atributos.nombre
+    cambiarTextoSlots(cambio) ---- dependiendo del cambio solicitado(por ahora solo mediaquery) cambia el texto de los slots reduciendolo o completandolo
+    actualizarLista(cambios) ----- actualiza los datos de los slots pasado como parametros en forma de arreglo de objetos
+    actualizarSlot(objeto) ------- cambia la interfaz del slot que corresponda al objeto pasado como parametro
+    obtenerSeleccionado() -------- retorna el slot que se encuentre en la interfaz como selecionado
+    buscarElementos() ------------ en construccion
+    manejarPaginacion() ---------- en construccion
+}
