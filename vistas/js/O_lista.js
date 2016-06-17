@@ -110,8 +110,10 @@ var Lista = function(data){
 
     //carga de elementos ya sea por busqueda a la BD o que sean suministrados en la
     //construccion
-    this.manejarCarga();
-  /*
+    setTimeout(function(){
+      lista.manejarCarga();
+    },10);
+     /*
     //en caso de que la paginacion este activa
     if(this.atributos.paginacion.uso === 'true'){
       this.manejarPaginacion();
@@ -126,29 +128,36 @@ var Lista = function(data){
   this.manejarCarga = function(){
       var carga = this.atributos.carga;
       //si no posee la info del cuadro de carga toma los valore por defecto
-      if(this.atributos.carga.uso === 'true'){
-        if(!carga.infoCuadro){
-          carga.infoCuadro = {
-            mensaje:'Buscando',
-            contenedor:this.nodo,
+      if(carga.uso === true){
+
+        var contenedor = this.crearContenedorCarga();
+        if(!carga.espera){
+          carga.espera = {
+            contenedor: contenedor,
+            cuadro:{
+              nombre: this.atributos.titulo,
+              mensaje: 'Buscando',
+              clases: ['lista']
+            }
           };
         }else{
-          //contenedor obligatorio es el nodo de la lista;
-          carga.infoCuadro.contenedor = this.nodo;
+          carga.espera.contenedor = contenedor;
           console.log('contenedor sobre escrito a nodo de la lista');
         }
         if(!carga.peticion){
           console.log('no se puede realizar una carga de elementos sin una peticion');
         }else{
           var lista = this;
-          torque.manejarOperacion(carga.peticion,carga.infoCuadro,function(respuesta){
+          torque.manejarOperacion(carga.peticion,carga.espera,function cargaAutomaticaLista(respuesta){
+            lista.removerContenedorCarga();
             lista.cargarElementos(respuesta.registros);
+            if(lista.atributos.carga.respuesta){
+              lista.atributos.carga.respuesta();
+            }
         });
-        cuadroDeCarga.style.marginTop='80px';
       }
     }
     else if(this.atributos.elementos){
-
       //si lo elementos de la lista fueron suministrados en la creacion
       this.cargarElementos(this.atributos.elementos);
     }else{
@@ -156,6 +165,16 @@ var Lista = function(data){
     }
   };
 
+  this.crearContenedorCarga = function(){
+    var contenedor = document.createElement('section');
+    contenedor.setAttribute('contenedorCarga','');
+    this.nodo.appendChild(contenedor);
+    return contenedor;
+  };
+  this.removerContenedorCarga = function(){
+    var contenedor = this.nodo.querySelector('section[contenedorCarga]');
+    this.nodo.removeChild(contenedor);
+  };
   this.abrirCampoBusqueda = function(){
 	var botonBusqueda = document.querySelector('button[btnbusq]');
     botonBusqueda.parentNode.classList.add('buscar');
@@ -214,9 +233,9 @@ var Lista = function(data){
     }
   };
 
-  this.buscarSlot = function(registro){
+  this.buscarSlot = function(objeto){
     for(x=0;x<this.Slots.length;x++){
-      if(this.Slots[x].atributos.codigo==registro.codigo){
+      if(this.Slots[x].atributos.codigo==objeto.codigo){
         return this.Slots[x];
       }
     }
@@ -224,9 +243,9 @@ var Lista = function(data){
     return false;
   };
 
-  this.buscarSlotPorNombre = function(registro){
+  this.buscarSlotPorNombre = function(objeto){
     for(x=0;x<this.Slots.length;x++){
-      if(this.Slots[x].atributos.nombre==registro.nombre){
+      if(this.Slots[x].atributos.nombre==objeto.nombre){
         return this.Slots[x];
       }
     }
@@ -266,10 +285,10 @@ var Lista = function(data){
     }
   };
 
-  this.actualizarSlot = function(registro){
-    var slot=this.buscarSlot(registro);
+  this.actualizarSlot = function(objeto){
+    var slot=this.buscarSlot(objeto);
     if(slot){
-      slot.atributos=registro;
+      slot.atributos=objeto;
       slot.reconstruirNodo();
     }
   };
