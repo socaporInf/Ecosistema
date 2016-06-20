@@ -1621,7 +1621,7 @@ var CuadroCarga = function(info,callback){
 	};
 	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
 	this.manejarCarga = function(nombre){
-		console.log('comienza manejo de carga');
+		console.log(nombre);
 		UI.buscarCuadroCarga(nombre).contEspera=0;
 		this.intervalID=setInterval(function(){
 			var callback = UI.buscarCuadroCarga(nombre).callback;
@@ -1686,14 +1686,12 @@ var Arquitecto = function(){
 
 	this.configure = function(objetoInicializar){
 		objetoInicializar = objetoInicializar || {};
-
 		this.elementos = {
 			 menu : new Menu(),
 			 cabecera : new Cabecera(),
 			 formulario : 'noPosee',
 			 botonera : 'noPosee'
 		};
-
 		if(objetoInicializar.formulario){
 			this.elementos.formulario = new Formulario(objetoInicializar.formulario.entidad);
 		}
@@ -1752,10 +1750,9 @@ var Arquitecto = function(){
 	};
  	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
 	this.iniciarCarga = function(info,callback){
-		console.log('inicio carga');
 		cuadroCarga = new CuadroCarga(info,callback);
 		this.agregarCuadroCarga(cuadroCarga);
-		cuadroCarga.manejarCarga(this.nombre);
+		cuadroCarga.manejarCarga(info.nombre);
 		return cuadroCarga.nodo;
 	};
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
