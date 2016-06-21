@@ -16,8 +16,8 @@ class cls_Permisos extends cls_Conexion{
 	public function f_ObtenerPrivilegios(){
 		$x=0;
 		$la_Privilegios=array();
-		$ls_Sql="SELECT * from seguridad.varbol_privilegio
-				WHERE codigo_usuario='".$this->aa_Atributos['Nombre']."' AND empresa='".$this->aa_Atributos['Empresa']."'";
+		$ls_Sql="SELECT * from seguridad.varbol_privilegio_usuario
+				WHERE estado_privilegio='A' AND codigo_usuario='".$this->aa_Atributos['Nombre']."' AND empresa='".$this->aa_Atributos['Empresa']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registro=$this->f_Arreglo($lr_tabla)){

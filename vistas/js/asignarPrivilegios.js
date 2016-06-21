@@ -83,10 +83,6 @@ var ArbolTemp = function(){
 		for(var i = 0; i < this.hojas.length;i++){
 			arreglo.push(this.hojas[i].atributos);
 		}
-		UI.agregarToasts({
-			texto: 'Exportacion realizada con exito',
-			tipo: 'web-arriba-derecha'
-		});
 		return arreglo;
 	};
 };
@@ -109,6 +105,7 @@ function construirUI(){
 	var infoCuadroCarga = {
 		contenedor: carga.nodo,
 		cuadro:{
+			nombre: 'asignarPrivilegiosCarga1',
 			mensaje:'Cargando'
 		}
 	};
@@ -130,19 +127,21 @@ function costruccionInicial(respuesta){
 		var Peticion = {
 			entidad: 'privilegio',
 			operacion: 'buscarArbol',
-			codigo: ''
+			codigo: UI.elementos.URL.captarParametroPorNombre('ruta')
 		};
 
 		var infoCuadroCarga = {
 			contenedor: formularioArbol.buscarSector('arbol').nodo,
 			cuadro:{
+				nombre: 'cargarArbol',
 				mensaje:'Cargando Arbol'
 			}
 		};
 
 		torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
-			var arbol = new Arbol({
-				nodos: respuesta.registros,
+			arbol = new Arbol({
+				hojasActuales: respuesta.hojasActuales,
+				nodos: respuesta.hojasGenereal,
 				hojaOnClick: function asignar(hoja){
 					var accion = arbolTemp.cambio(hoja);
 				},
@@ -184,7 +183,27 @@ function armarVentanaArbol(){
 	var botonGuardar = formularioArbol.nodo.querySelector('button[guardar]');
 	var botonLimpiar = formularioArbol.nodo.querySelector('button[limpiar]');
 	botonGuardar.onclick = function guardarPrivilegios(){
-		console.log(arbolTemp.exportarArreglo());
+		var peticion = {
+			entidad: 'privilegio',
+			operacion: 'guardarArbol',
+			codigo: UI.elementos.URL.captarParametroPorNombre('ruta'),
+			data: JSON.stringify(arbolTemp.exportarArreglo())
+		};
+		var espera = {
+			contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo,
+			cuadro:{
+				nombre: 'guardando Arbol',
+				mensaje: 'guardando'
+			}
+		};
+		torque.manejarOperacion(peticion,espera,function resultadoGuardado(respuesta){
+			UI.agregarToasts({
+				texto:respuesta.mensaje,
+				tipo: 'web-arriba-derecha-alto'
+			});
+			var sectorArbol = UI.buscarVentana('formularioArbol').buscarSector('arbol');
+			sectorArbol.nodo.appendChild(arbol.raiz.nodo);
+		});
 	};
 	botonLimpiar.onclick = function limpiar(){
 		arbolTemp.buscar(0).titulo.nodo.click();
