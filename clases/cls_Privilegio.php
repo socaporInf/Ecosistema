@@ -30,9 +30,11 @@ class cls_Privilegio extends cls_Conexion{
 				break;
 
 			case 'buscarArbol':
-				$la_respuesta=$this->f_BuscarArbol();
+				$la_respuesta['hojasGenereal']=$this->f_BuscarArbol();
+				$la_respuesta['hojasActuales']=$this->f_BuscarArbolPrivilegios();
 				if(count($la_respuesta)!=0){
-					$respuesta['registros'] = $la_respuesta;
+					$respuesta['hojasGenereal'] = $la_respuesta['hojasGenereal'];
+					$respuesta['hojasActuales'] = $la_respuesta['hojasActuales'];
 					$success=1;
 				}else{
 					$respuesta['mensaje'] = 'Arbol vacio';
@@ -40,6 +42,19 @@ class cls_Privilegio extends cls_Conexion{
 					$respuesta['titulo'] = 'advertencia';
 				}
 				break;
+
+			case 'guardarArbol':
+			$la_respuesta=$this->f_GuardarArbol();
+			if(count($la_respuesta)!=0){
+				$respuesta['hojasGenereal'] = $la_respuesta['hojasGenereal'];
+				$respuesta['hojasActuales'] = $la_respuesta['hojasActuales'];
+				$success=1;
+			}else{
+				$respuesta['mensaje'] = 'No se pudo guardar los cambios';
+				$respuesta['tipo'] = 'error';
+				$respuesta['titulo'] = 'Error Interno Del Servidor';
+			}
+			break;
 
 			default:
 				$respuesta['mensaje'] = 'Operacion "'.strtoupper($this->aa_Atributos['operacion']).'" no existe para esta entidad';
@@ -71,15 +86,36 @@ class cls_Privilegio extends cls_Conexion{
 		return $la_respuesta;
 	}
 
-	private function f_BuscarArbol(){
+	private function f_BuscarArbolPrivilegios(){
 		$x=0;
 		$la_Privilegios=array();
-		$ls_Sql="SELECT * from seguridad.varbol_privilegio";
+		$ls_Sql="SELECT * from seguridad.varbol_privilegio_usuario where estado_privilegio='A' and llave_acceso='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registro=$this->f_Arreglo($lr_tabla)){
 			$la_Privilegios[$x]['titulo']=$la_registro['titulo'];
 			$la_Privilegios[$x]['codigo']=$la_registro['componente'];
+			$la_Privilegios[$x]['padre']=$la_registro['padre'];
+			$la_Privilegios[$x]['tit_padre']=$la_registro['titulo_padre'];
+			$la_Privilegios[$x]['tipo']=$la_registro['tipo'];
+			$la_Privilegios[$x]['llave_acceso']=$la_registro['llave_acceso'];
+			$x++;
+		}
+		$y = 0;
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_Privilegios;
+	}
+
+	private function f_BuscarArbol(){
+		$x=0;
+		$la_Privilegios=array();
+		$ls_Sql="SELECT * from seguridad.varbol_componente ";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		while($la_registro=$this->f_Arreglo($lr_tabla)){
+			$la_Privilegios[$x]['titulo']=$la_registro['titulo'];
+			$la_Privilegios[$x]['codigo']=$la_registro['codigo'];
 			$la_Privilegios[$x]['padre']=$la_registro['padre'];
 			$la_Privilegios[$x]['tit_padre']=$la_registro['titulo_padre'];
 			$la_Privilegios[$x]['tipo']=$la_registro['tipo'];
@@ -90,5 +126,13 @@ class cls_Privilegio extends cls_Conexion{
 		return $la_Privilegios;
 	}
 
+	private function f_GuardarArbol(){
+		$permisosActual = $this->f_BuscarArbolPrivilegios();
+		print_r($permisosActual);
+		$data = json_decode(stripslashes($this->aa_Atributos['data']));
+		foreach($data as $d){
+	     //echo $d->codigo;
+	  };
+	}
 }
 ?>

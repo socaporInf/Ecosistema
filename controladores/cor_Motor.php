@@ -21,10 +21,19 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+<<<<<<< HEAD
 	case 'rol':
 		include_once('../clases/cls_Rol.php');
 		$lobj_Entidad = new cls_Rol;
 		$lobj_Entidad->setPeticion($la_Peticion);
+=======
+	case 'tipoNoticia':
+		include_once('../clases/cls_TipoNoticia.php');
+		$lobj_Entidad = new cls_TipoNoticia;
+		$lobj_Entidad->setPeticion($la_Form);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+>>>>>>> refs/remotes/origin/master
 
 	case 'notificacion':
 		include_once('../clases/cls_Notificacion.php');

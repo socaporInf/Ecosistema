@@ -581,7 +581,6 @@ var Formulario = function(entidad){
 				var infoCuadro = {
 					nombre: 'guardarEdicion',
 					mensaje:'Guardando cambios',
-					contenedor:contenedor,
 				};
 				var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,contenedor);
 				cuadroDeCarga.style.marginTop='80px';
@@ -1037,7 +1036,7 @@ var Formulario = function(entidad){
 			var infoCuadro = {
 				nombre: 'cargaVentanaList',
 				mensaje:'Buscando',
-				contenedor:this.nodo,
+				contenedor:this.nodo
 			};
 			var cuadroDeCarga=UI.iniciarCarga(infoCuadro,function(){
 				if(torque.registrosEntAct!==null){
@@ -1621,7 +1620,7 @@ var CuadroCarga = function(info,callback){
 	};
 	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
 	this.manejarCarga = function(nombre){
-		console.log('comienza manejo de carga');
+		console.log(nombre);
 		UI.buscarCuadroCarga(nombre).contEspera=0;
 		this.intervalID=setInterval(function(){
 			var callback = UI.buscarCuadroCarga(nombre).callback;
@@ -1670,6 +1669,7 @@ var CuadroCarga = function(info,callback){
 		var cuadro = this;
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
+		console.log(cuadro.nodo.parentNode);
 		cuadro.nodo.parentNode.removeChild(cuadro.nodo);
 		UI.removerCuadroCarga(cuadro.nombre);
 	};
@@ -1686,14 +1686,13 @@ var Arquitecto = function(){
 
 	this.configure = function(objetoInicializar){
 		objetoInicializar = objetoInicializar || {};
-
 		this.elementos = {
 			 menu : new Menu(),
 			 cabecera : new Cabecera(),
+			 URL: new URL(),
 			 formulario : 'noPosee',
 			 botonera : 'noPosee'
 		};
-
 		if(objetoInicializar.formulario){
 			this.elementos.formulario = new Formulario(objetoInicializar.formulario.entidad);
 		}
@@ -1752,10 +1751,9 @@ var Arquitecto = function(){
 	};
  	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
 	this.iniciarCarga = function(info,callback){
-		console.log('inicio carga');
 		cuadroCarga = new CuadroCarga(info,callback);
 		this.agregarCuadroCarga(cuadroCarga);
-		cuadroCarga.manejarCarga(this.nombre);
+		cuadroCarga.manejarCarga(info.nombre);
 		return cuadroCarga.nodo;
 	};
 	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
@@ -2340,6 +2338,15 @@ var Toasts = function(atributos){
 		},660);
 	};
 	//---------------------------Ink Event------------------------
+	var URL = function(){
+		this.estado = 'construido';
+		this.captarParametroPorNombre = function(nombre) {
+	    nombre = nombre.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	    var regex = new RegExp("[\\?&]" + nombre + "=([^&#]*)"),
+	    results = regex.exec(location.search);
+	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+		};
+	};
 /*---------------Utilidades---------------------------------------------*/
 function obtenerContenedor(){
 	var contenedor = document.body.firstChild;
