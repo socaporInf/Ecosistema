@@ -58,7 +58,6 @@ switch ($la_Peticion['entidad']) {
 		include_once('../clases/cls_Usuario.php');
 		$lobj_Entidad = new cls_Usuario;
 		$lobj_Entidad->setPeticion($la_Form);
->>>>>>> refs/remotes/origin/master
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
@@ -92,12 +91,9 @@ switch ($la_Peticion['entidad']) {
 
 	default:
 		$respuesta['success'] = 0;
-<<<<<<< HEAD
 		$respuesta['mensaje'] = 'Entidad '.$la_Peticion['entidad'].' no se encuentra soportada por esta aplicacion';
-=======
 		$respuesta['mensaje'] = 'Entidad '.$la_Form['entidad'].' no se encuentra soportada por esta aplicacion';
 		$respuesta['tipo'] = 'error';
->>>>>>> refs/remotes/origin/master
 		break;
 }
 header('Content-type: application/json; charset=utf-8');
