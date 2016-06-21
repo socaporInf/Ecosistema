@@ -25,7 +25,7 @@ switch ($la_Peticion['entidad']) {
 		include_once('../clases/cls_Rol.php');
 		$lobj_Entidad = new cls_Rol;
 		$lobj_Entidad->setPeticion($la_Peticion);
-		break
+		break;
 
 	case 'tipoNoticia':
 		include_once('../clases/cls_TipoNoticia.php');

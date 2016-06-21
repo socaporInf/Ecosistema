@@ -231,6 +231,10 @@ var Menu = function(){
 			this.construirNodo = function(){
 				var nodo = document.createElement('section');
 				nodo.innerHTML = this.contenido;
+				var seleccionado = location.href.substring((location.href.length - this.enlace.length),location.href.length);
+				if(seleccionado == this.enlace){
+					this.estado = 'seleccionado';
+				}
 				nodo.setAttribute('enlace',this.enlace);
 				if(this.enlace.substring(0,1)=='>'){
 					nodo.onclick=function(e){
@@ -281,7 +285,11 @@ var Menu = function(){
 					enlace:hijos[x].URL
 				};
 
-				this.agregarElemento(data);
+				var elementoNuevo = this.agregarElemento(data);
+				if(elementoNuevo.estado==='seleccionado'){
+					UI.elementos.menu.seleccionado = this;
+					elementoNuevo.nodo.setAttribute('seleccionado','');
+				}
 				//creo las capas de aquellas que su URL sea continuar
 				if(hijos[x].URL.substring(0,1)==='>'){
 					capaNueva = new SubCapa(hijos[x],this);
@@ -291,13 +299,11 @@ var Menu = function(){
 			}
 
 		};
-		this.agregarElemento = function(contenido,enlace,seleccionado){
+		this.agregarElemento = function(contenido,enlace){
 			var elementoNuevo = new Elemento(contenido,enlace);
-			if(seleccionado===true){
-				elementoNuevo.nodo.setAttribute('seleccionado','');
-			}
 			this.nodo.appendChild(elementoNuevo.nodo);
 			this.elementos.push(elementoNuevo);
+			return elementoNuevo;
 		};
 		this.buscarElemento=function(codigo){
 			for(var x=0;x<this.elementos.length;x++){
@@ -315,6 +321,7 @@ var Menu = function(){
 	this.capaActiva = null;
 	this.partes = [];
 	this.nodo = null;
+	this.seleccionado = false;
 
 	this.intervaloCarga=null;
 
@@ -355,6 +362,9 @@ var Menu = function(){
 
 					capaNueva = new SubCapa(sesion.arbol,null);
 					UI.elementos.menu.activarCapa(capaNueva);
+					if(UI.elementos.menu.seleccionado){
+						UI.elementos.menu.activarSeleccionado(capaNueva);
+					}
 				}
 			},30);
 			html+='<article off onclick="sesion.cerrarSesion()"></article>';
@@ -406,6 +416,36 @@ var Menu = function(){
 		this.activarCapa(this.capaActiva.padre);
 		var titulo = (this.capaActiva.padre!==null)?this.capaActiva.yo.titulo:'Menu';
 		this.cambiarTitulo(titulo);
+	};
+	this.activarSeleccionado = function(capa){
+		console.log('activarSeleccionado');
+		var ruta = this.buscarRuta(capa);
+		this.ruta = ruta;
+	};
+	this.buscarRuta = function(capa) {
+		console.log('entro en capa:'+capa.codigo);
+		seleccionado = this.seleccionado;
+		var ruta = [];
+		if(capa.codigo!==0){
+			for (var i = 0; i < capa.elementos.length; i++) {
+				console.log('reviso capa:'+capa.codigo+' elemento:'+capa.elementos[i].codigo);
+				if(capa.elementos[i].codigo == seleccionado.codigo){
+					console.log('consiguio elemento:'+capa.elementos[i].codigo);
+					this.seleccionado = capa;
+					ruta.push(capa.elementos[i]);
+					return ruta;
+				}
+			}
+			for(var x = 0;x < capa.hijos.length; x++){
+				console.log('buscara en hijos de capa:'+capa.codigo);
+				var semiRuta = this.buscarRuta(capa.hijos[x]);
+				if(semiRuta){
+					ruta = ruta.concat(semiRuta);
+					return ruta;
+				}
+			}
+		}
+		return false;
 	};
 	this.cambiarTitulo = function(texto){
 		var titulo = this.partes.titulo;
