@@ -99,11 +99,6 @@ class cls_Operacion extends cls_Conexion{
 	}
 	
 	private function f_Guardar(){
-		//encripto la contraseña
-		include_once('cls_acceso.php');
-		$lobj_Acceso = new cls_acceso;
-		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['clave']);
-
 		$lb_Hecho=false;
 		$ls_Sql="INSERT INTO seguridad.voperacion (codigo_operacion,nombre,descripcion) values 
 				('".$this->aa_Atributos['codigo']."','".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
@@ -124,7 +119,7 @@ class cls_Operacion extends cls_Conexion{
 		//arma la cadena sql en base a los campos pasados en la peticion
 		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-		$ls_Sql.="WHERE cod_tip_usu ='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.="WHERE codigo_operacion ='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
