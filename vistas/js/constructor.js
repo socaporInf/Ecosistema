@@ -418,26 +418,26 @@ var Menu = function(){
 		this.cambiarTitulo(titulo);
 	};
 	this.activarSeleccionado = function(capa){
-		console.log('activarSeleccionado');
-		var ruta = this.buscarRuta(capa);
-		this.ruta = ruta;
+		var ruta =  [];
+		do{			
+			ruta = ruta.concat(this.buscarRuta(capa));
+		}while(this.seleccionado!=capa);
+		ruta = ruta.reverse();
+		for(var x = 0; x < ruta.length; x++){
+			ruta[x].nodo.click();
+		}
 	};
 	this.buscarRuta = function(capa) {
-		console.log('entro en capa:'+capa.codigo);
 		seleccionado = this.seleccionado;
 		var ruta = [];
 		if(capa.codigo!==0){
-			for (var i = 0; i < capa.elementos.length; i++) {
-				console.log('reviso capa:'+capa.codigo+' elemento:'+capa.elementos[i].codigo);
-				if(capa.elementos[i].codigo == seleccionado.codigo){
-					console.log('consiguio elemento:'+capa.elementos[i].codigo);
-					this.seleccionado = capa;
-					ruta.push(capa.elementos[i]);
-					return ruta;
-				}
+			var elemento =  capa.buscarElemento(seleccionado.codigo);
+			if(elemento){
+				this.seleccionado = capa;
+				ruta.push(elemento);
+				return ruta;
 			}
 			for(var x = 0;x < capa.hijos.length; x++){
-				console.log('buscara en hijos de capa:'+capa.codigo);
 				var semiRuta = this.buscarRuta(capa.hijos[x]);
 				if(semiRuta){
 					ruta = ruta.concat(semiRuta);
@@ -1709,7 +1709,6 @@ var CuadroCarga = function(info,callback){
 		var cuadro = this;
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
-		console.log(cuadro.nodo.parentNode);
 		cuadro.nodo.parentNode.removeChild(cuadro.nodo);
 		UI.removerCuadroCarga(cuadro.nombre);
 	};
