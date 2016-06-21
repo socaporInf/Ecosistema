@@ -39,6 +39,9 @@ var Arbol = function(atributos){
 				var button = this.nodo.querySelector('button');
 				button.classList.remove('arrow_down_gray');
 			};
+			this.activar = function () {
+				this.nodo.querySelector('.arrow_down_gray').click();
+			};
 			this.construirNodo();
 		};
 		//------------------fin peciolo -----------
@@ -70,6 +73,7 @@ var Arbol = function(atributos){
 	this.nodos = atributos.nodos;
 	this.contenedor = atributos.contenedor;
 	this.hojaOnClick = atributos.hojaOnClick;
+	this.nodosActivos = atributos.hojasActuales || [];
 	this.hojas = null;
 
 	this.construirNodo = function(){
@@ -82,10 +86,10 @@ var Arbol = function(atributos){
 		}
 		arbol.hijos = sesion.buscarHijos(arbol.codigo,this.nodos);
 
-		arbolUI = this.armarHojas(arbol);
+		this.raiz = this.armarHojas(arbol);
 
-		this.contenedor.appendChild(arbolUI.nodo);
-		this.raiz = arbolUI;
+		this.contenedor.appendChild(this.raiz.nodo);
+		this.raiz = this.raiz;
 		this.raiz.nodo.classList.add('raiz');
 	};
 
@@ -98,6 +102,7 @@ var Arbol = function(atributos){
 			tipo: rama.tipo
 		});
 		this.asignarOnClickHoja(hoja);
+		this.verificarHoja(rama,hoja);
 		if(rama.hijos.length){
 
 			for(var x = 0; x < rama.hijos.length; x++){
@@ -110,7 +115,14 @@ var Arbol = function(atributos){
 		}
 		return hoja;
 	};
-
+	this.verificarHoja = function(rama,hoja){
+		for(var x = 0; x < this.nodosActivos.length; x++){
+			if(rama.codigo == this.nodosActivos[x].codigo){
+				hoja.peciolo.activar();
+				hoja.titulo.nodo.click();
+			}
+		}
+	};
 	this.asignarOnClickHoja = function(hoja){
 		var arbol = this;
 		hoja.titulo.nodo.onclick = function asignar(){

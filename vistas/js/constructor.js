@@ -581,7 +581,6 @@ var Formulario = function(entidad){
 				var infoCuadro = {
 					nombre: 'guardarEdicion',
 					mensaje:'Guardando cambios',
-					contenedor:contenedor,
 				};
 				var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,contenedor);
 				cuadroDeCarga.style.marginTop='80px';
@@ -1037,7 +1036,7 @@ var Formulario = function(entidad){
 			var infoCuadro = {
 				nombre: 'cargaVentanaList',
 				mensaje:'Buscando',
-				contenedor:this.nodo,
+				contenedor:this.nodo
 			};
 			var cuadroDeCarga=UI.iniciarCarga(infoCuadro,function(){
 				if(torque.registrosEntAct!==null){
@@ -1670,6 +1669,7 @@ var CuadroCarga = function(info,callback){
 		var cuadro = this;
 		clearInterval(this.intervalID);
 		this.estado = 'cargaCulminada';
+		console.log(cuadro.nodo.parentNode);
 		cuadro.nodo.parentNode.removeChild(cuadro.nodo);
 		UI.removerCuadroCarga(cuadro.nombre);
 	};
@@ -1689,6 +1689,7 @@ var Arquitecto = function(){
 		this.elementos = {
 			 menu : new Menu(),
 			 cabecera : new Cabecera(),
+			 URL: new URL(),
 			 formulario : 'noPosee',
 			 botonera : 'noPosee'
 		};
@@ -2337,6 +2338,15 @@ var Toasts = function(atributos){
 		},660);
 	};
 	//---------------------------Ink Event------------------------
+	var URL = function(){
+		this.estado = 'construido';
+		this.captarParametroPorNombre = function(nombre) {
+	    nombre = nombre.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	    var regex = new RegExp("[\\?&]" + nombre + "=([^&#]*)"),
+	    results = regex.exec(location.search);
+	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+		};
+	};
 /*---------------Utilidades---------------------------------------------*/
 function obtenerContenedor(){
 	var contenedor = document.body.firstChild;
