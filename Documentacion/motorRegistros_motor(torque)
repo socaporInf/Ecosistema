@@ -13,3 +13,20 @@ Motor(entidadActiva): {
     guardar(entidad,info,callback) ------------------ ejecuta una peticion al servidor con la operacion guardar. NOTA: integrar con operacion
 
 }
+
+NOTA: para manejarOperacion() se necesitan 3 parametros, 2 objetos y una funcion. los objetos serian de esta manera:
+
+let peticion = {
+  entidad: String, ------------- este valor si no es pasado es tomado por defecto de valor this.entidadActiva
+  operacion: String,
+  codigo: String, ------------------ este valor si no es pasado toma por defecto este ultimo lo toma del objeto formulario.ventanaForm.registroAct
+}
+
+este se le puede agregar cualquier cantidad de atributos que se necesiten aparte de esos 3
+
+let infoCuadroCarga = {
+  nodo: DOM,
+  cuadro:{
+    mensaje: String
+  }
+}

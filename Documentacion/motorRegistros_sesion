@@ -10,4 +10,5 @@ Sesion: {
     mostrarSesion() --------------- muestra por consola los datos de la sesion activa si existe
     armarPrivilegios(privilegios) - recive los privilegios del usuario y arma el arbol de acceso
     buscarHijos(codigoPadre) ------ funcion recursiva que busca los hijos del codigo suministrado en el arreglo de privilegios y los hijos de estos hasta que no quede ninguno
+    obtenerLlaves() --------------- dispara una peticion al servidor y busca el arreglo de llaves de acceso del usuario
 }

@@ -1,12 +1,13 @@
- <?php 
+ <?php
 include_once('cls_Conexion.php');
 class cls_Empresa extends cls_Conexion{
 	
 	private $aa_Atributos = array();
-	private $aa_Campos = array('cod_emp','rif','nombre','nombre_abr','dir_fis','telefono','correo');
+	private $aa_Campos = array('codigo_empresa','rif','nombre','nombre_abreviado','direccion_fiscal','telefono','correo');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
+		$this->setDatosConexion($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
 	}
 
 	public function getAtributos(){
@@ -56,11 +57,11 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM global.empresa ";
+		$ls_Sql="SELECT * FROM global.vempresa ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['cod_emp'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_empresa'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
 			$la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
 			$x++;
@@ -73,16 +74,16 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * FROM global.empresa where cod_emp='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT * FROM global.vempresa where codigo_empresa='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['cod_emp'];
+			$la_respuesta['codigo']=$la_registros['codigo_empresa'];
 			$la_respuesta['rif']=$la_registros['rif'];
 			$la_respuesta['nombre']=$la_registros['nombre'];
-			$la_respuesta['dir_fis']=$la_registros['dir_fis'];
+			$la_respuesta['direccion_fiscal']=$la_registros['direccion_fiscal'];
 			$la_respuesta['telefono']=$la_registros['telefono'];
-			$la_respuesta['nombre_abr']=$la_registros['nombre_abr'];
+			$la_respuesta['nombre_abreviado']=$la_registros['nombre_abreviado'];
 			$la_respuesta['correo']=$la_registros['correo'];
 			$lb_Enc=true;
 		}
@@ -99,9 +100,9 @@ class cls_Empresa extends cls_Conexion{
 	
 	private function f_Guardar(){
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO global.empresa (nombre,rif,dir_fis,telefono,correo,nombre_br) values 
-				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['rif']."','".$this->aa_Atributos['dir_fis']."',
-				'".$this->aa_Atributos['telefono']."','".$this->aa_Atributos['correo']."','".$this->aa_Atributos['nombre_abr']."')";
+		$ls_Sql="INSERT INTO global.vempresa (nombre,rif,direccion_fiscal,telefono,correo,nombre_abreviado) values 
+				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['rif']."','".$this->aa_Atributos['direccion_fiscal']."',
+				'".$this->aa_Atributos['telefono']."','".$this->aa_Atributos['correo']."','".$this->aa_Atributos['nombre_abreviado']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
@@ -111,12 +112,12 @@ class cls_Empresa extends cls_Conexion{
 	private function f_Modificar(){
 		$lb_Hecho=false;
 		$contCampos = 0;
-		$ls_Sql="UPDATE global.empresa SET ";
+		$ls_Sql="UPDATE global.vempresa SET ";
 
 		//arma la cadena sql en base a los campos pasados en la peticion
 		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-		$ls_Sql.="WHERE cod_emp ='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.="WHERE codigo_empresa ='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();

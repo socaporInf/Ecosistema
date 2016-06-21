@@ -25,12 +25,12 @@ function procesarAcc(){
 			ventana.bloqueo=true;
 			ventana.cabecera='Accesando';
 			ventana.cuerpo='Cargando...';
-			ventana.pie='<section modalButtons>\
-								<button type="button" cancelar id="modalButtonCancelar"></button>\
-							</section>';
-			
+			ventana.pie='<section modalButtons>'+
+										'<button type="button" cancelar id="modalButtonCancelar"></button>'+
+									'</section>';
+
 			//construyo la ventana modal
-			var capaContenido = UI.crearVentanaModal(ventana,true);				
+			var capaContenido = UI.crearVentanaModal(ventana,true);
 			capaContenido.nodo.style.height='430px';
 
 			//obtengo los botones
@@ -48,7 +48,7 @@ function procesarAcc(){
 					html+='<button inicio valor="'+respuesta.registros[x].codigo+'" onclick="iniciarSession(this) "';
 					html+='>'+respuesta.registros[x].nombre+'</button>';
 				}
-				
+
 				var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 				capaContenido.partes.cabecera.nodo.textContent='Elija Una Empresa';
 				capaContenido.partes.cuerpo.nodo.innerHTML=html;
@@ -70,8 +70,8 @@ function iniciarSession(nodo){
 	        var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 	        var respuesta = JSON.parse(conexionAcc.responseText);
 	        var html='';
-	        if(respuesta.success==1){	
-	        	location.href='vis_Empresa.html';
+	        if(respuesta.success==1){
+	        	location.href='vis_Landing.html';
 	        }else{
 	        	console.log(respuesta.mensaje);
 	        	html+="<atricle>"+respuesta.mensaje+"</article>";
@@ -83,9 +83,10 @@ function iniciarSession(nodo){
 	conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	var envio="Operacion="+encodeURIComponent("iniciarSession");
 	envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Empresa="+encodeURIComponent(nodo.getAttribute('valor'));
-	conexionAcc.send(envio);	
+	conexionAcc.send(envio);
 	var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 	var info={
+		nombre: 'iniciarSession',
 		mensaje:'Iniciar Sesion'
 	};
 	capaContenido.partes.cuerpo.nodo.innerHTML='';

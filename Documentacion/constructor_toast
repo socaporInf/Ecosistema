@@ -1,0 +1,7 @@
+Toasts: {
+  nodo: DOM,
+  atributos: arreglo
+
+  Metodos
+    construirNodo()
+}

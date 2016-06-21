@@ -1,0 +1,58 @@
+Ventana(atributos): {
+	
+	titulo(atributos):{
+		nodo: DOM,
+		atributos: Object,
+
+		Metodos
+			construirNodo()
+	}
+
+	Sector(atributos):{
+		nodo: DOM,
+		atributos: Object,
+
+		Metodos
+			construirNodo()
+	}
+
+  nodo: DOM,
+  atributos: Object,
+  estado: String,
+  sectores: Array,
+
+  Metodos
+    construirNodo()
+    agregarSector(atributos)
+    buscarSector(nombre)
+    quitarSector(nombre)
+    agregarTitulo(atributos)
+    destruirNodo()
+}
+
+NOTA: si se pasa como parametros los sectores en un arreglo de esta manera
+
+let ventana = new Ventana({
+	tipo: 'formulario',
+		titulo: {
+			texto: 'Seguridad',
+			tipo: 'basico'
+		},
+		sectores:[
+			{html:'aqui el html sector 1'},
+			{html:'aqui el html sector 2'}
+		]
+});
+
+los sectores se crear al momento de crear el objeto ventana o se pueden crear de esta manera
+
+let ventana = new Ventana({
+	tipo: 'formulario',
+		titulo: {
+			texto: 'Este es el titulo',
+			tipo: 'basico'
+		}
+});
+
+let sector_1 = ventana.agregarSector({html:'aqui el html sector 1'});
+let sector_2 = ventana.agregarSector({html:'aqui el html sector 2'});

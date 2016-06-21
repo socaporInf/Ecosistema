@@ -25,50 +25,19 @@
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.configure();
-
-	//botones que van a ser utilizados en la UI
-	let botones = ['buscar','nuevo','abrir'];
-	UI.elementos.botonera = new Botonera(botones);
-
-	//se inicializa el formulario
-	UI.elementos.formulario = new Formulario(torque.entidadActiva);
+	UI.configure({
+		formulario:{
+			entidad: torque.entidadActiva
+		}, 
+		botonera:{
+			botones:['buscar','nuevo','abrir']
+		}
+	});
 
 	sesion.obtenerSesion();
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 
-
-	//funcionamiento exclusivo del formulario
-	function guardar(){
-		var formulario = document.formNuevo;
-		var data = new Array();
-		var elemento;
-		var validacion=false;
-		for(var x=0;x<formulario.elements.length;x++){
-			if((formulario.elements[x].type=='text')||(formulario.elements[x].type=='password')){
-				if(formulario.elements[x].value==''){
-					validacion=true;
-				}
-				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
-				data.push(elemento);
-			}
-		}
-		if(!validacion){
-			//guardo en base de datos
-			torque.guardar(torque.entidadActiva,data,function(respuesta){
-				console.log(respuesta);
-				var nuevoSlot=UI.elementos.formulario.agregarSlot(nuevoRegistro);
-
-				//cambio a modificacion
-				nuevoSlot.firstChild.click();
-			});
-			
-		}else{
-			console.log('formulario no paso la validacion');
-		}
-	}
-	
 	//------------------------------------------Funciones Propias de la UI de este formulario---------------------------
 	//declaro el objeto donde se encuentra la UI del formulario 
 	var objForm=UI.elementos.formulario.ventanaForm;
@@ -95,10 +64,10 @@
 						parametros : {titulo:'Codigo',nombre:'codigo',tipo:'simple',eslabon:'simple',usaToolTip:true}
 					},{
 						tipo : 'campoDeTexto',
-						parametros : {titulo:'Nombre',nombre:'nom',tipo:'simple',eslabon:'simple',usaToolTip:true}
+						parametros : {titulo:'Nombre',nombre:'nombre',tipo:'simple',eslabon:'simple',usaToolTip:true}
 					},{
 						tipo : 'campoDeTexto',
-						parametros : {titulo:'Descripcion',nombre:'des',tipo:'area',eslabon:'area',usaToolTip:true}
+						parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
 					}
 				]
 				//agrego los campos
@@ -154,7 +123,7 @@
 					var campos = [
 						{
 							tipo : 'campoEdicion',
-							parametros : {titulo:'Descripcion',nombre:'des',valor:data.des,tipo:'area'}
+							parametros : {titulo:'Descripcion',nombre:'descripcion',valor:data.descripcion,tipo:'area'}
 						}
 					]
 					//agrego los campos

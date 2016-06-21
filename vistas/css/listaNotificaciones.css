@@ -1,0 +1,23 @@
+div[lista].notificaciones section[slot]{
+  padding-left: 10px;
+  padding-top: 2px;
+  padding-right: 0px;
+  padding-bottom: 2px;
+}
+div[lista].notificaciones section[prioridad]{
+  background-repeat: no-repeat;
+  background-position-x: calc(100% - 12px);
+  background-position-y: 4px;
+}
+div[lista].notificaciones section[prioridad='E']{
+  background-image: url('../imagenes/emergencia.png');
+}
+div[lista].notificaciones section[prioridad='A']{
+  background-image: url('../imagenes/alta.png');
+}
+div[lista].notificaciones section[prioridad='N']{
+  background-image: url('../imagenes/normal.png');
+}
+div[lista].notificaciones section[prioridad='B']{
+  background-image: url('../imagenes/info.png');
+}

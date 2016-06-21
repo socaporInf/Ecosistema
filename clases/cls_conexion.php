@@ -1,13 +1,14 @@
-<?php 
+<?php
    class cls_Conexion { 									//Declarar clase Abstracta Modelo
-	private  $db_host 	= '192.168.88.250';									//Nombre del Host
-	private  $db_usuario 	= 'postgres';									//Nombre del Usuario
-	private  $db_password = '1234';									//Password de la BD.
+	//protected  $db_host = '192.168.88.250';									//Nombre del Host local
+	protected  $db_host = '200.35.72.145';									//Nombre del Host Remoto
+	private $db_usuario = 'soca';									//Nombre del Usuario
+	private  $db_password = '1234';											//Password de la BD.
 	private  $db_num_db	 ='';
 	protected $db_nombre= 'socaDB';										//Nombre de la Base de Datos.
 	private  $db_port="5433";		
 	protected $query;													//Variable del Query
-	protected $rows 			= array();								//Variable arreglo de las filas de una busqueda
+	protected $rows = array();											//Variable arreglo de las filas de una busqueda
 	private $arCon;														//Variable de Conexion
 	public $mensaje = 'Hecho';											//Mensaje de Hecho
 	
@@ -21,14 +22,22 @@
 		$this->db_password=$pcPassword;
 		$this->db_num_db=$pcNumdb;
 	}
+
+	protected function setDatosConexion($pcUsuario, $pcPassword){
+		$this->db_usuario=$pcUsuario;
+		$this->db_password=$pcPassword;
+	}
 /*-----------------------------------
 * Funcion conectar (Conecta con la base de datos)
 *-----------------------------------*/
    
 	protected function f_Con() {
-		$this->arCon = pg_connect("host=".$this->db_host." user=".$this->db_usuario." port=".$this->db_port." password=".$this->db_password." dbname=".$this->db_nombre);
+		$this->arCon = pg_connect("host=".$this->db_host." user=".$this->db_usuario." port=".$this->db_port." password=".$this->db_password." dbname=".$this->db_nombre) or die('Could not connect: ' . pg_last_error());
 	}
-		
+	
+	protected function f_ConUsu() {
+		$this->arCon = pg_connect("host=".$this->db_host." user=".$this->db_usuario." port=".$this->db_port." password=".$this->db_password." dbname=".$this->db_nombre);
+	}	
 /*-----------------------------------
 * Funcion Desconectar (Desconecta con la base de datos)
 *-----------------------------------*/
@@ -43,7 +52,7 @@
   
 	protected function f_Ejecutar($lcSql){
 		//print($lcSql);
-		$result=pg_query($this->arCon,$lcSql) OR die ('Ejecucion Invalida');
+		$result=pg_query($this->arCon,$lcSql) OR die ('Ejecucion Invalida'. pg_last_error());
 		return $result;		
 	}
 
@@ -53,7 +62,7 @@
   
 	protected function f_Filtro($lcSql){
 		//print($lcSql);
-		$result=pg_query($this->arCon,$lcSql) OR die ('Busqueda Invalida');
+		$result=pg_query($this->arCon,$lcSql) OR die ('Busqueda Invalida ' . pg_last_error());
 		return $result;		
 	}
 			
