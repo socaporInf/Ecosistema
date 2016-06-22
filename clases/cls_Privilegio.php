@@ -89,7 +89,8 @@ class cls_Privilegio extends cls_Conexion{
 	private function f_BuscarArbolPrivilegios(){
 		$x=0;
 		$la_Privilegios=array();
-		$ls_Sql="SELECT * from seguridad.varbol_privilegio_usuario where estado_privilegio='A' and llave_acceso='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre from seguridad.varbol_privilegio_usuario where estado_privilegio='A' and llave_acceso='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.=" group by titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registro=$this->f_Arreglo($lr_tabla)){
@@ -127,12 +128,44 @@ class cls_Privilegio extends cls_Conexion{
 	}
 
 	private function f_GuardarArbol(){
-		$permisosActual = $this->f_BuscarArbolPrivilegios();
-		print_r($permisosActual);
-		$data = json_decode(stripslashes($this->aa_Atributos['data']));
-		foreach($data as $d){
-	     //echo $d->codigo;
-	  };
+		$existentes = $this->f_BuscarArbolPrivilegios();
+		$aGuardar = json_decode(stripslashes($this->aa_Atributos['data']),true);
+		//solamente lo que no estan en los existentes
+		$aGuardarValidado = array();
+		//aquellos que estan en los existentes pero no en los nuevos
+		$aDesabilitar = array();
+		$indice = 0;
+		//busco a los que realmente voy a guardar
+		for($x = 0;$x < count($aGuardar); $x++){
+			$validado = false;
+			for($y = 0;$y < count($existentes); $y++){
+				if($existentes[$y]['codigo'] == $aGuardar[$x]['codigo']){
+					$validado = true;
+				}
+			}
+			if(!$validado){
+					$aGuardarValidado[count($aGuardarValidado)] = $aGuardar[$x];
+			}
+		}
+		//busco aquellos a desabilitar
+		for($x = 0;$x < count($existentes); $x++){
+			$validado = false;
+			for($y = 0;$y < count($aGuardar); $y++){
+				if($aGuardar[$y]['codigo'] == $existentes[$x]['codigo']){
+					$validado = true;
+				}
+			}
+			print($validado);
+			if(!$validado){
+				$aDesabilitar[count($aDesabilitar)] = $existentes[$x];
+			}
+		}
+		unset($aGuardar);
+		unset($existentes);
+
+		print_r($aGuardarValidado);
+		print_r($aDesabilitar);
 	}
+
 }
 ?>
