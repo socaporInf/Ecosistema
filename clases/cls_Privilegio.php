@@ -45,9 +45,10 @@ class cls_Privilegio extends cls_Conexion{
 
 			case 'guardarArbol':
 			$la_respuesta=$this->f_GuardarArbol();
-			if(count($la_respuesta)!=0){
-				$respuesta['hojasGenereal'] = $la_respuesta['hojasGenereal'];
-				$respuesta['hojasActuales'] = $la_respuesta['hojasActuales'];
+			if($la_respuesta){
+				$respuesta['mensaje'] = 'cambios guardados de forma exitosa';
+				$respuesta['tipo'] = 'info';
+				$respuesta['titulo'] = 'Trasaccion exitosa';
 				$success=1;
 			}else{
 				$respuesta['mensaje'] = 'No se pudo guardar los cambios';
@@ -134,7 +135,7 @@ class cls_Privilegio extends cls_Conexion{
 		$aGuardarValidado = array();
 		//aquellos que estan en los existentes pero no en los nuevos
 		$aDesabilitar = array();
-		$indice = 0;
+		$llave_acceso = $this->aa_Atributos['codigo'];
 		//busco a los que realmente voy a guardar
 		for($x = 0;$x < count($aGuardar); $x++){
 			$validado = false;
@@ -155,17 +156,64 @@ class cls_Privilegio extends cls_Conexion{
 					$validado = true;
 				}
 			}
-			print($validado);
 			if(!$validado){
 				$aDesabilitar[count($aDesabilitar)] = $existentes[$x];
 			}
 		}
 		unset($aGuardar);
 		unset($existentes);
-
-		print_r($aGuardarValidado);
-		print_r($aDesabilitar);
+		//Operaciones en la base de datos
+		$lb_Hecho = false;
+		$this->f_Con();
+		$this->f_Begin();
+		$i = 0;
+		//si se va a desabilitar alguno entra por este camino
+		if(count($aDesabilitar)!=0){
+			do{
+				$ls_Sql = "	UPDATE seguridad.varbol_privilegio_usuario SET estado_privilegio='I'
+										WHERE llave_acceso='".$llave_acceso."' AND
+										componente = '".$aDesabilitar[$i]['codigo']."'";
+				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				$i++;
+			}while(($i < count($aDesabilitar)) || ($lb_Hecho == false));
+		}else{
+			//en caso contrario coloco true debido que no desabilitare a nadie
+			$lb_Hecho = true;
+		}
+		if(!$lb_Hecho){
+			$this->f_RollBack();
+		}else{
+			for ($i=0; $i < count($aGuardarValidado) ; $i++) {
+				$lb_Hecho = false;
+				$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,estado_privilegio from seguridad.varbol_privilegio_usuario";
+				$ls_Sql.=" where llave_acceso='".$this->aa_Atributos['codigo']."' and componente='".$aGuardarValidado[$i]['codigo']."'";
+				$ls_Sql.=" group by titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,estado_privilegio";
+				$lr_tabla=$this->f_Filtro($ls_Sql);
+				if($la_registro=$this->f_Arreglo($lr_tabla)){
+					$ls_Sql = "	UPDATE seguridad.varbol_privilegio_usuario SET estado_privilegio='A'
+											WHERE llave_acceso='".$llave_acceso."'
+											AND componente = '".$aGuardarValidado[$i]['codigo']."'";
+					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				}else{
+					$ls_Sql = "INSERT INTO seguridad.varbol_privilegio_usuario (llave_acceso,componente) values ('".$this->aa_Atributos['codigo']."','".$aGuardarValidado[$i]['codigo']."')";
+					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				}
+				$this->f_Cierra($lr_tabla);
+				if(!$lb_Hecho){
+					$this->f_RollBack();
+					break;
+				}
+			}
+			if($lb_Hecho){
+				$this->f_Commit();
+				$this->f_Des();
+				return true;
+			}else{
+				$this->f_RollBack();
+				$this->f_Des();
+				return false;
+			}
+		}
 	}
-
 }
 ?>
