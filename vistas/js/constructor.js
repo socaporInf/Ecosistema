@@ -419,7 +419,7 @@ var Menu = function(){
 	};
 	this.activarSeleccionado = function(capa){
 		var ruta =  [];
-		do{			
+		do{
 			ruta = ruta.concat(this.buscarRuta(capa));
 		}while(this.seleccionado!=capa);
 		ruta = ruta.reverse();
@@ -1303,27 +1303,8 @@ var modalWindow = function(){
 			};
 
 			this.agregarCampo = function(campo){
-				var campoNuevo;
 				var contenedor = this.nodo;
-				switch(campo.tipo.toLowerCase()){
-					case 'campodetexto':
-						campoNuevo = new CampoDeTexto(campo.parametros);
-						break;
-					case 'combobox':
-						campoNuevo = new ComboBox(campo.parametros);
-						break;
-					case 'radio':
-						campoNuevo = new Radio(campo.parametros);
-						break;
-					case 'campoedicion':
-						campoNuevo = new CampoEdicion(campo.parametros);
-						break;
-					case 'saltodelinea':
-						campoNuevo = new SaltoDeLinea();
-						break;
-
-				}
-				contenedor.appendChild(campoNuevo.nodo);
+				var campoNuevo = UI.agregarCampo(campo,contenedor);
 				this.campos.push(campoNuevo);
 			};
 
@@ -1861,9 +1842,16 @@ var Arquitecto = function(){
 			case 'saltodelinea':
 				campoNuevo = new SaltoDeLinea();
 				break;
-
+			case 'campobusqueda':
+				if(typeof CampoBusqueda !== 'undefined'){
+					campoNuevo = new CampoBusqueda(campo.parametros);
+				}else{
+						console.log('dependencia O_CampoBusqueda.js no existe');
+				}
+				break;
 		}
 		contenedor.appendChild(campoNuevo.nodo);
+		return campoNuevo;
 	};
 	//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
 	this.agregarCampos = function(campos,contenedor){

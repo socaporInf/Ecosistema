@@ -110,22 +110,9 @@ class cls_Privilegio extends cls_Conexion{
 	}
 
 	private function f_BuscarArbol(){
-		$x=0;
-		$la_Privilegios=array();
-		$ls_Sql="SELECT * from seguridad.varbol_componente ";
-		$this->f_Con();
-		$lr_tabla=$this->f_Filtro($ls_Sql);
-		while($la_registro=$this->f_Arreglo($lr_tabla)){
-			$la_Privilegios[$x]['titulo']=$la_registro['titulo'];
-			$la_Privilegios[$x]['codigo']=$la_registro['codigo'];
-			$la_Privilegios[$x]['padre']=$la_registro['padre'];
-			$la_Privilegios[$x]['tit_padre']=$la_registro['titulo_padre'];
-			$la_Privilegios[$x]['tipo']=$la_registro['tipo'];
-			$x++;
-		}
-		$this->f_Cierra($lr_tabla);
-		$this->f_Des();
-		return $la_Privilegios;
+		include_once('cls_Componente.php');
+		$lobj_Componente = new cls_Componente;
+		return $lobj_Componente->f_BuscarArbol();
 	}
 
 	private function f_GuardarArbol(){

@@ -58,7 +58,7 @@ switch ($la_Peticion['entidad']) {
 
 	case 'componente':
 		include_once('../clases/cls_Componente.php');
-		$lobj_Entidad = new cls_Privilegio;
+		$lobj_Entidad = new cls_Componente;
 		$lobj_Entidad->setPeticion($la_Peticion);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;

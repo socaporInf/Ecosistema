@@ -139,6 +139,7 @@ function costruccionInicial(respuesta){
 		};
 
 		torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
+			console.log(respuesta);
 			arbol = new Arbol({
 				hojasActuales: respuesta.hojasActuales,
 				nodos: respuesta.hojasGenereal,
@@ -213,7 +214,7 @@ function armarVentanaArbol(){
 //----------------------------------- Formulario de Componente -----------------------
 function construirFormulario(){
 	UI.elementos.botonera.buscarBoton('abrir').nodo.click();
-	UI.crearVentanaModal({
+	var formComponente = UI.crearVentanaModal({
 		contenido: 'ancho',
 		cabecera:'Nuevo Componente',
 		cuerpo:{
@@ -228,6 +229,9 @@ function construirFormulario(){
 				},{
 					tipo : 'campoDeTexto',
 					parametros : {titulo:'Enlace',nombre:'enlace',tipo:'simple',eslabon:'simple',usaToolTip:false}
+				},{
+					tipo : 'campoBusqueda',
+					parametros : {titulo:'Componente Padre',nombre:'padre'}
 				},{
 					tipo: 'comboBox',
 					parametros : {
@@ -249,16 +253,16 @@ function construirFormulario(){
 		},
 		pie:{
 			html: '<section modalButtons>'+
-						'<button type="button" cancelar </button>'+
-						'<button type="button" guardar </button>'+
+						'<button type="button" cancelar> </button>'+
+						'<button type="button" guardar> </button>'+
 					'</section>'
 		}
 	});
-	var cerrar = document.querySelector('button[cancelar]');
+	var cerrar = formComponente.nodo.querySelector('button[cancelar]');
 	cerrar.onclick = function cerrarVentanta(){
 		UI.elementos.modalWindow.eliminarUltimaCapa();
 	};
-	var guardar = document.querySelector('button[guardar]');
+	var guardar = formComponente.nodo.querySelector('button[guardar]');
 	guardar.onclick = guardarComponente;
 }
 function guardarComponente(){
