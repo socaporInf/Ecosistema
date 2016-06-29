@@ -2059,9 +2059,11 @@ var ComboBox = function(info){
 		//se crea el article
 		var article=document.createElement('article');
 		article.setAttribute('capaSelect','');
-		article.onclick=function(){
-			construirCapaSelect(this);
-		};
+		if(this.data.deshabilitado !== true ){
+			article.onclick=function(){
+				construirCapaSelect(this);
+			};
+		}
 		nodo.appendChild(article);
 
 		//se crea el select
@@ -2103,6 +2105,16 @@ var ComboBox = function(info){
 	};
 	this.captarNombre = function(){
 		return this.nodo.querySelector('select').name;
+	};
+	this.deshabilitar = function(){
+		var article = this.nodo.querySelector('article');
+		article.onclick = function(){};
+	};
+	this.habilitar = function(){
+		var article = this.nodo.querySelector('article');
+		article.onclick = function(){
+			construirCapaSelect(this);
+		};
 	};
 	this.construir();
 };

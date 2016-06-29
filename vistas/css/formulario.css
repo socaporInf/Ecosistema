@@ -3,6 +3,7 @@
 @import url('campoBusqueda.css');
 @import url('ventanaModal.css');
 @import url('toasts.css');
+@import url('iconos.css');
 * {
     outline: none;
     overflow: hidden;

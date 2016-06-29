@@ -139,7 +139,6 @@ function costruccionInicial(respuesta){
 		};
 
 		torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
-			console.log(respuesta);
 			arbol = new Arbol({
 				hojasActuales: respuesta.hojasActuales,
 				nodos: respuesta.hojasGenereal,
