@@ -505,7 +505,7 @@ var Formulario = function(entidad){
 		this.estado = 'sinConstruir';
 		this.formNode = null;
 		this.titulo = null;
-
+		this.campos = [];
 		//este es el registro que se esta editando
 		this.registroId='';
 		//el registro despues de buscarlo
@@ -652,27 +652,9 @@ var Formulario = function(entidad){
 
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
-			var campoNuevo;
 			var contenedor = this.nodo.getElementsByTagName('form')[0];
-			switch(campo.tipo.toLowerCase()){
-				case 'campodetexto':
-					campoNuevo = new CampoDeTexto(campo.parametros);
-					break;
-				case 'combobox':
-					campoNuevo = new ComboBox(campo.parametros);
-					break;
-				case 'radio':
-					campoNuevo = new Radio(campo.parametros);
-					break;
-				case 'campoedicion':
-					campoNuevo = new CampoEdicion(campo.parametros);
-					break;
-				case 'saltodelinea':
-					campoNuevo = new SaltoDeLinea();
-					break;
-
-			}
-			contenedor.appendChild(campoNuevo.nodo);
+			var campoNuevo = UI.agregarCampo(campo,contenedor);
+			this.campos.push(campoNuevo);
 		};
 		//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
 		this.agregarCampos = function(campos){
@@ -1883,6 +1865,26 @@ var Arquitecto = function(){
 		UI.elementos.toasts.splice(UI.elementos.toasts.indexOf(toast),1);
 		UI.elementos.toasts[0].cont--;
 	}
+	//------------------------- Manejo de Constructores ----------------------------
+	//agrega constructores para formularios
+	this.agregarConstructor  = function(objetoConstructor){
+		if(!this.elementos.constructores){
+			this.elementos.constructores = [];
+		}
+		this.elementos.constructores.push(objetoConstructor);
+	};
+	this.buscarConstructor = function(nombre){
+		if(this.elementos.constructores){
+			for (var i = 0; i < this.elementos.constructores.length; i++) {
+				if(this.elementos.constructores[i].nombre == nombre){
+					return this.elementos.constructores[i];
+				}
+			}
+			console.log('no se encontro el constructor');
+		}else{
+			console.log('no existe ningun constructor en la lista');
+		}
+	};
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
 var Ventana = function(atributos){
@@ -2039,6 +2041,9 @@ var Radio = function(info){
 	this.captarNombre = function(){
 		return this.nodo.querySelector('radio').name;
 	};
+	this.captarRequerido = function(){
+		return this.atributos.requerido;
+	};
 	this.construirNodo();
 };
 
@@ -2068,6 +2073,7 @@ var ComboBox = function(info){
 
 		//se crea el select
 		var select=document.createElement('select');
+		select.setAttribute('tabindex','-1');
 		select.name=this.data.nombre;
 		if(this.data.id!==undefined){
 			select.id=this.data.id;
@@ -2099,12 +2105,19 @@ var ComboBox = function(info){
 		nuevaOp.value=opcion.codigo;
 		select.appendChild(nuevaOp);
 	};
+	this.seleccionarOpcion = function(opcion){
+		var select=this.nodo.getElementsByTagName('select')[0];
+		select.value = opcion.codigo;
+	};
 	this.captarValor = function(){
 		var valor = (this.nodo.querySelector('select').value==='-')?null:this.nodo.querySelector('select').value;
 		return valor;
 	};
 	this.captarNombre = function(){
 		return this.nodo.querySelector('select').name;
+	};
+	this.captarRequerido = function(){
+		return this.data.requerido;
 	};
 	this.deshabilitar = function(){
 		var article = this.nodo.querySelector('article');
@@ -2187,6 +2200,9 @@ var CampoDeTexto = function(info){
 		}
 		return tipo;
 	};
+	this.captarRequerido = function(){
+		return this.data.requerido;
+	};
 	this.construir();
 };
 //-------------------- Campo Edicion----------------------------------------------------------
@@ -2195,6 +2211,7 @@ var CampoEdicion = function(info){
 	this.data =  info;
 	this.nodo = null;
 	this.tipo = info.tipo || 'simple';
+	this.data.valor = info.valor || '';
 
 	this.construirNodo = function(){
 		var nodo =  document.createElement('div');
@@ -2217,8 +2234,9 @@ var CampoEdicion = function(info){
 		this.nodo=nodo;
 	};
 
-	this.darVida = function(){
-
+	this.asignarValor = function(valor){
+		this.data.valor = valor;
+		this.nodo.querySelector('div[display]').textContent = valor;
 	};
 	this.construirNodo();
 };
