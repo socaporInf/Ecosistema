@@ -124,36 +124,40 @@ function costruccionInicial(respuesta){
 		});
 
 		var formularioArbol = armarVentanaArbol();
-		var Peticion = {
-			entidad: 'privilegio',
-			operacion: 'buscarArbol',
-			codigo: UI.elementos.URL.captarParametroPorNombre('ruta')
-		};
-
-		var infoCuadroCarga = {
-			contenedor: formularioArbol.buscarSector('arbol').nodo,
-			cuadro:{
-				nombre: 'cargarArbol',
-				mensaje:'Cargando Arbol'
-			}
-		};
-
-		torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
-			arbol = new Arbol({
-				hojasActuales: respuesta.hojasActuales,
-				nodos: respuesta.hojasGenereal,
-				hojaOnClick: function asignar(hoja){
-					var accion = arbolTemp.cambio(hoja);
-				},
-				contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo
-			});
-		});
+		llenarArbol(formularioArbol);
 	}else{
 		UI.crearMensaje(respuesta);
 	}
 	//funcionamiento botones
 	var btnNuevo = document.querySelector('button[btnnuevo]');
 	btnNuevo.onclick = construirFormulario;
+}
+function llenarArbol(formularioArbol){
+	var Peticion = {
+		entidad: 'privilegio',
+		operacion: 'buscarArbol',
+		codigo: UI.elementos.URL.captarParametroPorNombre('ruta')
+	};
+
+	var infoCuadroCarga = {
+		contenedor: formularioArbol.buscarSector('arbol').nodo,
+		cuadro:{
+			nombre: 'cargarArbol',
+			mensaje:'Cargando Arbol'
+		}
+	};
+
+	torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
+		arbolTemp = new ArbolTemp();
+		arbol = new Arbol({
+			hojasActuales: respuesta.hojasActuales,
+			nodos: respuesta.hojasGenereal,
+			hojaOnClick: function asignar(hoja){
+				var accion = arbolTemp.cambio(hoja);
+			},
+			contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo
+		});
+	});
 }
 //----------------------------------- ventana Arbol ----------------------------------
 function armarVentanaArbol(){
@@ -217,38 +221,8 @@ function construirFormulario(){
 		contenido: 'ancho',
 		cabecera:'Nuevo Componente',
 		cuerpo:{
-			alto:300,
-			campos:[
-				{
-					tipo : 'campoDeTexto',
-					parametros : {titulo:'Titulo',nombre:'titulo',tipo:'simple',eslabon:'simple',usaToolTip:true}
-				},{
-					tipo : 'campoDeTexto',
-					parametros : {titulo:'Color',nombre:'color',tipo:'simple',eslabon:'simple',usaToolTip:false}
-				},{
-					tipo : 'campoDeTexto',
-					parametros : {titulo:'Enlace',nombre:'enlace',tipo:'simple',eslabon:'simple',usaToolTip:false}
-				},{
-					tipo : 'campoBusqueda',
-					parametros : {titulo:'Componente Padre',nombre:'padre'}
-				},{
-					tipo: 'comboBox',
-					parametros : {
-						nombre:'tipoComponente',
-						titulo:'Tipos de Componente',
-						eslabon : 'area',
-						opciones: [
-							{codigo:'S',nombre:'Sistemas'},
-							{codigo:'F',nombre:'Formulario'},
-							{codigo:'R',nombre:'Reporte'},
-							{codigo:'M',nombre:'Modulo'}
-						]
-					}
-				},{
-					tipo : 'campoDeTexto',
-					parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
-				}
-			]
+			alto: UI.buscarConstructor('componente').nuevo.altura,
+			campos: UI.buscarConstructor('componente').nuevo.campos
 		},
 		pie:{
 			html: '<section modalButtons>'+
@@ -267,14 +241,21 @@ function construirFormulario(){
 function guardarComponente(){
 	var campos = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.campos;
 	var data = [];
+	var validado = false;
 	for (var i = 0; i < campos.length; i++) {
+		//valido el campo
+		if((campos[i].captarRequerido())&&(!campos[i].captarValor())){
+			validado = true;
+		}
 		if(campos[i].captarValor()){
 			data.push({nombre:campos[i].captarNombre(),valor:campos[i].captarValor()});
 		}
 	}
-	if(data.length){
+	if(!validado){
+		console.log(data);
 		torque.guardar('componente',data,function guardar(respuesta){
 			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+			llenarArbol(UI.buscarVentana('formularioArbol'));
 		});
 	}else{
 		UI.agregarToasts({
