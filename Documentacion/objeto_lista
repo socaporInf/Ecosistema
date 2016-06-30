@@ -37,3 +37,30 @@ Lista(data){
     buscarElementos() ------------ en construccion
     manejarPaginacion() ---------- en construccion
 }
+ejemplo objeto lista:
+{
+  titulo: 'notificaciones',
+  clase: 'notificaciones',
+  onclickSlot: function(slot){
+    //funcion que se ejecuta al precionar un slot
+  },
+  carga: {
+    uso:true,
+    peticion:{
+      entidad: 'notificacion',
+      operacion: 'buscarNotificacionesUsu'
+    },
+    espera:{
+      cuadro:{
+        nombre: 'notificaciones',
+        mensaje: 'Cargando notificaciones'
+      }
+    },
+    respuesta: function callback() {
+      //funcion que se ejecuta en respuesta a la busqueda
+    }
+  },
+  paginacion: {
+    uso:false
+  }
+}

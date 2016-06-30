@@ -9,12 +9,15 @@ combobox(info): {
     agregarOpcion(opcion) - agrega la opcion al combo
     captarValor()
     captarNombre()
+    captarRequerido() ----- retorna si el campo es requerido o no en booliano
+
 }
 
 ejemplo de campo combo box
 {
 	nombre:'tipoComponente',
 	titulo:'Tipos de Componente',
+  requerido: true
 	eslabon : 'area',
 	opciones: [
 		{codigo:'S',nombre:'Sistemas'}

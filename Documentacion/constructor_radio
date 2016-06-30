@@ -8,5 +8,6 @@ Radio(info): {
     agregarOpciones()  ---- agrega todas los opciones que se encuentran dentro de data
     agregarOpcion(opcion) - agrega la opcion al radio
     captarValor()
-    captarNombre()
+    captarNombre()    
+    captarRequerido() ----- retorna si el campo es requerido o no en booliano
 }
