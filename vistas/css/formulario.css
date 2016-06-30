@@ -4,6 +4,7 @@
 @import url('ventanaModal.css');
 @import url('toasts.css');
 @import url('iconos.css');
+@import url('colores-material.css');
 * {
     outline: none;
     overflow: hidden;
