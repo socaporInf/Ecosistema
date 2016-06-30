@@ -92,6 +92,8 @@ class cls_Privilegio extends cls_Conexion{
 		$la_Privilegios=array();
 		$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre from seguridad.varbol_privilegio_usuario where estado_privilegio='A' and llave_acceso='".$this->aa_Atributos['codigo']."'";
 		$ls_Sql.=" group by titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre";
+		$ls_Sql.=" order by padre";
+		$la_Privilegios[0];
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registro=$this->f_Arreglo($lr_tabla)){
@@ -103,7 +105,9 @@ class cls_Privilegio extends cls_Conexion{
 			$la_Privilegios[$x]['llave_acceso']=$la_registro['llave_acceso'];
 			$x++;
 		}
-		$y = 0;
+		$auxiliar = $la_Privilegios[0];
+		$la_Privilegios[0]=$la_Privilegios[count($la_Privilegios)-1];
+		$la_Privilegios[count($la_Privilegios)-1] = $auxiliar;
 		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
 		return $la_Privilegios;

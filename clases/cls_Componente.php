@@ -35,8 +35,15 @@ class cls_Componente extends cls_Conexion{
      case 'guardar':
        $lb_Hecho=$this->f_Guardar();
        if($lb_Hecho){
-         $respuesta['mensaje'] = 'Insercion realizada con exito';
-         $success=1;
+          $respuesta['mensaje']['titulo'] = 'Operacion Exitosa';
+          $respuesta['mensaje']['tipo'] = 'informacion';
+          $respuesta['mensaje']['mensaje'] = 'Insercion realizada con exito';
+          $success=1;
+       }else{
+          $respuesta['mensaje']['titulo'] = 'Error Interno de Servidor';
+          $respuesta['mensaje']['tipo'] = 'error';
+          $respuesta['mensaje']['mensaje'] = 'Fallo en la realizacion de la insercion';
+          $success=1;
        }
        break;
 
@@ -104,7 +111,7 @@ class cls_Componente extends cls_Conexion{
    $lb_Hecho=false;
    $ls_Sql="INSERT INTO seguridad.vcomponente (titulo,color,icono,enlace,componente_padre,tipo,descripcion) values
        ('".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['color']."','".$this->aa_Atributos['icono']."',
-       '".$this->aa_Atributos['enlace']."','".$this->aa_Atributos['componente_padre']."','".$this->aa_Atributos['tipo']."',
+       '".$this->aa_Atributos['enlace']."','".$this->aa_Atributos['padre']."','".$this->aa_Atributos['tipocomponente']."',
        '".$this->aa_Atributos['descripcion']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
@@ -124,7 +131,6 @@ class cls_Componente extends cls_Conexion{
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
-
 
    if($lb_Hecho){
      $this->f_Buscar();
