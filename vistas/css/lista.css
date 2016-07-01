@@ -20,6 +20,7 @@ div[lista] section[busqueda]{
   position: absolute;
   z-index: 2;
   padding: 10px 0px;
+  width: inherit;
 }
 section[busqueda] + section[slot]{
     margin-top: 51px !important;

@@ -495,11 +495,12 @@ var Cabecera = function(){
 /*----------------------------------------------------------------------------------------------------*/
 /*------------------------------Objeto Formulario(lista)----------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
-var Formulario = function(entidad){
+var Formulario = function(atributos){
 
 	//----------------------------------Objeto Ventana Formulario-------------------
-	var VentanaForm = function(){
+	var VentanaForm = function(atributos){
 
+		this.atributos = atributos;
 		this.tipo = 'noPosee';
 		this.nodo = null;
 		this.estado = 'sinConstruir';
@@ -522,7 +523,11 @@ var Formulario = function(entidad){
 			}else if(data.tipo=='nuevo'){
 				this.registroId='';
 			}
-			this.reconstruirUI();
+			if(atributos.usoConstructor){
+				this.iniciarConstructor();
+			}else{
+				this.reconstruirUI();
+			}
 		};
 		this.destruirNodo = function(){
 			if(this.registroId!==''){
@@ -701,6 +706,81 @@ var Formulario = function(entidad){
 					UI.elementos.formulario.ventanaForm.edicion();
 				};
 		};
+		//esta funcion se usa solo si el valor usarConstructor es === true
+		this.iniciarConstructor = function(){
+			if(this.campos.length){
+				this.campos = [];
+			}
+		  var constructor = UI.buscarConstructor(this.atributos.entidad);
+		  var tiempo = (this.estado=='agregado')?600:0;
+		  var html='';
+		  if(this.tipo=='nuevo'){
+		    this.registroId='';
+		    UI.elementos.formulario.ventanaList.controlLista();
+		    this.nodo.style.height='0px';
+		    setTimeout(function(){
+		      //guardo el objeto venana formulario para mejor entendimiento y acceso rapido
+		      var capaForm=UI.elementos.formulario.ventanaForm;
+		      //inicializo los datos del titulo del formulario y la altura del mismo
+		      var titulo = constructor.nuevo.titulo;
+		      var altura = constructor.nuevo.altura;
+		      capaForm.crearEstructuraBasicaNuevo(titulo,altura);
+		      //agrego los campos
+		      UI.elementos.formulario.ventanaForm.agregarCampos(constructor.nuevo.campos);
+		    },tiempo);
+
+		    //funcionamiento botones
+		    UI.elementos.botonera.agregarBoton('guardar');
+		    UI.elementos.botonera.quitarBoton('eliminar');
+
+		  }else if(this.tipo=='modificar'){
+
+		    //funcinamiento botones
+		    UI.elementos.botonera.agregarBoton('eliminar');
+		    UI.elementos.botonera.quitarBoton('guardar');
+
+		    this.nodo.style.height = '0px';
+
+		    setTimeout(function(){
+		      var nodo=UI.elementos.formulario.ventanaForm.nodo;
+		      nodo.style.height='300px';
+		      nodo.style.borderRadius='0px';
+		      //------------Cuadro Carga-------------------------------
+		      var infoCuadro = {
+		        mensaje:'Buscando'
+		      };
+		      nodo.innerHTML='';
+		      var cuadroDeCarga = UI.crearCuadroDeCarga(infoCuadro,nodo);
+		      cuadroDeCarga.style.marginTop = '80px';
+		      //--------------------------------------------------------
+		      var info={
+		        codigo:UI.elementos.formulario.ventanaForm.registroId,
+		        entidad:constructor.nombre,
+		        operacion:'buscarRegistro'
+		      };
+		      torque.Busqueda(info,function(respuesta){
+		        //guardo de forma local los datos para facil acceso
+		        var data = respuesta.registros;
+		        /*Actualizo en el objeto formulario la informacion recibida de manera que
+		        si en un futuro cercano necesito consultar no debo salir del cliente para lo mismo*/
+		        UI.elementos.formulario.ventanaForm.registroAct=data;
+		        //guardo el objeto ventana formulario para mejor entendimiento y acceso rapido
+		        var formulario = UI.elementos.formulario.ventanaForm;
+		        //inicializo los datos del titulo del formulario y la altura del mismo
+		        var titulo = {
+		          nombre:'Nombre',
+		          valor:data.nombre
+		        };
+		        var altura = constructor.modificar.altura;
+		        //monto la estructura basica sobre la cual se montan los campos a agregar
+		        formulario.crearEstructuraBasicaModificar(titulo,altura);
+		        //inicializo el arreglo con los campos a agregar
+		        formulario.agregarCampos(constructor.modificar.campos);
+		        UI.asignarValores(data,formulario);
+		      });
+		    },tiempo);
+		  }
+		};
 
 		this.agregarSectorOperaciones = function(){
 			var operaciones = document.createElement('section');
@@ -864,7 +944,6 @@ var Formulario = function(entidad){
 		this.Slots = [];
 
 		this.nodo = null;
-
 		this.entidadActiva=entidadActiva;
 
 		this.abrirCampoBusqueda = function(){
@@ -1072,13 +1151,12 @@ var Formulario = function(entidad){
 		this.construir();
 	};
 	/*--------------------------Fin Objeto VentanaList-----------------------------------*/
-
-	this.ventanaList = new VentanaList(entidad);
-	this.ventanaForm = new VentanaForm();
+	this.entidadActiva = atributos.entidad;
+	this.atributos = atributos;
+	this.ventanaList = new VentanaList(this.entidadActiva);
+	this.ventanaForm = new VentanaForm(atributos);
 
 	this.estado = 'sinInicializar';
-
-	this.entidadActiva=entidad;
 
 	this.interval=null;
 
@@ -1205,7 +1283,11 @@ var Formulario = function(entidad){
 				this.ventanaForm.tipo='nuevo';
 				this.ventanaForm.registroId='';
 			}
-			this.ventanaForm.reconstruirUI();
+			if(this.ventanaForm.atributos.usoConstructor){
+				this.ventanaForm.iniciarConstructor();
+			}else{
+				this.ventanaForm.reconstruirUI();
+			}
 		}else{
 			this.construirVentanaForm(data);
 			this.agregarVentanaForm();
@@ -1623,7 +1705,6 @@ var CuadroCarga = function(info,callback){
 	};
 	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
 	this.manejarCarga = function(nombre){
-		console.log(nombre);
 		UI.buscarCuadroCarga(nombre).contEspera=0;
 		this.intervalID=setInterval(function(){
 			var callback = UI.buscarCuadroCarga(nombre).callback;
@@ -1693,10 +1774,11 @@ var Arquitecto = function(){
 			 cabecera : new Cabecera(),
 			 URL: new URL(),
 			 formulario : 'noPosee',
-			 botonera : 'noPosee'
+			 botonera : 'noPosee',
+			 constructores: this.elementos.constructores
 		};
 		if(objetoInicializar.formulario){
-			this.elementos.formulario = new Formulario(objetoInicializar.formulario.entidad);
+			this.elementos.formulario = new Formulario(objetoInicializar.formulario);
 		}
 
 		if(objetoInicializar.botonera){
@@ -1841,7 +1923,19 @@ var Arquitecto = function(){
 			this.agregarCampo(campos[x],contenedor);
 		}
 	};
-
+	//con esta funcion asigno los valores a los campos edicion que contenga un contenedor
+	this.asignarValores = function(registro,contenedor){
+		var campos = contenedor.campos;
+		for (var campo in registro) {
+			if (registro.hasOwnProperty(campo)) {
+				for(var y = 0; y < campos.length; y++){
+					if(campos[y].data.nombre == campo){
+						campos[y].asignarValor(registro[campo]);
+					}
+				}
+			}
+		}
+	};
 	//------------------------- Manejo de toast ----------------------------
 	//agrega mensaje pequeño
 	this.agregarToasts = function(atributos){

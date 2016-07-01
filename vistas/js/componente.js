@@ -1,4 +1,4 @@
-UI.agregarConstructor({
+componente = {
   nombre:'componente',
   nuevo:{
     titulo: 'componente',
@@ -43,23 +43,24 @@ UI.agregarConstructor({
     ]
   },
   modificar:{
+    altura: 500,
     campos: [
       {
         tipo : 'campoEdicion',
+        parametros : {nombre:'color',titulo:'Color'}
+      },{
+        tipo : 'campoEdicion',
+        parametros : {nombre:'enlace',titulo:'Enlace'}
+      },{
+        tipo : 'campoEdicion',
+        parametros : {nombre:'tipo',titulo:'Tipo de Componente'}
+      },{
+        tipo : 'campoEdicion',
+        parametros : {nombre:'padre',titulo:'Componente Padre'}
+      },{
+        tipo : 'campoEdicion',
         parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area'}
       }
-    ],
-    asignarValores: function(registro,contenedor){
-      var campos = contenedor.campos;
-      for (var campo in registro) {
-        if (object.hasOwnProperty(campo)) {
-          for(var y = 0; y < campos.length; y++){
-            if(campos[y].nombre == campo){
-              campos[y].asignarValor(registro[campo]);
-            }
-          }
-        }
-      }
-    }
+    ]
   }
-});
+};

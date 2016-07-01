@@ -87,6 +87,7 @@ class cls_Componente extends cls_Conexion{
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo']=$la_registros['codigo_componente'];
+     $la_respuesta['nombre']=$la_registros['titulo'];
      $la_respuesta['titulo']=$la_registros['titulo'];
      $la_respuesta['color']=$la_registros['color'];
      $la_respuesta['enlace']=$la_registros['enlace'];
