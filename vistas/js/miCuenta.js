@@ -1,32 +1,35 @@
 function construirUI(){
-	let divOperaciones = document.querySelector('div[division-operaciones]');
-	let seguridad = new Ventana({
+	var divOperaciones = document.querySelector('div[division-operaciones]');
+	var seguridad = new Ventana({
 		tipo: 'columna',
 		titulo: {
 			texto: 'Seguridad',
 			tipo: 'inverso'
-		}
+		},sectores: [
+			{nombre:'cambiarClave',html:"<aside class='clave-grande'></aside><section texto class='lateral-icono'>Cambiar Clave</section>"},
+			{nombre:'gestionarPreguntas',html:"<aside class='interrogacion-grande'></aside><section texto class='lateral-icono'>Gestionar preguntas y respues de seguridad</section>"}
+		]
 	});
-	let datosPersonales = new Ventana({
+	var datosPersonales = new Ventana({
 		tipo: 'columna',
 		titulo: {
 			texto: 'Datos Personales',
 			tipo: 'inverso'
 		}
 	});
-	let cambiarClave = seguridad.agregrarSector({html:"<aside class='clave-grande'></aside><section texto class='lateral-icono'>Cambiar Clave</section>"});
-	let gestionarPreguntas = seguridad.agregrarSector({html:"<aside class='interrogacion-grande'></aside><section texto class='lateral-icono'>Gestionar preguntas y respues de seguridad</section>"});
+	var cambiarClave = seguridad.buscarSector('cambiarClave');
+	var gestionarPreguntas = seguridad.buscarSector('gestionarPreguntas');
 
 	cambiarClave.nodo.onclick = function abrirCambiarClave(e){
-		let formulario = new Ventana({
+		var formulario = new Ventana({
 			tipo: 'formulario',
 			titulo:{
 				texto: cambiarClave.nodo.querySelector('section[texto]').textContent
 			}
 		});
-		let divFormulario = document.querySelector('div[division-formulario]');
+		var divFormulario = document.querySelector('div[division-formulario]');
 		divFormulario.appendChild(formulario.nodo);
-	}
+	};
 
 	divOperaciones.appendChild(seguridad.nodo);
 	divOperaciones.appendChild(datosPersonales.nodo);

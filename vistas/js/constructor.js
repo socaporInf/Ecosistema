@@ -419,7 +419,7 @@ var Menu = function(){
 	};
 	this.activarSeleccionado = function(capa){
 		var ruta =  [];
-		do{			
+		do{
 			ruta = ruta.concat(this.buscarRuta(capa));
 		}while(this.seleccionado!=capa);
 		ruta = ruta.reverse();
@@ -495,17 +495,18 @@ var Cabecera = function(){
 /*----------------------------------------------------------------------------------------------------*/
 /*------------------------------Objeto Formulario(lista)----------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
-var Formulario = function(entidad){
+var Formulario = function(atributos){
 
 	//----------------------------------Objeto Ventana Formulario-------------------
-	var VentanaForm = function(){
+	var VentanaForm = function(atributos){
 
+		this.atributos = atributos;
 		this.tipo = 'noPosee';
 		this.nodo = null;
 		this.estado = 'sinConstruir';
 		this.formNode = null;
 		this.titulo = null;
-
+		this.campos = [];
 		//este es el registro que se esta editando
 		this.registroId='';
 		//el registro despues de buscarlo
@@ -522,7 +523,11 @@ var Formulario = function(entidad){
 			}else if(data.tipo=='nuevo'){
 				this.registroId='';
 			}
-			this.reconstruirUI();
+			if(atributos.usoConstructor){
+				this.iniciarConstructor();
+			}else{
+				this.reconstruirUI();
+			}
 		};
 		this.destruirNodo = function(){
 			if(this.registroId!==''){
@@ -652,27 +657,9 @@ var Formulario = function(entidad){
 
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
-			var campoNuevo;
 			var contenedor = this.nodo.getElementsByTagName('form')[0];
-			switch(campo.tipo.toLowerCase()){
-				case 'campodetexto':
-					campoNuevo = new CampoDeTexto(campo.parametros);
-					break;
-				case 'combobox':
-					campoNuevo = new ComboBox(campo.parametros);
-					break;
-				case 'radio':
-					campoNuevo = new Radio(campo.parametros);
-					break;
-				case 'campoedicion':
-					campoNuevo = new CampoEdicion(campo.parametros);
-					break;
-				case 'saltodelinea':
-					campoNuevo = new SaltoDeLinea();
-					break;
-
-			}
-			contenedor.appendChild(campoNuevo.nodo);
+			var campoNuevo = UI.agregarCampo(campo,contenedor);
+			this.campos.push(campoNuevo);
 		};
 		//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
 		this.agregarCampos = function(campos){
@@ -718,6 +705,81 @@ var Formulario = function(entidad){
 				article.onclick=function(){
 					UI.elementos.formulario.ventanaForm.edicion();
 				};
+		};
+		//esta funcion se usa solo si el valor usarConstructor es === true
+		this.iniciarConstructor = function(){
+			if(this.campos.length){
+				this.campos = [];
+			}
+		  var constructor = UI.buscarConstructor(this.atributos.entidad);
+		  var tiempo = (this.estado=='agregado')?600:0;
+		  var html='';
+		  if(this.tipo=='nuevo'){
+		    this.registroId='';
+		    UI.elementos.formulario.ventanaList.controlLista();
+		    this.nodo.style.height='0px';
+		    setTimeout(function(){
+		      //guardo el objeto venana formulario para mejor entendimiento y acceso rapido
+		      var capaForm=UI.elementos.formulario.ventanaForm;
+		      //inicializo los datos del titulo del formulario y la altura del mismo
+		      var titulo = constructor.nuevo.titulo;
+		      var altura = constructor.nuevo.altura;
+		      capaForm.crearEstructuraBasicaNuevo(titulo,altura);
+		      //agrego los campos
+		      UI.elementos.formulario.ventanaForm.agregarCampos(constructor.nuevo.campos);
+		    },tiempo);
+
+		    //funcionamiento botones
+		    UI.elementos.botonera.agregarBoton('guardar');
+		    UI.elementos.botonera.quitarBoton('eliminar');
+
+		  }else if(this.tipo=='modificar'){
+
+		    //funcinamiento botones
+		    UI.elementos.botonera.agregarBoton('eliminar');
+		    UI.elementos.botonera.quitarBoton('guardar');
+
+		    this.nodo.style.height = '0px';
+
+		    setTimeout(function(){
+		      var nodo=UI.elementos.formulario.ventanaForm.nodo;
+		      nodo.style.height='300px';
+		      nodo.style.borderRadius='0px';
+		      //------------Cuadro Carga-------------------------------
+		      var infoCuadro = {
+		        mensaje:'Buscando'
+		      };
+		      nodo.innerHTML='';
+		      var cuadroDeCarga = UI.crearCuadroDeCarga(infoCuadro,nodo);
+		      cuadroDeCarga.style.marginTop = '80px';
+		      //--------------------------------------------------------
+		      var info={
+		        codigo:UI.elementos.formulario.ventanaForm.registroId,
+		        entidad:constructor.nombre,
+		        operacion:'buscarRegistro'
+		      };
+		      torque.Busqueda(info,function(respuesta){
+		        //guardo de forma local los datos para facil acceso
+		        var data = respuesta.registros;
+		        /*Actualizo en el objeto formulario la informacion recibida de manera que
+		        si en un futuro cercano necesito consultar no debo salir del cliente para lo mismo*/
+		        UI.elementos.formulario.ventanaForm.registroAct=data;
+		        //guardo el objeto ventana formulario para mejor entendimiento y acceso rapido
+		        var formulario = UI.elementos.formulario.ventanaForm;
+		        //inicializo los datos del titulo del formulario y la altura del mismo
+		        var titulo = {
+		          nombre:'Nombre',
+		          valor:data.nombre
+		        };
+		        var altura = constructor.modificar.altura;
+		        //monto la estructura basica sobre la cual se montan los campos a agregar
+		        formulario.crearEstructuraBasicaModificar(titulo,altura);
+		        //inicializo el arreglo con los campos a agregar
+		        formulario.agregarCampos(constructor.modificar.campos);
+		        UI.asignarValores(data,formulario);
+		      });
+		    },tiempo);
+		  }
 		};
 
 		this.agregarSectorOperaciones = function(){
@@ -882,7 +944,6 @@ var Formulario = function(entidad){
 		this.Slots = [];
 
 		this.nodo = null;
-
 		this.entidadActiva=entidadActiva;
 
 		this.abrirCampoBusqueda = function(){
@@ -1090,13 +1151,12 @@ var Formulario = function(entidad){
 		this.construir();
 	};
 	/*--------------------------Fin Objeto VentanaList-----------------------------------*/
-
-	this.ventanaList = new VentanaList(entidad);
-	this.ventanaForm = new VentanaForm();
+	this.entidadActiva = atributos.entidad;
+	this.atributos = atributos;
+	this.ventanaList = new VentanaList(this.entidadActiva);
+	this.ventanaForm = new VentanaForm(atributos);
 
 	this.estado = 'sinInicializar';
-
-	this.entidadActiva=entidad;
 
 	this.interval=null;
 
@@ -1223,7 +1283,11 @@ var Formulario = function(entidad){
 				this.ventanaForm.tipo='nuevo';
 				this.ventanaForm.registroId='';
 			}
-			this.ventanaForm.reconstruirUI();
+			if(this.ventanaForm.atributos.usoConstructor){
+				this.ventanaForm.iniciarConstructor();
+			}else{
+				this.ventanaForm.reconstruirUI();
+			}
 		}else{
 			this.construirVentanaForm(data);
 			this.agregarVentanaForm();
@@ -1303,27 +1367,8 @@ var modalWindow = function(){
 			};
 
 			this.agregarCampo = function(campo){
-				var campoNuevo;
 				var contenedor = this.nodo;
-				switch(campo.tipo.toLowerCase()){
-					case 'campodetexto':
-						campoNuevo = new CampoDeTexto(campo.parametros);
-						break;
-					case 'combobox':
-						campoNuevo = new ComboBox(campo.parametros);
-						break;
-					case 'radio':
-						campoNuevo = new Radio(campo.parametros);
-						break;
-					case 'campoedicion':
-						campoNuevo = new CampoEdicion(campo.parametros);
-						break;
-					case 'saltodelinea':
-						campoNuevo = new SaltoDeLinea();
-						break;
-
-				}
-				contenedor.appendChild(campoNuevo.nodo);
+				var campoNuevo = UI.agregarCampo(campo,contenedor);
 				this.campos.push(campoNuevo);
 			};
 
@@ -1660,7 +1705,6 @@ var CuadroCarga = function(info,callback){
 	};
 	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
 	this.manejarCarga = function(nombre){
-		console.log(nombre);
 		UI.buscarCuadroCarga(nombre).contEspera=0;
 		this.intervalID=setInterval(function(){
 			var callback = UI.buscarCuadroCarga(nombre).callback;
@@ -1730,10 +1774,11 @@ var Arquitecto = function(){
 			 cabecera : new Cabecera(),
 			 URL: new URL(),
 			 formulario : 'noPosee',
-			 botonera : 'noPosee'
+			 botonera : 'noPosee',
+			 constructores: this.elementos.constructores
 		};
 		if(objetoInicializar.formulario){
-			this.elementos.formulario = new Formulario(objetoInicializar.formulario.entidad);
+			this.elementos.formulario = new Formulario(objetoInicializar.formulario);
 		}
 
 		if(objetoInicializar.botonera){
@@ -1861,9 +1906,16 @@ var Arquitecto = function(){
 			case 'saltodelinea':
 				campoNuevo = new SaltoDeLinea();
 				break;
-
+			case 'campobusqueda':
+				if(typeof CampoBusqueda !== 'undefined'){
+					campoNuevo = new CampoBusqueda(campo.parametros);
+				}else{
+						console.log('dependencia O_CampoBusqueda.js no existe');
+				}
+				break;
 		}
 		contenedor.appendChild(campoNuevo.nodo);
+		return campoNuevo;
 	};
 	//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
 	this.agregarCampos = function(campos,contenedor){
@@ -1871,7 +1923,19 @@ var Arquitecto = function(){
 			this.agregarCampo(campos[x],contenedor);
 		}
 	};
-
+	//con esta funcion asigno los valores a los campos edicion que contenga un contenedor
+	this.asignarValores = function(registro,contenedor){
+		var campos = contenedor.campos;
+		for (var campo in registro) {
+			if (registro.hasOwnProperty(campo)) {
+				for(var y = 0; y < campos.length; y++){
+					if(campos[y].data.nombre == campo){
+						campos[y].asignarValor(registro[campo]);
+					}
+				}
+			}
+		}
+	};
 	//------------------------- Manejo de toast ----------------------------
 	//agrega mensaje pequeño
 	this.agregarToasts = function(atributos){
@@ -1895,6 +1959,26 @@ var Arquitecto = function(){
 		UI.elementos.toasts.splice(UI.elementos.toasts.indexOf(toast),1);
 		UI.elementos.toasts[0].cont--;
 	}
+	//------------------------- Manejo de Constructores ----------------------------
+	//agrega constructores para formularios
+	this.agregarConstructor  = function(objetoConstructor){
+		if(!this.elementos.constructores){
+			this.elementos.constructores = [];
+		}
+		this.elementos.constructores.push(objetoConstructor);
+	};
+	this.buscarConstructor = function(nombre){
+		if(this.elementos.constructores){
+			for (var i = 0; i < this.elementos.constructores.length; i++) {
+				if(this.elementos.constructores[i].nombre == nombre){
+					return this.elementos.constructores[i];
+				}
+			}
+			console.log('no se encontro el constructor');
+		}else{
+			console.log('no existe ningun constructor en la lista');
+		}
+	};
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
 var Ventana = function(atributos){
@@ -2051,6 +2135,9 @@ var Radio = function(info){
 	this.captarNombre = function(){
 		return this.nodo.querySelector('radio').name;
 	};
+	this.captarRequerido = function(){
+		return this.atributos.requerido;
+	};
 	this.construirNodo();
 };
 
@@ -2071,13 +2158,16 @@ var ComboBox = function(info){
 		//se crea el article
 		var article=document.createElement('article');
 		article.setAttribute('capaSelect','');
-		article.onclick=function(){
-			construirCapaSelect(this);
-		};
+		if(this.data.deshabilitado !== true ){
+			article.onclick=function(){
+				construirCapaSelect(this);
+			};
+		}
 		nodo.appendChild(article);
 
 		//se crea el select
 		var select=document.createElement('select');
+		select.setAttribute('tabindex','-1');
 		select.name=this.data.nombre;
 		if(this.data.id!==undefined){
 			select.id=this.data.id;
@@ -2109,12 +2199,29 @@ var ComboBox = function(info){
 		nuevaOp.value=opcion.codigo;
 		select.appendChild(nuevaOp);
 	};
+	this.seleccionarOpcion = function(opcion){
+		var select=this.nodo.getElementsByTagName('select')[0];
+		select.value = opcion.codigo;
+	};
 	this.captarValor = function(){
 		var valor = (this.nodo.querySelector('select').value==='-')?null:this.nodo.querySelector('select').value;
 		return valor;
 	};
 	this.captarNombre = function(){
 		return this.nodo.querySelector('select').name;
+	};
+	this.captarRequerido = function(){
+		return this.data.requerido;
+	};
+	this.deshabilitar = function(){
+		var article = this.nodo.querySelector('article');
+		article.onclick = function(){};
+	};
+	this.habilitar = function(){
+		var article = this.nodo.querySelector('article');
+		article.onclick = function(){
+			construirCapaSelect(this);
+		};
 	};
 	this.construir();
 };
@@ -2187,6 +2294,9 @@ var CampoDeTexto = function(info){
 		}
 		return tipo;
 	};
+	this.captarRequerido = function(){
+		return this.data.requerido;
+	};
 	this.construir();
 };
 //-------------------- Campo Edicion----------------------------------------------------------
@@ -2195,6 +2305,7 @@ var CampoEdicion = function(info){
 	this.data =  info;
 	this.nodo = null;
 	this.tipo = info.tipo || 'simple';
+	this.data.valor = info.valor || '';
 
 	this.construirNodo = function(){
 		var nodo =  document.createElement('div');
@@ -2217,8 +2328,9 @@ var CampoEdicion = function(info){
 		this.nodo=nodo;
 	};
 
-	this.darVida = function(){
-
+	this.asignarValor = function(valor){
+		this.data.valor = valor;
+		this.nodo.querySelector('div[display]').textContent = valor;
 	};
 	this.construirNodo();
 };
