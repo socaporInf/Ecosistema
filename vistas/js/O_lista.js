@@ -71,6 +71,7 @@ var Lista = function(data){
 
   this.Slots = [];
   this.atributos = data;
+  this.atributos.onclickSlot = this.atributos.onclickSlot || null;
   this.nodo = null;
 
   this.construir = function(){
@@ -122,6 +123,7 @@ var Lista = function(data){
   };
 
   this.manejarPaginacion = function(){
+    //TODO
     console.log('paginacion activa');
   };
 
@@ -196,7 +198,7 @@ var Lista = function(data){
 	};
 
   this.buscarElementos = function(){
-    /*en construccion*/
+    /*TODO*/
   };
 
   this.listarSlots = function(){
@@ -210,6 +212,12 @@ var Lista = function(data){
     var slot = new Slot(data);
     this.Slots.push(slot);
     this.nodo.appendChild(slot.nodo);
+    var lista = this;
+    if(this.atributos.onclickSlot!==null){
+      slot.nodo.onclick = function(){
+        lista.atributos.onclickSlot(slot);
+      };
+    }
     return slot.nodo;
   };
 

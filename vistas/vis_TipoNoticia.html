@@ -21,11 +21,10 @@
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('clase');
+	var torque = new Motor('tipoNoticia');
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-
 	UI.configure({
 		formulario:{
 			entidad: torque.entidadActiva
@@ -54,8 +53,8 @@
 				//guardo el objeto venana formulario para mejor entendimiento y acceso rapido
 				var capaForm=UI.elementos.formulario.ventanaForm;
 				//inicializo los datos del titulo del formulario y la altura del mismo
-				var titulo = 'Clase';
-				var altura = 210;
+				var titulo = 'Variedad';
+				var altura = 310;
 				capaForm.crearEstructuraBasicaNuevo(titulo,altura);
 
 				//creo los campos que va a usar el formulario
@@ -65,7 +64,7 @@
 						parametros : {titulo:'Nombre',nombre:'nombre',tipo:'simple',eslabon:'simple',usaToolTip:true}
 					},{
 						tipo : 'campoDeTexto',
-						parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:true}
+						parametros : {titulo:'Color',nombre:'color',tipo:'simple',eslabon:'simple',usaToolTip:true}
 					}
 				]
 				//agrego los campos
@@ -114,14 +113,17 @@
 						nombre:'Nombre',
 						valor:data.nombre
 					}
-					var altura = 210;
+					var altura = 310;
 					//monto la estructura basica sobre la cual se montan los campos a agregar
 					formulario.crearEstructuraBasicaModificar(titulo,altura);
 					//inicializo el arreglo con los campos a agregar
 					var campos = [
 						{
 							tipo : 'campoEdicion',
-							parametros : {titulo:'Descripcion',nombre:'descripcion',valor:data.descripcion,tipo:'area'}
+							parametros : {titulo:'Nombre',nombre:'nombre',valor:data.nombre}
+						},{
+							tipo : 'campoEdicion',
+							parametros : {titulo:'Color',nombre:'color',valor:data.color}
 						}
 					]
 					//agrego los campos

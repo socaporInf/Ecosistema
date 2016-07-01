@@ -7,5 +7,18 @@ campodetexto(info): {
     construir()
     captarValor()
     captarNombre()
-    captarTipo() --- retorna si el campo de texto es un input o un textarea 
+    captarTipo() --- retorna si el campo de texto es un input o un textarea
+    captarRequerido() ----- retorna si el campo es requerido o no en booliano
+}
+ejemplo de objeto constructor
+{
+  tipo : 'campoDeTexto',
+  parametros : {
+    requerido: true,
+    titulo:'titulo que se muestra en la interfaz',
+    nombre:'name del campo',
+    tipo:'simple',     ----- tiene 3 valores: simple=input[type='text']; area=textarea; password=input[type='password']
+    eslabon:'simple',
+    usaToolTip:true
+  }
 }
