@@ -27,7 +27,12 @@ section[busqueda] + section[slot]{
 }
 div[lista] section[contenedorCarga]{
   width: 100%;
-  padding-top: 80px;
+  height: 200px !important;
+}
+div[lista] section.vacio{
+  text-align: center;
+  padding-top: 60px;
+  color:#212121; 
 }
 div[lista] section[busqueda] div[listBuscar]{
   transition:all 0.3s ease-in-out;

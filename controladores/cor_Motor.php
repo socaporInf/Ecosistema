@@ -41,6 +41,20 @@ switch ($la_Peticion['entidad']) {
 		$lobj_Entidad->setPeticion($la_Peticion);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
+
+	case 'tablaVirtual':
+		include_once('../clases/cls_Tabla_Virtual.php');
+		$lobj_Entidad = new cls_Tabla_Virtual;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
+	case 'mensajeSistema':
+		include_once('../clases/cls_Mensaje_Sistema.php');
+		$lobj_Entidad = new cls_Mensaje_Sistema;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
 //--------------------------seguridad-----------------------------------------------
 	case 'rol':
 		include_once('../clases/cls_Rol.php');
@@ -100,7 +114,6 @@ switch ($la_Peticion['entidad']) {
 
 	default:
 		$respuesta['success'] = 0;
-		$respuesta['mensaje'] = 'Entidad '.$la_Peticion['entidad'].' no se encuentra soportada por esta aplicacion';
 		$respuesta['mensaje'] = 'Entidad '.$la_Peticion['entidad'].' no se encuentra soportada por esta aplicacion';
 		$respuesta['tipo'] = 'error';
 		break;

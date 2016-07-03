@@ -97,17 +97,17 @@ div[botonera] button[btnEliminar]:hover:before{
     border-radius:5px; 
     padding:5px;
 }
-div[botonera] button[btnListar]{
-    background-color: #FFEB3B;
+div[botonera] button[btnDetalle]{
+    background-color: #FF5722;
     background-image: url('../imagenes/list.png');    
     top:0px;
     left:0px;
     position: absolute;
 }
-div[botonera] button[btnListar]:hover:before{
-    content: 'Listar';
+div[botonera] button[btnDetalle]:hover:before{
+    content: 'detalle';
     color:white;
-    background-color: #FFEB3B;
+    background-color: #FF5722;
     margin-left:-100px;
     border-radius:5px; 
     padding:5px;

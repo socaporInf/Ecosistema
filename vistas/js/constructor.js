@@ -28,15 +28,16 @@ var handleMediaChange = function (mediaQueryList) {
 /*----------------------------------------------------------------------------------------------------*/
 var Botonera = function(estructura){
 
-	var Boton = function(tipo){
-		this.tipo = tipo.toLowerCase();
+	var Boton = function(atributos){
+		this.atributos = atributos;
+		this.tipo = atributos.tipo.toLowerCase();
 		this.nodo =  null;
 		this.estado = 'porConstruir';
 
 		this.construirNodo = function(){
 			var nodo = document.createElement('button');
 			nodo.setAttribute('type','button');
-			switch(this.tipo){
+			switch(this.atributos.tipo){
 				case 'abrir':
 					nodo.setAttribute('btnAbrir','');
 					nodo.setAttribute('estado','oculto');
@@ -54,8 +55,8 @@ var Botonera = function(estructura){
 					nodo.setAttribute('btnEliminar','');
 					nodo.onclick=UI.elementos.formulario.eliminar;
 				break;
-				case 'listar':
-					nodo.setAttribute('btnListar','');
+				case 'detalle':
+					nodo.setAttribute('btnDetalle','');
 				break;
 				case 'redactar':
 					nodo.setAttribute('btnRedactar','');
@@ -73,6 +74,13 @@ var Botonera = function(estructura){
 			}
 			this.nodo = nodo;
 			this.estado = 'enUso';
+			var yo = this;
+			if(this.atributos.click){
+				this.nodo.onclick = function(){
+					yo.atributos.click(yo);
+				}
+			}
+
 		};
 		this.construirNodo();
 	};
@@ -113,18 +121,21 @@ var Botonera = function(estructura){
 		}
 		this.agregarEfectos();
 	};
-	this.agregarBoton = function(tipo){
+	this.agregarBoton = function(constructorBoton){
 		var botonera = this.nodo;
 		var existe = false;
+		if(typeof constructorBoton == 'string'){
+			constructorBoton = {tipo:constructorBoton}
+		}
 		for(var x=0;x<this.botones.length;x++){
-			if(this.botones[x].tipo==tipo.toLowerCase()){
+			if(this.botones[x].tipo==constructorBoton.tipo.toLowerCase()){
 				existe=true;
-				console.log('el boton '+tipo+' ya existe');
+				console.log('el boton '+constructorBoton.tipo+' ya existe');
 			}
 		}
 		if(!existe){
 
-			boton = new Boton(tipo);
+			boton = new Boton(constructorBoton);
 			botonera.appendChild(boton.nodo);
 			//esta parte es solo para cuando se agrega un boton en un momento posterior a la inicializacion
 			if(this.buscarBoton('abrir')!=-1){
@@ -142,15 +153,37 @@ var Botonera = function(estructura){
 	this.agregarBotones = function(botones){
 		var tiempo = 20;
 		for(var x = 0; x < botones.length; x++){
-			espera(x,tiempo,botones);
+			espera(x,tiempo,botones,'agregar');
 			tiempo+=20;
 		}
 	};
-	function espera(x,tiempo,botones){
+	function espera(x,tiempo,botones,operacion){
 		setTimeout(function(){
-			UI.elementos.botonera.agregarBoton(botones[x]);
+			if(operacion === 'quitar'){				
+				UI.elementos.botonera.quitarBoton(botones[x]);
+			}else{
+				UI.elementos.botonera.agregarBoton(botones[x]);
+			}
 		},tiempo);
 	}
+	this.quitarBotones = function(botones){
+		var tiempo = 20;
+		for(var x = 0; x < botones.length; x++){
+			espera(x,tiempo,botones,'quitar');
+			tiempo+=20;
+		}
+	};
+	this.gestionarBotones = function(botones){
+		var tiempo = 20;
+		for(var x = 0; x < botones.quitar.length; x++){
+			espera(x,tiempo,botones.quitar,'quitar');
+			tiempo+=20;
+		}
+		for(var x = 0; x < botones.agregar.length; x++){
+			espera(x,tiempo,botones.agregar,'agregar');
+			tiempo+=20;
+		}
+	};
 	this.agregarEfectos = function(){
 		var botones = this.botones;
 		if(botones.length>1){
@@ -201,8 +234,11 @@ var Botonera = function(estructura){
 	this.getEstado = function(){
 		console.log(this.estado);
 	};
-	this.quitarBoton = function(tipo){
-		var eliminar=this.buscarBoton(tipo);
+	this.quitarBoton = function(constructorBoton){
+		if(typeof constructorBoton == 'string'){
+			constructorBoton = {tipo:constructorBoton}
+		}
+		var eliminar=this.buscarBoton(constructorBoton.tipo);
 		if(eliminar!=-1){
 			eliminar.nodo.style.top='0px';
 			setTimeout(function(){
@@ -648,8 +684,6 @@ var Formulario = function(atributos){
 					});
 				});
 			}
-
-
 			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
 			boton.classList.remove('edicion');
 			boton.onclick = UI.elementos.formulario.ventanaForm.edicion;
@@ -730,14 +764,24 @@ var Formulario = function(atributos){
 		    },tiempo);
 
 		    //funcionamiento botones
-		    UI.elementos.botonera.agregarBoton('guardar');
-		    UI.elementos.botonera.quitarBoton('eliminar');
-
+		    //quito
+		    var gestionar = {quitar:['eliminar'],agregar:['guardar']};
+	        if(constructor.modificar.botones){
+	        	gestionar.quitar = gestionar.agregar.concat(constructor.modificar.botones);
+	        }
+		    //agrego
+	        if(constructor.nuevo.botones){
+	        	gestionar.agregar = gestionar.agregar.concat(constructor.nuevo.botones);
+	        }
+	        UI.elementos.botonera.gestionarBotones(gestionar);
 		  }else if(this.tipo=='modificar'){
 
 		    //funcinamiento botones
 		    UI.elementos.botonera.agregarBoton('eliminar');
 		    UI.elementos.botonera.quitarBoton('guardar');
+	        if(constructor.nuevo.botones){
+	        	UI.elementos.botonera.quitarBotones(constructor.nuevo.botones);
+	        }
 
 		    this.nodo.style.height = '0px';
 
@@ -766,9 +810,15 @@ var Formulario = function(atributos){
 		        UI.elementos.formulario.ventanaForm.registroAct=data;
 		        //guardo el objeto ventana formulario para mejor entendimiento y acceso rapido
 		        var formulario = UI.elementos.formulario.ventanaForm;
+		        var nombre;
+		        if(constructor.campo_nombre){
+		        	nombre = constructor.campo_nombre;
+		        }else{
+		        	nombre = 'nombre';
+		        }
 		        //inicializo los datos del titulo del formulario y la altura del mismo
 		        var titulo = {
-		          nombre:'Nombre',
+		          nombre: nombre,
 		          valor:data.nombre
 		        };
 		        var altura = constructor.modificar.altura;
@@ -777,6 +827,13 @@ var Formulario = function(atributos){
 		        //inicializo el arreglo con los campos a agregar
 		        formulario.agregarCampos(constructor.modificar.campos);
 		        UI.asignarValores(data,formulario);
+		        //si se añadieron botones
+		        if(constructor.nuevo.botones){
+		        	UI.elementos.botonera.quitarBotones(constructor.modificar.botones);
+		        }
+		        if(constructor.modificar.botones){
+		        	UI.elementos.botonera.agregarBotones(constructor.modificar.botones);
+		        }
 		      });
 		    },tiempo);
 		  }
@@ -845,7 +902,7 @@ var Formulario = function(atributos){
 	var VentanaList = function(entidadActiva){
 		/*------------------------------Objeto Slot-------------------*/
 		var Slot = function(data){
-
+			console.log(data);
 			this.atributos = data;
 			this.estado = 'sinInicializar';
 			this.rol = 'lista';
@@ -857,10 +914,16 @@ var Formulario = function(atributos){
 				nodo.id=this.atributos.codigo;
 				var html ="";
 				var titulo;
-				if(this.atributos.nombre.length>28){
-					titulo=this.atributos.nombre.substr(0,28)+'...';
+				var campo_nombre;
+				if(UI.buscarConstructor(entidadActiva)){
+					campo_nombre = this.atributos[UI.buscarConstructor(entidadActiva).campo_nombre];
 				}else{
-					titulo=this.atributos.nombre;
+					campo_nombre = this.atributos.nombre;
+				}
+				if(campo_nombre.length>28){
+					titulo = campo_nombre.substr(0,28)+'...';
+				}else{
+					titulo = campo_nombre;
 				}
 				html+="<article  title>"+titulo+"</article>"+
 					"<button type='button' btnEliminar></button>";
@@ -1357,6 +1420,9 @@ var modalWindow = function(){
 				if(porConstruir.alto){
 					this.nodo.style.height = porConstruir.alto + 'px';
 				}
+				if(porConstruir.clase){
+					this.nodo.classList.add(porConstruir.clase);
+				}
 
 			};
 
@@ -1458,7 +1524,8 @@ var modalWindow = function(){
 			}
 		};
 		this.convertirEnMensaje = function(mensaje){
-			this.partes.cabecera.nodo.class='';
+			//cambio la cabecera
+			this.partes.cabecera.nodo.class = '';
 			this.partes.cabecera.nodo.classList.add(mensaje.tipo);
 			this.partes.cabecera.nodo.textContent = mensaje.titulo;
 
@@ -1936,6 +2003,23 @@ var Arquitecto = function(){
 			}
 		}
 	};
+	//funcion solo se utiliza para formularios de modificacion(update)
+	this.modificar = function(contenedor){
+		var Reg = [];
+		var campos = contenedor.campos;
+		for (var i = 0; i < campos.length; i++) {
+			Reg.push({
+				nombre:campos[i].captarNombre(),
+				valor:campos[i].captarValor()
+			});
+			if(campos[i].estado === 'editando'){
+				campos[i].finalizarEdicion();
+			}else{
+				campos[i].activarEdicion();
+			}
+		}
+		return Reg;
+	}
 	//------------------------- Manejo de toast ----------------------------
 	//agrega mensaje pequeño
 	this.agregarToasts = function(atributos){
@@ -2255,7 +2339,7 @@ var CampoDeTexto = function(info){
 		}else if(this.data.tipo=='password'){
 			html+='<input type="password" name="'+this.data.nombre+'" value="" required>';
 		}else if(this.data.tipo=='area'){
-			html+='<textarea name="Descripcion" required></textarea>';
+			html+='<textarea name="'+this.data.nombre+'" required></textarea>';
 		}else{
 			console.log(this.data.tipo);
 		}
@@ -2306,32 +2390,97 @@ var CampoEdicion = function(info){
 	this.nodo = null;
 	this.tipo = info.tipo || 'simple';
 	this.data.valor = info.valor || '';
+	this.estado = 'mostrando';
 
-	this.construirNodo = function(){
-		var nodo =  document.createElement('div');
+	this.construirNodo = function(){		
+		var nodo =  null;
 		var campo = '';
 		var html = '';
-		nodo.setAttribute('formUpdate','');
-		if(this.tipo=='simple'){
-			campo+="<input  type='text' edit name='"+this.data.nombre+"'>";
-		}else if(this.tipo=='area'){
-			campo+="<textarea name='"+this.data.nombre+"'></textarea>";
-			nodo.setAttribute('area','');
-		}
-		html+="<label>"+this.data.titulo+"</label>";
-		html+="<div clear></div>";
-		html+="<div cont>";
-		html+=	campo;
-		html+=	"<div display>"+this.data.valor+"</div>";
-		html+="</div>";
+		if(this.tipo.toLowerCase() === 'titulo'){
+ 			nodo = document.createElement('section');
+ 			nodo.setAttribute('titulo','');
+ 			nodo.setAttribute('area','');
+ 			html = "<div cont>"+
+						"<textarea  name='"+this.data.nombre+"'></textarea>"+
+						"<div display>"+this.data.valor+"</div>"+
+					"</div>"+
+					"<article update='campo'></article>";
+		}else{
+			nodo = document.createElement('div');
+			nodo.setAttribute('formUpdate','');
+			if(this.tipo=='simple'){
+				campo+="<input  type='text' edit name='"+this.data.nombre+"'>";
+			}else if(this.tipo=='area'){
+				campo+="<textarea name='"+this.data.nombre+"'></textarea>";
+				nodo.setAttribute('area','');
+			}
+			html+="<label>"+this.data.titulo+"</label>";
+			html+="<div clear></div>";
+			html+="<div cont>";
+			html+=	campo;
+			html+=	"<div display>"+this.data.valor+"</div>";
+			html+="</div>";
+		}		
 		nodo.innerHTML=html;
 		this.nodo=nodo;
 	};
-
 	this.asignarValor = function(valor){
 		this.data.valor = valor;
 		this.nodo.querySelector('div[display]').textContent = valor;
 	};
+	this.activarEdicion = function(){
+		this.nodo.classList.add('edicion');
+		//contenedor
+		var contenedorEdit = this.nodo.querySelector('div[cont]');
+		//campo donde se muestra el valor del campo pero de solo lectura
+		var display = contenedorEdit.querySelector('div[display]');
+		//campo donde se edita la informacion
+		var campoEdit = null;
+		if(this.tipo === 'simple'){
+			campoEdit = contenedorEdit.querySelector('input');
+		}else{
+			campoEdit = contenedorEdit.querySelector('textarea');
+		}
+		campoEdit.value = display.textContent;
+		campoEdit.focus(); 
+		this.estado = 'editando';
+		if(this.tipo === 'titulo'){
+			this.nodo.querySelector('article[update]').classList.add('edicion');
+		}
+	}
+	this.finalizarEdicion = function(){
+		this.nodo.classList.remove('edicion');
+		//contenedor
+		var contenedorEdit = this.nodo.querySelector('div[cont]');
+		//campo donde se muestra el valor del campo pero de solo lectura
+		var display = contenedorEdit.querySelector('div[display]');
+		//campo donde se edita la informacion
+		var campoEdit = null;
+		if(this.tipo === 'simple'){
+			campoEdit = contenedorEdit.querySelector('input');
+		}else{
+			campoEdit = contenedorEdit.querySelector('textarea');
+		}
+		display.textContent = campoEdit.value; 
+		this.estado = 'mostrando';
+		if(this.tipo === 'titulo'){
+			this.nodo.querySelector('article[update]').classList.remove('edicion');
+		}
+	}
+	this.captarValor = function(){
+		if(this.estado === 'mostrando'){
+			return this.nodo.querySelector('div[display]').textContent;
+		}else{
+			if(this.tipo === 'simple'){
+				return this.nodo.querySelector('input').value;
+			}else{
+				return this.nodo.querySelector('textarea').value;
+			}
+		}
+	}
+	this.captarNombre = function(){
+		return this.data.nombre;
+	}
 	this.construirNodo();
 };
 //-------------------- Toasts ------------------------------------------------------------

@@ -1,58 +1,61 @@
 
 .mat-blue500{
-    background-color: #2196F3;
+    background-color: #2196F3 !important;
 }
 .mat-red500{
-    background-color: #f44336;
+    background-color: #f44336 !important;
 }
 .mat-pink500{
-    background-color: #E91E63;
+    background-color: #E91E63 !important;
 }
 .mat-purple500{
-    background-color: #9C27B0;
+    background-color: #9C27B0 !important;
 }
 .mat-deeppurple500{
-    background-color: #673AB7;
+    background-color: #673AB7 !important;
 }
 .mat-indigo500{
-    background-color: #3F51B5;
+    background-color: #3F51B5 !important;
 }
 .mat-lightblue500{
-    background-color: #03A9F4;
+    background-color: #03A9F4 !important;
 }
 .mat-cyan500{
-    background-color: #00BCD4;
+    background-color: #00BCD4 !important;
 }
 .mat-teal500{
-    background-color: #009688;
+    background-color: #009688 !important;
 }
 .mat-green500{
-    background-color: #4CAF50;
+    background-color: #4CAF50 !important;
 }
 .mat-lightgreen500{
-    background-color: #8BC34A;
+    background-color: #8BC34A !important;
 }
 .mat-lime500{
-    background-color: #CDDC39;
+    background-color: #CDDC39 !important;
 }
 .mat-yellow500{
-    background-color: #FFEB3B;
+    background-color: #FFEB3B !important;
 }
 .mat-amber500{
-    background-color: #FFC107;
+    background-color: #FFC107 !important;
 }
 .mat-orange500{
-    background-color: #FF9800;
+    background-color: #FF9800 !important;
 }
 .mat-deeporange500{
-    background-color: #FF5722;
+    background-color: #FF5722 !important;
 }
 .mat-brown500{
-    background-color: #795548;
+    background-color: #795548 !important;
 }
 .mat-gray500{
-    background-color: #9E9E9E;
+    background-color: #9E9E9E !important;
 }
 .mat-bluegrey500{
-    background-color: #607D8B;
+    background-color: #607D8B !important;
+}
+.mat-white{
+    background-color: #fff !important;
 }
