@@ -1,5 +1,6 @@
 componente = {
   nombre:'componente',
+  campo_nombre: 'titulo',
   nuevo:{
     titulo: 'componente',
     altura: 400,

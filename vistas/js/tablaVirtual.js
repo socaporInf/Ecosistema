@@ -1,5 +1,6 @@
 tablaVirtual = {
   nombre:'tablaVirtual',
+  campo_nombre: 'nombre',
   nuevo:{
     titulo: 'Tabla Virtual',
     altura: 300,
