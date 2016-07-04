@@ -902,7 +902,6 @@ var Formulario = function(atributos){
 	var VentanaList = function(entidadActiva){
 		/*------------------------------Objeto Slot-------------------*/
 		var Slot = function(data){
-			console.log(data);
 			this.atributos = data;
 			this.estado = 'sinInicializar';
 			this.rol = 'lista';
@@ -1526,11 +1525,11 @@ var modalWindow = function(){
 		this.convertirEnMensaje = function(mensaje){
 			//cambio la cabecera
 			this.partes.cabecera.nodo.class = '';
-			this.partes.cabecera.nodo.classList.add(mensaje.tipo);
+			this.partes.cabecera.nodo.classList.add(mensaje.nombre_tipo.toLowerCase());
 			this.partes.cabecera.nodo.textContent = mensaje.titulo;
 
 			//cambio el cuerpo
-			this.partes.cuerpo.nodo.innerHTML='<strong>'+mensaje.mensaje+'</strong>';
+			this.partes.cuerpo.nodo.innerHTML='<strong>'+mensaje.cuerpo+'</strong>';
 			this.partes.cuerpo.nodo.style.height = '50px';
 
 			//cambio pie

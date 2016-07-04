@@ -23,6 +23,9 @@ class cls_Usuario extends cls_Conexion{
 				if(count($registros)!=0){
 					$success=1;
 					$respuesta['registros']=$registros;
+				}else{
+					$success = 0;
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(8);
 				}
 				break;
 
@@ -39,10 +42,10 @@ class cls_Usuario extends cls_Conexion{
 				if($lb_Hecho){
 					$this->f_Buscar();
 					$respuesta['registros'] = $this->aa_Atributos['registro'];
-					$respuesta['mensaje'] = 'Insercion realizada con exito';
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(9);
 					$success = 1;
 				}else{
-					$respuesta['mensaje'] = 'Error al ejecutar la insercion';
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(10);
 					$success = 0;
 				}
 				break;
@@ -188,7 +191,6 @@ class cls_Usuario extends cls_Conexion{
 			$this->aa_Atributos['contrasena'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['codigo']);
 			$this->f_ModificarPassLoginRol();
 			$respuesta = $this->f_Modificar();
-			$respuesta['titulo'] = 'Informacion';
 		}else{
 			$respuesta['success'] = 0;
 		}

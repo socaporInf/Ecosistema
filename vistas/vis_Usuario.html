@@ -127,6 +127,7 @@
 				nodo.style.borderRadius='0px';
 				//------------Cuadro Carga-------------------------------
 				var infoCuadro = {
+					nombre: 'buscando',
 					mensaje:'Buscando'
 				}
 				nodo.innerHTML='';
@@ -259,7 +260,7 @@ function clickAct(){
 			//-----------------------------------------------------------
 			torque.Operacion(peticion,function atenderRespuesta(respuesta){
 				UI.buscarCuadroCarga('rolGuardar').terminarCarga();
-				capaEnUso.convertirEnMensaje(respuesta);
+				capaEnUso.convertirEnMensaje(respuesta.mensaje);
 			});
 		}
 	}
@@ -300,6 +301,7 @@ function clickRec(){
 		let infoCuadroCarga = {
 			contenedor: capaEnUso.partes.cuerpo.nodo,
 			cuadro:{
+				nombre:'aceptarEnvio',
 				mensaje:'Verificando'
 			}
 		}
@@ -307,7 +309,7 @@ function clickRec(){
 		if(peticion.clave!==''){
 			torque.manejarOperacion(peticion,infoCuadroCarga,function atenderRespuesta(respuesta){
 				//cambio la cabecera
-				capaEnUso.convertirEnMensaje(respuesta);
+				capaEnUso.convertirEnMensaje(respuesta.mensaje);
 			});
 		}
 	}
