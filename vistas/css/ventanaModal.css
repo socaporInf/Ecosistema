@@ -70,7 +70,10 @@ div[capa='contenido'] section[cuerpo] {
     margin-top: 18px;
     overflow: visible;
 }
-div[capa='contenido'] section[cuerpo] option {}
+div[capa='contenido'] section[cuerpo].lista {
+    padding: 0px;
+    margin-top: 0px;
+}
 div[capa='contenido'] section[pie] {
     width: 100%;
     height: 60px;
@@ -122,5 +125,5 @@ div[capa='contenido'] section[cuerpo] div[texto]{
     margin-right: 24px;
 }
 div[capa='contenido'] div[lista]{
-    margin: 0px;
+    margin: 0px 0px 60px 0px;
 }

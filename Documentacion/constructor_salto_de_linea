@@ -1,6 +1,0 @@
-saltodelinea: {
-  nodo: DOM,
-
-  Metodos
-    construirNodo()
-}

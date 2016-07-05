@@ -1,5 +1,6 @@
  <?php 
 include_once('cls_Conexion.php');
+include_once('cls_Mensaje_Sistema.php');
 class cls_Usuario extends cls_Conexion{
 	
 	private $aa_Atributos = array();
@@ -15,6 +16,7 @@ class cls_Usuario extends cls_Conexion{
 	}
 
 	public function gestionar(){
+		$lobj_Mensaje = new cls_Mensaje_Sistema;
 		switch ($this->aa_Atributos['operacion']) {
 			case 'buscar':
 				$registros=$this->f_Listar();
@@ -52,18 +54,18 @@ class cls_Usuario extends cls_Conexion{
 			case 'cambiarEstado':
 				$respuesta = $this->f_CambiarEstado();
 				if($respuesta['success']==1){
-					$respuesta['tipo']='informacion';
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(18);
 				}else{
-					$respuesta['tipo']='error';
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(20);
 				}
 				break;
 				
 			case 'reactivarClave':
 				$respuesta = $this->f_ReactivarClave();
 				if($respuesta['success']==1){
-					$respuesta['tipo']='informacion';
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(18);
 				}else{
-					$respuesta['tipo']='error';
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(19);
 				}
 				break;
 				
@@ -157,14 +159,8 @@ class cls_Usuario extends cls_Conexion{
 			$this->f_Buscar();
 			$respuesta['registro'] = $this->aa_Atributos['registro'];
 			$respuesta['success'] = 1;
-			$respuesta['mensaje'] = 'Modificacion Realizada Exitosamente';
-			$respuesta['tipo'] = 'informacion';
-			$respuesta['titulo'] = 'Informacion';
 		}else{
 			$respuesta['success'] = 0;
-			$respuesta['mensaje'] = 'Error al Realizar la Modificacion';
-			$respuesta['tipo'] = 'Error';
-			$respuesta['titulo'] = 'Error';	
 		}
 		return $respuesta;
 	}
@@ -194,10 +190,7 @@ class cls_Usuario extends cls_Conexion{
 			$respuesta = $this->f_Modificar();
 			$respuesta['titulo'] = 'Informacion';
 		}else{
-			$respuesta['tipo'] = 'error'; 
-			$respuesta['mensaje'] = 'Clave Suministrada Incorrecta';
 			$respuesta['success'] = 0;
-			$respuesta['titulo'] = 'Error';
 		}
 		return $respuesta;
 	}	
