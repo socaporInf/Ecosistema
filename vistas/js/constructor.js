@@ -833,7 +833,7 @@ var Formulario = function(atributos){
 		        //si se añadieron botones
 
 						var agregar = ['eliminar'];
-		        if(constructor.modificar.botones){							
+		        if(constructor.modificar.botones){
 							agregar = agregar.concat(constructor.modificar.botones);
 						}
 						UI.elementos.botonera.agregarBotones(agregar);
@@ -969,10 +969,15 @@ var Formulario = function(atributos){
 				var nodo=this.nodo;
 				var slot=this;
 				var titulo;
-				if(this.atributos.nombre.length>28){
-					titulo=this.atributos.nombre.substr(0,28)+'...';
+				if(UI.buscarConstructor(entidadActiva)){
+					campo_nombre = this.atributos[UI.buscarConstructor(entidadActiva).campo_nombre];
 				}else{
-					titulo=this.atributos.nombre;
+					campo_nombre = this.atributos.nombre;
+				}
+				if(campo_nombre.length>28){
+					titulo = campo_nombre.substr(0,28)+'...';
+				}else{
+					titulo = campo_nombre;
 				}
 				var html="<article  title>"+titulo+"</article>"+
 				"<button type='button' btnEliminar></button>";
@@ -1110,10 +1115,15 @@ var Formulario = function(atributos){
 					var nodo=this.Slots[x].nodo;
 					var slot=this.Slots[x];
 					var titulo;
-					if(slot.atributos.nombre.length>28){
-						titulo=slot.atributos.nombre.substr(0,28)+'...';
+					if(UI.buscarConstructor(entidadActiva)){
+						campo_nombre = slot.atributos[UI.buscarConstructor(entidadActiva).campo_nombre];
 					}else{
-						titulo=slot.atributos.nombre;
+						campo_nombre = slot.atributos.nombre;
+					}
+					if(campo_nombre.length>28){
+						titulo = campo_nombre.substr(0,28)+'...';
+					}else{
+						titulo = campo_nombre;
 					}
 					var html="<article  title>"+titulo+"</article>"+
 					"<button type='button' btnEliminar></button>";
