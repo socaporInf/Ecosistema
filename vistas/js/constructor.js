@@ -78,7 +78,7 @@ var Botonera = function(estructura){
 			if(this.atributos.click){
 				this.nodo.onclick = function(){
 					yo.atributos.click(yo);
-				}
+				};
 			}
 
 		};
@@ -125,7 +125,7 @@ var Botonera = function(estructura){
 		var botonera = this.nodo;
 		var existe = false;
 		if(typeof constructorBoton == 'string'){
-			constructorBoton = {tipo:constructorBoton}
+			constructorBoton = {tipo:constructorBoton};
 		}
 		for(var x=0;x<this.botones.length;x++){
 			if(this.botones[x].tipo==constructorBoton.tipo.toLowerCase()){
@@ -159,7 +159,7 @@ var Botonera = function(estructura){
 	};
 	function espera(x,tiempo,botones,operacion){
 		setTimeout(function(){
-			if(operacion === 'quitar'){				
+			if(operacion === 'quitar'){
 				UI.elementos.botonera.quitarBoton(botones[x]);
 			}else{
 				UI.elementos.botonera.agregarBoton(botones[x]);
@@ -179,8 +179,8 @@ var Botonera = function(estructura){
 			espera(x,tiempo,botones.quitar,'quitar');
 			tiempo+=20;
 		}
-		for(var x = 0; x < botones.agregar.length; x++){
-			espera(x,tiempo,botones.agregar,'agregar');
+		for(var i = 0; i < botones.agregar.length; i++){
+			espera(i,tiempo,botones.agregar,'agregar');
 			tiempo+=20;
 		}
 	};
@@ -236,7 +236,7 @@ var Botonera = function(estructura){
 	};
 	this.quitarBoton = function(constructorBoton){
 		if(typeof constructorBoton == 'string'){
-			constructorBoton = {tipo:constructorBoton}
+			constructorBoton = {tipo:constructorBoton};
 		}
 		var eliminar=this.buscarBoton(constructorBoton.tipo);
 		if(eliminar!=-1){
@@ -767,7 +767,7 @@ var Formulario = function(atributos){
 		    //quito
 		    var gestionar = {quitar:['eliminar'],agregar:['guardar']};
 	        if(constructor.modificar.botones){
-	        	gestionar.quitar = gestionar.agregar.concat(constructor.modificar.botones);
+	        	gestionar.quitar = gestionar.quitar.concat(constructor.modificar.botones);
 	        }
 		    //agrego
 	        if(constructor.nuevo.botones){
@@ -777,11 +777,14 @@ var Formulario = function(atributos){
 		  }else if(this.tipo=='modificar'){
 
 		    //funcinamiento botones
-		    UI.elementos.botonera.agregarBoton('eliminar');
-		    UI.elementos.botonera.quitarBoton('guardar');
-	        if(constructor.nuevo.botones){
-	        	UI.elementos.botonera.quitarBotones(constructor.nuevo.botones);
-	        }
+				var quitar = ['guardar','eliminar'];
+	      if(constructor.nuevo.botones){
+	      	quitar = quitar.concat(constructor.nuevo.botones);
+	      }
+				if(constructor.modificar.botones){
+	      	quitar = quitar.concat(constructor.modificar.botones);
+	      }
+				UI.elementos.botonera.quitarBotones(quitar);
 
 		    this.nodo.style.height = '0px';
 
@@ -828,12 +831,12 @@ var Formulario = function(atributos){
 		        formulario.agregarCampos(constructor.modificar.campos);
 		        UI.asignarValores(data,formulario);
 		        //si se añadieron botones
-		        if(constructor.nuevo.botones){
-		        	UI.elementos.botonera.quitarBotones(constructor.modificar.botones);
-		        }
+
+						var agregar = ['eliminar'];
 		        if(constructor.modificar.botones){
-		        	UI.elementos.botonera.agregarBotones(constructor.modificar.botones);
-		        }
+							agregar = agregar.concat(constructor.modificar.botones);
+						}
+						UI.elementos.botonera.agregarBotones(agregar);
 		      });
 		    },tiempo);
 		  }
@@ -966,10 +969,15 @@ var Formulario = function(atributos){
 				var nodo=this.nodo;
 				var slot=this;
 				var titulo;
-				if(this.atributos.nombre.length>28){
-					titulo=this.atributos.nombre.substr(0,28)+'...';
+				if(UI.buscarConstructor(entidadActiva)){
+					campo_nombre = this.atributos[UI.buscarConstructor(entidadActiva).campo_nombre];
 				}else{
-					titulo=this.atributos.nombre;
+					campo_nombre = this.atributos.nombre;
+				}
+				if(campo_nombre.length>28){
+					titulo = campo_nombre.substr(0,28)+'...';
+				}else{
+					titulo = campo_nombre;
 				}
 				var html="<article  title>"+titulo+"</article>"+
 				"<button type='button' btnEliminar></button>";
@@ -1107,10 +1115,15 @@ var Formulario = function(atributos){
 					var nodo=this.Slots[x].nodo;
 					var slot=this.Slots[x];
 					var titulo;
-					if(slot.atributos.nombre.length>28){
-						titulo=slot.atributos.nombre.substr(0,28)+'...';
+					if(UI.buscarConstructor(entidadActiva)){
+						campo_nombre = slot.atributos[UI.buscarConstructor(entidadActiva).campo_nombre];
 					}else{
-						titulo=slot.atributos.nombre;
+						campo_nombre = slot.atributos.nombre;
+					}
+					if(campo_nombre.length>28){
+						titulo = campo_nombre.substr(0,28)+'...';
+					}else{
+						titulo = campo_nombre;
 					}
 					var html="<article  title>"+titulo+"</article>"+
 					"<button type='button' btnEliminar></button>";
@@ -2018,7 +2031,7 @@ var Arquitecto = function(){
 			}
 		}
 		return Reg;
-	}
+	};
 	//------------------------- Manejo de toast ----------------------------
 	//agrega mensaje pequeño
 	this.agregarToasts = function(atributos){
@@ -2391,7 +2404,7 @@ var CampoEdicion = function(info){
 	this.data.valor = info.valor || '';
 	this.estado = 'mostrando';
 
-	this.construirNodo = function(){		
+	this.construirNodo = function(){
 		var nodo =  null;
 		var campo = '';
 		var html = '';
@@ -2419,7 +2432,7 @@ var CampoEdicion = function(info){
 			html+=	campo;
 			html+=	"<div display>"+this.data.valor+"</div>";
 			html+="</div>";
-		}		
+		}
 		nodo.innerHTML=html;
 		this.nodo=nodo;
 	};
@@ -2441,12 +2454,12 @@ var CampoEdicion = function(info){
 			campoEdit = contenedorEdit.querySelector('textarea');
 		}
 		campoEdit.value = display.textContent;
-		campoEdit.focus(); 
+		campoEdit.focus();
 		this.estado = 'editando';
 		if(this.tipo === 'titulo'){
 			this.nodo.querySelector('article[update]').classList.add('edicion');
 		}
-	}
+	};
 	this.finalizarEdicion = function(){
 		this.nodo.classList.remove('edicion');
 		//contenedor
@@ -2460,12 +2473,12 @@ var CampoEdicion = function(info){
 		}else{
 			campoEdit = contenedorEdit.querySelector('textarea');
 		}
-		display.textContent = campoEdit.value; 
+		display.textContent = campoEdit.value;
 		this.estado = 'mostrando';
 		if(this.tipo === 'titulo'){
 			this.nodo.querySelector('article[update]').classList.remove('edicion');
 		}
-	}
+	};
 	this.captarValor = function(){
 		if(this.estado === 'mostrando'){
 			return this.nodo.querySelector('div[display]').textContent;
@@ -2476,10 +2489,10 @@ var CampoEdicion = function(info){
 				return this.nodo.querySelector('textarea').value;
 			}
 		}
-	}
+	};
 	this.captarNombre = function(){
 		return this.data.nombre;
-	}
+	};
 	this.construirNodo();
 };
 //-------------------- Toasts ------------------------------------------------------------

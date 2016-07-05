@@ -14,8 +14,35 @@ var Arbol = function(atributos){
 			this.construirNodo(texto);
 		};
 		//------------------fin titulo -----------
-
-		var Peciolo =  function(){
+		var Opcion = function(atributos){
+			this.atributos = atributos;
+			this.nodo = null;
+			this.construirNodo = function(){
+				var nodo = document.createElement('article');
+				nodo.classList.add('opcion-hoja');
+				this.nodo = nodo;
+				var yo = this;
+				if(this.atributos.click){
+					this.nodo.onclick = function(){
+							yo.atributos.click(yo);
+					};
+				}
+				if(this.atributos.clases){
+						this.agregarClases();
+				}
+			};
+			this.agregarClases = function(){
+				for (var i = 0; i < this.atributos.clases.length; i++) {
+					this.agregarClase(this.atributos.clases[i]);
+				}
+			};
+			this.agregarClase = function(clase){
+				this.nodo.classList.add(clase);
+			};
+			this.construirNodo();
+		};
+		//------------------fin Opcion -----------
+		var Peciolo = function(){
 
 			this.nodo = null;
 
@@ -49,6 +76,7 @@ var Arbol = function(atributos){
 		this.titulo = null;
 		this.nodo = null;
 		this.peciolo = null;
+		this.opciones = [];
 
 		this.construirNodo = function(){
 			var nodo =  document.createElement('div');
@@ -59,14 +87,36 @@ var Arbol = function(atributos){
 
 			this.titulo = new Titulo(this.atributos.titulo);
 			nodo.appendChild(this.titulo.nodo);
-
 			this.nodo =  nodo;
+
+			this.agregarOpciones([
+				{
+					clases: ['icon','icon-operaciones-negro-32'],
+					click: function(){
+						console.log('abrir operaciones');
+					}
+				},{
+						clases: ['icon','icon-editar-blanco-32','mat-deeporange500'],
+						click: function(){
+							console.log('abrir edicion');
+						}
+				}
+			]);
 		};
 
 		this.removerTallos = function(){
 			this.peciolo.removerBoton();
 		};
 
+		this.agregarOpciones = function (opciones) {
+			var opcion;
+			for (var i = 0; i < opciones.length; i++) {
+				opcion = new Opcion(opciones[i]);
+				this.opciones.push(opcion);
+				this.nodo.appendChild(opcion.nodo);
+				opcion.nodo.style.right = (i*29)+5+'px';
+			}
+		};
 		this.construirNodo();
 	};
 	//----------------fin hoja-----------------------
@@ -109,7 +159,6 @@ var Arbol = function(atributos){
 				var hijo = this.armarHojas(rama.hijos[x]);
 				hoja.nodo.appendChild(hijo.nodo);
 			}
-
 		}else{
 			hoja.removerTallos();
 		}
