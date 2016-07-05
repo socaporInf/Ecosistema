@@ -4,6 +4,7 @@ div[hoja]{
 	height: 30px;
 	width: calc(100% - 10px);
 	cursor: pointer;
+	position: relative;
 }
 div[hoja]:hover > div[peciolo],
 div[hoja]:hover > div[titulo-hoja]{
@@ -64,4 +65,15 @@ button.arrow_down_gray:hover{
 }
 button.arrow_down_gray.activo{
 		transform: rotate(-180deg);
+}
+/*-------------------------- Opciones ----------------------------*/
+article.opcion-hoja{
+  position: absolute;
+  z-index: 3;
+  margin-left: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50px;
+  border: none;
+  top: 3px;
 }
