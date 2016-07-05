@@ -1,10 +1,9 @@
  <?php
 include_once('cls_Conexion.php');
-include_once('cls_Mensaje_Sistema.php');
-class cls_Clase extends cls_Conexion{
-
+class cls_Mensaje_Sistema extends cls_Conexion{
+	
 	private $aa_Atributos = array();
-	private $aa_Campos = array('codigo_clase','nombre','descripcion');
+	private $aa_Campos = array('codigo','titulo','cuerpo','tipo','descripcion');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -16,7 +15,6 @@ class cls_Clase extends cls_Conexion{
 	}
 
 	public function gestionar(){
-		$lobj_Mensaje = new cls_Mensaje_Sistema;
 		switch ($this->aa_Atributos['operacion']) {
 			case 'buscar':
 				$registros=$this->f_Listar();
@@ -25,7 +23,9 @@ class cls_Clase extends cls_Conexion{
 					$respuesta['registros']=$registros;
 				}else{
 					$respuesta['success'] = 0;
-					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+					$respuesta['mensaje'] = 'no hay registros';
+					$respuesta['tipo'] = 'advertencia';
+					$respuesta['titulo'] = 'advertencia';	
 				}
 				break;
 
@@ -42,12 +42,12 @@ class cls_Clase extends cls_Conexion{
 				if($lb_Hecho){
 					$this->f_BuscarUltimo();
 					$respuesta['registros'] = $this->aa_Atributos['registro'];
-					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(9);
+					$respuesta['mensaje'] = 'Insercion realizada con exito';
 					$success = 1;
 				}else{
-					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(10);
+					$respuesta['mensaje'] = 'Error al ejecutar la insercion';
 					$success = 0;
-				}				
+				}
 				break;
 
 			case 'modificar':
@@ -55,8 +55,7 @@ class cls_Clase extends cls_Conexion{
 				break;
 				
 			default:
-				$valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
-				$respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
+				$respuesta['mensaje'] = 'Operacion "'.strtoupper($this->aa_Atributos['operacion']).'" no existe para esta entidad';
 				$success = 0;
 				break;
 		}
@@ -65,15 +64,29 @@ class cls_Clase extends cls_Conexion{
 		}	
 		return $respuesta;
 	}
+	public function buscarMensaje($codigo){
+		$la_peticion = array('codigo' => $codigo );
+		$this->setPeticion($la_peticion);
+		$this->f_Buscar();
+		return $this->aa_Atributos['registro'];
+	}
+	public function completarMensaje($codigo,$valores){
+		$mensaje = $this->buscarMensaje($codigo);
+		foreach ($valores as $aCambiar => $nuevo) {
+			$mensaje['titulo'] = str_replace($aCambiar, $nuevo, $mensaje['titulo']);
+			$mensaje['cuerpo'] = str_replace($aCambiar, $nuevo, $mensaje['cuerpo']);
+		}
+		return $mensaje;
+	}
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM agronomia.vclase ";
+		$ls_Sql="SELECT * FROM global.vmensaje_sistema ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_clase'];
-			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo'];
+			$la_respuesta[$x]['titulo']=$la_registros['titulo'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -84,12 +97,16 @@ class cls_Clase extends cls_Conexion{
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * FROM agronomia.vclase where codigo_clase='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT * FROM global.vmensaje_sistema where codigo='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['codigo_clase'];
-			$la_respuesta['nombre']=$la_registros['nombre'];
+			$la_respuesta['codigo']=$la_registros['codigo'];
+			$la_respuesta['nombre']=$la_registros['titulo'];
+			$la_respuesta['titulo']=$la_registros['titulo'];
+			$la_respuesta['cuerpo']=$la_registros['cuerpo'];
+			$la_respuesta['tipo']=$la_registros['tipo'];
+			$la_respuesta['nombre_tipo']=$la_registros['nombre_tipo'];
 			$la_respuesta['descripcion']=$la_registros['descripcion'];
 			$lb_Enc=true;
 		}
@@ -107,23 +124,26 @@ class cls_Clase extends cls_Conexion{
 	private function f_Guardar(){
 
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO agronomia.vclase (nombre,descripcion) values 
-				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
+		$ls_Sql="INSERT INTO global.vmensaje_sistema (titulo,descripcion,cuerpo,tipo) values 
+				('".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['descripcion']."', 
+				'".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['tipo']."') ";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
-		return false;
+		return $lb_Hecho;
 	}
 
 	private function f_BuscarUltimo(){
 		$lb_Enc=false;
 		//Busco El rol
-		$ls_Sql="SELECT * from agronomia.vclase WHERE codigo_clase = (SELECT MAX(codigo_clase) from agronomia.vclase) ";
+		$ls_Sql="SELECT * from global.vmensaje_sistema WHERE codigo = (SELECT MAX(codigo) from global.vmensaje_sistema) ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['codigo_clase'];
-			$la_respuesta['nombre']=$la_registros['nombre'];
+			$la_respuesta['codigo']=$la_registros['codigo'];
+			$la_respuesta['titulo']=$la_registros['titulo'];
+			$la_respuesta['cuerpo']=$la_registros['cuerpo'];
+			$la_respuesta['tipo']=$la_registros['tipo'];
 			$la_respuesta['descripcion']=$la_registros['descripcion'];
 			$lb_Enc=true;
 		}
@@ -141,15 +161,12 @@ class cls_Clase extends cls_Conexion{
 	private function f_Modificar(){
 		$lb_Hecho=false;
 		$contCampos = 0;
-		if(isset($this->aa_Atributos['nombre'])){
-			$this->aa_Atributos['nom'] = $this->aa_Atributos['nombre'];
-		}
-		$ls_Sql="UPDATE agronomia.vclase SET ";
+		$ls_Sql="UPDATE global.vmensaje_sistema SET ";
 
 		//arma la cadena sql en base a los campos pasados en la peticion
 		$ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-		$ls_Sql.="WHERE codigo_clase ='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.="WHERE codigo ='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();

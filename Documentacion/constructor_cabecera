@@ -1,6 +1,0 @@
-cabecera:{
-  estado: string,
-
-  Metodos
-    construir()
-}

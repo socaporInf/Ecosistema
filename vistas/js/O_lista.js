@@ -152,7 +152,11 @@ var Lista = function(data){
           var lista = this;
           torque.manejarOperacion(carga.peticion,carga.espera,function cargaAutomaticaLista(respuesta){
             lista.removerContenedorCarga();
-            lista.cargarElementos(respuesta.registros);
+            if(respuesta.success){
+              lista.cargarElementos(respuesta.registros);
+            }else{
+              lista.noExistenRegistros();
+            }
             if(lista.atributos.carga.respuesta){
               lista.atributos.carga.respuesta();
             }
@@ -177,6 +181,12 @@ var Lista = function(data){
     var contenedor = this.nodo.querySelector('section[contenedorCarga]');
     this.nodo.removeChild(contenedor);
   };
+  this.noExistenRegistros = function(){
+    var ayuda = document.createElement('section');
+    ayuda.classList.add('vacio');
+    ayuda.textContent = 'No existen Registros';
+    this.nodo.appendChild(ayuda);
+  }
   this.abrirCampoBusqueda = function(){
 	var botonBusqueda = document.querySelector('button[btnbusq]');
     botonBusqueda.parentNode.classList.add('buscar');
