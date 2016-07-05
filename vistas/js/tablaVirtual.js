@@ -1,5 +1,6 @@
 tablaVirtual = {
   nombre:'tablaVirtual',
+  campo_nombre: 'nombre',
   nuevo:{
     titulo: 'Tabla Virtual',
     altura: 300,
@@ -135,14 +136,14 @@ editarRegistro = function(slot){
       setTimeout(abrirFormTabla,1000);
     };
     formTabla.partes.cuerpo.nodo.querySelector('article[update]').onclick = activarEdicion;
-  },1000)
+  },1000);
 };
 var activarEdicion = function(){
   var formTabla = UI.elementos.modalWindow.buscarUltimaCapaContenido();
   formTabla.partes.cuerpo.registro = UI.modificar(formTabla.partes.cuerpo);
   this.onclick = finalizarEdicion;
-}
-var finalizarEdicion = function(){  
+};
+var finalizarEdicion = function(){
   var formTabla = UI.elementos.modalWindow.buscarUltimaCapaContenido();
   var nuevoRegistro = UI.modificar(formTabla.partes.cuerpo);
   var cambios = validarCambios(nuevoRegistro,formTabla.partes.cuerpo.registro);
@@ -152,7 +153,7 @@ var finalizarEdicion = function(){
     nuevoRegistro.push({nombre:'codigo',valor:formTabla.partes.cuerpo.registroId});
     enviarCambios(nuevoRegistro,formTabla.partes.cuerpo.nodo);
   }
-}
+};
 var validarCambios = function(newReg,oldReg){
   var cambios = [];
   for (var i = 0; i < newReg.length; i++) {
@@ -166,13 +167,13 @@ var validarCambios = function(newReg,oldReg){
     }
   }
   return cambios;
-}
+};
 var enviarCambios = function(cambios,contenedor){
   //armo la peticion
   var peticion = {
     entidad: 'tablaVirtual',
     operacion: 'modificarRegistro'
-  }
+  };
   for (var i = 0; i < cambios.length; i++) {
     peticion[cambios[i].nombre] = cambios[i].valor;
   }
@@ -183,16 +184,16 @@ var enviarCambios = function(cambios,contenedor){
       nombre: 'guardando cambios',
       mensaje: 'Guardando cambios'
     }
-  }
+  };
   torque.manejarOperacion(peticion,infoCuadro,function guardarCambios(respuesta){
-    if(respuesta.success){        
+    if(respuesta.success){
       UI.elementos.modalWindow.eliminarUltimaCapa();
       setTimeout(abrirFormTabla,1000);
     }else{
       UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
     }
   });
-} 
+};
 /*----------------------------------------Nuevo Registro Virtual----------------------------------------------*/
 var abrirFormTabNuevo = function(){
   UI.elementos.modalWindow.eliminarUltimaCapa();
@@ -230,9 +231,9 @@ var guardarRegistro = function(){
         nombre: 'guardando ' + UI.elementos.formulario.ventanaForm.registroAct.nombre,
         mensaje: 'Guardando Registro'
       }
-    }
+    };
     torque.manejarOperacion(peticion,InfoCuadro,function guardar(respuesta){
-      if(respuesta.success){        
+      if(respuesta.success){
         UI.elementos.modalWindow.eliminarUltimaCapa();
         setTimeout(abrirFormTabla,1000);
       }else{
@@ -245,7 +246,7 @@ var guardarRegistro = function(){
       tipo: 'web-arriba-derecha'
     });
   }
-}
+};
 var validar = function(contenedor){
   var data = {};
   var campos = contenedor.campos;
@@ -259,4 +260,4 @@ var validar = function(contenedor){
     }
   }
   return data;
-}
+};

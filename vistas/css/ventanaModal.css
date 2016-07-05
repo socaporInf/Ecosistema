@@ -125,5 +125,5 @@ div[capa='contenido'] section[cuerpo] div[texto]{
     margin-right: 24px;
 }
 div[capa='contenido'] div[lista]{
-    margin: 0px;
+    margin: 0px 0px 60px 0px;
 }
