@@ -1,5 +1,6 @@
 <?php 
 include_once('cls_Conexion.php');
+include_once('cls_Mensaje_Sistema.php');
 class cls_Operacion extends cls_Conexion{
 	
 	private $aa_Atributos = array();
@@ -14,6 +15,7 @@ class cls_Operacion extends cls_Conexion{
 	}
 
 	public function gestionar(){
+		$lobj_Mensaje = new cls_Mensaje_Sistema;
 		switch ($this->aa_Atributos['operacion']) {
 			case 'buscar':
 				$registros=$this->f_Listar();
@@ -36,10 +38,10 @@ class cls_Operacion extends cls_Conexion{
 				if($lb_Hecho){
 					$this->f_Buscar();
 					$respuesta['registros'] = $this->aa_Atributos['registro'];
-					$respuesta['mensaje'] = 'Insercion realizada con exito';
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(9);
 					$success = 1;
 				}else{
-					$respuesta['mensaje'] = 'Error al ejecutar la insercion';
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(10);
 					$success = 0;
 				}
 				break;

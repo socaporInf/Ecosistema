@@ -1,7 +1,8 @@
 componente = {
   nombre:'componente',
+  campo_nombre: 'titulo',
   nuevo:{
-    titulo: 'componente',
+    titulo: 'Componente',
     altura: 400,
     campos:[
       {
