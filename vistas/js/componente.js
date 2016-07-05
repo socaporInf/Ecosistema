@@ -56,7 +56,7 @@ componente = {
         parametros : {nombre:'tipo',titulo:'Tipo de Componente'}
       },{
         tipo : 'campoEdicion',
-        parametros : {nombre:'padre',titulo:'Componente Padre'}
+        parametros : {nombre:'componente_padre',titulo:'Componente Padre'}
       },{
         tipo : 'campoEdicion',
         parametros : {titulo:'Descripcion',nombre:'descripcion',tipo:'area'}

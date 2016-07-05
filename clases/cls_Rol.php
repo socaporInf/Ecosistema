@@ -1,5 +1,6 @@
 <?php 
 include_once('cls_Conexion.php');
+include_once('cls_Mensaje_Sistema.php');
 class cls_Rol extends cls_Conexion{
 	
 	private $aa_Atributos = array();
@@ -14,6 +15,7 @@ class cls_Rol extends cls_Conexion{
 	}
 
 	public function gestionar(){
+		$lobj_Mensaje = new cls_Mensaje_Sistema;
 		switch ($this->aa_Atributos['operacion']) {
 
 			case 'buscar':
@@ -49,10 +51,11 @@ class cls_Rol extends cls_Conexion{
 				$respuesta=$this->guardarDetalle();
 				if($respuesta!=false){
 					$respuesta['registro'] = $respuesta;
-					$respuesta['mensaje'] = 'Asignacion realizada con exito';
-					$respuesta['tipo'] = 'informacion';
-					$respuesta['titulo'] = 'Informacion';	
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(16);
 					$success=1;
+				}else{
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(17);
+					$success = 0;
 				}
 			break;
 

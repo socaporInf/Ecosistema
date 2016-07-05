@@ -252,7 +252,6 @@ function guardarComponente(){
 		}
 	}
 	if(!validado){
-		console.log(data);
 		torque.guardar('componente',data,function guardar(respuesta){
 			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 			llenarArbol(UI.buscarVentana('formularioArbol'));
