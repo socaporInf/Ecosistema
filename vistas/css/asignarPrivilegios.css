@@ -16,3 +16,6 @@ div[mat-window].form-lat{
   width: calc(40% + 50px);
   float:left;
 }
+div[hoja]:hover > article.icon-operaciones-negro-32{
+  background-image: url('../imagenes/operaciones-blanco-32.png') !important;
+}

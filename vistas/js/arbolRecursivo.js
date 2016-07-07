@@ -16,6 +16,7 @@ var Arbol = function(atributos){
 		//------------------fin titulo -----------
 		var Opcion = function(atributos){
 			this.atributos = atributos;
+			this.atributos.id =  Math.floor(Math.random() * (100 - 1)) + 1;
 			this.nodo = null;
 			this.construirNodo = function(){
 				var nodo = document.createElement('article');
@@ -24,11 +25,11 @@ var Arbol = function(atributos){
 				var yo = this;
 				if(this.atributos.click){
 					this.nodo.onclick = function(){
-							yo.atributos.click(yo);
+							yo.atributos.click(this);
 					};
 				}
 				if(this.atributos.clases){
-						this.agregarClases();
+					this.agregarClases();
 				}
 			};
 			this.agregarClases = function(){
@@ -88,34 +89,34 @@ var Arbol = function(atributos){
 			this.titulo = new Titulo(this.atributos.titulo);
 			nodo.appendChild(this.titulo.nodo);
 			this.nodo =  nodo;
-
-			this.agregarOpciones([
-				{
-					clases: ['icon','icon-operaciones-negro-32'],
-					click: function(){
-						console.log('abrir operaciones');
-					}
-				},{
-						clases: ['icon','icon-editar-blanco-32','mat-deeporange500'],
-						click: function(){
-							console.log('abrir edicion');
-						}
-				}
-			]);
 		};
 
 		this.removerTallos = function(){
 			this.peciolo.removerBoton();
 		};
 
-		this.agregarOpciones = function (opciones) {
-			var opcion;
-			for (var i = 0; i < opciones.length; i++) {
-				opcion = new Opcion(opciones[i]);
-				this.opciones.push(opcion);
-				this.nodo.appendChild(opcion.nodo);
-				opcion.nodo.style.right = (i*29)+5+'px';
+		this.agregarOpciones = function (opciones){
+			if(this.atributos.privilegio){
+				var opcion;
+				for (var i = 0; i < opciones.length; i++) {
+					var nuevaOpcion = this.agregarOpcion(opciones[i]);
+					nuevaOpcion.nodo.style.right = (i*29)+5+'px';
+					nuevaOpcion.nodo.setAttribute('codigo',this.atributos.codigo);
+					nuevaOpcion.nodo.setAttribute('padre',this.atributos.padre);
+					nuevaOpcion.nodo.setAttribute('titulo',this.atributos.titulo);
+					nuevaOpcion.nodo.setAttribute('tipo',this.atributos.tipo);
+					nuevaOpcion.nodo.setAttribute('privilegio',this.atributos.privilegio);
+				}
 			}
+		};
+		this.agregarOpcion = function(opcion){
+			nuevaOpcion = new Opcion(opcion);
+			this.opciones.push(nuevaOpcion);
+			this.nodo.appendChild(nuevaOpcion.nodo);
+			return nuevaOpcion;
+		};
+		this.asignarPrivilegio =function(codigoPrivilegio){
+			this.atributos.privilegio = codigoPrivilegio;
 		};
 		this.construirNodo();
 	};
@@ -123,6 +124,7 @@ var Arbol = function(atributos){
 	this.nodos = atributos.nodos;
 	this.contenedor = atributos.contenedor;
 	this.hojaOnClick = atributos.hojaOnClick;
+	this.hojaOpciones = atributos.hojaOpciones;
 	this.nodosActivos = atributos.hojasActuales || [];
 	this.hojas = null;
 
@@ -153,8 +155,11 @@ var Arbol = function(atributos){
 		});
 		this.asignarOnClickHoja(hoja);
 		this.verificarHoja(rama,hoja);
+		hoja.agregarOpciones(this.hojaOpciones);
+		if(rama.codigo === '0'){
+			this.hojas = hoja;
+		}
 		if(rama.hijos.length){
-
 			for(var x = 0; x < rama.hijos.length; x++){
 				var hijo = this.armarHojas(rama.hijos[x]);
 				hoja.nodo.appendChild(hijo.nodo);
@@ -168,6 +173,7 @@ var Arbol = function(atributos){
 		for(var x = 0; x < this.nodosActivos.length; x++){
 			if(rama.codigo == this.nodosActivos[x].codigo){
 				hoja.peciolo.activar();
+				hoja.asignarPrivilegio(this.nodosActivos[x].privilegio);
 				hoja.titulo.nodo.click();
 			}
 		}

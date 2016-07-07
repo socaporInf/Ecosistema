@@ -1,5 +1,6 @@
  <?php
 include_once('cls_Conexion.php');
+include_once('cls_Mensaje_Sistema.php');
 class cls_Privilegio extends cls_Conexion{
 
 	private $aa_Atributos = array();
@@ -15,6 +16,7 @@ class cls_Privilegio extends cls_Conexion{
 	}
 
 	public function gestionar(){
+		$lobj_Mensaje = new cls_Mensaje_Sistema;
 		switch ($this->aa_Atributos['operacion']) {
 
 			case 'buscarRegistro':
@@ -23,11 +25,21 @@ class cls_Privilegio extends cls_Conexion{
 					$respuesta['registro'] = $la_respuesta;
 					$success=1;
 				}else{
-					$respuesta['mensaje'] = 'Relacion no existe';
-					$respuesta['tipo'] = 'advertencia';
-					$respuesta['titulo'] = 'advertencia';
+					$respuesta['success'] = 0;
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
 				}
 				break;
+
+				case 'buscarOperacionesDisponibles':
+					$la_respuesta=$this->f_BuscarOperacionesDisponibles();
+					if(count($la_respuesta)!=0){
+						$respuesta['registro'] = $la_respuesta;
+						$success=1;
+					}else{
+						$respuesta['success'] = 0;
+						$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+					}
+					break;
 
 			case 'buscarArbol':
 				$la_respuesta['hojasGenereal']=$this->f_BuscarArbol();
@@ -58,9 +70,12 @@ class cls_Privilegio extends cls_Conexion{
 			break;
 
 			default:
-				$respuesta['mensaje'] = 'Operacion "'.strtoupper($this->aa_Atributos['operacion']).'" no existe para esta entidad';
-				$success = 0;
-				break;
+			$valores = array();
+			$valores['{OPERACION}'] = '<b>'.$this->aa_Atributos['operacion'].'</b>';
+			$valores['{ENTIDAD}'] = '<b>'.$this->aa_Atributos['entidad'].'</b>';
+			$respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
+			$success = 0;
+			break;
 		}
 		if(!isset($respuesta['success'])){
 			$respuesta['success']=$success;
@@ -90,15 +105,16 @@ class cls_Privilegio extends cls_Conexion{
 	private function f_BuscarArbolPrivilegios(){
 		$x=0;
 		$la_Privilegios=array();
-		$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre from seguridad.varbol_privilegio_usuario where estado_privilegio='A' and llave_acceso='".$this->aa_Atributos['codigo']."'";
-		$ls_Sql.=" group by titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre";
+		$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,codigo from seguridad.varbol_privilegio_usuario where estado_privilegio='A' and llave_acceso='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql.=" group by titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,codigo";
 		$ls_Sql.=" order by padre";
 		$la_Privilegios[0];
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registro=$this->f_Arreglo($lr_tabla)){
-			$la_Privilegios[$x]['titulo']=$la_registro['titulo'];
 			$la_Privilegios[$x]['codigo']=$la_registro['componente'];
+			$la_Privilegios[$x]['titulo']=$la_registro['titulo'];
+			$la_Privilegios[$x]['privilegio']=$la_registro['codigo'];
 			$la_Privilegios[$x]['padre']=$la_registro['padre'];
 			$la_Privilegios[$x]['tit_padre']=$la_registro['titulo_padre'];
 			$la_Privilegios[$x]['tipo']=$la_registro['tipo'];
@@ -205,6 +221,28 @@ class cls_Privilegio extends cls_Conexion{
 				return false;
 			}
 		}
+	}
+	private function f_BuscarOperacionesDisponibles(){
+		//Busco Detalle
+		$ls_Sql="SELECT * from seguridad.voperacion_privilegio
+				WHERE codigo_privilegio='".$this->aa_Atributos['codigo']."'";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$i = 0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$i]['codigo']=$la_registros['codigo'];
+			$la_respuesta[$i]['codigoPrivilegio']=$la_registros['codigo_privilegio'];
+			$la_respuesta[$i]['estadoPrivilegio']=$la_registros['estado_privilegio'];
+			$la_respuesta[$i]['codigoComponente']=$la_registros['codigo_componente'];
+			$la_respuesta[$i]['tituloComponente']=$la_registros['titulo_componente'];
+			$la_respuesta[$i]['tipoComponente']=$la_registros['tipo_componente'];
+			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre_operacion'];
+			$i++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_respuesta;
 	}
 }
 ?>

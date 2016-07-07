@@ -81,7 +81,14 @@ var ArbolTemp = function(){
 	this.exportarArreglo = function(){
 		var arreglo = [];
 		for(var i = 0; i < this.hojas.length;i++){
-			arreglo.push(this.hojas[i].atributos);
+			arreglo.push({
+				codigo: this.hojas[i].atributos.codigo,
+				padre: this.hojas[i].atributos.padre,
+				privilegio: this.hojas[i].atributos.privilegio,
+				tipo: this.hojas[i].atributos.tipo,
+				tit_padre: this.hojas[i].atributos.tit_padre,
+				titulo: this.hojas[i].atributos.titulo
+			});
 		}
 		return arreglo;
 	};
@@ -155,6 +162,15 @@ function llenarArbol(formularioArbol){
 			hojaOnClick: function asignar(hoja){
 				var accion = arbolTemp.cambio(hoja);
 			},
+			hojaOpciones:[
+				{
+					clases: ['icon','icon-operaciones-negro-32'],
+					click: operaciones
+				},{
+						clases: ['icon','icon-editar-blanco-32','mat-deeporange500'],
+						click: editarPrivilegio
+				}
+			],
 			contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo
 		});
 	});
@@ -263,3 +279,30 @@ function guardarComponente(){
 		});
 	}
 }
+//--------------------------- Funciones Opciones ------------------------
+var operaciones = function operacionesHoja(nodo){
+	console.log(nodo.getAttribute('privilegio'));
+	var asignarOperaciones = UI.crearVentanaModal({
+		cuerpo:{
+			html: 'aqui va el cuadro carga'
+		}
+	});
+	var peticion = {
+		entidad : 'privilegio',
+		operacion: 'buscarOperacionesDisponibles',
+		codigo : nodo.getAttribute('codigo')
+	};
+	var cuadro = {
+		contenedor: asignarOperaciones.partes.cuerpo.nodo,
+		cuadro:{
+			nombre: 'esperaOperaciones',
+			mensaje : 'cargando operaciones disponibles'
+		}
+	};
+	torque.manejarOperacion(peticion,cuadro,function armarOperaciones(respuesta){
+		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+	});
+};
+var editarPrivilegio = function(hoja){
+
+};

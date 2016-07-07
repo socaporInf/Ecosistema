@@ -1504,7 +1504,7 @@ var modalWindow = function(){
 			switch(parte){
 				case 'cabecera':
 					this.partes.cabecera=new Cabecera(contenido);
-					this.nodo.appendChild(this.partes.cabecera.nodo);
+					this.nodo.insertBefore(this.partes.cabecera.nodo,this.nodo.firstChild);
 				break;
 				case 'cuerpo':
 					this.partes.cuerpo=new Cuerpo(contenido);
@@ -1537,16 +1537,23 @@ var modalWindow = function(){
 		};
 		this.convertirEnMensaje = function(mensaje){
 			//cambio la cabecera
-			this.partes.cabecera.nodo.class = '';
-			this.partes.cabecera.nodo.classList.add(mensaje.nombre_tipo.toLowerCase());
-			this.partes.cabecera.nodo.textContent = mensaje.titulo;
+			if(mensaje.titulo){
+				if(!this.partes.cabecera){
+					this.agregarParte('cabecera','titulo');
+				}
+				this.partes.cabecera.nodo.class = '';
+				this.partes.cabecera.nodo.classList.add(mensaje.nombre_tipo.toLowerCase());
+				this.partes.cabecera.nodo.textContent = mensaje.titulo;
+			}
 
 			//cambio el cuerpo
-			this.partes.cuerpo.nodo.innerHTML='<strong>'+mensaje.cuerpo+'</strong>';
+			this.partes.cuerpo.nodo.innerHTML=mensaje.cuerpo;
 			this.partes.cuerpo.nodo.style.height = '50px';
 
 			//cambio pie
-			this.partes.pie.desaparecer();
+			if(this.partes.pie){
+				this.partes.pie.desaparecer();
+			}
 		};
 		this.construirNodo();
 	};
