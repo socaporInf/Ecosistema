@@ -165,9 +165,9 @@ function llenarArbol(formularioArbol){
 			hojaOpciones:[
 				{
 					clases: ['icon','icon-operaciones-negro-32'],
-					click: operaciones
+					click: buscarOperaciones
 				},{
-						clases: ['icon','icon-editar-blanco-32','mat-deeporange500'],
+						clases: ['icon','icon-editar-negro-32'],
 						click: editarPrivilegio
 				}
 			],
@@ -221,8 +221,7 @@ function armarVentanaArbol(){
 				texto:respuesta.mensaje,
 				tipo: 'web-arriba-derecha-alto'
 			});
-			var sectorArbol = UI.buscarVentana('formularioArbol').buscarSector('arbol');
-			sectorArbol.nodo.appendChild(arbol.raiz.nodo);
+			llenarArbol(UI.buscarVentana('formularioArbol'));
 		});
 	};
 	botonLimpiar.onclick = function limpiar(){
@@ -280,8 +279,7 @@ function guardarComponente(){
 	}
 }
 //--------------------------- Funciones Opciones ------------------------
-var operaciones = function operacionesHoja(nodo){
-	console.log(nodo.getAttribute('privilegio'));
+var buscarOperaciones = function operacionesHoja(nodo){
 	var asignarOperaciones = UI.crearVentanaModal({
 		cuerpo:{
 			html: 'aqui va el cuadro carga'
@@ -290,7 +288,7 @@ var operaciones = function operacionesHoja(nodo){
 	var peticion = {
 		entidad : 'privilegio',
 		operacion: 'buscarOperacionesDisponibles',
-		codigo : nodo.getAttribute('codigo')
+		codigo : nodo.getAttribute('privilegio')
 	};
 	var cuadro = {
 		contenedor: asignarOperaciones.partes.cuerpo.nodo,
@@ -300,9 +298,58 @@ var operaciones = function operacionesHoja(nodo){
 		}
 	};
 	torque.manejarOperacion(peticion,cuadro,function armarOperaciones(respuesta){
-		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+		if (respuesta.success) {
+			construirFormularioAsignarOp(UI.elementos.modalWindow.buscarUltimaCapaContenido(),respuesta.registro);
+		}else{
+			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+		}
 	});
 };
 var editarPrivilegio = function(hoja){
 
 };
+//------------------------------------ Formulario asignar Operaciones -----------------
+function construirFormularioAsignarOp(capaContenido,operaciones){
+	var disponibles = operaciones.disponibles;
+	var asignadas = operaciones.asignadas;
+	var campos = [];
+	for (var i = 0; i < disponibles.length; i++) {
+		var campo = {
+			tipo: 'checkBox',
+			parametros:{
+				nombre: disponibles[i].nombreOperacion,
+				valor: disponibles[i].codigoOperacion,
+				requerido: false,
+				habilitado: true,
+				tipo: 'girar',
+				eslabon: 'area',
+				usaTitulo: true,
+				marcado: false
+			}
+		}
+		if(asignadas){
+			for(var x = 0; x < asignadas.length; x++){
+				if(disponibles[i].codigoOperacion === asignadas[x].codigoOperacion){
+					campo.parametros.marcado = true;
+				}
+			}
+		}
+		campos.push(campo);
+	}
+	capaContenido.convertirEnFormulario({
+		cabecera: {
+			html: 'Asignar Operaciones'
+		},
+		cuerpo: {
+			alto: 150,
+			campos: campos
+		},
+		pie: {
+			html: '<section modalButtons>'+
+						'<button type="button" class="icon-guardar-indigo-32"> </button>'+
+						'<button type="button" class="icon-cerrar-rojo-32"> </button>'+
+					'</section>'
+		}
+	});
+	capaContenido.nodo.classList.remove('ancho');
+}

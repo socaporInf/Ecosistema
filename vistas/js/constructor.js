@@ -1435,7 +1435,6 @@ var modalWindow = function(){
 				if(porConstruir.clase){
 					this.nodo.classList.add(porConstruir.clase);
 				}
-
 			};
 
 			this.agregarCampos = function(campos){
@@ -1517,6 +1516,31 @@ var modalWindow = function(){
 			}
 		};
 
+		this.removerParte = function(parte){
+				switch (parte) {
+					case 'cabecera':
+						if(this.partes.cabecera){
+							this.partes.cabecera.nodo.parentNode.removeChild(this.partes.cabecera.nodo);
+							this.partes.cabecera = null;
+						}
+						break;
+					case 'cuerpo':
+						if(this.partes.cuerpo){
+							this.partes.cabecera.nodo.parentNode.removeChild(this.partes.cuerpo.nodo);
+							this.partes.cuerpo = null;
+						}
+						break;
+					case 'cabecera':
+						if(this.partes.pie){
+							this.partes.pie.nodo.parentNode.removeChild(this.partes.pie.nodo);
+							this.partes.pie = null;
+						}
+						break;
+					default:
+						console.log(parte+'no existe');
+				}
+		};
+
 		this.dibujarUI = function(data){
 			data.tipo=data.tipo || 'contenedor';
 			data.contenido = data.contenido || 'normal';
@@ -1535,7 +1559,38 @@ var modalWindow = function(){
 				this.nodo.classList.add('ancho');
 			}
 		};
+		this.convertirEnFormulario = function(formulario){
+			//Cambios Generales
+			if(!this.nodo.classList.contains('ancho')){
+				this.nodo.classList.add('ancho');
+			}
+			//cambio cabecera
+			if(formulario.cabecera){
+				if(this.partes.cabecera){
+					this.removerParte('cabecera');
+				}
+				this.agregarParte('cabecera',formulario.cabecera);
+			}
+			//cuerpo
+			if(formulario.cuerpo){
+				if(this.partes.cuerpo){
+					this.removerParte('cuerpo');
+				}
+				this.agregarParte('cuerpo',formulario.cuerpo);
+			}
+			//pie
+			if(formulario.pie){
+				if(this.partes.pie){
+					this.removerParte('pie');
+				}
+				this.agregarParte('pie',formulario.pie);
+			}
+		};
 		this.convertirEnMensaje = function(mensaje){
+			//cambios Generales
+			if(this.nodo.classList.contains('ancho')){
+				this.nodo.classList.remove('ancho');
+			}
 			//cambio la cabecera
 			if(mensaje.titulo){
 				if(!this.partes.cabecera){
@@ -1992,6 +2047,9 @@ var Arquitecto = function(){
 			case 'saltodelinea':
 				campoNuevo = new SaltoDeLinea();
 				break;
+			case 'checkbox':
+				campoNuevo = new CheckBox(campo.parametros);
+				break;
 			case 'campobusqueda':
 				if(typeof CampoBusqueda !== 'undefined'){
 					campoNuevo = new CampoBusqueda(campo.parametros);
@@ -2204,6 +2262,124 @@ var Ventana = function(atributos){
 	this.construirNodo();
 };
 
+//-----------------------------Objeto CheckBox-------------------------
+var CheckBox = function(info){
+	//marcado,habilitado,valor,nombre,requerido,usaTitulo,eslabon
+	var Campo = function(tipo){
+		this.nodo = null;
+		this.check =null;
+		this.box = null;
+
+		this.construirNodo = function(){
+			var nodo = document.createElement('div');
+			nodo.setAttribute('checkbox','');
+			this.nodo = nodo;
+
+			var check = document.createElement('div');
+			check.setAttribute('check','');
+			nodo.appendChild(check);
+
+			var box = document.createElement('div');
+			box.setAttribute('box','');
+			nodo.appendChild(box);
+
+			box.classList.add(tipo);
+			check.classList.add(tipo);
+
+			this.check = check;
+			this.box = box;
+		};
+		this.construirNodo();
+	};
+	var Titulo = function(nombre){
+		this.nodo = null;
+
+		this.construirNodo = function(){
+			var nodo = document.createElement('div');
+			nodo.setAttribute('titulo','');
+			this.nodo = nodo;
+
+			nodo.textContent = nombre;
+		};
+		this.construirNodo();
+	};
+	//partes
+	this.nodo = null;
+	this.campo = null;
+	this.texto = null;
+	// valores
+	this.habilitado = 'habilitado';
+	this.marcado = false;
+	this.valor = info.valor;
+	this.nombre = info.nombre;
+	this.requerido = info.requerido || false;
+
+	this.construirNodo = function(){
+		var nodo = document.createElement('div');
+		nodo.setAttribute('o-checkbox','');
+		this.nodo = nodo;
+
+		tipo = info.tipo || 'girar';
+		this.campo = new Campo(tipo);
+		this.nodo.appendChild(this.campo.nodo);
+		info.usaTitulo = info.usaTitulo || true;
+		if(info.usaTitulo){
+			this.titulo = new Titulo(info.nombre);
+			this.nodo.appendChild(this.titulo.nodo);
+		}
+		if(info.eslabon === 'area'){
+			this.nodo.setAttribute('area','');
+		}
+
+		if(!info.habilitado){
+			this.deshabilitar();
+		}else {
+			this.habilitar();
+		}
+		if(info.marcado){
+			this.marcar();
+		}else{
+			this.desmarcar();
+		}
+	};
+	this.cambiarEstado = function(){
+		if(this.marcado){
+			this.desmarcar();
+		}else{
+			this.marcar();
+		}
+	};
+	this.marcar = function(){
+		this.campo.nodo.classList.add('marcado');
+		this.marcado = true;
+	};
+	this.desmarcar = function(){
+		this.campo.nodo.classList.remove('marcado');
+			this.marcado = false;
+	};
+	this.deshabilitar = function(){
+		var yo = this;
+		this.nodo.onclick = function(){};
+		this.estado = 'deshabilitado';
+	};
+	this.habilitar = function(){
+		var yo = this;
+		this.nodo.onclick = function(){
+			yo.cambiarEstado();
+		};
+		this.estado = 'habilitado';
+	};
+	this.captarNombre = function(){
+		return this.nombre;
+	};
+	this.captarValor = function(){
+		return this.valor;
+	};
+	this.captarRequerido = function(){
+		return this.requerido;
+	};
+	this.construirNodo();
+};
 //-----------------------------Objeto Radio----------------------------
 var Radio = function(info){
 	//nombre,opciones,seleccionado

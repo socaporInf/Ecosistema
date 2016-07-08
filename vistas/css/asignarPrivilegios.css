@@ -19,3 +19,6 @@ div[mat-window].form-lat{
 div[hoja]:hover > article.icon-operaciones-negro-32{
   background-image: url('../imagenes/operaciones-blanco-32.png') !important;
 }
+div[hoja]:hover > article.icon-editar-negro-32{
+  background-image: url('../imagenes/editar-blanco-32.png') !important;
+}

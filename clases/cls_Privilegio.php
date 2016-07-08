@@ -31,7 +31,8 @@ class cls_Privilegio extends cls_Conexion{
 				break;
 
 				case 'buscarOperacionesDisponibles':
-					$la_respuesta=$this->f_BuscarOperacionesDisponibles();
+					$la_respuesta['disponibles']=$this->f_BuscarOperacionesDisponibles();
+					$la_respuesta['asignadas']=$this->f_BuscarOperacionesAsignadas();
 					if(count($la_respuesta)!=0){
 						$respuesta['registro'] = $la_respuesta;
 						$success=1;
@@ -223,6 +224,21 @@ class cls_Privilegio extends cls_Conexion{
 		}
 	}
 	private function f_BuscarOperacionesDisponibles(){
+		//Busco Detalle
+		$ls_Sql="SELECT * from seguridad.voperacion";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$i = 0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre'];
+			$i++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_respuesta;
+	}
+	private function f_BuscarOperacionesAsignadas(){
 		//Busco Detalle
 		$ls_Sql="SELECT * from seguridad.voperacion_privilegio
 				WHERE codigo_privilegio='".$this->aa_Atributos['codigo']."'";
