@@ -30,17 +30,40 @@ class cls_Privilegio extends cls_Conexion{
 				}
 				break;
 
-				case 'buscarOperacionesDisponibles':
-					$la_respuesta['disponibles']=$this->f_BuscarOperacionesDisponibles();
-					$la_respuesta['asignadas']=$this->f_BuscarOperacionesAsignadas();
-					if(count($la_respuesta)!=0){
-						$respuesta['registro'] = $la_respuesta;
-						$success=1;
-					}else{
+			case 'buscarOperacionesDisponibles':
+				$la_respuesta['disponibles']=$this->f_BuscarOperacionesDisponibles();
+				$la_respuesta['asignadas']=$this->f_BuscarOperacionesAsignadas();
+				if(count($la_respuesta['disponibles'])!=0){
+					$respuesta['registro'] = $la_respuesta;
+					$success=1;
+				}else{
+					$respuesta['success'] = 0;
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(21);
+				}
+				break;
+
+			case 'buscarOperaciones':
+				$la_respuesta['disponibles']=$this->f_BuscarOperaciones();
+				$la_respuesta['asignadas']=$this->f_BuscarOperacionesDisponibles();
+				if(count($la_respuesta['disponibles'])!=0){
+					$respuesta['registro'] = $la_respuesta;
+					$success=1;
+				}else{
+					$respuesta['success'] = 0;
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(21);
+				}
+				break;
+
+			case 'asignarOperaciones':
+				$la_respuesta = $this->f_GuardarOperaciones();
+				if($la_respuesta){
+					$respuesta['success'] = 1;
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(14);
+				}else{
 						$respuesta['success'] = 0;
-						$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
-					}
-					break;
+						$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(15);
+				}
+			 	break;
 
 			case 'buscarArbol':
 				$la_respuesta['hojasGenereal']=$this->f_BuscarArbol();
@@ -48,6 +71,18 @@ class cls_Privilegio extends cls_Conexion{
 				if(count($la_respuesta)!=0){
 					$respuesta['hojasGenereal'] = $la_respuesta['hojasGenereal'];
 					$respuesta['hojasActuales'] = $la_respuesta['hojasActuales'];
+					$success=1;
+				}else{
+					$respuesta['mensaje'] = 'Arbol vacio';
+					$respuesta['tipo'] = 'advertencia';
+					$respuesta['titulo'] = 'advertencia';
+				}
+				break;
+
+			case 'buscarArbolComponente':
+				$la_respuesta['hojasGenereal']=$this->f_BuscarArbol();
+				if(count($la_respuesta)!=0){
+					$respuesta['hojasGenereal'] = $la_respuesta['hojasGenereal'];
 					$success=1;
 				}else{
 					$respuesta['mensaje'] = 'Arbol vacio';
@@ -139,35 +174,12 @@ class cls_Privilegio extends cls_Conexion{
 	private function f_GuardarArbol(){
 		$existentes = $this->f_BuscarArbolPrivilegios();
 		$aGuardar = json_decode(stripslashes($this->aa_Atributos['data']),true);
-		//solamente lo que no estan en los existentes
-		$aGuardarValidado = array();
-		//aquellos que estan en los existentes pero no en los nuevos
-		$aDesabilitar = array();
 		$llave_acceso = $this->aa_Atributos['codigo'];
-		//busco a los que realmente voy a guardar
-		for($x = 0;$x < count($aGuardar); $x++){
-			$validado = false;
-			for($y = 0;$y < count($existentes); $y++){
-				if($existentes[$y]['codigo'] == $aGuardar[$x]['codigo']){
-					$validado = true;
-				}
-			}
-			if(!$validado){
-					$aGuardarValidado[count($aGuardarValidado)] = $aGuardar[$x];
-			}
-		}
-		//busco aquellos a desabilitar
-		for($x = 0;$x < count($existentes); $x++){
-			$validado = false;
-			for($y = 0;$y < count($aGuardar); $y++){
-				if($aGuardar[$y]['codigo'] == $existentes[$x]['codigo']){
-					$validado = true;
-				}
-			}
-			if(!$validado){
-				$aDesabilitar[count($aDesabilitar)] = $existentes[$x];
-			}
-		}
+		$valores = $this->validarGuardado($aGuardar,$existentes,'codigo');
+		//solamente lo que no estan en los existentes
+		$aGuardarValidado = $valores['aGuardarValidado'];
+		//aquellos que estan en los existentes pero no en los nuevos
+		$aDesabilitar = $valores['aDesabilitar'];
 		unset($aGuardar);
 		unset($existentes);
 		//Operaciones en la base de datos
@@ -225,6 +237,22 @@ class cls_Privilegio extends cls_Conexion{
 	}
 	private function f_BuscarOperacionesDisponibles(){
 		//Busco Detalle
+		$ls_Sql="SELECT * from seguridad.vcomponente_operacion WHERE codigo_componente =(select componente from seguridad.varbol_privilegio_usuario where codigo =".$this->aa_Atributos['codigo']." )";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$i = 0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre_operacion'];
+			$i++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_respuesta;
+	}
+
+	private function f_BuscarOperaciones(){
+		//Busco Detalle
 		$ls_Sql="SELECT * from seguridad.voperacion";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
@@ -241,7 +269,7 @@ class cls_Privilegio extends cls_Conexion{
 	private function f_BuscarOperacionesAsignadas(){
 		//Busco Detalle
 		$ls_Sql="SELECT * from seguridad.voperacion_privilegio
-				WHERE codigo_privilegio='".$this->aa_Atributos['codigo']."'";
+				WHERE codigo_privilegio='".$this->aa_Atributos['codigo']."' AND estado = 'A'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
@@ -259,6 +287,98 @@ class cls_Privilegio extends cls_Conexion{
 		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
 		return $la_respuesta;
+	}
+	private function f_GuardarOperaciones(){
+		$existentes = $this->f_BuscarOperacionesAsignadas();
+		$data = json_decode(stripslashes($this->aa_Atributos['data']),true);
+		$aGuardar = array();
+		foreach ($data as $llave => $valor) {
+			$valor['codigoOperacion'] = $valor['valor'];
+			$aGuardar[$llave] = $valor;
+		}
+		$valores = $this->validarGuardado($aGuardar,$existentes,'codigoOperacion');
+		$aDesabilitar = $valores['aDesabilitar'];
+		$aGuardarValidado = $valores['aGuardarValidado'];
+		$lb_Hecho = false;
+		$this->f_Con();
+		$this->f_Begin();
+		$i = 0;
+		if(count($aDesabilitar)!=0){
+			do{
+				$ls_Sql = "	UPDATE seguridad.voperacion_privilegio SET estado='I'
+										WHERE codigo='".$aDesabilitar[$i]['codigo']."'";
+				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				$i++;
+			}while(($i < count($aDesabilitar)) || ($lb_Hecho == false));
+		}else{
+			//en caso contrario coloco true debido que no desabilitare a nadie
+			$lb_Hecho = true;
+		}
+		if(!$lb_Hecho){
+			$this->f_RollBack();
+		}else{
+			for ($i=0; $i < count($aGuardarValidado) ; $i++) {
+				$lb_Hecho = false;
+				$ls_Sql = "SELECT * from seguridad.voperacion_privilegio";
+				$ls_Sql .=" WHERE codigo_privilegio =".$this->aa_Atributos['codigo']."";
+				$ls_Sql .=" AND codigo_operacion =".$aGuardarValidado[$i]['codigoOperacion']."";
+				$lr_tabla=$this->f_Filtro($ls_Sql);
+				if($la_registro=$this->f_Arreglo($lr_tabla)){
+					$ls_Sql = "	UPDATE seguridad.voperacion_privilegio SET estado='A'
+											WHERE codigo_privilegio='".$this->aa_Atributos['codigo']."'
+											AND codigo_operacion = '".$aGuardarValidado[$i]['codigoOperacion']."'";
+					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				}else{
+					$ls_Sql = "INSERT INTO seguridad.voperacion_privilegio (codigo_privilegio,codigo_operacion)
+											values ('".$this->aa_Atributos['codigo']."','".$aGuardarValidado[$i]['codigoOperacion']."')";
+					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				}
+				$this->f_Cierra($lr_tabla);
+				if(!$lb_Hecho){
+					$this->f_RollBack();
+					break;
+				}
+			}
+			if($lb_Hecho){
+				$this->f_Commit();
+				$this->f_Des();
+				return true;
+			}else{
+				$this->f_RollBack();
+				$this->f_Des();
+				return false;
+			}
+		}
+	}
+	private function validarGuardado($aGuardar,$existentes,$campoAComparar){
+		$aDesabilitar = array();
+		$aGuardarValidado = array();
+		for($x = 0;$x < count($aGuardar); $x++){
+			$validado = false;
+			for($y = 0;$y < count($existentes); $y++){
+				if($existentes[$y][$campoAComparar] == $aGuardar[$x][$campoAComparar]){
+					$validado = true;
+				}
+			}
+			if(!$validado){
+					$aGuardarValidado[count($aGuardarValidado)] = $aGuardar[$x];
+			}
+		}
+		//busco aquellos a desabilitar
+		for($x = 0;$x < count($existentes); $x++){
+			$validado = false;
+			for($y = 0;$y < count($aGuardar); $y++){
+				if($aGuardar[$y][$campoAComparar] == $existentes[$x][$campoAComparar]){
+					$validado = true;
+				}
+			}
+			if(!$validado){
+				$aDesabilitar[count($aDesabilitar)] = $existentes[$x];
+			}
+		}
+		$valores['aGuardarValidado'] = $aGuardarValidado;
+		$valores['aDesabilitar'] = $aDesabilitar;
+		return $valores;
 	}
 }
 ?>

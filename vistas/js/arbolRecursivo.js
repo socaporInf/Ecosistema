@@ -96,9 +96,17 @@ var Arbol = function(atributos){
 		};
 
 		this.agregarOpciones = function (opciones){
-			if(this.atributos.privilegio){
-				var opcion;
-				for (var i = 0; i < opciones.length; i++) {
+			var opcion;
+			for (var i = 0; i < opciones.length; i++) {
+				var validar = false;
+				if(opciones[i].privilegio){
+					if(this.atributos.privilegio){
+						validar = true;
+					}
+				}else{
+					validar = true;
+				}
+				if(validar){
 					var nuevaOpcion = this.agregarOpcion(opciones[i]);
 					nuevaOpcion.nodo.style.right = (i*29)+5+'px';
 					nuevaOpcion.nodo.setAttribute('codigo',this.atributos.codigo);

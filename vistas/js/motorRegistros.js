@@ -104,7 +104,7 @@ var Motor = function(entidadActiva){
 				if(respuesta.success===1){
 					torque.registrosEntAct=respuesta.registros;
 				}else{
-					UI.crearMensaje(respuesta);
+					UI.crearMensaje(respuesta.mensaje);
 					UI.buscarCuadroCarga('iniciarSession').terminarCarga();
 				}
 			});
@@ -166,10 +166,7 @@ var Motor = function(entidadActiva){
 					if(respuesta.success === 1){
 		            	callback(respuesta);
 					}else{
-						UI.crearMensaje({
-							tipo:'error',
-							mensaje: respuesta.mensaje
-						});
+						UI.crearMensaje(respuesta.mensaje);
 						UI.elementos.formulario.ventanaForm.destruirNodo();
 					}
 				}
@@ -203,10 +200,7 @@ var Motor = function(entidadActiva){
 				if(respuesta.success === 1){
 	            	callback(respuesta);
 				}else{
-					UI.crearMensaje({
-							tipo:'error',
-							mensaje: respuesta.mensaje
-						});
+					UI.crearMensaje(respuesta.mensaje);
 					UI.elementos.formulario.ventanaForm.destruirNodo();
 				}
 		    }

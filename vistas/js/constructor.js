@@ -1944,11 +1944,11 @@ var Arquitecto = function(){
 	};
 
 	this.crearMensaje = function(mensaje){
-		var titulo = mensaje.titulo || mensaje.tipo.toUpperCase();
+		var titulo = mensaje.titulo || mensaje.nombre_tipo.toUpperCase();
 		var ventana = {
-			tipo: mensaje.tipo,
+			tipo: mensaje.nombre_tipo.toLowerCase(),
 			cabecera: titulo,
-			cuerpo: mensaje.mensaje
+			cuerpo: mensaje.cuerpo
 		};
 		this.crearVentanaModal(ventana);
 	};
@@ -2373,7 +2373,11 @@ var CheckBox = function(info){
 		return this.nombre;
 	};
 	this.captarValor = function(){
-		return this.valor;
+		if(this.marcado){
+			return this.valor;
+		}else{
+			return false;
+		}
 	};
 	this.captarRequerido = function(){
 		return this.requerido;

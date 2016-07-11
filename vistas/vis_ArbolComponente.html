@@ -15,8 +15,13 @@
 <!-- scripts que construyen la interfaz y su funcionamiento -->
 <script type="text/javascript" src='js/motorRegistros.js'></script>
 <script type="text/javascript" src='js/constructor.js'></script>
-<script type="text/javascript" src='js/asignarPrivilegios.js'></script>
+<script type="text/javascript" src='js/arbolComponente.js'></script>
 <script type="text/javascript" src='js/arbolRecursivo.js'></script>
+<!-- scripts PLUGINS-->
+<script type="text/javascript" src='js/O_CampoBusqueda.js'></script>
+<script type="text/javascript" src='js/O_lista.js'></script>
+<!-- scripts formularios auxiliares -->
+<script type="text/javascript" src='js/componente.js'></script>
 
 
 <script type="text/javascript">
@@ -29,7 +34,11 @@
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
+	UI.agregarConstructor(componente);
 	UI.configure({
+		botonera :{
+			botones:['nuevo','abrir']
+		}
 	});
 
 	sesion.obtenerSesion();
