@@ -7,6 +7,7 @@ var Sesion = function(){
 	this.nombre = '';
 	this.privilegios = null;
 	this.arbol = null;
+	this.llavesAcceso = [];
 
 	this.obtenerSesion = function(){
 		conexionAcc=crearXMLHttpRequest();
@@ -21,7 +22,7 @@ var Sesion = function(){
 				}else{
 					location.href='index.html';
 				}
-		    }
+		  }
 		};
 		conexionAcc.open('POST','../controladores/cor_validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
@@ -53,7 +54,7 @@ var Sesion = function(){
 		conexionAcc.onreadystatechange = function(){
 			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
 				var respuesta=JSON.parse(conexionAcc.responseText);
-				console.log(respuesta);
+				this.llavesAcceso = respuesta.llaves;
 		  }
 		};
 		conexionAcc.open('POST','../controladores/cor_validar.php', true);
@@ -103,7 +104,7 @@ var Motor = function(entidadActiva){
 				if(respuesta.success===1){
 					torque.registrosEntAct=respuesta.registros;
 				}else{
-					UI.crearMensaje(respuesta);
+					UI.crearMensaje(respuesta.mensaje);
 					UI.buscarCuadroCarga('iniciarSession').terminarCarga();
 				}
 			});
@@ -165,10 +166,7 @@ var Motor = function(entidadActiva){
 					if(respuesta.success === 1){
 		            	callback(respuesta);
 					}else{
-						UI.crearMensaje({
-							tipo:'error',
-							mensaje: respuesta.mensaje
-						});
+						UI.crearMensaje(respuesta.mensaje);
 						UI.elementos.formulario.ventanaForm.destruirNodo();
 					}
 				}
@@ -202,10 +200,7 @@ var Motor = function(entidadActiva){
 				if(respuesta.success === 1){
 	            	callback(respuesta);
 				}else{
-					UI.crearMensaje({
-							tipo:'error',
-							mensaje: respuesta.mensaje
-						});
+					UI.crearMensaje(respuesta.mensaje);
 					UI.elementos.formulario.ventanaForm.destruirNodo();
 				}
 		    }

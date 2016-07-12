@@ -1,6 +1,7 @@
 @import url('botonera.css');
 @import url('lista.css');
 @import url('campoBusqueda.css');
+@import url('checkBox.css');
 @import url('ventanaModal.css');
 @import url('toasts.css');
 @import url('iconos.css');
@@ -718,13 +719,13 @@ div[formupdate]> div div[display] {
 
 /*------------Funcionamiento edicion-----------*/
 
-div[formupdate].edicion div div[display], 
+div[formupdate].edicion div div[display],
 section[titulo].edicion div div[display] {
     opacity: 0;
     z-index: 1;
 }
-div[formupdate].edicion div[cont] textarea, 
-div[formupdate].edicion div[cont] input[type='text'], 
+div[formupdate].edicion div[cont] textarea,
+div[formupdate].edicion div[cont] input[type='text'],
 section[titulo].edicion div[cont] textarea {
     opacity: 1;
     z-index: 2;

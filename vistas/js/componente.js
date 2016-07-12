@@ -44,9 +44,12 @@ componente = {
     ]
   },
   modificar:{
-    altura: 500,
+    altura: 370,
     campos: [
       {
+        tipo : 'campoEdicion',
+        parametros : {nombre:'titulo',titulo:'Titulo',tipo:'titulo'}
+      },{
         tipo : 'campoEdicion',
         parametros : {nombre:'color',titulo:'Color'}
       },{

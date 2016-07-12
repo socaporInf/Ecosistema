@@ -1,7 +1,7 @@
  <?php
 include_once('cls_Conexion.php');
 class cls_Tabla_Virtual extends cls_Conexion{
-	
+
 	private $aa_Atributos = array();
 	private $aa_Campos = array('codigo','nombre','funcion','campo_relacion');
 
@@ -25,7 +25,7 @@ class cls_Tabla_Virtual extends cls_Conexion{
 					$respuesta['success'] = 0;
 					$respuesta['mensaje'] = 'no hay registros';
 					$respuesta['tipo'] = 'advertencia';
-					$respuesta['titulo'] = 'advertencia';	
+					$respuesta['titulo'] = 'advertencia';
 				}
 				break;
 
@@ -46,7 +46,7 @@ class cls_Tabla_Virtual extends cls_Conexion{
 					$respuesta['success'] = 0;
 					$respuesta['mensaje'] = 'no hay registros';
 					$respuesta['tipo'] = 'advertencia';
-					$respuesta['titulo'] = 'advertencia';	
+					$respuesta['titulo'] = 'advertencia';
 				}
 				break;
 
@@ -59,10 +59,10 @@ class cls_Tabla_Virtual extends cls_Conexion{
 					$respuesta['success'] = 0;
 					$respuesta['mensaje'] = 'no hay registros';
 					$respuesta['tipo'] = 'advertencia';
-					$respuesta['titulo'] = 'advertencia';	
+					$respuesta['titulo'] = 'advertencia';
 				}
 				break;
-			
+
 			case 'guardarRegistro':
 				$lb_Hecho = $this->f_GuardarRegistro();
 				if($lb_Hecho){
@@ -103,7 +103,7 @@ class cls_Tabla_Virtual extends cls_Conexion{
 			case 'modificar':
 				$respuesta = $this->f_Modificar();
 				break;
-				
+
 			default:
 				$respuesta['mensaje'] = 'Operacion "'.strtoupper($this->aa_Atributos['operacion']).'" no existe para esta entidad';
 				$success = 0;
@@ -111,7 +111,7 @@ class cls_Tabla_Virtual extends cls_Conexion{
 		}
 		if(!isset($respuesta['success'])){
 			$respuesta['success']=$success;
-		}	
+		}
 		return $respuesta;
 	}
 	private function f_Listar(){
@@ -186,12 +186,12 @@ class cls_Tabla_Virtual extends cls_Conexion{
 
 		return $lb_Enc;
 	}
-	
+
 	private function f_Guardar(){
 
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO global.vtabla_virtual (nombre,funcion) values 
-				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['funcion']."')";
+		$ls_Sql="INSERT INTO global.vtabla_virtual (nombre,funcion,campo_relacion) values
+				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['funcion']."','".$this->aa_Atributos['campo_relacion']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
@@ -201,7 +201,7 @@ class cls_Tabla_Virtual extends cls_Conexion{
 	private function f_GuardarRegistro(){
 
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO global.vregistro_virtual (nombre_registro,descripcion_registro,codigo_tabla) values 
+		$ls_Sql="INSERT INTO global.vregistro_virtual (nombre_registro,descripcion_registro,codigo_tabla) values
 				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."','".$this->aa_Atributos['codigo_tabla']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);

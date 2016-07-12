@@ -81,7 +81,14 @@ var ArbolTemp = function(){
 	this.exportarArreglo = function(){
 		var arreglo = [];
 		for(var i = 0; i < this.hojas.length;i++){
-			arreglo.push(this.hojas[i].atributos);
+			arreglo.push({
+				codigo: this.hojas[i].atributos.codigo,
+				padre: this.hojas[i].atributos.padre,
+				privilegio: this.hojas[i].atributos.privilegio,
+				tipo: this.hojas[i].atributos.tipo,
+				tit_padre: this.hojas[i].atributos.tit_padre,
+				titulo: this.hojas[i].atributos.titulo
+			});
 		}
 		return arreglo;
 	};
@@ -126,11 +133,8 @@ function costruccionInicial(respuesta){
 		var formularioArbol = armarVentanaArbol();
 		llenarArbol(formularioArbol);
 	}else{
-		UI.crearMensaje(respuesta);
+		UI.crearMensaje(respuesta.mensaje);
 	}
-	//funcionamiento botones
-	var btnNuevo = document.querySelector('button[btnnuevo]');
-	btnNuevo.onclick = construirFormulario;
 }
 function llenarArbol(formularioArbol){
 	var Peticion = {
@@ -155,6 +159,17 @@ function llenarArbol(formularioArbol){
 			hojaOnClick: function asignar(hoja){
 				var accion = arbolTemp.cambio(hoja);
 			},
+			hojaOpciones:[
+				{
+					clases: ['icon','icon-operaciones-negro-32'],
+					click: buscarOperaciones,
+					privilegio: true
+				},{
+					clases: ['icon','icon-editar-negro-32'],
+					click: editarPrivilegio,
+					privilegio:true
+				}
+			],
 			contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo
 		});
 	});
@@ -205,8 +220,7 @@ function armarVentanaArbol(){
 				texto:respuesta.mensaje,
 				tipo: 'web-arriba-derecha-alto'
 			});
-			var sectorArbol = UI.buscarVentana('formularioArbol').buscarSector('arbol');
-			sectorArbol.nodo.appendChild(arbol.raiz.nodo);
+			llenarArbol(UI.buscarVentana('formularioArbol'));
 		});
 	};
 	botonLimpiar.onclick = function limpiar(){
@@ -214,32 +228,80 @@ function armarVentanaArbol(){
 	};
 	return formularioArbol;
 }
-//----------------------------------- Formulario de Componente -----------------------
-function construirFormulario(){
-	UI.elementos.botonera.buscarBoton('abrir').nodo.click();
-	var formComponente = UI.crearVentanaModal({
-		contenido: 'ancho',
-		cabecera:'Nuevo Componente',
+
+//--------------------------- Funciones Opciones ------------------------
+var buscarOperaciones = function operacionesHoja(nodo){
+	var asignarOperaciones = UI.crearVentanaModal({
 		cuerpo:{
-			alto: UI.buscarConstructor('componente').nuevo.altura,
-			campos: UI.buscarConstructor('componente').nuevo.campos
-		},
-		pie:{
-			html: '<section modalButtons>'+
-						'<button type="button" cancelar> </button>'+
-						'<button type="button" guardar> </button>'+
-					'</section>'
+			html: 'aqui va el cuadro carga'
 		}
 	});
-	var cerrar = formComponente.nodo.querySelector('button[cancelar]');
-	cerrar.onclick = function cerrarVentanta(){
-		UI.elementos.modalWindow.eliminarUltimaCapa();
+	var peticion = {
+		entidad : 'privilegio',
+		operacion: 'buscarOperacionesDisponibles',
+		codigo : nodo.getAttribute('privilegio')
 	};
-	var guardar = formComponente.nodo.querySelector('button[guardar]');
-	guardar.onclick = guardarComponente;
+	var cuadro = {
+		contenedor: asignarOperaciones.partes.cuerpo.nodo,
+		cuadro:{
+			nombre: 'esperaOperaciones',
+			mensaje : 'cargando operaciones disponibles'
+		}
+	};
+	UI.elementos.modalWindow.buscarUltimaCapaContenido().registroId = nodo.getAttribute('privilegio');
+	torque.manejarOperacion(peticion,cuadro,function armarOperaciones(respuesta){
+		if (respuesta.success) {
+			construirFormAsignarOp(UI.elementos.modalWindow.buscarUltimaCapaContenido(),respuesta.registro,nodo);
+		}else{
+			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+		}
+	});
+};
+var editarPrivilegio = function(hoja){
+
+};
+//------------------------------------ Formulario asignar Operaciones -----------------
+function construirFormAsignarOp(capaContenido,operaciones,nodo){
+	if(operaciones.disponibles){
+		//creo la ventana de asignacion dependiendo a lo que necesito
+		capaContenido = construirVentanaAsignacion(operaciones.disponibles,operaciones.asignadas,capaContenido,nodo);
+
+		var btnGuardar = capaContenido.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
+
+		btnGuardar.onclick = function(){
+			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
+			peticion ={
+				entidad : 'privilegio',
+				operacion : 'asignarOperaciones',
+				codigo : UI.elementos.modalWindow.buscarUltimaCapaContenido().registroId,
+				data : JSON.stringify(data)
+			};
+			var cuadro = {
+				contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+				cuadro:{
+					nombre: 'guardarOperaciones',
+					mensaje : 'guardando Cambios'
+				}
+			};
+			torque.manejarOperacion(peticion,cuadro,function guardarOperaciones(respuesta){
+				if (respuesta.success) {
+					UI.agregarToasts({
+						texto: respuesta.mensaje.cuerpo,
+						tipo: 'web-arriba-derecha-alto'
+					});
+					UI.elementos.modalWindow.eliminarUltimaCapa();
+				}else{
+					UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+				}
+			});
+		};
+	}else{
+		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+	}
 }
-function guardarComponente(){
-	var campos = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.campos;
+/*-------------------------- ArmarPeticion ----------------------------*/
+function obtenenrValoresFormulario(contenedor){
+	var campos = contenedor.campos;
 	var data = [];
 	var validado = false;
 	for (var i = 0; i < campos.length; i++) {
@@ -252,14 +314,8 @@ function guardarComponente(){
 		}
 	}
 	if(!validado){
-		torque.guardar('componente',data,function guardar(respuesta){
-			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
-			llenarArbol(UI.buscarVentana('formularioArbol'));
-		});
+		return data;
 	}else{
-		UI.agregarToasts({
-			texto:'debe llenar el formulario para guardar',
-			tipo: 'web-arriba-derecha-alto'
-		});
+		return false;
 	}
 }

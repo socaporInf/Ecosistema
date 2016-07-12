@@ -53,7 +53,7 @@ div[capa='contenido'] section[cabecera].informacion {
 div[capa='contenido'] section[cabecera].advertencia {
     background-image: url('../imagenes/warning_white.png');
     background-color: #FFC107;
-    color: #212121;
+    color: white;
 }
 div[capa='contenido'] section[pie].error {
     background-color: #E57373;
@@ -126,4 +126,7 @@ div[capa='contenido'] section[cuerpo] div[texto]{
 }
 div[capa='contenido'] div[lista]{
     margin: 0px 0px 60px 0px;
+}
+div[capa='contenido'] div.ContenedorCarga{
+    margin-top: 15px !important;
 }

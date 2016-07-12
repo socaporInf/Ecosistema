@@ -691,9 +691,12 @@ var Formulario = function(atributos){
 
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
-			var contenedor = this.nodo.getElementsByTagName('form')[0];
-			var campoNuevo = UI.agregarCampo(campo,contenedor);
-			this.campos.push(campoNuevo);
+			//para que no agregue el titulo dado que ya viene con la estructura basica de modificar
+      if((campo.tipo.toLowerCase() === 'campoedicion')&&(campo.parametros.tipo!=='titulo')){
+        var contenedor = this.nodo.getElementsByTagName('form')[0];
+        var campoNuevo = UI.agregarCampo(campo,contenedor);
+        this.campos.push(campoNuevo);
+      }
 		};
 		//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
 		this.agregarCampos = function(campos){
@@ -1435,7 +1438,6 @@ var modalWindow = function(){
 				if(porConstruir.clase){
 					this.nodo.classList.add(porConstruir.clase);
 				}
-
 			};
 
 			this.agregarCampos = function(campos){
@@ -1504,7 +1506,7 @@ var modalWindow = function(){
 			switch(parte){
 				case 'cabecera':
 					this.partes.cabecera=new Cabecera(contenido);
-					this.nodo.appendChild(this.partes.cabecera.nodo);
+					this.nodo.insertBefore(this.partes.cabecera.nodo,this.nodo.firstChild);
 				break;
 				case 'cuerpo':
 					this.partes.cuerpo=new Cuerpo(contenido);
@@ -1515,6 +1517,31 @@ var modalWindow = function(){
 					this.nodo.appendChild(this.partes.pie.nodo);
 				break;
 			}
+		};
+
+		this.removerParte = function(parte){
+				switch (parte) {
+					case 'cabecera':
+						if(this.partes.cabecera){
+							this.partes.cabecera.nodo.parentNode.removeChild(this.partes.cabecera.nodo);
+							this.partes.cabecera = null;
+						}
+						break;
+					case 'cuerpo':
+						if(this.partes.cuerpo){
+							this.partes.cuerpo.nodo.parentNode.removeChild(this.partes.cuerpo.nodo);
+							this.partes.cuerpo = null;
+						}
+						break;
+					case 'cabecera':
+						if(this.partes.pie){
+							this.partes.pie.nodo.parentNode.removeChild(this.partes.pie.nodo);
+							this.partes.pie = null;
+						}
+						break;
+					default:
+						console.log(parte+'no existe');
+				}
 		};
 
 		this.dibujarUI = function(data){
@@ -1535,18 +1562,56 @@ var modalWindow = function(){
 				this.nodo.classList.add('ancho');
 			}
 		};
+		this.convertirEnFormulario = function(formulario){
+			//Cambios Generales
+			if(!this.nodo.classList.contains('ancho')){
+				this.nodo.classList.add('ancho');
+			}
+			//cambio cabecera
+			if(formulario.cabecera){
+				if(this.partes.cabecera){
+					this.removerParte('cabecera');
+				}
+				this.agregarParte('cabecera',formulario.cabecera);
+			}
+			//cuerpo
+			if(formulario.cuerpo){
+				if(this.partes.cuerpo){
+					this.removerParte('cuerpo');
+				}
+				this.agregarParte('cuerpo',formulario.cuerpo);
+			}
+			//pie
+			if(formulario.pie){
+				if(this.partes.pie){
+					this.removerParte('pie');
+				}
+				this.agregarParte('pie',formulario.pie);
+			}
+		};
 		this.convertirEnMensaje = function(mensaje){
+			//cambios Generales
+			if(this.nodo.classList.contains('ancho')){
+				this.nodo.classList.remove('ancho');
+			}
 			//cambio la cabecera
-			this.partes.cabecera.nodo.class = '';
-			this.partes.cabecera.nodo.classList.add(mensaje.tipo);
-			this.partes.cabecera.nodo.textContent = mensaje.titulo;
+			if(mensaje.titulo){
+				if(!this.partes.cabecera){
+					this.agregarParte('cabecera','titulo');
+				}
+				this.partes.cabecera.nodo.class = '';
+				this.partes.cabecera.nodo.classList.add(mensaje.nombre_tipo.toLowerCase());
+				this.partes.cabecera.nodo.textContent = mensaje.titulo;
+			}
 
 			//cambio el cuerpo
-			this.partes.cuerpo.nodo.innerHTML='<strong>'+mensaje.mensaje+'</strong>';
+			this.partes.cuerpo.nodo.innerHTML=mensaje.cuerpo;
 			this.partes.cuerpo.nodo.style.height = '50px';
 
 			//cambio pie
-			this.partes.pie.desaparecer();
+			if(this.partes.pie){
+				this.partes.pie.desaparecer();
+			}
 		};
 		this.construirNodo();
 	};
@@ -1739,7 +1804,7 @@ var CuadroCarga = function(info,callback){
 		var cuadro = document.createElement('div');
 		cuadro.classList.toggle('ContenedorCarga');
 
-		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center">'+info.mensaje+'</article>'+
+		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center;width:inherit">'+info.mensaje+'</article>'+
 		'<div class="showbox">'+
 			'<div class="loader">'+
 				'<svg class="circular" viewBox="25 25 50 50">'+
@@ -1759,6 +1824,15 @@ var CuadroCarga = function(info,callback){
 		this.estado = 'iniciado';
 		this.nodo = cuadro;
 		this.manejoDeClases();
+		this.tamanoTexto(info.mensaje);
+	};
+	this.tamanoTexto = function(texto){
+			var tamano = texto.length;
+			if(tamano < 40){
+				this.nodo.style.width = (tamano * 10) +'px';
+			}else{
+					this.nodo.style.width = ((tamano/2) * 10) +'px';
+			}
 	};
 	this.manejoDeClases = function(){
 		this.eliminarClasesRepetidas();
@@ -1821,7 +1895,7 @@ var CuadroCarga = function(info,callback){
 		var titulo = this.nodo.firstChild;
 		var circulo = this.nodo.getElementsByTagName('circle')[0];
 		circulo.parentNode.removeChild(circulo);
-		titulo.textContent = respuesta.mensaje;
+		titulo.textContent = respuesta.mensaje.titulo;
 		UI.removerCuadroCarga(this.nombre);
 		if(callback!==null){
 			callback(respuesta);
@@ -1882,11 +1956,11 @@ var Arquitecto = function(){
 	};
 
 	this.crearMensaje = function(mensaje){
-		var titulo = mensaje.titulo || mensaje.tipo.toUpperCase();
+		var titulo = mensaje.titulo || mensaje.nombre_tipo.toUpperCase();
 		var ventana = {
-			tipo: mensaje.tipo,
+			tipo: mensaje.nombre_tipo.toLowerCase(),
 			cabecera: titulo,
-			cuerpo: mensaje.mensaje
+			cuerpo: mensaje.cuerpo
 		};
 		this.crearVentanaModal(ventana);
 	};
@@ -1984,6 +2058,9 @@ var Arquitecto = function(){
 				break;
 			case 'saltodelinea':
 				campoNuevo = new SaltoDeLinea();
+				break;
+			case 'checkbox':
+				campoNuevo = new CheckBox(campo.parametros);
 				break;
 			case 'campobusqueda':
 				if(typeof CampoBusqueda !== 'undefined'){
@@ -2197,6 +2274,131 @@ var Ventana = function(atributos){
 	this.construirNodo();
 };
 
+//-----------------------------Objeto CheckBox-------------------------
+var CheckBox = function(info){
+	//marcado,habilitado,valor,nombre,requerido,usaTitulo,eslabon
+	var Campo = function(animacion){
+		this.nodo = null;
+		this.check =null;
+		this.box = null;
+
+		this.construirNodo = function(){
+			var nodo = document.createElement('div');
+			nodo.setAttribute('checkbox','');
+			this.nodo = nodo;
+
+			var check = document.createElement('div');
+			check.setAttribute('check','');
+			nodo.appendChild(check);
+
+			var box = document.createElement('div');
+			box.setAttribute('box','');
+			nodo.appendChild(box);
+
+			box.classList.add(animacion);
+			check.classList.add(animacion);
+
+			this.check = check;
+			this.box = box;
+		};
+		this.construirNodo();
+	};
+	var Titulo = function(nombre){
+		this.nodo = null;
+
+		this.construirNodo = function(){
+			var nodo = document.createElement('div');
+			nodo.setAttribute('titulo','');
+			this.nodo = nodo;
+
+			nodo.textContent = nombre;
+		};
+		this.construirNodo();
+	};
+	//partes
+	this.nodo = null;
+	this.campo = null;
+	this.texto = null;
+	// valores
+	this.habilitado = 'habilitado';
+	this.marcado = false;
+	this.valor = info.valor;
+	this.nombre = info.nombre;
+	this.requerido = info.requerido || false;
+
+	this.construirNodo = function(){
+		var nodo = document.createElement('div');
+		nodo.setAttribute('o-checkbox','');
+		this.nodo = nodo;
+
+		animacion = info.animacion || 'girar';
+		this.campo = new Campo(animacion);
+		this.nodo.appendChild(this.campo.nodo);
+
+		tipo = info.tipo || 'campo';
+		this.nodo.classList.add(tipo);
+		info.usaTitulo = info.usaTitulo || true;
+		if(info.usaTitulo){
+			this.titulo = new Titulo(info.nombre);
+			this.nodo.appendChild(this.titulo.nodo);
+		}
+		if(info.eslabon === 'area'){
+			this.nodo.setAttribute('area','');
+		}
+
+		if(!info.habilitado){
+			this.deshabilitar();
+		}else {
+			this.habilitar();
+		}
+		if(info.marcado){
+			this.marcar();
+		}else{
+			this.desmarcar();
+		}
+	};
+	this.cambiarEstado = function(){
+		if(this.marcado){
+			this.desmarcar();
+		}else{
+			this.marcar();
+		}
+	};
+	this.marcar = function(){
+		this.campo.nodo.classList.add('marcado');
+		this.marcado = true;
+	};
+	this.desmarcar = function(){
+		this.campo.nodo.classList.remove('marcado');
+			this.marcado = false;
+	};
+	this.deshabilitar = function(){
+		var yo = this;
+		this.nodo.onclick = function(){};
+		this.estado = 'deshabilitado';
+	};
+	this.habilitar = function(){
+		var yo = this;
+		this.nodo.onclick = function(){
+			yo.cambiarEstado();
+		};
+		this.estado = 'habilitado';
+	};
+	this.captarNombre = function(){
+		return this.nombre;
+	};
+	this.captarValor = function(){
+		if(this.marcado){
+			return this.valor;
+		}else{
+			return false;
+		}
+	};
+	this.captarRequerido = function(){
+		return this.requerido;
+	};
+	this.construirNodo();
+};
 //-----------------------------Objeto Radio----------------------------
 var Radio = function(info){
 	//nombre,opciones,seleccionado
