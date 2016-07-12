@@ -29,9 +29,9 @@ class cls_Privilegio extends cls_Conexion{
 					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
 				}
 				break;
-
+			//------------------------ Operaciones ----------------------------------
 			case 'buscarOperacionesDisponibles':
-				$la_respuesta['disponibles']=$this->f_BuscarOperacionesDisponibles();
+				$la_respuesta['disponibles']=$this->f_BuscarOperacionesDisponibles('privilegio');
 				$la_respuesta['asignadas']=$this->f_BuscarOperacionesAsignadas();
 				if(count($la_respuesta['disponibles'])!=0){
 					$respuesta['registro'] = $la_respuesta;
@@ -44,7 +44,7 @@ class cls_Privilegio extends cls_Conexion{
 
 			case 'buscarOperaciones':
 				$la_respuesta['disponibles']=$this->f_BuscarOperaciones();
-				$la_respuesta['asignadas']=$this->f_BuscarOperacionesDisponibles();
+				$la_respuesta['asignadas']=$this->f_BuscarOperacionesDisponibles('componente');
 				if(count($la_respuesta['disponibles'])!=0){
 					$respuesta['registro'] = $la_respuesta;
 					$success=1;
@@ -53,6 +53,17 @@ class cls_Privilegio extends cls_Conexion{
 					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(21);
 				}
 				break;
+
+			case 'guardarOperacionesDisponibles':
+				$la_respuesta = $this->f_GuardarOperacionesDisponibles();
+				if($la_respuesta){
+					$respuesta['success'] = 1;
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(14);
+				}else{
+						$respuesta['success'] = 0;
+						$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(15);
+				}
+			 	break;
 
 			case 'asignarOperaciones':
 				$la_respuesta = $this->f_GuardarOperaciones();
@@ -64,7 +75,7 @@ class cls_Privilegio extends cls_Conexion{
 						$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(15);
 				}
 			 	break;
-
+			//------------------------ Arbol ----------------------------------
 			case 'buscarArbol':
 				$la_respuesta['hojasGenereal']=$this->f_BuscarArbol();
 				$la_respuesta['hojasActuales']=$this->f_BuscarArbolPrivilegios();
@@ -104,6 +115,17 @@ class cls_Privilegio extends cls_Conexion{
 				$respuesta['titulo'] = 'Error Interno Del Servidor';
 			}
 			break;
+			//-------------------------------- Campos ------------------------
+			case 'buscarCampos':
+				$la_respuesta['disponibles']=$this->f_BuscarCamposDisponibles('componente');
+				if(count($la_respuesta['disponibles'])!=0){
+					$respuesta['registro'] = $la_respuesta;
+					$success=1;
+				}else{
+					$respuesta['success'] = 0;
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(21);
+				}
+				break;
 
 			default:
 			$valores = array();
@@ -137,7 +159,7 @@ class cls_Privilegio extends cls_Conexion{
 
 		return $la_respuesta;
 	}
-
+	//------------------------------------------------------------------------- Arbol ------------------------------------------------------------------------------
 	private function f_BuscarArbolPrivilegios(){
 		$x=0;
 		$la_Privilegios=array();
@@ -235,9 +257,15 @@ class cls_Privilegio extends cls_Conexion{
 			}
 		}
 	}
-	private function f_BuscarOperacionesDisponibles(){
+	//---------------------------------------------------------------------- Operaciones ----------------------------------------------------------------------------
+	private function f_BuscarOperacionesDisponibles($tipo){
 		//Busco Detalle
-		$ls_Sql="SELECT * from seguridad.vcomponente_operacion WHERE codigo_componente =(select componente from seguridad.varbol_privilegio_usuario where codigo =".$this->aa_Atributos['codigo']." )";
+		if($tipo=='componente'){
+			$cadena = $this->aa_Atributos['codigo'];
+		}else if($tipo == 'privilegio' ){
+			$cadena = '('."SELECT componente FROM seguridad.varbol_privilegio_usuario WHERE codigo =".$this->aa_Atributos['codigo'].')';
+		}
+		$ls_Sql="SELECT * from seguridad.vcomponente_operacion WHERE codigo_componente = ".$cadena." AND estado = 'A' ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
@@ -288,6 +316,7 @@ class cls_Privilegio extends cls_Conexion{
 		$this->f_Des();
 		return $la_respuesta;
 	}
+
 	private function f_GuardarOperaciones(){
 		$existentes = $this->f_BuscarOperacionesAsignadas();
 		$data = json_decode(stripslashes($this->aa_Atributos['data']),true);
@@ -350,6 +379,92 @@ class cls_Privilegio extends cls_Conexion{
 			}
 		}
 	}
+	private function f_GuardarOperacionesDisponibles(){
+		$existentes = $this->f_BuscarOperacionesDisponibles('componente');
+		$data = json_decode(stripslashes($this->aa_Atributos['data']),true);
+		$aGuardar = array();
+		foreach ($data as $llave => $valor) {
+			$valor['codigoOperacion'] = $valor['valor'];
+			$aGuardar[$llave] = $valor;
+		}
+		$valores = $this->validarGuardado($aGuardar,$existentes,'codigoOperacion');
+		$aDesabilitar = $valores['aDesabilitar'];
+		$aGuardarValidado = $valores['aGuardarValidado'];
+		$lb_Hecho = false;
+		$this->f_Con();
+		$this->f_Begin();
+		$i = 0;
+		if(count($aDesabilitar)!=0){
+			do{
+				$ls_Sql = "	UPDATE seguridad.vcomponente_operacion SET estado='I'
+										WHERE codigo_operacion='".$aDesabilitar[$i]['codigoOperacion']."'
+										AND codigo_componente='".$this->aa_Atributos['codigo']."'";
+				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				$i++;
+			}while(($i < count($aDesabilitar)) || ($lb_Hecho == false));
+		}else{
+			//en caso contrario coloco true debido que no desabilitare a nadie
+			$lb_Hecho = true;
+		}
+		if(!$lb_Hecho){
+			$this->f_RollBack();
+		}else{
+			for ($i=0; $i < count($aGuardarValidado) ; $i++) {
+				$lb_Hecho = false;
+				$ls_Sql = "SELECT * from seguridad.vcomponente_operacion";
+				$ls_Sql .=" WHERE codigo_componente =".$this->aa_Atributos['codigo']."";
+				$ls_Sql .=" AND codigo_operacion =".$aGuardarValidado[$i]['codigoOperacion']."";
+				$lr_tabla=$this->f_Filtro($ls_Sql);
+				if($la_registro=$this->f_Arreglo($lr_tabla)){
+					$ls_Sql = "	UPDATE seguridad.vcomponente_operacion SET estado='A'
+											WHERE codigo_componente='".$this->aa_Atributos['codigo']."'
+											AND codigo_operacion = '".$aGuardarValidado[$i]['codigoOperacion']."'";
+					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				}else{
+					$ls_Sql = "INSERT INTO seguridad.vcomponente_operacion (codigo_componente,codigo_operacion)
+											values ('".$this->aa_Atributos['codigo']."','".$aGuardarValidado[$i]['codigoOperacion']."')";
+					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+				}
+				$this->f_Cierra($lr_tabla);
+				if(!$lb_Hecho){
+					$this->f_RollBack();
+					break;
+				}
+			}
+			if($lb_Hecho){
+				$this->f_Commit();
+				$this->f_Des();
+				return true;
+			}else{
+				$this->f_RollBack();
+				$this->f_Des();
+				return false;
+			}
+		}
+	}
+	//------------------------------------------------------------------------- Campos ------------------------------------------------------------------------------
+	private function f_BuscarOperacionesDisponibles($tipo){
+		//Busco Detalle
+		if($tipo=='componente'){
+			$cadena = $this->aa_Atributos['codigo'];
+		}else if($tipo == 'privilegio' ){
+			$cadena = '('."SELECT componente FROM seguridad.varbol_privilegio_usuario WHERE codigo =".$this->aa_Atributos['codigo'].')';
+		}
+		$ls_Sql="SELECT * from seguridad.vcomponente_campo WHERE codigo_componente = ".$cadena." AND estado = 'A' ";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$i = 0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$i]['codigoCampo']=$la_registros['codigo_campo'];
+			$la_respuesta[$i]['nombreCampo']=$la_registros['nombre_campo'];
+			$i++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_respuesta;
+	}
+	//------------------------------------------------------------------------- General ------------------------------------------------------------------------------
+
 	private function validarGuardado($aGuardar,$existentes,$campoAComparar){
 		$aDesabilitar = array();
 		$aGuardarValidado = array();

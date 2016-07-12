@@ -691,9 +691,12 @@ var Formulario = function(atributos){
 
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
-			var contenedor = this.nodo.getElementsByTagName('form')[0];
-			var campoNuevo = UI.agregarCampo(campo,contenedor);
-			this.campos.push(campoNuevo);
+			//para que no agregue el titulo dado que ya viene con la estructura basica de modificar
+      if((campo.tipo.toLowerCase() === 'campoedicion')&&(campo.parametros.tipo!=='titulo')){
+        var contenedor = this.nodo.getElementsByTagName('form')[0];
+        var campoNuevo = UI.agregarCampo(campo,contenedor);
+        this.campos.push(campoNuevo);
+      }
 		};
 		//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
 		this.agregarCampos = function(campos){
@@ -1526,7 +1529,7 @@ var modalWindow = function(){
 						break;
 					case 'cuerpo':
 						if(this.partes.cuerpo){
-							this.partes.cabecera.nodo.parentNode.removeChild(this.partes.cuerpo.nodo);
+							this.partes.cuerpo.nodo.parentNode.removeChild(this.partes.cuerpo.nodo);
 							this.partes.cuerpo = null;
 						}
 						break;
@@ -1801,7 +1804,7 @@ var CuadroCarga = function(info,callback){
 		var cuadro = document.createElement('div');
 		cuadro.classList.toggle('ContenedorCarga');
 
-		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center">'+info.mensaje+'</article>'+
+		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center;width:inherit">'+info.mensaje+'</article>'+
 		'<div class="showbox">'+
 			'<div class="loader">'+
 				'<svg class="circular" viewBox="25 25 50 50">'+
@@ -1821,6 +1824,15 @@ var CuadroCarga = function(info,callback){
 		this.estado = 'iniciado';
 		this.nodo = cuadro;
 		this.manejoDeClases();
+		this.tamanoTexto(info.mensaje);
+	};
+	this.tamanoTexto = function(texto){
+			var tamano = texto.length;
+			if(tamano < 40){
+				this.nodo.style.width = (tamano * 10) +'px';
+			}else{
+					this.nodo.style.width = ((tamano/2) * 10) +'px';
+			}
 	};
 	this.manejoDeClases = function(){
 		this.eliminarClasesRepetidas();
@@ -1883,7 +1895,7 @@ var CuadroCarga = function(info,callback){
 		var titulo = this.nodo.firstChild;
 		var circulo = this.nodo.getElementsByTagName('circle')[0];
 		circulo.parentNode.removeChild(circulo);
-		titulo.textContent = respuesta.mensaje;
+		titulo.textContent = respuesta.mensaje.titulo;
 		UI.removerCuadroCarga(this.nombre);
 		if(callback!==null){
 			callback(respuesta);
@@ -2265,7 +2277,7 @@ var Ventana = function(atributos){
 //-----------------------------Objeto CheckBox-------------------------
 var CheckBox = function(info){
 	//marcado,habilitado,valor,nombre,requerido,usaTitulo,eslabon
-	var Campo = function(tipo){
+	var Campo = function(animacion){
 		this.nodo = null;
 		this.check =null;
 		this.box = null;
@@ -2283,8 +2295,8 @@ var CheckBox = function(info){
 			box.setAttribute('box','');
 			nodo.appendChild(box);
 
-			box.classList.add(tipo);
-			check.classList.add(tipo);
+			box.classList.add(animacion);
+			check.classList.add(animacion);
 
 			this.check = check;
 			this.box = box;
@@ -2319,9 +2331,12 @@ var CheckBox = function(info){
 		nodo.setAttribute('o-checkbox','');
 		this.nodo = nodo;
 
-		tipo = info.tipo || 'girar';
-		this.campo = new Campo(tipo);
+		animacion = info.animacion || 'girar';
+		this.campo = new Campo(animacion);
 		this.nodo.appendChild(this.campo.nodo);
+
+		tipo = info.tipo || 'campo';
+		this.nodo.classList.add(tipo);
 		info.usaTitulo = info.usaTitulo || true;
 		if(info.usaTitulo){
 			this.titulo = new Titulo(info.nombre);

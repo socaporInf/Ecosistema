@@ -186,7 +186,7 @@ var Lista = function(data){
     ayuda.classList.add('vacio');
     ayuda.textContent = 'No existen Registros';
     this.nodo.appendChild(ayuda);
-  }
+  };
   this.abrirCampoBusqueda = function(){
 	var botonBusqueda = document.querySelector('button[btnbusq]');
     botonBusqueda.parentNode.classList.add('buscar');

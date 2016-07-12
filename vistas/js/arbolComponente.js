@@ -51,6 +51,12 @@ function llenarArbol(formularioArbol){
 				{
 					clases: ['icon','icon-operaciones-negro-32'],
 					click: buscarOperaciones
+				},{
+					clases: ['icon','icon-campo-negro-32'],
+					click: buscarCampos
+				},{
+					clases: ['icon','icon-editar-negro-32'],
+					click: formularioEditarComponente
 				}
 			],
 			contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo
@@ -80,65 +86,83 @@ var buscarOperaciones = function operacionesHoja(nodo){
 	UI.elementos.modalWindow.buscarUltimaCapaContenido().registroId = nodo.getAttribute('codigo');
 	torque.manejarOperacion(peticion,cuadro,function armarOperaciones(respuesta){
 		if (respuesta.success) {
-			construirFormularioAsignarOp(UI.elementos.modalWindow.buscarUltimaCapaContenido(),respuesta.registro);
+			construirFormAsignarOp(UI.elementos.modalWindow.buscarUltimaCapaContenido(),respuesta.registro,nodo);
 		}else{
 			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 		}
 	});
 };
-var editarPrivilegio = function(hoja){
+	//------------------------------------ Formulario asignar Operaciones -----------------
+function construirFormAsignarOp(capaContenido,operaciones,nodo){
+	if(operaciones.disponibles){
+		//creo la ventana de asignacion dependiendo a lo que necesito
+		capaContenido = construirVentanaAsignacion(operaciones.disponibles,operaciones.asignadas,capaContenido,nodo);
 
-};
-//------------------------------------ Formulario asignar Operaciones -----------------
-function construirFormularioAsignarOp(capaContenido,operaciones,privilegio){
-	var disponibles = operaciones.disponibles;
-	var asignadas = operaciones.asignadas;
-	var campos = [];
-	if(disponibles){
-		for (var i = 0; i < disponibles.length; i++) {
-			var campo = {
-				tipo: 'checkBox',
-				parametros:{
-					nombre: disponibles[i].nombreOperacion,
-					valor: disponibles[i].codigoOperacion,
-					requerido: false,
-					habilitado: true,
-					tipo: 'girar',
-					eslabon: 'area',
-					usaTitulo: true,
-					marcado: false
+		var btnGuardar = capaContenido.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
+		btnGuardar.onclick = function(){
+			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
+			peticion ={
+				entidad : 'privilegio',
+				operacion : 'guardarOperacionesDisponibles',
+				codigo : UI.elementos.modalWindow.buscarUltimaCapaContenido().registroId,
+				data : JSON.stringify(data)
+			};
+			var cuadro = {
+				contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+				cuadro:{
+					nombre: 'guardarOperaciones',
+					mensaje : 'guardando Cambios'
 				}
 			};
-			if(asignadas){
-				for(var x = 0; x < asignadas.length; x++){
-					if(disponibles[i].codigoOperacion === asignadas[x].codigoOperacion){
-						campo.parametros.marcado = true;
-					}
+			torque.manejarOperacion(peticion,cuadro,function guardarOperaciones(respuesta){
+				if (respuesta.success) {
+					UI.agregarToasts({
+						texto: respuesta.mensaje.cuerpo,
+						tipo: 'web-arriba-derecha-alto'
+					});
+					UI.elementos.modalWindow.eliminarUltimaCapa();
+				}else{
+					UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 				}
-			}
-			campos.push(campo);
-		}
-		capaContenido.convertirEnFormulario({
-			cabecera: {
-				html: 'Asignar Operaciones'
-			},
-			cuerpo: {
-				alto: 150,
-				campos: campos
-			},
-			pie: {
-				html: '<section modalButtons>'+
-							'<button type="button" class="icon-guardar-indigo-32"> </button>'+
-							'<button type="button" class="icon-cerrar-rojo-32"> </button>'+
-						'</section>'
-			}
-		});
-		capaContenido.nodo.classList.remove('ancho');
-		var btnCerrrar = capaContenido.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32');
-		var btnGuardar = capaContenido.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
-		btnCerrrar.onclick = function(){
-			UI.elementos.modalWindow.eliminarUltimaCapa();
+			});
 		};
+	}else{
+		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+	}
+}
+//------------------------------------ Campos -----------------------------------
+var buscarCampos = function camposHoja(nodo){
+	var asignarOperaciones = UI.crearVentanaModal({
+		cuerpo:{
+			html: 'aqui va el cuadro carga'
+		}
+	});
+	var peticion = {
+		entidad : 'privilegio',
+		operacion: 'buscarCampos',
+		codigo : nodo.getAttribute('codigo')
+	};
+	var cuadro = {
+		contenedor: asignarOperaciones.partes.cuerpo.nodo,
+		cuadro:{
+			nombre: 'esperaCampos',
+			mensaje : 'cargando campos disponibles'
+		}
+	};
+	UI.elementos.modalWindow.buscarUltimaCapaContenido().registroId = nodo.getAttribute('codigo');
+	torque.manejarOperacion(peticion,cuadro,function armarOperaciones(respuesta){
+		if (respuesta.success) {
+			construirFormularioAsignarCampo(UI.elementos.modalWindow.buscarUltimaCapaContenido(),respuesta.registro,nodo);
+		}else{
+			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+		}
+	});
+};
+function construirFormularioAsignarCampo(capaContenido,operaciones,nodo){
+	if(operaciones.disponibles){
+		//creo la ventana de asignacion dependiendo a lo que necesito
+		capaContenido = construirVentanaAsignacion( operaciones.disponibless,operaciones.asignadas,capaContenido,nodo);
+		var btnGuardar = capaContenido.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
 		btnGuardar.onclick = function(){
 			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
 			peticion ={
@@ -208,23 +232,81 @@ function guardarComponente(){
 		});
 	}
 }
-//-------------------------------------------formularios ---------------------------------------------
-function obtenenrValoresFormulario(contenedor){
-	var campos = contenedor.campos;
-	var data = [];
-	var validado = false;
-	for (var i = 0; i < campos.length; i++) {
-		//valido el campo
-		if((campos[i].captarRequerido())&&(!campos[i].captarValor())){
-			validado = true;
+function formularioEditarComponente(nodo){
+	var formComp = UI.crearVentanaModal({
+		cuerpo:{
+			html: 'cuadro de carga'
 		}
-		if(campos[i].captarValor()){
-			data.push({nombre:campos[i].captarNombre(),valor:campos[i].captarValor()});
+	});
+	var peticion = {
+		entidad : 'componente',
+		operacion: 'buscarRegistro',
+		codigo: nodo.getAttribute('codigo')
+	};
+	var cuadroCarga = {
+		contenedor: formComp.partes.cuerpo.nodo,
+		cuadro:{
+			nombre: 'cargando componente',
+			mensaje: 'Buscando datos del componente'
 		}
+	};
+  torque.manejarOperacion(peticion,cuadroCarga,function motarFormularioNuevo(respuesta){
+		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnFormulario({
+			contenido: 'ancho',
+			cuerpo:{
+				clase: 'lista',
+				alto: UI.buscarConstructor('componente').modificar.altura,
+				campos: UI.buscarConstructor('componente').modificar.campos
+			},
+			pie:{
+				html: '<section modalButtons>'+
+							'<button type="button" class="icon-cerrar-rojo-32"> </button>'+
+						'</section>'
+			}
+		});
+    UI.asignarValores(respuesta.registros,formComp.partes.cuerpo);
+    formComp.partes.cuerpo.registroId = respuesta.registros.codigo;
+    formComp.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
+      UI.elementos.modalWindow.eliminarUltimaCapa();
+    };
+    formComp.partes.cuerpo.nodo.querySelector('article[update]').onclick = activarEdicion;
+  });
+}
+var activarEdicion = function(){
+  var formComp = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+  formComp.partes.cuerpo.registro = UI.modificar(formComp.partes.cuerpo);
+  this.onclick = finalizarEdicion;
+};
+var finalizarEdicion = function(){
+  var formComp = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+  var nuevoRegistro = UI.modificar(formComp.partes.cuerpo);
+  nuevoRegistro.push({nombre:'codigo',valor:formComp.partes.cuerpo.registroId});
+  enviarCambios(nuevoRegistro,formComp.partes.cuerpo.nodo);
+};
+
+function enviarCambios(cambios,contenedor){
+	//armo la peticion
+	var peticion = {
+		entidad: 'componente',
+		operacion: 'modificar'
+	};
+	for (var i = 0; i < cambios.length; i++) {
+		peticion[cambios[i].nombre] = cambios[i].valor;
 	}
-	if(!validado){
-		return data;
-	}else{
-		return false;
-	}
+	//luego el cuadro
+	var infoCuadro = {
+		contenedor: contenedor,
+		cuadro:{
+			nombre: 'guardando cambios',
+			mensaje: 'Guardando cambios'
+		}
+	};
+	torque.manejarOperacion(peticion,infoCuadro,function guardarCambios(respuesta){
+		if(respuesta.success){
+			llenarArbol(UI.buscarVentana('formularioArbol'));
+			UI.elementos.modalWindow.eliminarUltimaCapa();
+		}else{
+			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+		}
+	});
 }

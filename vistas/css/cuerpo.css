@@ -42,7 +42,6 @@ div[cabecera] div[titulo]{
   right: 0;
   margin: auto auto;
 }
-// demo-specific
 
 .showbox {
   position: absolute;
@@ -51,7 +50,6 @@ div[cabecera] div[titulo]{
   transition: all 0.5s linear;
 }
 
-// end demo-specific
 
 .loader {
   position: relative;
@@ -78,7 +76,7 @@ div[cabecera] div[titulo]{
 .path {
   stroke-dasharray: 1,200;
   stroke-dashoffset: 0;
-  animation: 
+  animation:
    dash 1.5s ease-in-out infinite
   ;
   stroke-linecap: round;

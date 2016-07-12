@@ -127,3 +127,6 @@ div[capa='contenido'] section[cuerpo] div[texto]{
 div[capa='contenido'] div[lista]{
     margin: 0px 0px 60px 0px;
 }
+div[capa='contenido'] div.ContenedorCarga{
+    margin-top: 15px !important;
+}
