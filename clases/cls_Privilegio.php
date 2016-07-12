@@ -128,12 +128,12 @@ class cls_Privilegio extends cls_Conexion{
 				break;
 
 			default:
-			$valores = array();
-			$valores['{OPERACION}'] = '<b>'.$this->aa_Atributos['operacion'].'</b>';
-			$valores['{ENTIDAD}'] = '<b>'.$this->aa_Atributos['entidad'].'</b>';
-			$respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
-			$success = 0;
-			break;
+				$valores = array();
+				$valores['{OPERACION}'] = '<b>'.$this->aa_Atributos['operacion'].'</b>';
+				$valores['{ENTIDAD}'] = '<b>'.$this->aa_Atributos['entidad'].'</b>';
+				$respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
+				$success = 0;
+				break;
 		}
 		if(!isset($respuesta['success'])){
 			$respuesta['success']=$success;
