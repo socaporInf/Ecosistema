@@ -7,11 +7,25 @@ operacion= {
 		campos:[
 			{
 				tipo: 'campoDeTexto',
-				parametros:{requerido:true, titulo: 'Nombre', tipo:'simple', eslabon: 'simple', usaToolTip: true}
+				parametros:{
+					nombre: 'nombre',
+					requerido:true, 
+					titulo: 'Nombre', 
+					tipo:'simple', 
+					eslabon: 'simple', 
+					usaToolTip: true
+				}
 			},
 			{
 				tipo: 'campoDeTexto',
-				parametros:{requerido:false, titulo: 'Descripción', tipo:'simple', eslabon: 'area', usaToolTip: true}
+				parametros:{
+					nombre: 'descripcion',
+					requerido:false, 
+					titulo: 'Descripción', 
+					tipo:'simple', 
+					eslabon: 'area', 
+					usaToolTip: true
+				}
 			}
 		]
 	},
@@ -20,7 +34,12 @@ operacion= {
 		campos: [
 			{
 				tipo: 'campoEdicion',
-				parametros:{nombre: 'descripcion',titulo: 'Descripción', tipo:'simple', eslabon: 'area'}
+				parametros:{
+					nombre: 'descripcion',
+					titulo: 'Descripción', 
+					tipo:'simple', 
+					eslabon: 'area'
+				}
 			}
 		]
 
