@@ -36,7 +36,7 @@ class cls_Operacion extends cls_Conexion{
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
-					$this->f_Buscar();
+					$this->f_BuscarUltimo();
 					$respuesta['registros'] = $this->aa_Atributos['registro'];
 					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(9);
 					$success = 1;
@@ -99,11 +99,33 @@ class cls_Operacion extends cls_Conexion{
 
 		return $lb_Enc;
 	}
-	
+	private function f_BuscarUltimo(){
+		$lb_Enc=false;
+		//Busco El rol
+		$ls_Sql="SELECT *  from seguridad.voperacion where codigo_operacion = (SELECT max (codigo_operacion) 
+			      FROM seguridad.voperacion)  ";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		if($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta['codigo']=$la_registros['codigo_operacion'];
+			$la_respuesta['nombre']=$la_registros['nombre'];
+			$la_respuesta['descripcion']=$la_registros['descripcion'];
+			$lb_Enc=true;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+
+		if($lb_Enc){
+			//guardo en atributo de la clase
+			$this->aa_Atributos['registro']=$la_respuesta;
+		}
+
+		return $lb_Enc;
+	}
 	private function f_Guardar(){
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO seguridad.voperacion (codigo_operacion,nombre,descripcion) values 
-				('".$this->aa_Atributos['codigo']."','".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
+		$ls_Sql="INSERT INTO seguridad.voperacion (nombre,descripcion) values 
+				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
