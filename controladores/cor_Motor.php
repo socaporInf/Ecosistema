@@ -114,7 +114,9 @@ switch ($la_Peticion['entidad']) {
 
 	default:
 		$respuesta['success'] = 0;
-		$respuesta['mensaje'] = 'Entidad '.$la_Peticion['entidad'].' no se encuentra soportada por esta aplicacion';
+		$respuesta['mensaje']['nombre_tipo'] =  'error';
+		$respuesta['mensaje']['titulo'] = 'Entidad No soportada';
+		$respuesta['mensaje']['cuerpo'] = 'Entidad '.$la_Peticion['entidad'].' no se encuentra entre las disponibles para esta aplicacion';
 		$respuesta['tipo'] = 'error';
 		break;
 }

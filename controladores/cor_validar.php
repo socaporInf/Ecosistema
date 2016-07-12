@@ -102,7 +102,7 @@ if($la_Form['Operacion']=='acceso'){
 		$respuesta=array(
 			'mensaje'=>'llaves obtenidas con exito',
 			'success'=>1,
-			'llaves'=>$_SESSION['Usuario']['llaves_acceso']
+			'llavesAcceso'=>$_SESSION['Usuario']['llaves_acceso']
 			);
 	}
 }

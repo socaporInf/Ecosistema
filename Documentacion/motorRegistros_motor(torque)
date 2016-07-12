@@ -1,32 +1,76 @@
+# Motor(torque)
+este objeto encapsula toda la interaccion entre el cilente y el servidor, facilitando dicha interaccion con el uso de metodos prediseñados para el uso del programador.
+el objeto presenta la siguiente estructura:
+```javascript
 Motor(entidadActiva): {
+  //Atributos
   estado: string,
-  entidadActiva: string, ---- entidad activa en el motor para ejecutar busquedas
-  registrosEntAct: array, --- arreglo con los registros de la entidad activa Nota: trabajar Paginacion
-  resultadoBusqueda: object,- en desuso
+  entidadActiva: string,
+  registrosEntAct: array,  Nota: trabajar Paginacion
 
-  Metodos
-    ignition() -------------------------------------- se ejecuta al arrancar el motor
-    buscarRegistros(entidad,callback) --------------- ejecuta una peticion al servidor con la operacion buscar de la entidad pasada como parametro que al recibir la respuesta ejecuta el callback
-    busqueda(info,callback) ------------------------- ejecuta una peticion al servidor pero solo maneja 3 parametros entidad,operacion y codigo. al recibir respuesta ejecuta el callback
-    Operacion(peticion,callback) -------------------- ejecuta una peticion al servidor  y maneja cualquier cantidad de parametros que se le pasen en la peticion. dicha peticion maneja 2 valores por defecto si no son pasadas la entidad(entidadActiva) y el codigo. este ultimo lo toma del formulario
-    manejarOperacion(peticion,cuadroCarga,callback) - esta funcion maneja todo el proceso de peticion, tiempo de espera y respuesta y al igual que operacion maneja cualquier cantidad de parametros pasados dentro de peticion
-    guardar(entidad,info,callback) ------------------ ejecuta una peticion al servidor con la operacion guardar. NOTA: integrar con operacion
-
+  //Metodos
+    ignition()
+    buscarRegistros(entidad,callback)
+    Operacion(peticion,callback)
+    Busqueda(peticion,callback)
+    manejarOperacion(peticion,cuadroCarga,callback)
 }
-
-NOTA: para manejarOperacion() se necesitan 3 parametros, 2 objetos y una funcion. los objetos serian de esta manera:
-
-let peticion = {
-  entidad: String, ------------- este valor si no es pasado es tomado por defecto de valor this.entidadActiva
-  operacion: String,
-  codigo: String, ------------------ este valor si no es pasado toma por defecto este ultimo lo toma del objeto formulario.ventanaForm.registroAct
+```
+## Atributos:
+### estado:
+### entidadActiva:
+**String** con la entidad activa por defecto para el motor para ejecutar busquedas.
+###registrosEntAct:
+**Array** con los registros de la entidad activa luego de realizada una busqueda
+## Metodos:
+### ignition()
+esta funcion se ejecuta en el momento de la instanciacion del objeto, ejecutando una busqueda a la ***entidad Activa*** y guardando el resultado en el atributo `this.registrosEntAct`.
+### buscarRegistro(entidad,callback)
+ejecuta una peticion al servidor con la **Operacion** buscar sobre la entidad(String) y al recibirla respuesta ejecuta el callback(funcion), el cual recibe como parametro dicha respuesta. un ejemplo de callback es el siguiente.
+```javascript
+var callback = function(respuesta){
+  console.log(respuesta);
 }
-
-este se le puede agregar cualquier cantidad de atributos que se necesiten aparte de esos 3
-
-let infoCuadroCarga = {
+```
+### Operacion(peticion,callback)
+ejecuta una peticion al servidor  y maneja cualquier cantidad de atributos que se le pasen en el **Objeto** peticion.
+dicha peticion posee la siguiente estructura basica:
+```javascript
+var peticion = {
+  entidad: 'entidad',
+  operacion: 'operacion a realizar',
+  codigo: 'codigo del registro a utilizar'
+}
+```
+como se pudo observar esta posee 3 parametros basicos, pero al usar este metodo se le pueden agregar cualquier cantidada de atributos extras en dicha estructura y estos seran pasados al servidor.
+Ademas el objeto peticon maneja 2 valores por defecto si no son pasadas la entidad(entidadActiva) y el codigo. este ultimo lo toma del **Objeto** formulario.
+### manejarOperacion(peticion,cuadroCarga,callback)
+esta funcion maneja todo el proceso de peticion, tiempo de espera y respuesta, al igual que operacion maneja cualquier cantidad de parametros pasados dentro de peticion.
+si se requiere la utilizacion de gif de carga para la operacion a realizar la mejor opcion a utilizar es este metodo de entre todos lo de este ***Objeto***.
+un ejemplo de los parametros pasados a esta funcion son los siguientes.
+```javascript
+var peticion = {
+  entidad: 'entidad',
+  operacion: 'operacion a realizar',
+  codigo: 'codigo',
+  codigoEntidadPadre: 'se pueden agregar cualquier cantidad de atributos extra'
+}
+var cuadroCarga = {
   nodo: DOM,
   cuadro:{
-    mensaje: String
+    mensaje: 'mensaje que se muestra'
   }
 }
+```
+### busqueda(peticion,callback)
+ejecuta una peticion al servidor recibiendo como parametro la peticion(Objeto) y el callback(funcion).
+el objeto peticion posee la siguiente estructura:
+```javascript
+var peticion = {
+  entidad: 'entidad',
+  operacion: 'operacion a realizar',
+  codigo: 'codigo del registro a utilizar'
+}
+```
+como se puede visualizar en la estructura solo maneja 3 parametros entidad,operacion y codigo, limitando asi su uso, a diferencia del metodo operacion que el objeto peticion que recibe puede tener cualquier cantidad de atributos.
+al igual que los demas metodos que usan callback al recibir respuesta ejecuta lo ejecuta.
