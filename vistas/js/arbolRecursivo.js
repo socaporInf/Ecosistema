@@ -68,7 +68,10 @@ var Arbol = function(atributos){
 				button.classList.remove('arrow_down_gray');
 			};
 			this.activar = function () {
-				this.nodo.querySelector('.arrow_down_gray').click();
+				var button = this.nodo.querySelector('button');
+				if(button.classList.contains('arrow_down_gray')){
+					button.click();
+				}
 			};
 			this.construirNodo();
 		};

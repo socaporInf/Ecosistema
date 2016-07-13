@@ -23,6 +23,7 @@
 <script type="text/javascript" src='js/O_lista.js'></script>
 <!-- scripts formularios auxiliares -->
 <script type="text/javascript" src='js/componente.js'></script>
+<script type="text/javascript" src='js/campo.js'></script>
 
 
 <script type="text/javascript">
@@ -36,6 +37,7 @@
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
 	UI.agregarConstructor(componente);
+	UI.agregarConstructor(campo);
 	UI.configure({
 		botonera :{
 			botones:['nuevo','abrir']

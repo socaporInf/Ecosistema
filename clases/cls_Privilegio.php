@@ -443,14 +443,14 @@ class cls_Privilegio extends cls_Conexion{
 		}
 	}
 	//------------------------------------------------------------------------- Campos ------------------------------------------------------------------------------
-	private function f_BuscarOperacionesDisponibles($tipo){
+	private function f_BuscarCamposDisponibles($tipo){
 		//Busco Detalle
 		if($tipo=='componente'){
 			$cadena = $this->aa_Atributos['codigo'];
 		}else if($tipo == 'privilegio' ){
 			$cadena = '('."SELECT componente FROM seguridad.varbol_privilegio_usuario WHERE codigo =".$this->aa_Atributos['codigo'].')';
 		}
-		$ls_Sql="SELECT * from seguridad.vcomponente_campo WHERE codigo_componente = ".$cadena." AND estado = 'A' ";
+		$ls_Sql="SELECT * from seguridad.vcomponente_campo WHERE codigo_componente = ".$cadena." AND estado_campo = 'A' ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
