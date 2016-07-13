@@ -3,7 +3,7 @@ div[toasts-mobile]{
   width: calc(100% - 48px);
   height: 20px;
   padding: 14px 24px;
-  color: gray;
+  color: white;
   background-color: #333333;
   font-size: 18px;
   bottom: 0px;
@@ -20,7 +20,7 @@ div[toasts-web-arriba-derecha-alto]{
   transition:all 0.5s ease-in-out;
   width: 250px;
   padding: 14px 24px;
-  color: gray;
+  color: white;
   background-color: #333333;
   font-size: 15px;
   position: absolute;
