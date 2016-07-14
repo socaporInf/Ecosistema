@@ -1497,8 +1497,7 @@ var modalWindow = function(){
 			this.nodo=nodo;
 			this.estado='enUso';
 			setTimeout(function(){
-				nodo.style.top=' calc(50% - 250px)';
-				nodo.style.opacity='1';
+				nodo.classList.add('aparecer');
 			},300);
 		};
 
@@ -1682,8 +1681,7 @@ var modalWindow = function(){
 				capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
 				//los saco de vista con la trancision
 				//capa contenido
-				capaContenido.nodo.style.top='200%';
-				capaContenido.nodo.style.opacity='0';
+				capaContenido.nodo.classList.remove('aparecer');
 				setTimeout(function(){
 					capaExterior.nodo.style.opacity='0';
 				},300);

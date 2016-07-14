@@ -21,6 +21,10 @@ div[capa='contenido'] {
     margin-bottom: 50px;
     opacity: 0;
 }
+div[capa='contenido'].aparecer{
+    top:calc(50% - 250px);
+    opacity:1;
+}
 div[capa='contenido'].ancho{
     width: calc(90%);
     left: calc(5%)
