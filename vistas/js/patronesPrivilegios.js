@@ -36,6 +36,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 			html: '<section modalButtons>'+
 						'<button type="button" class="icon-guardar-indigo-32"> </button>'+
 						'<button type="button" class="icon-cerrar-rojo-32"> </button>'+
+						'<button type="button" class="icon-nuevo-azul-claro-32"> </button>'+
 					'</section>'
 		}
 	});

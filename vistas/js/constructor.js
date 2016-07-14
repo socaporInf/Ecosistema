@@ -2147,7 +2147,7 @@ var Arquitecto = function(){
 					return this.elementos.constructores[i];
 				}
 			}
-			console.log('no se encontro el constructor');
+			console.log('no se encontro el constructor '+nombre);
 		}else{
 			console.log('no existe ningun constructor en la lista');
 		}
