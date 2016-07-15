@@ -36,7 +36,7 @@ class cls_Clase extends cls_Conexion{
 					$success=1;
 				}
 				break;
-			
+
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
@@ -47,13 +47,13 @@ class cls_Clase extends cls_Conexion{
 				}else{
 					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(10);
 					$success = 0;
-				}				
+				}
 				break;
 
 			case 'modificar':
 				$respuesta = $this->f_Modificar();
 				break;
-				
+
 			default:
 				$valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
 				$respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -62,7 +62,7 @@ class cls_Clase extends cls_Conexion{
 		}
 		if(!isset($respuesta['success'])){
 			$respuesta['success']=$success;
-		}	
+		}
 		return $respuesta;
 	}
 	private function f_Listar(){
@@ -103,11 +103,11 @@ class cls_Clase extends cls_Conexion{
 
 		return $lb_Enc;
 	}
-	
+
 	private function f_Guardar(){
 
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO agronomia.vclase (nombre,descripcion) values 
+		$ls_Sql="INSERT INTO agronomia.vclase (nombre,descripcion) values
 				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
@@ -162,6 +162,5 @@ class cls_Clase extends cls_Conexion{
 		}
 		return $respuesta;
 	}
-
 }
 ?>
