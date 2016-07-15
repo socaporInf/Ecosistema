@@ -126,8 +126,65 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 				}
 			});
 		};
+		//--------------------- Funcionamiento boton nuevo -------------------------------------------
+		var btnNuevo = capaContenido.partes.pie.nodo.querySelector('button.icon-nuevo-azul-claro-32');
+		btnNuevo.onclick = function(){
+			UI.elementos.modalWindow.eliminarUltimaCapa();
+			setTimeout(crearventananuevo,1000);
+		}
+
 	}else{
 		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+	}
+}
+function crearventananuevo(){
+	var ventanaNuevo = UI.crearVentanaModal({
+		cabecera: {
+			html: UI.buscarConstructor('operacion').nuevo.titulo
+		},
+		cuerpo: {
+			alto: UI.buscarConstructor('operacion').nuevo.altura,
+			campos: UI.buscarConstructor('operacion').nuevo.campos
+		},
+		pie: {
+			html: 	'<section modalButtons>'+
+						'<button type="button" class="icon-guardar-indigo-32"> </button>'+
+						'<button type="button" class="icon-cerrar-rojo-32"> </button>'+
+					'</section>'
+		}
+	});
+	var btnGuardar = ventanaNuevo.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
+	var btnCerrar = ventanaNuevo.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32');
+	btnCerrar.onclick = function(){
+		UI.elementos.modalWindow.eliminarUltimaCapa();
+	}
+	btnGuardar.onclick = function(){
+		var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
+		peticion ={
+			entidad : 'operacion',
+			operacion : 'guardar'
+		};
+		for (var i = 0; i < data.length; i++) {
+		  peticion[data[i].nombre] = data[i].valor;
+		}
+		var cuadro = {
+			contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+			cuadro:{
+				nombre: 'guardarOperaciones',
+				mensaje : 'guardando Cambios'
+			}
+		};
+		torque.manejarOperacion(peticion,cuadro,function guardarOperaciones(respuesta){
+			if (respuesta.success) {
+				UI.agregarToasts({
+					texto: respuesta.mensaje.cuerpo,
+					tipo: 'web-arriba-derecha-alto'
+				});
+				UI.elementos.modalWindow.eliminarUltimaCapa();
+			}else{
+				UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+			}
+		});
 	}
 }
 //------------------------------------ Campos -----------------------------------
