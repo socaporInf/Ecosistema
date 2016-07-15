@@ -122,7 +122,7 @@ var Motor = function(moduloActivo,entidadActiva){
 		        callback(JSON.parse(conexionBuscar.responseText));
 		    }
 		};
-		conexionBuscar.open('POST','../'+modulo+'controladores/cor_Motor.php', true);
+		conexionBuscar.open('POST','../../'+modulo+'/controladores/cor_Motor.php', true);
 		conexionBuscar.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="operacion="+encodeURIComponent("buscar")+'&entidad='+encodeURIComponent(entidad);
 		conexionBuscar.send(envio);

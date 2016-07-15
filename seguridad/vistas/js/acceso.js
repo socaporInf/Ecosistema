@@ -8,7 +8,7 @@ function accesar(){
 	}
 	conexionAcc=crearXMLHttpRequest();
 	conexionAcc.onreadystatechange = procesarAcc;
-	conexionAcc.open('POST','../controladores/cor_validar.php', true);
+	conexionAcc.open('POST','seguridad/controladores/cor_validar.php', true);
 	conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	var envio="Operacion="+encodeURIComponent("acceso");
 	envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Pass="+encodeURIComponent(campPass.value);
@@ -40,7 +40,8 @@ function procesarAcc(){
 			btnCancelar.onclick = function(){
 				UI.elementos.modalWindow.eliminarUltimaCapa();
 			};
-			torque.buscarRegistros('empresa',function(response){
+
+			buscarEmpresas(function(response){
 				//recivo la informacion
 				var respuesta=response;
 				var html='';
@@ -61,6 +62,18 @@ function procesarAcc(){
 		}
 	}
 }
+buscarEmpresas = function(callback){
+	var conexionBuscar=crearXMLHttpRequest();
+	conexionBuscar.onreadystatechange = function(){
+		if (conexionBuscar.readyState == 4){
+					callback(JSON.parse(conexionBuscar.responseText));
+			}
+	};
+	conexionBuscar.open('POST','global/controladores/cor_Motor.php', true);
+	conexionBuscar.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	var envio="operacion="+encodeURIComponent("buscar")+'&entidad='+encodeURIComponent('empresa');
+	conexionBuscar.send(envio);
+};
 function iniciarSession(nodo){
 
 	var campNom=document.getElementById('nomUsu');
@@ -71,7 +84,7 @@ function iniciarSession(nodo){
 	        var respuesta = JSON.parse(conexionAcc.responseText);
 	        var html='';
 	        if(respuesta.success==1){
-	        	location.href='vis_Landing.html';
+	        	location.href='global/vistas/vis_Landing.html';
 	        }else{
 	        	console.log(respuesta.mensaje);
 	        	html+="<atricle>"+respuesta.mensaje+"</article>";
@@ -79,7 +92,7 @@ function iniciarSession(nodo){
 	        }
 	    }
 	};
-	conexionAcc.open('POST','../controladores/cor_validar.php', true);
+	conexionAcc.open('POST','seguridad/controladores/cor_validar.php', true);
 	conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	var envio="Operacion="+encodeURIComponent("iniciarSession");
 	envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Empresa="+encodeURIComponent(nodo.getAttribute('valor'));

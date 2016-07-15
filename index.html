@@ -3,10 +3,14 @@
 <head>
 	<meta  charset = "utf-8"  />
 	<title>Agronomia</title>
-	<link rel="stylesheet" type="text/css" href="../../nucleo/css/logIn.css">
-	<link rel="stylesheet" type="text/css" href="../../nucleo/css/cuerpo.css">
-	<link rel="stylesheet" type="text/css" href="../../nucleo/css/menu.css">
-	<link rel="stylesheet" type="text/css" href="../../nucleo/css/formulario.css">
+	<!-- Estilos externos //google -->
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- Estilos locales -->
+	<link rel="stylesheet" type="text/css" href="seguridad/vistas/css/logIn.css">
+	<link rel="stylesheet" type="text/css" href="nucleo/vistas/css/cuerpo.css">
+	<link rel="stylesheet" type="text/css" href="nucleo/vistas/css/menu.css">
+	<link rel="stylesheet" type="text/css" href="nucleo/vistas/css/formulario.css">
 </head>
 <body>
 	<div contenedor>
@@ -23,7 +27,7 @@
 					<div olvido>¿Olvido su contraseña?</div>
 				</div>
 			</div>
-			<button type='button' onclick='accesar()'></button>
+			<button type='button' onclick='accesar()'><i class="material-icons md-24 white">send</i></button>
 		</div>
 		<div pie>
 
@@ -31,10 +35,10 @@
 	</div>
 
 </body>
-<script type="text/javascript" src='../../nucleo/js/motorRegistros.js'></script>
-<script type="text/javascript" src='../../nucleo/js/constructor.js'></script>
+<script type="text/javascript" src='nucleo/vistas/js/motorRegistros.js'></script>
+<script type="text/javascript" src='nucleo/vistas/js/constructor.js'></script>
 
-<script type="text/javascript" src='js/acceso.js'></script>
+<script type="text/javascript" src='seguridad/vistas/js/acceso.js'></script>
 <script type="text/javascript">
 	/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
 	var torque = new Motor('acceso');
