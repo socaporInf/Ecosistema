@@ -171,10 +171,10 @@ function crearventananuevo(){
 			contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
 			cuadro:{
 				nombre: 'guardarOperaciones',
-				mensaje : 'guardando Cambios'
+				mensaje : 'Guardando Cambios'
 			}
 		};
-		torque.manejarOperacion(peticion,cuadro,function guardarOperaciones(respuesta){
+		var guardarOperaciones = function(respuesta){
 			if (respuesta.success) {
 				UI.agregarToasts({
 					texto: respuesta.mensaje.cuerpo,
@@ -184,7 +184,9 @@ function crearventananuevo(){
 			}else{
 				UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 			}
-		});
+		}
+		
+		torque.manejarOperacion(peticion,cuadro,guardarOperaciones);
 	}
 }
 //------------------------------------ Campos -----------------------------------
