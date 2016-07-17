@@ -9,6 +9,7 @@ function construirUI(){
 		carga: {
 			uso:true,
 			peticion:{
+				modulo: 'global',
 				entidad: 'notificacion',
 				operacion: 'buscarNotificacionesUsu'
 			},
@@ -97,6 +98,7 @@ function mostrarNoticia(){
 
 function cargarNoticias(contenedor){
 	var peticion = {
+		modulo: 'global',
 		entidad: 'noticia',
 		operacion: 'buscar'
 	};

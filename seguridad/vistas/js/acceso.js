@@ -4,6 +4,10 @@ function accesar(){
 	var campPass=document.getElementById('pass');
 
 	if((campNom.value==='')||(campPass.value==='')){
+		UI.agregarToasts({
+			texto:'Debe llenar ambos campos antes de poder continuar',
+			tipo: 'web-arriba-derecha-alto'
+		})
 		return;
 	}
 	conexionAcc=crearXMLHttpRequest();
@@ -26,7 +30,7 @@ function procesarAcc(){
 			ventana.cabecera='Accesando';
 			ventana.cuerpo='Cargando...';
 			ventana.pie='<section modalButtons>'+
-										'<button type="button" cancelar id="modalButtonCancelar"></button>'+
+										'<button type="button" cancelar id="modalButtonCancelar"><i class="material-icons md-24 red500">clear</i></button>'+
 									'</section>';
 
 			//construyo la ventana modal

@@ -9,7 +9,7 @@ div[campoBusqueda] div[formelements]{
 }
 div[campoBusqueda] button{
   position: absolute;
-  margin-left: -40px;
+  margin-left: calc(100% - 65px);
   z-index: 10;
   margin-top: -5px;
 }

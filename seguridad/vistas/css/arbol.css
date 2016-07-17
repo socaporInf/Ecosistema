@@ -30,8 +30,8 @@ div[hoja] div[titulo-hoja]{
 div[hoja] div[peciolo].asignado button{
 	background-color: #4CAF50;
 }
-div[hoja] div[peciolo].asignado button.arrow_down_gray{
-	background-image: url('../imagenes/arrow_down_white.png');
+div[hoja] div[peciolo].asignado button:after{
+	color:white;
 }
 div[hoja] div[peciolo]{
 	transition: all 0.3s linear;
@@ -52,16 +52,22 @@ button[little-mat-button-invisible]{
 	height: 24px;
 	background-color: transparent;
 }
+button:after{	
+    font-family: 'Material Icons';
+    color:white;
+    font-size: 24px;
+    font-style: initial;
+}
 button[little-mat-button-invisible]:hover{
 	background-color: #424242 !important;
 }
-button.arrow_down_gray{
-	background-repeat: no-repeat;
-	background-image: url('../imagenes/arrow_down_gray.png');
-	background-position: 0px 2px;
+
+button.arrow_down_gray:after{
+	content: 'keyboard_arrow_down';
+	color:#607D8B;
 }
-button.arrow_down_gray:hover{
-	background-image: url('../imagenes/arrow_down_white.png');
+button.arrow_down_gray:hover:after{
+	color:white;
 }
 button.arrow_down_gray.activo{
 		transform: rotate(-180deg);

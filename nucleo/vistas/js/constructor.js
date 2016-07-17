@@ -267,8 +267,9 @@ var Menu = function(){
 			this.construirNodo = function(){
 				var nodo = document.createElement('section');
 				nodo.innerHTML = this.contenido;
-				var seleccionado = location.href.substring((location.href.length - this.enlace.length),location.href.length);
-				if(seleccionado == this.enlace){
+				var finalEnlace =this.enlace.split('/')[this.enlace.split('/').length-1];
+				var seleccionado = location.href.substring((location.href.length - finalEnlace.length),location.href.length);
+				if(seleccionado == finalEnlace){
 					this.estado = 'seleccionado';
 				}
 				nodo.setAttribute('enlace',this.enlace);
@@ -403,12 +404,12 @@ var Menu = function(){
 					}
 				}
 			},30);
-			html+='<article off onclick="sesion.cerrarSesion()"></article>';
+			html+='<article off onclick="sesion.cerrarSesion()"><i></i></article>';
 
 		}
-		html+='<article contac></article>';
-		html+='<article seguridad onclick="location.href=\'vis_Cuenta.html\'"></article>';
-		html+='<article books></article>';
+		html+='<article contact><i></i></article>';
+		html+='<article seguridad  onclick="location.href=\'vis_Cuenta.html\'"><i></i></article>';
+		html+='<article books><i></i></article>';
 		pie.innerHTML=html;
 	};
 	this.getEstado = function(){
@@ -509,7 +510,7 @@ var Cabecera = function(){
 		var contenedor = obtenerContenedor();
 		var elemento = document.createElement('div');
 		elemento.setAttribute('cabecera','');
-		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'></button><div titulo>SOCA-PORTUGUESA</div>";
+		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'><i class='material-icons md-36 white'>menu</i></button><div titulo>SOCA-PORTUGUESA</div>";
 		contenedor.insertBefore(elemento,contenedor.firstChild);
 		//funcionamiento boton
 		var botonMenu=document.getElementById('menuBtn');
@@ -691,12 +692,12 @@ var Formulario = function(atributos){
 
 		//funcion para agregar de forma dinamica campos a la interfaz
 		this.agregarCampo = function(campo){
-			//para que no agregue el titulo dado que ya viene con la estructura basica de modificar
-      if((campo.tipo.toLowerCase() === 'campoedicion')&&(campo.parametros.tipo!=='titulo')){
-        var contenedor = this.nodo.getElementsByTagName('form')[0];
-        var campoNuevo = UI.agregarCampo(campo,contenedor);
-        this.campos.push(campoNuevo);
-      }
+		//para que no agregue el titulo dado que ya viene con la estructura basica de modificar
+	      if((campo.tipo.toLowerCase() !== 'campoedicion')||((campo.tipo.toLowerCase() === 'campoedicion')&&(campo.parametros.tipo!=='titulo'))){
+	        var contenedor = this.nodo.getElementsByTagName('form')[0];
+	        var campoNuevo = UI.agregarCampo(campo,contenedor);
+	        this.campos.push(campoNuevo);
+	      }
 		};
 		//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
 		this.agregarCampos = function(campos){
@@ -806,7 +807,8 @@ var Formulario = function(atributos){
 		      var info={
 		        codigo:UI.elementos.formulario.ventanaForm.registroId,
 		        entidad:constructor.nombre,
-		        operacion:'buscarRegistro'
+		        operacion:'buscarRegistro',
+		        modulo:constructor.modulo
 		      };
 		      torque.Busqueda(info,function(respuesta){
 		        //guardo de forma local los datos para facil acceso
@@ -1403,6 +1405,44 @@ var modalWindow = function(){
 					this.nodo.innerHTML = porConstruir.html;
 				}
 			};
+			this.agregarTipo = function(tipo){
+				this.nodo.classList.add(tipo);
+				switch(tipo){
+					case 'error':
+						var icono = UI.crearIcono({
+							nombre:'error',
+							tamano: 48,
+							color: 'white',
+							inactivo: false
+						});
+						this.nodo.appendChild(icono);
+						break;
+
+					case 'advertencia':
+						var icono = UI.crearIcono({
+							nombre:'warning',
+							tamano: 48,
+							color: 'white',
+							inactivo: false
+						});
+						this.nodo.appendChild(icono);
+						break;
+
+					case 'informacion':
+						var icono = UI.crearIcono({
+							nombre:'info_outline',
+							tamano: 48,
+							color: 'white',
+							inactivo: false
+						});
+						this.nodo.appendChild(icono);
+						break;
+
+					default:
+						console.log('no existe icono para'+tipo);
+						break;
+				}
+			}
 			this.construirNodo();
 		};
 
@@ -1548,7 +1588,7 @@ var modalWindow = function(){
 			data.contenido = data.contenido || 'normal';
 			if(data.cabecera!==undefined){
 				this.agregarParte('cabecera',data.cabecera);
-				this.partes.cabecera.nodo.classList.toggle(data.tipo.toLowerCase());
+				this.partes.cabecera.agregarTipo(data.tipo.toLowerCase());
 			}
 			if(data.cuerpo!==undefined){
 				this.agregarParte('cuerpo',data.cuerpo);
@@ -1599,8 +1639,9 @@ var modalWindow = function(){
 					this.agregarParte('cabecera','titulo');
 				}
 				this.partes.cabecera.nodo.class = '';
-				this.partes.cabecera.nodo.classList.add(mensaje.nombre_tipo.toLowerCase());
-				this.partes.cabecera.nodo.textContent = mensaje.titulo;
+				this.partes.cabecera.agregarTipo(mensaje.nombre_tipo.toLowerCase());
+				
+				//this.partes.cabecera.nodo.textContent = mensaje.titulo;
 			}
 
 			//cambio el cuerpo
@@ -1827,7 +1868,7 @@ var CuadroCarga = function(info,callback){
 	this.tamanoTexto = function(texto){
 			var tamano = texto.length;
 			if(tamano < 40){
-				this.nodo.style.width = (tamano * 10) +'px';
+				this.nodo.style.width = (tamano * 12) +'px';
 			}else{
 					this.nodo.style.width = ((tamano/2) * 10) +'px';
 			}
@@ -1954,13 +1995,8 @@ var Arquitecto = function(){
 	};
 
 	this.crearMensaje = function(mensaje){
-		var titulo = mensaje.titulo || mensaje.nombre_tipo.toUpperCase();
-		var ventana = {
-			tipo: mensaje.nombre_tipo.toLowerCase(),
-			cabecera: titulo,
-			cuerpo: mensaje.cuerpo
-		};
-		this.crearVentanaModal(ventana);
+		var capa = this.crearVentanaModal({cuerpo: 'mesaje'});
+		capa.convertirEnMensaje(mensaje)
 	};
 //------------------------- Manejo Cuadros de carga -------------------------------
 	this.agregarCuadroCarga = function(cuadroCarga){
@@ -2150,6 +2186,41 @@ var Arquitecto = function(){
 			console.log('no existe ningun constructor en la lista');
 		}
 	};
+	//------------------------- Manejo Iconos ----------------------------
+	this.crearIcono = function(atributos){
+		var icono = document.createElement('i');
+		icono.classList.add('material-icons');
+		icono.textContent = atributos.nombre;
+		if(atributos.tamano){
+			switch(atributos.tamano){
+				case 24:
+					icono.classList.add('md-24');
+					break;
+
+				case 36:
+					icono.classList.add('md-36');
+					break;
+
+				case 48:
+					icono.classList.add('md-48');
+					break;
+			} 
+		}
+		if(atributos.color){
+			icono.classList.add(atributos.color);
+		}
+		if(atributos.tono){
+			if(atributos.tono.toLowerCase()==='claro'){
+				icono.classList.add('md-light');
+			}else if(atributos.tono.toLowerCase()==='oscuro'){
+				icono.classList.add('md-dark');
+			}
+		}
+		if(atributos.inactivo){
+			icono.classList.add('md-inactive');
+		}
+		return icono;
+	}
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
 var Ventana = function(atributos){

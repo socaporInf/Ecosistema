@@ -30,7 +30,8 @@ function armarVentanaArbol(){
 function llenarArbol(formularioArbol){
 	var Peticion = {
 		entidad: 'privilegio',
-		operacion: 'buscarArbolComponente'
+		operacion: 'buscarArbolComponente',
+		modulo: 'seguridad'
 	};
 
 	var infoCuadroCarga = {
@@ -74,7 +75,8 @@ var buscarOperaciones = function operacionesHoja(nodo){
 	var peticion = {
 		entidad : 'privilegio',
 		operacion: 'buscarOperaciones',
-		codigo : nodo.getAttribute('codigo')
+		codigo : nodo.getAttribute('codigo'),
+		modulo:'seguridad'
 	};
 	var cuadro = {
 		contenedor: asignarOperaciones.partes.cuerpo.nodo,
@@ -103,6 +105,7 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
 			peticion ={
 				entidad : 'privilegio',
+				modulo:'seguridad',
 				operacion : 'guardarOperacionesDisponibles',
 				codigo : UI.elementos.modalWindow.buscarUltimaCapaContenido().registroId,
 				data : JSON.stringify(data)
@@ -162,6 +165,7 @@ function crearventananuevo(){
 		var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
 		peticion ={
 			entidad : 'operacion',
+			modulo : 'seguridad',
 			operacion : 'guardar'
 		};
 		for (var i = 0; i < data.length; i++) {
@@ -199,6 +203,7 @@ var buscarCampos = function camposHoja(nodo){
 	var peticion = {
 		entidad : 'privilegio',
 		operacion: 'buscarCampos',
+		modulo: 'seguridad',
 		codigo : nodo.getAttribute('codigo')
 	};
 	var cuadro = {
@@ -286,7 +291,7 @@ function construirFormulario(){
 function guardarComponente(){
 	var peticion = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
 	if(peticion){
-		torque.guardar('componente',peticion,function guardar(respuesta){
+		torque.guardar('seguridad','componente',peticion,function guardar(respuesta){
 			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 			llenarArbol(UI.buscarVentana('formularioArbol'));
 		});
@@ -305,6 +310,7 @@ function formularioEditarComponente(nodo){
 	});
 	var peticion = {
 		entidad : 'componente',
+		modulo:'seguridad',
 		operacion: 'buscarRegistro',
 		codigo: nodo.getAttribute('codigo')
 	};
@@ -353,6 +359,7 @@ function enviarCambios(cambios,contenedor){
 	//armo la peticion
 	var peticion = {
 		entidad: 'componente',
+		modulo: 'seguirdad',
 		operacion: 'modificar'
 	};
 	for (var i = 0; i < cambios.length; i++) {

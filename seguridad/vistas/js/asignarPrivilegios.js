@@ -105,6 +105,7 @@ function construirUI(){
 
 	var Peticion = {
 		entidad: 'privilegio',
+		modulo: 'seguridad',
 		operacion: 'buscarRegistro',
 		codigo: location.search.substring(6,location.search.length)
 	};
@@ -139,6 +140,7 @@ function costruccionInicial(respuesta){
 function llenarArbol(formularioArbol){
 	var Peticion = {
 		entidad: 'privilegio',
+		modulo:'seguridad',
 		operacion: 'buscarArbol',
 		codigo: UI.elementos.URL.captarParametroPorNombre('ruta')
 	};
@@ -204,6 +206,7 @@ function armarVentanaArbol(){
 	botonGuardar.onclick = function guardarPrivilegios(){
 		var peticion = {
 			entidad: 'privilegio',
+			modulo:'seguridad',
 			operacion: 'guardarArbol',
 			codigo: UI.elementos.URL.captarParametroPorNombre('ruta'),
 			data: JSON.stringify(arbolTemp.exportarArreglo())
@@ -238,6 +241,7 @@ var buscarOperaciones = function operacionesHoja(nodo){
 	});
 	var peticion = {
 		entidad : 'privilegio',
+		modulo : 'seguridad',
 		operacion: 'buscarOperacionesDisponibles',
 		codigo : nodo.getAttribute('privilegio')
 	};
@@ -272,6 +276,7 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
 			peticion ={
 				entidad : 'privilegio',
+				modulo : 'seguridad',
 				operacion : 'asignarOperaciones',
 				codigo : UI.elementos.modalWindow.buscarUltimaCapaContenido().registroId,
 				data : JSON.stringify(data)
@@ -299,23 +304,4 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 	}
 }
-/*-------------------------- ArmarPeticion ----------------------------*/
-function obtenenrValoresFormulario(contenedor){
-	var campos = contenedor.campos;
-	var data = [];
-	var validado = false;
-	for (var i = 0; i < campos.length; i++) {
-		//valido el campo
-		if((campos[i].captarRequerido())&&(!campos[i].captarValor())){
-			validado = true;
-		}
-		if(campos[i].captarValor()){
-			data.push({nombre:campos[i].captarNombre(),valor:campos[i].captarValor()});
-		}
-	}
-	if(!validado){
-		return data;
-	}else{
-		return false;
-	}
-}
+

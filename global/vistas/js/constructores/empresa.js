@@ -1,6 +1,7 @@
 empresa = {
   nombre: 'empresa',
   campo_nombre: 'nombre',
+  modulo: 'global',
   nuevo: {
     titulo: 'Empresa',
     altura: 400,
@@ -33,19 +34,19 @@ empresa = {
     campos: [
       {
         tipo : 'campoEdicion',
-        parametros : {nombre:'rif',valor:data.rif,titulo:'Rif'}
+        parametros : {nombre:'rif',titulo:'Rif'}
       },{
         tipo : 'campoEdicion',
-        parametros : {nombre:'nombre_abreviado',valor:data.nombre_abreviado,titulo:'Nombre Abreviado'}
+        parametros : {nombre:'nombre_abreviado',titulo:'Nombre Abreviado'}
       },{
         tipo : 'campoEdicion',
-        parametros : {nombre:'telefono',valor:data.telefono,titulo:'Telefono'}
+        parametros : {nombre:'telefono',titulo:'Telefono'}
       },{
         tipo : 'campoEdicion',
-        parametros : {nombre:'correo',valor:data.correo,titulo:'Correo'}
+        parametros : {nombre:'correo',titulo:'Correo'}
       },{
         tipo : 'campoEdicion',
-        parametros : {nombre:'direccion_fiscal',valor:data.direccion_fiscal,titulo:'Direccion Fisica',tipo:'area'}
+        parametros : {nombre:'direccion_fiscal',titulo:'Direccion Fisica',tipo:'area'}
       }
     ]
   }

@@ -1,5 +1,6 @@
 tablaVirtual = {
   nombre:'tablaVirtual',
+  modulo: 'seguridad',
   campo_nombre: 'nombre',
   nuevo:{
     titulo: 'Tabla Virtual',

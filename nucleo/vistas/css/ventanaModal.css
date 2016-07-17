@@ -48,16 +48,19 @@ div[capa='contenido'] section[cabecera].error, div[capa='contenido'] section[cab
 }
 div[capa='contenido'] section[cabecera].error {
     background-color: #f44336;
-    background-image: url('../imagenes/error_white.png');
 }
 div[capa='contenido'] section[cabecera].informacion {
     background-color: #3F51B5;
-    background-image: url('../imagenes/info_white.png');
 }
 div[capa='contenido'] section[cabecera].advertencia {
-    background-image: url('../imagenes/warning_white.png');
     background-color: #FFC107;
-    color: white;
+}
+div[capa='contenido'] section[cabecera].error i, 
+div[capa='contenido'] section[cabecera].informacion i, 
+div[capa='contenido'] section[cabecera].advertencia i{
+    top: 7px;
+    left: 7px;
+    position: absolute;
 }
 div[capa='contenido'] section[pie].error {
     background-color: #E57373;
@@ -106,23 +109,6 @@ div[capa='contenido'] section[pie] section[modalbuttons] button {
 }
 div[capa='contenido'] section[pie] section[modalbuttons] button:hover {
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-}
-div[capa='contenido'] section[pie] section[modalbuttons] button[aceptar] {
-    background-image: url('../imagenes/check-green.png');
-}
-div[capa='contenido'] section[pie] section[modalbuttons] button[cancelar] {
-    background-image: url('../imagenes/close.png');
-}
-div[capa='contenido'] section[pie] section[modalbuttons] button[eliminar] {
-    background-image: url('../imagenes/trash_red_16.png');
-    background-position: 12px 11px;
-}
-div[capa='contenido'] section[pie] section[modalbuttons] button[modificar] {
-    background-image: url('../imagenes/pencil_green_16.png');
-    background-position: 12px 11px;
-}
-div[capa='contenido'] section[pie] section[modalbuttons] button[guardar] {
-    background-image: url('../imagenes/guardar-azul.png');
 }
 div[capa='contenido'] section[cuerpo] div[texto]{
     margin-left: 24px;

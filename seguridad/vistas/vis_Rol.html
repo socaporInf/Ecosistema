@@ -3,18 +3,22 @@
 <head>
 	<title></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- Estilos externos //google -->
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" type="text/css" href="css/cuerpo.css">
-	<link rel="stylesheet" type="text/css" href="css/menu.css">
-	<link rel="stylesheet" type="text/css" href="css/formulario.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- Estilos locales -->
+	<link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/cuerpo.css">
+	<link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/menu.css">
+	<link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/formulario.css">
 </head>
 <body>
 	<div contenedor>
 
 	</div>
 </body>
-<script type="text/javascript" src='js/constructor.js'></script>
-<script type="text/javascript" src='js/motorRegistros.js'></script>
+<!-- scripts que construyen la interfaz y su funcionamiento -->
+<script type="text/javascript" src='../../nucleo/vistas/js/motorRegistros.js'></script>
+<script type="text/javascript" src='../../nucleo/vistas/js/constructor.js'></script>
 
 <script type="text/javascript">
 
@@ -24,12 +28,12 @@
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('rol');
+	var torque = new Motor('seguridad','rol');
 
 	//se cargan los registros necesarios que no forman parte de la entidad activa pero
 	//que de igual forma se utilizaran dentro del maestro
 	var empresas
-	torque.Busqueda({entidad:'empresa',operacion:'buscar'},function(respuesta){
+	torque.Busqueda({modulo:'global',entidad:'empresa',operacion:'buscar'},function(respuesta){
 		empresas=respuesta.registros;
 	});
 
@@ -112,7 +116,8 @@
 					var info={
 						codigo:UI.elementos.formulario.ventanaForm.registroId,
 						entidad:torque.entidadActiva,
-						operacion:'buscarRegistro'
+						operacion:'buscarRegistro',
+						modulo:'seguridad'
 					}
 					torque.Busqueda(info,function(respuesta){
 						//guardo de forma local los datos para facil acceso
@@ -200,9 +205,9 @@
 							cabecera:'Operaciones En '+this.textContent,
 							cuerpo:'Las Operaciones disponibles son: <br>Eliminar Asociacion<br>Modificar Privilegios',
 							pie:'<section modalButtons>\
-									<button type="button" cancelar id="modalButtonCancelar"></button>\
-									<button type="button" modificar ruta="'+this.getAttribute('codigo')+'" id="modalButtonModificar"></button>\
-									<button type="button" eliminar codigo="'+this.getAttribute('empresa')+'"  id="modalButtonEliminar"></button>\
+									<button type="button" cancelar class="icon icon-cerrar-rojo-32" id="modalButtonCancelar"></button>\
+									<button type="button" modificar class="icon icon-modificar-verde" ruta="'+this.getAttribute('codigo')+'" id="modalButtonModificar"></button>\
+									<button type="button" eliminar class="icon icon-eliminar-rojo" codigo="'+this.getAttribute('empresa')+'"  id="modalButtonEliminar"></button>\
 								</section>'
 						}
 
@@ -253,7 +258,8 @@
 									operacion:'eliminarDetalle',
 									codigo_empresa:this.getAttribute('codigo'),
 									codigo:UI.elementos.formulario.ventanaForm.registroId,
-									entidad:'rol'
+									entidad:'rol',
+									modulo:'seguridad'
 								}
 								//ejecuto operacion
 								torque.Operacion(peticion,function(respuesta){
@@ -285,7 +291,7 @@
 							cabecera:'Asignar Empresa',
 							cuerpo:'<label>'+registro.nombre+'</label>',
 							pie:'<section modalButtons>\
-									<button type="button" cancelar id="modalButtonCancelar"></button>\
+									<button type="button" cancelar class="icon icon-cerrar-rojo-32" id="modalButtonCancelar"></button>\
 									<button type="button" aceptar  id="modalButtonAceptar"></button>\
 								</section>'
 						}
@@ -311,6 +317,7 @@
 										codigo_empresa: lista.value,
 										codigo: UI.elementos.formulario.ventanaForm.registroId,
 										entidad: 'rol',
+										modulo: 'seguridad',
 										Operacion:'guardarDetalle'
 									}
 									torque.Operacion(peticion,function(respuesta){
@@ -345,7 +352,7 @@
 						cuadroDeCarga.style.marginTop='80px';
 						//-----------------------------------------------------------------------------------
 
-						torque.buscarRegistros('empresa',function(respuesta){
+						torque.buscarRegistros('global','empresa',function(respuesta){
 							//--------------------------creo el combo-----------------
 							var comboData={
 								titulo:'Empresa',

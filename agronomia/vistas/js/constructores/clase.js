@@ -1,9 +1,9 @@
-operacion= {
-	nombre: 'operacion',
- 	modulo: 'seguridad',
+clase= {
+	nombre: 'clase',
+ 	modulo: 'agronomia',
 	campo_nombre: 'nombre',
 	nuevo:{
-		titulo: 'Operación',
+		titulo: 'Clase',
 		altura: 220,
 		campos:[
 			{

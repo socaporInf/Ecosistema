@@ -1,5 +1,7 @@
-registroVirtual = {
-  nombre:'registroVirtual',
+tipoNoticia = {
+  nombre:'tipoNoticia',
+  modulo: 'global',
+  campo_nombre: 'nombre',
   nuevo:{
     titulo: '',
     altura: 200,
@@ -9,7 +11,7 @@ registroVirtual = {
         parametros : {requerido:true,titulo:'Nombre',nombre:'nombre',tipo:'simple',eslabon:'simple',usaToolTip:true}
       },{
         tipo : 'campoDeTexto',
-        parametros : {requerido:true,titulo:'Descripcion',nombre:'Descripcion',tipo:'area',eslabon:'area',usaToolTip:false}
+        parametros : {requerido:true,titulo:'Color',nombre:'color',tipo:'simple',eslabon:'simple',usaToolTip:true}
       }
     ]
   },
@@ -21,7 +23,7 @@ registroVirtual = {
         parametros : {nombre:'nombre',titulo:'Nombre',tipo:'titulo'}
       },{
         tipo : 'campoEdicion',
-        parametros : {nombre:'descripcion',titulo:'Descripcion',tipo:'area'}
+        parametros : {nombre:'color',titulo:'color',tipo:'area'}
       }
     ]
   },

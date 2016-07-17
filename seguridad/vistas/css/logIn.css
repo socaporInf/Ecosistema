@@ -30,13 +30,12 @@ div[loginForm] div[titulo]{
 }
 div[capaLog] button[type='button']{
 	margin-left: 370px;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 100px;
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
     background: #4CAF50;
     position: absolute;
-    background-image: url('../imagenes/send_white.png');
     background-repeat: no-repeat;
     background-position: 17px;
     border: none;
@@ -59,22 +58,19 @@ div[loginForm] div[cuerpo] input{
     outline: none;
     font-size: 17px;
 }
-div[loginForm] div[cuerpo] input[type='text']{
-	margin-top: 50px;
-	background-image: url('../imagenes/person.png');
-	background-repeat: no-repeat;
-	background-position: 4px 10px;
-}
-div[loginForm] div[cuerpo] input[type='password']{
-	background-image: url('../imagenes/lock_outline.png');
-	background-repeat: no-repeat;
-	background-position: 4px 10px;
-}
 div[loginForm] div[olvido]{
 	width: 100%;
 	text-align: center;
 	color:silver;
 	margin-top: 73px; 
+}
+section[cuerpo]{
+	display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-around;
 }
 article[tituloAcesso]{
 	border-bottom: 10px;
@@ -97,4 +93,15 @@ button[inicio]:hover{
 }
 div[clear]{
 	clear: both;
+}
+div[cont-log-input]{
+    position: relative;
+}
+div[primero]{
+    margin-top: 35px;
+}
+div[cont-log-input] i{
+    position: absolute;
+    top:30px;
+    left:24px;
 }

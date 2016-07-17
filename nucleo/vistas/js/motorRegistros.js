@@ -24,7 +24,7 @@ var Sesion = function(){
 				}
 		  }
 		};
-		conexionAcc.open('POST','../controladores/cor_validar.php', true);
+		conexionAcc.open('POST','../../seguridad/controladores/cor_validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="Operacion="+encodeURIComponent("obtenerSesion");
 		conexionAcc.send(envio);
@@ -35,11 +35,11 @@ var Sesion = function(){
 			if (conexionAcc.readyState == 4 && conexionAcc.status == 200){
 				var respuesta=JSON.parse(conexionAcc.responseText);
 				if(respuesta.success==1){
-					location.href='index.html';
+					location.href='../../index.html';
 				}
 		  }
 		};
-		conexionAcc.open('POST','../controladores/cor_validar.php', true);
+		conexionAcc.open('POST','../../seguridad/controladores/cor_validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="Operacion="+encodeURIComponent("cerrarSesion");
 		conexionAcc.send(envio);
@@ -57,7 +57,7 @@ var Sesion = function(){
 				this.llavesAcceso = respuesta.llaves;
 		  }
 		};
-		conexionAcc.open('POST','../controladores/cor_validar.php', true);
+		conexionAcc.open('POST','../../seguridad/controladores/cor_validar.php', true);
 		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="Operacion="+encodeURIComponent("obtenerLlaves");
 		conexionAcc.send(envio);
@@ -103,7 +103,7 @@ var Motor = function(moduloActivo,entidadActiva){
 	//funcion de arranque del objeto
 	this.ignition = function(){
 		if((this.entidadActiva!='acceso')&&(typeof(this.entidadActiva)!=='undefined')){
-			this.buscarRegistros(this.entidadActiva,function(respuesta){
+			this.buscarRegistros(this.moduloActivo,this.entidadActiva,function(respuesta){
 				if(respuesta.success===1){
 					torque.registrosEntAct=respuesta.registros;
 				}else{
@@ -135,7 +135,7 @@ var Motor = function(moduloActivo,entidadActiva){
 		            callback(JSON.parse(conexionBusqueda.responseText));
 		    }
 		};
-		conexionMotor.open('POST','../../'+info.modulo+'/controladores/cor_Motor.php', true);
+		conexionBusqueda.open('POST','../../'+info.modulo+'/controladores/cor_Motor.php', true);
 		conexionBusqueda.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="operacion="+encodeURIComponent(info.operacion)+'&entidad='+encodeURIComponent(info.entidad);
 		envio+="&codigo="+encodeURIComponent(info.codigo);

@@ -126,44 +126,32 @@ article[update] {
     width: 24px;
     height: 24px;
     padding: 1px;
-    background-image: url('../imagenes/pencil_green_16.png');
-    background-color: white;
+    background-color: #4CAF50;
     background-repeat: no-repeat;
     background-position: 5px;
     float: right;
     border-radius: 100px;
+    color:white;
+}
+article[update]:after{
+    content: 'create';    
+    font-family: 'Material Icons';
+    font-size: 24px;
+    font-style: initial;
 }
 article[update]:hover {
-    background-image: url('../imagenes/pencil_white_16.png');
-    background-color: #4CAF50;
+    color:#4CAF50;
+    background-color: white;
 }
 article[update].edicion {
-    background-image: url('../imagenes/save_green.png');
-    background-color: #fff;
-    background-position: 1px;
+    background-color: #4CAF50;
+}
+article[update].edicion:after{
+    content: 'save';
 }
 article[update].edicion:hover {
-    background-image: url('../imagenes/save.png');
-    background-color: #4CAF50;
-    background-position: 1px;
-}
-section[titulo] article[update] {
-    background-image: url('../imagenes/pencil_white_16.png');
-    background-color: #4CAF50;
-}
-section[titulo] article[update]:hover {
-    background-image: url('../imagenes/pencil_green_16.png');
     background-color: white;
-}
-section[titulo] article[update].edicion {
-    background-image: url('../imagenes/save.png');
-    background-color: #4CAF50;
-    background-position: 1px;
-}
-section[titulo] article[update].edicion:hover {
-    background-image: url('../imagenes/save_green.png');
-    background-color: white;
-    background-position: 1px;
+    color:#4CAF50
 }
 section[sector]:last-child {
     bottom: 1px;
@@ -262,23 +250,36 @@ div[capaList] section[busqueda] button[cerrarBusq] {
     border-radius: 100px;
     width: 32px;
     height: 32px;
-    background-image: url('../imagenes/close.png');
     background-position: 4px;
     float: right;
     margin-top: -34px;
     background-color: transparent;
     margin-right: 3px
 }
+
+div[capaList] section button:after {
+    font-family: 'Material Icons';
+    font-style: initial;
+}
+div[capaList] section[busqueda] button[btnBusq]:after {
+    content: 'search';
+    font-size: 48px;
+    color:white;
+}
+
+div[capaList] section[busqueda] button[cerrarBusq]:after {
+    content: 'clear';
+    color: #f44336;
+    font-size:24px;
+}
 div[capaList] section[busqueda] button[cerrarBusq]:hover {
     box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 div[capaList] section[busqueda] button[btnBusq] {
     border: none;
-    /* border-radius: 100px; */
     width: 50px;
     height: 50px;
     background-color: transparent;
-    background-image: url('../imagenes/search_32.png');
     background-repeat: no-repeat;
     background-position: 8px;
     float: right;
@@ -311,11 +312,19 @@ div[capaList] section[slot] article[title] {
 }
 div[capaList] section button[btnModificar] {
     background-color: #4CAF50;
-    background-image: url('../imagenes/pencil_white_16.png');
+}
+div[capaList] section button[btnModificar]:after {
+    color: white;
+    font-size: 24px;
+    content: 'create';
 }
 div[capaList] section button[btnEliminar] {
     background-color: #e57373;
-    background-image: url('../imagenes/trash_white_16.png');
+}
+div[capaList] section button[btnEliminar]:after {
+    color: white;
+    font-size: 24px;
+    content: 'delete';
 }
 
 /*------------------------MATERIAL ELEMENTs---------------------*/

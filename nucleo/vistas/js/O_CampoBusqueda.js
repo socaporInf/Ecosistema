@@ -6,6 +6,7 @@ var CampoBusqueda = function(atributos){
       nodo.classList.add('mat-but-transp');
       nodo.classList.add('mat-green500');
       nodo.classList.add('icon-search');
+      nodo.classList.add('icon');
       this.nodo = nodo;
       this.nodo.onclick = function activarCampo(){
         //monto venta modal

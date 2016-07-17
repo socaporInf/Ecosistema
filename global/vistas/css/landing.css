@@ -1,4 +1,4 @@
-@import url('card.css');
+@import url('../../../nucleo/vistas/css/card.css');
 /*------------------ calendario-------------------*/
 #calendar {
 		max-width: 900px;

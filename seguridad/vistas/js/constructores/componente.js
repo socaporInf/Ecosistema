@@ -1,7 +1,8 @@
 componente = {
   nombre:'componente',
+  modulo: 'seguridad',
   campo_nombre: 'titulo',
-  nuevo:{
+  nuevo :{
     titulo: 'Componente',
     altura: 400,
     campos:[

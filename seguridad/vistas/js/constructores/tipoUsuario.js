@@ -1,9 +1,9 @@
-operacion= {
-	nombre: 'operacion',
+tipoUsuario= {
+	nombre: 'tipoUsuario',
  	modulo: 'seguridad',
 	campo_nombre: 'nombre',
 	nuevo:{
-		titulo: 'Operación',
+		titulo: 'Tipo Usuario',
 		altura: 220,
 		campos:[
 			{

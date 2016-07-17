@@ -1,41 +1,79 @@
-.icon {
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    stroke-width: 0;
-    stroke: currentColor;
-    fill: currentColor;
+button{
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+
+    align-items: center;
+    justify-content: center;
 }
-.icon-search {
-    background-image: url('../imagenes/search.png');
+/*se puede borrar despues*/
+.icon:after {    
+    font-family: 'Material Icons';
+    font-style: initial;
 }
-.icon-guardar-indigo-32 {
-    background-image: url('../imagenes/guardar-azul.png');
+.icon-search:after {
+    content: 'search';
+    color:white;
+    font-size: 24px;
 }
-.icon-cerrar-rojo-32 {
-    background-image: url('../imagenes/close.png');
+.icon-guardar-indigo-32:after {
+    content: 'save';
+    color:  #3F51B5;
+    font-size: 24px;
 }
-.icon-nuevo-azul-claro-32 {
-    background-image: url('../imagenes/nuevo-azul-claro-32.png');
+.icon-cerrar-rojo-32:after {    
+    content: 'clear';
+    color: #f44336;
+    font-size: 24px;
 }
-.icon-operaciones-blanco-32,
-{
-    background-image: url('../imagenes/operaciones-blanco-32.png');
+.icon-nuevo-azul-claro-32:after {
+    content: 'insert_drive_file';
+    color:  #3F51B5;
+    font-size: 24px;
 }
-.icon-operaciones-negro-32 {
-    background-image: url('../imagenes/operaciones-negro-32.png');
+.icon-operaciones-blanco-32:after{
+    content: 'settings';
+    color:  white;
+    font-size: 24px;
 }
-.icon-editar-blanco-32 {
-    background-image: url('../imagenes/editar-blanco-32.png');
+.icon-operaciones-negro-32:after {
+    content: 'settings';
+    color:  #212121;
+    font-size: 24px;
 }
-.icon-editar-negro-32 {
-    background-image: url('../imagenes/editar-negro-32.png');
+.icon-editar-blanco-32:after {
+    content: 'create';
+    color:  white;
+    font-size: 24px;
 }
-.icon-campo-negro-32 {
-    background-image: url('../imagenes/campo-negro-32.png');
+.icon-editar-negro-32:after {
+    content: 'create';
+    color:  #212121;
+    font-size: 24px;
 }
-.icon-campo-blanco-32 {
-    background-image: url('../imagenes/campo-blanco-32.png');
+.icon-campo-negro-32:after {
+    content: 'remove_circle';
+    color:  #212121;
+    font-size: 24px;
+}
+.icon-campo-blanco-32:after {
+    content: 'remove_circle';
+    color:  white;
+    font-size: 24px;
+}
+.icon-modificar-verde:after{
+    content: 'create';
+    color:  #4CAF50;
+    font-size: 24px;
+}
+.icon-eliminar-rojo:after{    
+    content: 'delete';
+    color:  #f44336;
+    font-size: 24px;
 }
 /*                Material Icons Google                  */
 /* Rules for sizing the icon. */

@@ -1,5 +1,6 @@
 campo = {
   nombre: 'campo',
+  modulo: 'seguridad',
   campo_nombre: 'nombre',
   nuevo:{
     titulo: 'Campo',
@@ -27,15 +28,15 @@ campo = {
 					usaToolTip: true
 				}
 			},{
-        tipo : 'campoBusqueda',
-        parametros : {
-          titulo:'Componente Padre',
-          nombre:'padre',
-          requerido:true,
-          peticion: {entidad:'componente',operacion: 'buscar'},
-          cuadro: {nombre: 'listaComponentes',mensaje: 'Cargando Componentes'}
-        }
-      }
+	        	tipo : 'campoBusqueda',
+		        parametros : {
+		          titulo:'Componente Padre',
+		          nombre:'padre',
+		          requerido:true,
+		          peticion: {entidad:'componente',operacion: 'buscar'},
+		          cuadro: {nombre: 'listaComponentes',mensaje: 'Cargando Componentes'}
+		        }
+	      	}
 		]
   },
   modificar:{
