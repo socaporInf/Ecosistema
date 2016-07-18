@@ -1,4 +1,4 @@
-div.campo-rif{
+div.campo-identificacion{
     margin-left: 0px !important;
     float: left;
     overflow: visible;
@@ -14,4 +14,10 @@ div[campo-rif].campo-numero{
 }
 div[campo-rif].campo-final{
   width: 30%;
+}
+div[campo-cedula].combo-letra{
+  width:30%;
+}
+div[campo-cedula].campo-numero{
+  width: 70%;
 }

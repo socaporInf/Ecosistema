@@ -2104,11 +2104,11 @@ var Arquitecto = function(){
 						console.log('dependencia O_CampoBusqueda.js no existe');
 				}
 				break;
-			case 'camporif':
-				if(typeof CampoRif !== 'undefined'){
-					campoNuevo = new CampoRif(campo.parametros);
+			case 'campoidentificacion':
+				if(typeof CampoIdentificacion !== 'undefined'){
+					campoNuevo = new CampoIdentificacion(campo.parametros);
 				}else{
-						console.log('dependencia O_CampoRif.js no existe');
+						console.log('dependencia O_CampoIdentificacion.js no existe');
 				}
 				break;
 		}
