@@ -8,6 +8,7 @@ var CampoIdentificacion = function(atributos){
   this.comboLetra = null;
   this.campoNumero = null;
   this.campoFinal = null;
+  this.nodo = null;
   this.construirNodo = function(){
     var nodo = document.createElement('div');
     nodo.classList.add('campo-identificacion');
@@ -67,6 +68,9 @@ var CampoIdentificacion = function(atributos){
   };
   this.captarRequerido = function(){
     return this.requerido;
+  };
+  this.captarTipo = function(){
+    return this.tipo;
   };
   this.construirNodo();
 };
