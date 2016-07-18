@@ -1,0 +1,190 @@
+/*------------------------Botonera------------------------------------------------*/
+div[botonera]{
+    right: 20px;
+    position: fixed;
+    bottom: 50px;
+    width: 60px;
+    margin-bottom: 25px;
+    overflow: visible;
+    z-index: 10;
+}
+div[botonera] button{
+    transition: all 0.2s ease-in-out;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 60px;
+    z-index: 10;
+    margin-left: 10px;
+    background-repeat: no-repeat;
+    background-position: 12px;
+    float:left;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    overflow: visible;
+}
+div[botonera] button:after{
+    font-family: 'Material Icons';
+    color:white;
+    font-size: 24px;
+    font-style: initial;
+}
+div[botonera] button:not([btnAbrir]):hover{
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
+}
+div[botonera] button:not([btnAbrir]):before{
+  transition:inherit;
+  margin-left: 0px;
+  opacity: 0;
+  content: '';
+}
+div[botonera] button:not([btnAbrir]):hover:before{
+  opacity: 1;
+}
+div[botonera] button:not([btnAbrir]):hover:after{
+    margin-left: 10px;
+    margin-right: 35px;
+}
+div[botonera] button:hover:before{
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
+}
+div[botonera] button[btnNuevo]{
+    background-color: #4FC3F7;
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnNuevo]:after{
+    content: 'insert_drive_file';
+}
+div[botonera] button[btnNuevo]:hover:before{
+    content: 'Nuevo';
+    color:white;
+    background-color: inherit;
+    margin-left:-25px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnBuscar]{
+    background-color: #03A9F4;
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnBuscar]:after{
+    content: 'search';
+}
+div[botonera] button[btnBuscar]:hover:before{
+    content: 'Buscar';
+    color:white;
+    background-color: inherit;
+    margin-left:-25px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnModificar]{
+    background-color: #4CAF50;
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnModificar]:after{
+    content: 'mode_edit';
+}
+div[botonera] button[btnModificar]:hover:before{
+    content: 'Modificar';
+    color:white;
+    background-color: inherit;
+    margin-left:-25px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnEliminar]{
+    background-color:#e57373;
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnEliminar]:after{
+    content: 'delete';
+}
+div[botonera] button[btnEliminar]:hover:before{
+    content: 'Eliminar';
+    color:white;
+    background-color: #e57373;
+    margin-left:-25px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnDetalle]{
+    background-color: #FF5722;
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnDetalle]:after{
+    content: 'list';
+}
+div[botonera] button[btnDetalle]:hover:before{
+    content: 'detalle';
+    color:white;
+    background-color: #FF5722;
+    margin-left:-25px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnGuardar]{
+    background-color: #3F51B5;  
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnGuardar]:after{
+    content: 'save';
+}
+div[botonera] button[btnGuardar]:hover:before{
+    content: 'Guardar';
+    color:white;
+    background-color: inherit;
+    margin-left:-25px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnCancelar]{
+    background-color: #f44336;  
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnCancelar]:after{
+    content: 'clear';
+}
+div[botonera] button[btnCancelar]:hover:before{
+    content: 'Cancelar';
+    color:white;
+    background-color: #f44336;
+    margin-left:-25px;
+    border-radius:5px; 
+    padding:5px;
+}
+div[botonera] button[btnAbrir]{
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 60px;
+    background-color: #4CAF50;
+    background-position: 14px;
+    z-index: 999;
+    margin-left: 0px;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+    position:absolute;
+}
+div[botonera] button[btnAbrir]:after{
+    content: 'add';
+    font-size: 48px;
+}
+.apertura{
+  -webkit-transform: rotate(225deg); /* Chrome, Safari, Opera */
+  transform: rotate(225deg);
+  background-color: #f44336 !important;
+  box-shadow: 0 -19px 38px rgba(0,0,0,0.30), 0 -15px 12px rgba(0,0,0,0.22) !important;
+}

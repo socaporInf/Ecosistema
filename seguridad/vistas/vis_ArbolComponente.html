@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<!-- Estilos externos //google -->
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- Estilos locales -->
+	<link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/cuerpo.css">
+	<link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/menu.css">
+	<link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/formulario.css">
+	<link rel="stylesheet" type="text/css" href="css/asignarPrivilegios.css">
+</head>
+<body>
+	<div contenedor></div>
+</body>
+<!-- scripts que construyen la interfaz y su funcionamiento -->
+<script type="text/javascript" src='../../nucleo/vistas/js/motorRegistros.js'></script>
+<script type="text/javascript" src='../../nucleo/vistas/js/constructor.js'></script>
+<script type="text/javascript" src='js/patronesPrivilegios.js'></script>
+<script type="text/javascript" src='js/arbolComponente.js'></script>
+<script type="text/javascript" src='js/arbolRecursivo.js'></script>
+<!-- scripts PLUGINS-->
+<script type="text/javascript" src='../../nucleo/vistas/js/O_CampoBusqueda.js'></script>
+<script type="text/javascript" src='../../nucleo/vistas/js/O_lista.js'></script>
+<!-- scripts formularios auxiliares -->
+<script type="text/javascript" src='js/constructores/componente.js'></script>
+<script type="text/javascript" src='js/constructores/campo.js'></script>
+<script type="text/javascript" src='js/constructores/operacion.js'></script>
+
+
+<script type="text/javascript">
+/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
+	//arranca la sesion
+	var sesion = new Sesion();
+
+	//arranca el motor de registros que se comunica con BD
+	var torque = new Motor();
+
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.agregarConstructor(componente);
+	UI.agregarConstructor(campo);
+	UI.agregarConstructor(operacion);
+	UI.configure({
+		botonera :{
+			botones:['nuevo','abrir']
+		}
+	});
+
+	sesion.obtenerSesion();
+/*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+construirUI();
+
+</script>

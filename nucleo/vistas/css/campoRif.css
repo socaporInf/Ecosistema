@@ -1,0 +1,17 @@
+div.campo-rif{
+    margin-left: 0px !important;
+    float: left;
+    overflow: visible;
+    position: relative;
+    z-index: 4;
+    width: 32%;
+}
+div[campo-rif].combo-letra{
+  width:20%;
+}
+div[campo-rif].campo-numero{
+  width: 50%;
+}
+div[campo-rif].campo-final{
+  width: 30%;
+}
