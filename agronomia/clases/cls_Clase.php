@@ -141,9 +141,6 @@ class cls_Clase extends cls_Conexion{
 	private function f_Modificar(){
 		$lb_Hecho=false;
 		$contCampos = 0;
-		if(isset($this->aa_Atributos['nombre'])){
-			$this->aa_Atributos['nom'] = $this->aa_Atributos['nombre'];
-		}
 		$ls_Sql="UPDATE agronomia.vclase SET ";
 
 		//arma la cadena sql en base a los campos pasados en la peticion

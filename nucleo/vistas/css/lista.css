@@ -32,7 +32,7 @@ div[lista] section[contenedorCarga]{
 div[lista] section.vacio{
   text-align: center;
   padding-top: 60px;
-  color:#212121; 
+  color:#212121;
 }
 div[lista] section[busqueda] div[listBuscar]{
   transition:all 0.3s ease-in-out;
@@ -60,13 +60,28 @@ div[lista] section[busqueda] input[campBusq]{
     height: 20px;
     margin-left: 10px;
 }
+
+div[lista] section button:after {
+    font-family: 'Material Icons';
+    font-style: initial;
+}
+div[lista] section[busqueda] button[btnBusq]:after {
+    content: 'search';
+    font-size: 48px;
+    color:white;
+}
+
+div[lista] section[busqueda] button[cerrarBusq]:after {
+    content: 'clear';
+    color: #f44336;
+    font-size:24px;
+}
 div[lista] section[busqueda] button[cerrarBusq]{
   transition:inherit;
   border:none;
   border-radius: 100px;
   width: 32px;
   height:32px;
-  background-image: url('../imagenes/close.png');
   background-position: 4px;
   float: right;
   margin-top: -34px;
@@ -78,11 +93,9 @@ div[lista] section[busqueda] button[cerrarBusq]:hover{
 }
 div[lista] section[busqueda] button[btnBusq]{
     border: none;
-    /* border-radius: 100px; */
     width: 50px;
     height: 50px;
     background-color: transparent;
-    background-image: url('../imagenes/search_32.png');
     background-repeat: no-repeat;
     background-position: 8px;
     float: right;

@@ -17,6 +17,7 @@ mensaje = {
           titulo:'Tipo de Mensaje',
           nombre:'tipo',
           requerido:true,
+          eslabon:'area',
           peticion: {entidad:'tablaVirtual' ,operacion: 'buscarRegistrosPorNombreTabla', nombre_tabla:'TIPO_MENSAJE_SISTEMA'},
           cuadro: {nombre: 'listaMensajeSistema',mensaje: 'Cargando Tipos de Mensaje'}
         }

@@ -129,7 +129,11 @@ class cls_Tabla_Virtual extends cls_Conexion{
 	private function f_ListarRegistros(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM global.vregistro_virtual WHERE codigo_tabla='".$this->aa_Atributos['codigo']."'";
+		if(isset($this->aa_Atributos['nombre_tabla'])){
+			$ls_Sql="SELECT * FROM global.vregistro_virtual WHERE nombre_tabla='".$this->aa_Atributos['nombre_tabla']."'";
+		}else{
+			$ls_Sql="SELECT * FROM global.vregistro_virtual WHERE codigo_tabla='".$this->aa_Atributos['codigo']."'";
+		}
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){

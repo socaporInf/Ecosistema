@@ -134,7 +134,7 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 		btnNuevo.onclick = function(){
 			UI.elementos.modalWindow.eliminarUltimaCapa();
 			setTimeout(crearventananuevo,1000);
-		}
+		};
 
 	}else{
 		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
@@ -160,7 +160,7 @@ function crearventananuevo(){
 	var btnCerrar = ventanaNuevo.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32');
 	btnCerrar.onclick = function(){
 		UI.elementos.modalWindow.eliminarUltimaCapa();
-	}
+	};
 	btnGuardar.onclick = function(){
 		var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
 		peticion ={
@@ -188,10 +188,10 @@ function crearventananuevo(){
 			}else{
 				UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 			}
-		}
-		
+		};
+
 		torque.manejarOperacion(peticion,cuadro,guardarOperaciones);
-	}
+	};
 }
 //------------------------------------ Campos -----------------------------------
 var buscarCampos = function camposHoja(nodo){
@@ -229,7 +229,7 @@ var buscarCampos = function camposHoja(nodo){
 var formCampoNuevo = function(capaContenido,nodo){
 	capaContenido.convertirEnFormulario({
 		cabecera:{
-			html: 'Nuevo '+UI.buscarConstructor('campo').nuevo.titulo+' para '+nodo.getAttribute('titulo')
+			html: 'Nuevo '+UI.buscarConstructor('campo').nuevo.titulo+' Restringido para '+nodo.getAttribute('titulo')
 		},
 		cuerpo:{
 			campos: [UI.buscarConstructor('campo').nuevo.campos[0],UI.buscarConstructor('campo').nuevo.campos[1]],
@@ -359,7 +359,7 @@ function enviarCambios(cambios,contenedor){
 	//armo la peticion
 	var peticion = {
 		entidad: 'componente',
-		modulo: 'seguirdad',
+		modulo: 'seguridad',
 		operacion: 'modificar'
 	};
 	for (var i = 0; i < cambios.length; i++) {

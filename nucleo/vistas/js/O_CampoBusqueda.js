@@ -45,11 +45,14 @@ var CampoBusqueda = function(atributos){
   this.construirNodo = function(){
     var nodo = document.createElement('div');
     nodo.setAttribute('campoBusqueda','');
+    if(this.atributos.eslabon === 'area'){
+      nodo.setAttribute('area','');
+    }
     this.comboBox = new ComboBox({
       titulo:this.atributos.titulo,
       nombre:this.atributos.nombre,
       opciones: [],
-      eslabon:'busqueda',
+      eslabon:this.atributos.eslabon,
       deshabilitado: true
     });
     nodo.appendChild(this.comboBox.nodo);
