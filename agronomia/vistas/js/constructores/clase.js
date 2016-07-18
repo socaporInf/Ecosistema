@@ -10,10 +10,10 @@ clase= {
 				tipo: 'campoDeTexto',
 				parametros:{
 					nombre: 'nombre',
-					requerido:true, 
-					titulo: 'Nombre', 
-					tipo:'simple', 
-					eslabon: 'simple', 
+					requerido:true,
+					titulo: 'Nombre',
+					tipo:'simple',
+					eslabon: 'simple',
 					usaToolTip: true
 				}
 			},
@@ -21,10 +21,10 @@ clase= {
 				tipo: 'campoDeTexto',
 				parametros:{
 					nombre: 'descripcion',
-					requerido:false, 
-					titulo: 'Descripción', 
-					tipo:'simple', 
-					eslabon: 'area', 
+					requerido:false,
+					titulo: 'Descripción',
+					tipo:'simple',
+					eslabon: 'area',
 					usaToolTip: true
 				}
 			}
@@ -37,12 +37,11 @@ clase= {
 				tipo: 'campoEdicion',
 				parametros:{
 					nombre: 'descripcion',
-					titulo: 'Descripción', 
-					tipo:'simple', 
+					titulo: 'Descripción',
+					tipo:'simple',
 					eslabon: 'area'
 				}
 			}
 		]
-
 	}
-}
+};

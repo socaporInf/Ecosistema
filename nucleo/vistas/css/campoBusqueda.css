@@ -1,17 +1,21 @@
 div[campoBusqueda]{
-  width: 100%;
+  width: 32%;
   position: relative;
   padding-top: 5px;
   margin-left: 0px !important;
+  float: left;
+}
+div[campoBusqueda][area]{
+  width: 100%;
 }
 div[campoBusqueda] div[formelements]{
-  width: calc(100% - 25px);
+  width: calc(100%);
 }
 div[campoBusqueda] button{
   position: absolute;
-  margin-left: calc(100% - 65px);
+  margin-left: calc(100% - 35px);
   z-index: 10;
-  margin-top: -5px;
+  margin-top: 3px;
 }
 div[capa='contenido'] div[lista] section[busqueda]{
   width: 100%;
@@ -19,8 +23,8 @@ div[capa='contenido'] div[lista] section[busqueda]{
 button.mat-but-transp{
   transition: all 0.2s ease-in-out;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border-radius: 60px;
     z-index: 10;
     margin-left: 10px;
@@ -28,4 +32,7 @@ button.mat-but-transp{
     background-position: 12px;
     float: left;
     overflow: visible;
+}
+div[campoBusqueda] select{
+  padding: 6px 9px 7px 9px;
 }

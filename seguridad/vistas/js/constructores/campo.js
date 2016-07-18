@@ -28,15 +28,16 @@ campo = {
 					usaToolTip: true
 				}
 			},{
-	        	tipo : 'campoBusqueda',
-		        parametros : {
-		          titulo:'Componente Padre',
-		          nombre:'padre',
-		          requerido:true,
-		          peticion: {entidad:'componente',operacion: 'buscar'},
-		          cuadro: {nombre: 'listaComponentes',mensaje: 'Cargando Componentes'}
-		        }
-	      	}
+      	tipo : 'campoBusqueda',
+        parametros : {
+          titulo:'Componente Padre',
+          nombre:'padre',
+          requerido:true,
+					eslabon:'area',
+          peticion: {entidad:'componente',operacion: 'buscar'},
+          cuadro: {nombre: 'listaComponentes',mensaje: 'Cargando Componentes'}
+        }
+    	}
 		]
   },
   modificar:{

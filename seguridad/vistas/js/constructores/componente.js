@@ -21,7 +21,8 @@ componente = {
           titulo:'Componente Padre',
           nombre:'padre',
           requerido:true,
-          peticion: {entidad:'componente',operacion: 'buscar'},
+          eslabon:'area',
+          peticion: {modulo:'seguridad',entidad:'componente',operacion: 'buscar'},
           cuadro: {nombre: 'listaComponentes',mensaje: 'Cargando Componentes'}
         }
       },{
@@ -30,7 +31,6 @@ componente = {
           nombre:'tipoComponente',
           titulo:'Tipos de Componente',
           eslabon : 'area',
-          requerido:true,
           opciones: [
             {codigo:'S',nombre:'Sistemas'},
             {codigo:'F',nombre:'Formulario'},

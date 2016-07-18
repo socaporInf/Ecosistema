@@ -1407,9 +1407,10 @@ var modalWindow = function(){
 			};
 			this.agregarTipo = function(tipo){
 				this.nodo.classList.add(tipo);
+				var icono;
 				switch(tipo){
 					case 'error':
-						var icono = UI.crearIcono({
+						icono = UI.crearIcono({
 							nombre:'error',
 							tamano: 48,
 							color: 'white',
@@ -1419,7 +1420,7 @@ var modalWindow = function(){
 						break;
 
 					case 'advertencia':
-						var icono = UI.crearIcono({
+						icono = UI.crearIcono({
 							nombre:'warning',
 							tamano: 48,
 							color: 'white',
@@ -1429,7 +1430,7 @@ var modalWindow = function(){
 						break;
 
 					case 'informacion':
-						var icono = UI.crearIcono({
+						icono = UI.crearIcono({
 							nombre:'info_outline',
 							tamano: 48,
 							color: 'white',
@@ -1442,7 +1443,7 @@ var modalWindow = function(){
 						console.log('no existe icono para'+tipo);
 						break;
 				}
-			}
+			};
 			this.construirNodo();
 		};
 
@@ -1640,7 +1641,7 @@ var modalWindow = function(){
 				}
 				this.partes.cabecera.nodo.class = '';
 				this.partes.cabecera.agregarTipo(mensaje.nombre_tipo.toLowerCase());
-				
+
 				//this.partes.cabecera.nodo.textContent = mensaje.titulo;
 			}
 
@@ -1996,7 +1997,7 @@ var Arquitecto = function(){
 
 	this.crearMensaje = function(mensaje){
 		var capa = this.crearVentanaModal({cuerpo: 'mesaje'});
-		capa.convertirEnMensaje(mensaje)
+		capa.convertirEnMensaje(mensaje);
 	};
 //------------------------- Manejo Cuadros de carga -------------------------------
 	this.agregarCuadroCarga = function(cuadroCarga){
@@ -2103,6 +2104,13 @@ var Arquitecto = function(){
 						console.log('dependencia O_CampoBusqueda.js no existe');
 				}
 				break;
+			case 'camporif':
+				if(typeof CampoRif !== 'undefined'){
+					campoNuevo = new CampoRif(campo.parametros);
+				}else{
+						console.log('dependencia O_CampoRif.js no existe');
+				}
+				break;
 		}
 		contenedor.appendChild(campoNuevo.nodo);
 		return campoNuevo;
@@ -2204,7 +2212,7 @@ var Arquitecto = function(){
 				case 48:
 					icono.classList.add('md-48');
 					break;
-			} 
+			}
 		}
 		if(atributos.color){
 			icono.classList.add(atributos.color);
@@ -2220,7 +2228,7 @@ var Arquitecto = function(){
 			icono.classList.add('md-inactive');
 		}
 		return icono;
-	}
+	};
 };
 /*---------------Objetos de interfaz---------------------------------------------*/
 var Ventana = function(atributos){
@@ -2541,14 +2549,16 @@ var ComboBox = function(info){
 		}
 
 		nodo.appendChild(select);
-		this.nodo=nodo;
 
-		//creo la primera opcion
-		var opcion = {
-			codigo : '-',
-			nombre : 'Elija un '+this.data.titulo
-		};
-		this.agregarOpcion(opcion);
+		this.nodo=nodo;
+		if(this.data.titulo){
+			//creo la primera opcion
+			var opcion = {
+				codigo : '-',
+				nombre : 'Elija un '+this.data.titulo
+			};
+			this.agregarOpcion(opcion);
+		}
 
 		//genero y asigno el resto de las opciones
 		this.agregarOpciones(this.data.opciones);
@@ -2617,10 +2627,11 @@ var CampoDeTexto = function(info){
 		CampoDeTexto.classList.toggle('group');
 		CampoDeTexto.setAttribute(this.data.eslabon,'');
 		var html='';
+		max=(info.max)?"maxlength="+info.max:'';
 		if(this.data.tipo=='simple'){
-			html+='<input type="text" name="'+this.data.nombre+'" value="" required>';
+			html+='<input type="text" name="'+this.data.nombre+'" value="" '+max+' required>';
 		}else if(this.data.tipo=='password'){
-			html+='<input type="password" name="'+this.data.nombre+'" value="" required>';
+			html+='<input type="password" name="'+this.data.nombre+'" '+max+' value="" required>';
 		}else if(this.data.tipo=='area'){
 			html+='<textarea name="'+this.data.nombre+'" required></textarea>';
 		}else{
