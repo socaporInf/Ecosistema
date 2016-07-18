@@ -7,11 +7,12 @@ productor= {
 		altura: 220,
 		campos:[
 			{
-				tipo: 'campoRif',
+				tipo: 'campoIdentificacion',
 				parametros:{
 					nombre: 'rif',
 					requerido:true,
-					titulo: 'Rif'
+					titulo: 'Cedula',
+					tipo: 'Cedula'
 				}
 			},{
 				tipo: 'campoDeTexto',
