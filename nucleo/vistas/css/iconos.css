@@ -1,0 +1,154 @@
+button{
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+
+    align-items: center;
+    justify-content: center;
+}
+/*se puede borrar despues*/
+.icon:after {    
+    font-family: 'Material Icons';
+    font-style: initial;
+}
+.icon-search:after {
+    content: 'search';
+    color:white;
+    font-size: 24px;
+}
+.icon-guardar-indigo-32:after {
+    content: 'save';
+    color:  #3F51B5;
+    font-size: 24px;
+}
+.icon-cerrar-rojo-32:after {    
+    content: 'clear';
+    color: #f44336;
+    font-size: 24px;
+}
+.icon-nuevo-azul-claro-32:after {
+    content: 'insert_drive_file';
+    color:  #3F51B5;
+    font-size: 24px;
+}
+.icon-operaciones-blanco-32:after{
+    content: 'settings';
+    color:  white;
+    font-size: 24px;
+}
+.icon-operaciones-negro-32:after {
+    content: 'settings';
+    color:  #212121;
+    font-size: 24px;
+}
+.icon-editar-blanco-32:after {
+    content: 'create';
+    color:  white;
+    font-size: 24px;
+}
+.icon-editar-negro-32:after {
+    content: 'create';
+    color:  #212121;
+    font-size: 24px;
+}
+.icon-campo-negro-32:after {
+    content: 'remove_circle';
+    color:  #212121;
+    font-size: 24px;
+}
+.icon-campo-blanco-32:after {
+    content: 'remove_circle';
+    color:  white;
+    font-size: 24px;
+}
+.icon-modificar-verde:after{
+    content: 'create';
+    color:  #4CAF50;
+    font-size: 24px;
+}
+.icon-eliminar-rojo:after{    
+    content: 'delete';
+    color:  #f44336;
+    font-size: 24px;
+}
+/*                Material Icons Google                  */
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+/* Rules for using icons as black on a light background. */
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+/* Rules for using icons as white on a dark background. */
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+
+/* colores iconos */
+.blue500{
+    color: #2196F3 ;
+}
+.red500{
+    color: #f44336 ;
+}
+.pink500{
+    color: #E91E63 ;
+}
+.purple500{
+    color: #9C27B0 ;
+}
+.deeppurple500{
+    color: #673AB7 ;
+}
+.indigo500{
+    color: #3F51B5 ;
+}
+.lightblue500{
+    color: #03A9F4 ;
+}
+.cyan500{
+    color: #00BCD4 ;
+}
+.teal500{
+    color: #009688 ;
+}
+.green500{
+    color: #4CAF50 ;
+}
+.lightgreen500{
+    color: #8BC34A ;
+}
+.lime500{
+    color: #CDDC39 ;
+}
+.yellow500{
+    color: #FFEB3B ;
+}
+.amber500{
+    color: #FFC107 ;
+}
+.orange500{
+    color: #FF9800 ;
+}
+.deeporange500{
+    color: #FF5722 ;
+}
+.brown500{
+    color: #795548 ;
+}
+.gray500{
+    color: #9E9E9E ;
+}
+.bluegrey500{
+    color: #607D8B ;
+}
+.white{
+    color: #fff ;
+}

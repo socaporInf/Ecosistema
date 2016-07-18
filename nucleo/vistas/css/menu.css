@@ -1,0 +1,133 @@
+div[capaMenu]{
+    position: relative;
+	height: 100%;
+    width: 350px;
+    top: 0;
+    left: 0;
+    margin-top: 48px;
+    transition: all 0.5s ease-in-out;
+    position: fixed;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    margin-left: -350px;
+    z-index: 999;
+    background-color: white;
+}
+div[capaMenu] section[titulo],div[capaMenu] section[pie]{
+    width: 100%;
+    height: 55px;
+    position: absolute;
+    float: left;
+    background-color: white;
+    background-color: #7b7b7b;
+}
+div[capaMenu] section[titulo]{
+    color: white;
+    padding-left:5px; 
+    font-size: 22px;
+}
+div[capaMenu] section[pie]{
+    bottom:48px; 
+}
+div[SubCapaMenu]{
+    float:left;
+    transition:all 0.2s linear;
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 152px);
+    overflow-y:visible;
+    overflow-x:hidden; 
+    opacity: 0; 
+    margin-top: 56px;
+}
+div[SubCapaMenu].capaActiva{
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    opacity: 1 !important;
+}
+div[SubCapaMenu].siguiente{
+    margin-left: 100% !important;
+    opacity: 0 !important;
+}
+div[SubCapaMenu].anterior{
+    margin-left: -100% !important;
+    opacity: 0 !important;
+}
+div[SubCapaMenu] section{
+    width: calc(100% - 20px);
+    background-color: white;
+    height: 30px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    padding: 10px 8px 10px 10px;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 1px;
+    margin-left: 1px;
+    color: #4CAF50;
+    background-repeat: no-repeat;
+}
+div[SubCapaMenu] section[seleccionado]{
+    margin-left: 10px !important;
+    background-color: #a5d6a7;
+    color: white;
+}
+div[SubCapaMenu] section[enlace^='>']:after{
+    content: 'chevron_right';
+    font-family: 'Material Icons';
+    font-size: 24px;
+    font-style: initial;
+    left: calc(100% - 24px);
+    position: absolute;
+}
+div[SubCapaMenu] section[enlace^='>'][seleccionado]:after{
+    color:white;
+}
+div[SubCapaMenu] section[enlace^='<']:after{
+    content: 'chevron_left';
+    font-family: 'Material Icons';
+    font-size: 24px;
+    font-style: initial;    
+    left: calc(100% - 24px);
+    position: absolute;
+}
+div[capamenu] section[pie] article{
+    width: 48px;
+    height: 48px;
+    float: right;
+    border-left: 1px solid white;
+    margin: 0px 1px;
+    background-repeat: no-repeat;
+    transition: all 0.3s linear;
+}
+div[capamenu] section[pie] article:hover{
+    background-color: #E0E0E0;
+}
+div[capamenu] section[pie] article i:after{
+    font-family: 'Material Icons';
+    color:white;
+    font-size: 48px;
+    font-style: initial;
+}
+div[capamenu] section[pie] article[off] i:after{
+    content: 'power_settings_new';
+}
+div[capamenu] section[pie] article[contact] i:after{
+    content: 'headset_mic';
+}
+div[capamenu] section[pie] article[seguridad] i:after{
+    content: 'security';
+}
+div[capamenu] section[pie] article[books] i:after{
+    content: 'books';
+    width: 54px
+}
+div[capamenu] section[pie] article:hover i:after{
+    color:#7b7b7b;
+}
+.retroceso:after{
+    content: 'chevron_left';
+    font-family: 'Material Icons';
+    font-size: 30px;
+    font-style: initial;    
+    left: calc(100% - 40px);
+    position: absolute;
+    top:10px;
+}

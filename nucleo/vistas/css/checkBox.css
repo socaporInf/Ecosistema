@@ -1,0 +1,91 @@
+div[o-checkbox]{
+  width: 32%;
+  height: 40px;
+  float: left;
+}
+div[o-checkbox][area]{
+  width: 100%;
+}
+div[o-checkbox].campo{
+  margin-bottom: 45px;
+}
+div[o-checkbox].opciones{
+    margin-bottom: 0px;
+}
+/*------------------------- Titulo --------------------------------------------*/
+div[o-checkbox] div[titulo]{
+  margin-top: 10px;
+  margin-left: 25px;
+}
+/*------------------------- Campo ---------------------------------------------*/
+div[checkbox]{
+  margin-top: 8px;
+  width: 24px;
+  height: 24px;
+  float: left;
+  position: relative;
+}
+div[checkbox] div[box]{
+  transition: all 0.3s linear;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+div[checkbox] div[box]:after,
+div[checkbox] div[check]:after{  
+    font-family: 'Material Icons';
+    font-size: 24px;
+    font-style: initial;
+}
+div[checkbox] div[check]{
+  transition: all 0.3s linear;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  position: absolute;
+  opacity: 0;
+}
+div[checkbox] div[check]:after{
+  content: 'check';
+  color: #4CAF50;
+  position: absolute;
+  top: 6px;
+  left: 3px;
+}
+div[checkbox] div[box]:after{
+  transition: inherit;
+  content: 'check_box_outline_blank';
+  color: #212121;
+}
+/*--------------------- Fin Campo ---------------------------------------------*/
+/*--------------------- Transiciones ------------------------------------------*/
+div[checkbox] div[check].girar{
+  transform: rotate(225deg);
+}
+div[checkbox] div[check].aparecer{
+  transform: rotate(225deg)  scale(0);
+}
+div[checkbox].marcado div[check].girar{
+  transform: rotate(0deg);
+  background-position: center;
+  opacity: 1;
+}
+div[checkbox].marcado div[box].girar{
+  opacity: 0;
+  transform: rotate(-225deg);
+}
+div[checkbox].marcado div[check].girar:after{
+  transition: inherit;
+  top: 0px;
+  left: 0px;
+}
+div[checkbox].marcado div[check].aparecer{
+  transform: rotate(0deg) scale(1);
+  background-position: center;
+  opacity: 1;
+}
+div[checkbox].marcado div[box].aparecer{
+  opacity: 0;
+}

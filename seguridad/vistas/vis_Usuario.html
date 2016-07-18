@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<!-- Estilos externos //google -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Estilos locales -->
+    <link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/cuerpo.css">
+    <link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/menu.css">
+    <link rel="stylesheet" type="text/css" href="../../nucleo/vistas/css/formulario.css">
+</head>
+<body>
+	<div contenedor></div>
+</body>
+<!-- scripts que construyen la interfaz y su funcionamiento -->
+<script type="text/javascript" src='../../nucleo/vistas/js/motorRegistros.js'></script>
+<script type="text/javascript" src='../../nucleo/vistas/js/constructor.js'></script>>
+
+<script type="text/javascript">
+/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
+	//arranca la sesion
+	var sesion = new Sesion();
+
+	//arranca el motor de registros que se comunica con BD
+	var torque = new Motor('seguridad','usuario');
+
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.configure({
+		formulario:{
+			entidad: torque.entidadActiva
+		},
+		botonera:{
+			botones:['buscar','nuevo','abrir']
+		}
+	});
+
+	sesion.obtenerSesion();
+
+	var tipos;
+
+	torque.buscarRegistros('tipoUsuario',function(respuesta){
+		tipos = respuesta.registros;
+	})
+
+/*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+
+
+	//------------------------------------------Funciones Propias de la UI de este formulario---------------------------
+	//declaro el objeto donde se encuentra la UI del formulario
+	var objForm=UI.elementos.formulario.ventanaForm;
+
+	objForm.reconstruirUI=function(){
+		var tiempo = (this.estado=='agregado')?600:0;
+		var html='';
+		if(this.tipo=='nuevo'){
+			this.registroId='';
+			UI.elementos.formulario.ventanaList.controlLista();
+			this.nodo.style.height='0px';
+			setTimeout(function(){
+				//guardo el objeto venana formulario para mejor entendimiento y acceso rapido
+				var capaForm=UI.elementos.formulario.ventanaForm;
+				//inicializo los datos del titulo del formulario y la altura del mismo
+				var titulo = 'Usuario del Sistema';
+				var altura = 400;
+				capaForm.crearEstructuraBasicaNuevo(titulo,altura);
+
+				console.log(tipos);
+
+				//creo los campos que va a usar el formulario
+				var campos = [
+					{
+						tipo : 'campoDeTexto',
+						parametros : {titulo:'Nombre',nombre:'codigo',tipo:'simple',eslabon:'simple',usaToolTip:true}
+					},{
+						tipo : 'campoDeTexto',
+						parametros : {titulo:'Clave',nombre:'contrasena',tipo:'password',eslabon:'simple',usaToolTip:false}
+					},{
+						tipo : 'saltoDeLinea'
+					},{
+						tipo: 'comboBox',
+						parametros : {
+							nombre:'tipoUsuario',
+							titulo:'Tipos de Usuario',
+							eslabon : 'area',
+							opciones: tipos
+						}
+					},{
+						tipo : 'saltoDeLinea'
+					},{
+						tipo : 'campoDeTexto',
+						parametros : {titulo:'Cedula',nombre:'cedula',tipo:'simple',eslabon:'simple',usaToolTip:true}
+					},{
+						tipo : 'campoDeTexto',
+						parametros : {titulo:'Correo',nombre:'correo',tipo:'simple',eslabon:'simple',usaToolTip:true}
+					},{
+						tipo : 'saltoDeLinea'
+					},{
+						tipo : 'Radio',
+						parametros : {
+							nombre : 'estado',
+							opciones : [
+								{valor:'A',nombre:'Activo'},
+								{valor:'I',nombre:'Inactivo'}
+							]
+						}
+					}
+				]
+				//agrego los campos
+				UI.elementos.formulario.ventanaForm.agregarCampos(campos);
+			},tiempo);
+
+			//funcionamiento botones
+			UI.elementos.botonera.agregarBoton('guardar');
+			UI.elementos.botonera.quitarBoton('eliminar');
+
+		}else if(this.tipo='modificar'){
+
+			//funcinamiento botones
+			UI.elementos.botonera.agregarBoton('eliminar');
+			UI.elementos.botonera.quitarBoton('guardar');
+
+			this.nodo.style.height = '0px';
+
+			setTimeout(function(){
+				var nodo=UI.elementos.formulario.ventanaForm.nodo;
+				nodo.style.height='300px';
+				nodo.style.borderRadius='0px';
+				//------------Cuadro Carga-------------------------------
+				var infoCuadro = {
+					nombre: 'buscando',
+					mensaje:'Buscando'
+				}
+				nodo.innerHTML='';
+				var cuadroDeCarga = UI.crearCuadroDeCarga(infoCuadro,nodo);
+				cuadroDeCarga.style.marginTop = '80px';
+				//--------------------------------------------------------
+				var info={
+					codigo:UI.elementos.formulario.ventanaForm.registroId,
+					entidad:torque.entidadActiva,
+					operacion:'buscarRegistro'
+				}
+				torque.Busqueda(info,function(respuesta){
+					//guardo de forma local los datos para facil acceso
+					var data = respuesta.registros;
+					/*Actualizo en el objeto formulario la informacion recibida de manera que
+					si en un futuro cercano necesito consultar no debo salir del cliente para lo mismo*/
+					UI.elementos.formulario.ventanaForm.registroAct=data;
+					//guardo el objeto ventana formulario para mejor entendimiento y acceso rapido
+					var formulario = UI.elementos.formulario.ventanaForm;
+					//inicializo los datos del titulo del formulario y la altura del mismo
+					var titulo = {
+						nombre:'Nombre',
+						valor:data.nombre
+					}
+					var altura = 215;
+					//monto la estructura basica sobre la cual se montan los campos a agregar
+					formulario.crearEstructuraBasicaModificar(titulo,altura);
+					//inicializo el arreglo con los campos a agregar
+					var campos = [
+						{
+							tipo : 'campoEdicion',
+							parametros : {titulo:'Cedula',nombre:'cedula',valor:data.cedula}
+						},{
+							tipo : 'campoEdicion',
+							parametros : {titulo:'Correo',nombre:'correo',valor:data.correo}
+						}
+					]
+					//agrego los campos
+					formulario.agregarCampos(campos);
+					//agrego sector de operaciones adicionales
+					formulario.agregarSectorOperaciones();
+					//agrego los botones
+					let htmlOp = '<button class="mat-text-but" type="button" rec>Reactivar clave</button>\
+								<button class="mat-text-but" type="button" act>Activar/desactivar</button>';
+					formulario.nodo.querySelector('section[contOp]').innerHTML += htmlOp;
+					//funcionamiento botones
+					let btnRec = formulario.nodo.querySelector('button[rec].mat-text-but');
+					let btnAct = formulario.nodo.querySelector('button[act].mat-text-but');
+
+					btnAct.onclick = clickAct;
+					btnRec.onclick = clickRec;
+
+				});
+			},tiempo);
+		}
+	};
+	objForm.agregarFuncionamiento = function(){
+		var nodo=this.nodo;
+		var lista=nodo.getElementsByTagName('article');
+		for(var x=0;x<lista.length;x++){
+			lista[x].style.cursor='pointer';
+			if(lista[x].getAttribute('update')!==null){
+				lista[x].onclick=this.edicion;
+			}
+		}
+		lista = this.nodo.getElementsByTagName('input');
+		for(var x=0; x<lista.length;x++){
+			if(lista[x].type=='text'){
+				lista[x].parentNode.onmouseover=UI.elementos.formulario.abrirtooltipInput;
+				lista[x].parentNode.onmouseout=UI.elementos.formulario.cerrartooltipInput;
+			}
+		}
+	};
+
+function clickAct(){
+	//---------------Creo la ventana modal-------------
+	let ventana = {
+		cabecera : 'Cambio Estado',
+		cuerpo : '<label>Estados Disponibles</label><div clear></div>',
+		pie: '<section modalButtons>\
+				<button type="button" cancelar id="modalButtonCancelar"></button>\
+				<button type="button" aceptar  id="modalButtonAceptar"></button>\
+			</section>'
+	};
+	let capaEnUso = UI.crearVentanaModal(ventana);
+	//------------Creo el comboBox---------------------
+	let Campo = {
+		tipo : 'comboBox',
+		parametros : {
+			titulo:'estado',
+			nombre:'estado',
+			eslabon:'area',
+			id:'Estados',
+			opciones:[
+				{codigo:'A',nombre:'ACTIVO'},
+				{codigo:'I',nombre:'INACTIVO'}
+			]
+		}
+	}
+	//----------Asigno el combo a la ventana------------
+	capaEnUso.partes.cuerpo.nodo.style.height='250px';
+	capaEnUso.partes.cuerpo.agregarCampo(Campo);
+
+	//agrego funcionamiento a los botones
+	var btnCancelar = document.getElementById("modalButtonCancelar");
+	var btnAceptar 	= document.getElementById("modalButtonAceptar");
+
+	btnCancelar.onclick=function cerrar(){
+		UI.elementos.modalWindow.eliminarUltimaCapa();
+	}
+
+	btnAceptar.onclick = function aceptarEnvio(){
+		let capaEnUso = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+		let peticion = {
+			operacion:'cambiarEstado',
+			estado: capaEnUso.nodo.querySelector('select').value,
+			modulo:'seguridad',
+		}
+		if(peticion.estado!='-'){
+			capaEnUso.partes.pie.desaparecer();
+			//inicio carga
+			//------------Cuadro Carga-------------------------------
+				let nodo = capaEnUso.partes.cuerpo.nodo;
+				let infoCuadro = {
+					nombre: 'rolGuardar',
+					mensaje:'Guardando Cambios'
+				}
+				nodo.innerHTML='';
+				var cuadroDeCarga = UI.crearCuadroDeCarga(infoCuadro,nodo);
+				cuadroDeCarga.style.marginTop = '80px';
+			//-----------------------------------------------------------
+			torque.Operacion(peticion,function atenderRespuesta(respuesta){
+				UI.buscarCuadroCarga('rolGuardar').terminarCarga();
+				capaEnUso.convertirEnMensaje(respuesta.mensaje);
+			});
+		}
+	}
+}
+
+function clickRec(){
+	//---------------Creo la ventana modal-------------
+	let ventana = {
+		cabecera : 'Reactivar Clave',
+		cuerpo : '<br>',
+		pie: '<section modalButtons>\
+				<button type="button" cancelar id="modalButtonCancelar"></button>\
+				<button type="button" aceptar  id="modalButtonAceptar"></button>\
+			</section>'
+	};
+	let capaEnUso = UI.crearVentanaModal(ventana);
+	capaEnUso.partes.cuerpo.nodo.style.height='150px';
+	let Campo = {
+		tipo:'campoDeTexto',
+		parametros: {titulo:'Introduzca SU CLAVE para continuar',nombre:'clave',tipo:'password',eslabon:'area',usaToolTip:true}
+	}
+	capaEnUso.partes.cuerpo.agregarCampo(Campo);
+
+	//agrego funcionamiento a los botones
+	var btnCancelar = document.getElementById("modalButtonCancelar");
+	var btnAceptar 	= document.getElementById("modalButtonAceptar");
+
+	btnCancelar.onclick = function cerrar(){
+		UI.elementos.modalWindow.eliminarUltimaCapa();
+	}
+
+	btnAceptar.onclick = function aceptarEnvio(){
+		let capaEnUso = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+		let peticion = {
+			operacion:'reactivarClave',
+			clave: capaEnUso.nodo.querySelector('input').value,
+			modulo:'seguridad'
+		}
+		let infoCuadroCarga = {
+			contenedor: capaEnUso.partes.cuerpo.nodo,
+			cuadro:{
+				nombre:'aceptarEnvio',
+				mensaje:'Verificando'
+			}
+		}
+		capaEnUso.partes.cuerpo.nodo.style.height='250px';
+		if(peticion.clave!==''){
+			torque.manejarOperacion(peticion,infoCuadroCarga,function atenderRespuesta(respuesta){
+				capaEnUso.convertirEnMensaje(respuesta.mensaje);
+			});
+		}
+	}
+}
+</script>
+</html>

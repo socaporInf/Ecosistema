@@ -1,0 +1,85 @@
+div[hoja]{
+	transition: all 0.3s linear;
+	margin: 0px 0px 0px 10px;
+	height: 30px;
+	width: calc(100% - 10px);
+	cursor: pointer;
+	position: relative;
+}
+div[hoja]:hover > div[peciolo],
+div[hoja]:hover > div[titulo-hoja]{
+	background-color: #607D8B;
+	color:white;
+}
+div[hoja]:first-of-type(div[hoja]){
+	background-color: black;
+}
+div[hoja].abierto{
+	height: auto;
+}
+div[hoja].raiz{
+	margin-left: 0px;
+	width: 100%;
+}
+div[hoja] div[titulo-hoja]{
+	transition: all 0.3s linear;
+	width: calc(100% - 33px);
+	float: left;
+	padding: 4px 0px 4px 0px;
+}
+div[hoja] div[peciolo].asignado button{
+	background-color: #4CAF50;
+}
+div[hoja] div[peciolo].asignado button:after{
+	color:white;
+}
+div[hoja] div[peciolo]{
+	transition: all 0.3s linear;
+	float: left;
+	width: 24px;
+	height: 27px;
+	border:none;
+	padding-top: 3px;
+	padding-left: 3px;
+	padding-right: 3px
+}
+
+button[little-mat-button-invisible]{
+	transition: all 0.3s linear;
+	border: none;
+	border-radius: 50px;
+	width: 24px;
+	height: 24px;
+	background-color: transparent;
+}
+button:after{	
+    font-family: 'Material Icons';
+    color:white;
+    font-size: 24px;
+    font-style: initial;
+}
+button[little-mat-button-invisible]:hover{
+	background-color: #424242 !important;
+}
+
+button.arrow_down_gray:after{
+	content: 'keyboard_arrow_down';
+	color:#607D8B;
+}
+button.arrow_down_gray:hover:after{
+	color:white;
+}
+button.arrow_down_gray.activo{
+		transform: rotate(-180deg);
+}
+/*-------------------------- Opciones ----------------------------*/
+article.opcion-hoja{
+  position: absolute;
+  z-index: 3;
+  margin-left: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50px;
+  border: none;
+  top: 3px;
+}
