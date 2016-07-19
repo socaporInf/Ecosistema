@@ -23,6 +23,10 @@
 <script type="text/javascript" src='../../nucleo/vistas/js/O_lista.js'></script>
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/productor.js'></script>
+<script type="text/javascript" src='js/constructores/finca.js'></script>
+<!-- script con el funcionamiento de este formulario -->
+<script type="text/javascript" src='js/formInventario.js'></script>
+
 
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
@@ -35,16 +39,14 @@
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
 	UI.agregarConstructor(productor);
+	UI.agregarConstructor(finca);
 	UI.configure({
-		formulario:{
-			entidad: torque.entidadActiva,
-			usoConstructor: true
-		},
 		botonera:{
-			botones:['buscar','nuevo','abrir']
+			botones:['nuevo','abrir']
 		}
 	});
 	sesion.obtenerSesion();
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+construirUI();
 </script>
 </html>

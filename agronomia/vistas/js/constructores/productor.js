@@ -56,12 +56,31 @@ productor= {
 		altura: 220,
 		campos: [
 			{
+        tipo : 'campoEdicion',
+        parametros : {nombre:'nombre_completo',titulo:'Nombre completo',tipo:'titulo'}
+      },{
 				tipo: 'campoEdicion',
 				parametros:{
-					nombre: 'descripcion',
-					titulo: 'Descripción',
+					nombre: 'rif',
+					titulo: 'Rif',
 					tipo:'simple',
-					eslabon: 'area'
+					eslabon: 'simple'
+				}
+			},{
+				tipo: 'campoEdicion',
+				parametros:{
+					nombre: 'codigo_tipo_persona',
+					titulo: 'tipo de Persona',
+					tipo:'simple',
+					eslabon: 'simple'
+				}
+			},{
+				tipo: 'campoEdicion',
+				parametros:{
+					nombre: 'codigo_productor',
+					titulo: 'Codigo de productor',
+					tipo:'simple',
+					eslabon: 'simple'
 				}
 			}
 		]

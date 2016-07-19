@@ -758,7 +758,7 @@ div[mat-window].not-first {
     margin-top: 10px;
 }
 div[mat-window].formulario {
-    width: calc(80%+ 50px);
+    width: calc(90%);
     float: left;
 }
 div[mat-window].titulo {
@@ -793,6 +793,7 @@ div[mat-window] section[sector] {
     width: 100%;
     min-height: 40px;
     border-bottom: 1px solid rgba(160, 160, 160, 0.5);
+    position: relative;
 }
 div[mat-window] section[operaciones] {
     height: 50px;
@@ -800,7 +801,26 @@ div[mat-window] section[operaciones] {
     padding-right: 15px;
     border-top: 1px solid rgba(160, 160, 160, 0.5);
 }
+div[mat-window] section[botonera]{
 
+}
+div[mat-window] section[botonera] button.icon{
+    transition: all 0.2s ease-in-out;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 60px;
+    z-index: 10;
+    margin-right: 10px;
+    background-repeat: no-repeat;
+    background-position: 8px;
+    float: right;
+    overflow: visible;
+    margin-top: 10px;
+    background-color: white;
+    margin-bottom: 10px;
+    box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
 /*-----------------------------------Media Query-------------------------------*/
 
 @media (max-width: 1000px) {

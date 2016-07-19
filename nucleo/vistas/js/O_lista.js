@@ -1,8 +1,8 @@
 var Lista = function(data){
   /*------------------------------Objeto Slot-------------------*/
-  var Slot = function(data){
+  var Slot = function(registro){
 
-    this.atributos = data;
+    this.atributos = registro;
     this.estado = 'sinInicializar';
     this.rol = 'lista';
     this.nodo = null;
@@ -13,7 +13,17 @@ var Lista = function(data){
       nodo.id=this.atributos.codigo;
       var html ="";
       var titulo;
-      titulo=this.atributos.nombre;
+      var nombreAMostrar;
+      if(data.campo_nombre){
+        nombreAMostrar = data.campo_nombre;
+      }else {
+        nombreAMostrar = 'nombre';
+      }
+      if(this.atributos[nombreAMostrar].length>28){
+        titulo=this.atributos[nombreAMostrar].substr(0,28)+'...';
+      }else{
+        titulo=this.atributos[nombreAMostrar];
+      }
       html+="<article  title>"+titulo+"</article>";
       nodo.innerHTML=html;
       this.nodo = nodo;
@@ -24,7 +34,6 @@ var Lista = function(data){
     this.funcionamiento = function(){
       var nodo = this.nodo;
       var article =nodo.getElementsByTagName('article')[0];
-
       article.onclick=function(e){
         agregarRippleEvent(this.parentNode,e);
       };
@@ -35,10 +44,16 @@ var Lista = function(data){
       var nodo=this.nodo;
       var slot=this;
       var titulo;
-      if(this.atributos.nombre.length>28){
-        titulo=this.atributos.nombre.substr(0,28)+'...';
+      var nombre;
+      if(data.campo_nombre){
+        nombre = data.campo_nombre;
+      }else {
+        nombre = 'nombre';
+      }
+      if(this.atributos[nombre].length>28){
+        titulo=this.atributos[nombre].substr(0,28)+'...';
       }else{
-        titulo=this.atributos.nombre;
+        titulo=this.atributos[nombre];
       }
       var html="<article  title>"+titulo+"</article>";
       setTimeout(function(){
@@ -114,7 +129,7 @@ var Lista = function(data){
     setTimeout(function(){
       lista.manejarCarga();
     },10);
-     /*
+     /*TODO
     //en caso de que la paginacion este activa
     if(this.atributos.paginacion.uso === 'true'){
       this.manejarPaginacion();
@@ -188,7 +203,7 @@ var Lista = function(data){
     this.nodo.appendChild(ayuda);
   };
   this.abrirCampoBusqueda = function(){
-	var botonBusqueda = document.querySelector('button[btnbusq]');
+	var botonBusqueda = this.nodo.querySelector('button[btnbusq]');
     botonBusqueda.parentNode.classList.add('buscar');
 		var lista = this;
     setTimeout(function(){
@@ -197,7 +212,7 @@ var Lista = function(data){
   };
 
 	this.cerrarCampoBusqueda = function(){
-		var botonBusqueda = document.querySelector('button[btnbusq]');
+		var botonBusqueda = this.nodo.querySelector('button[btnbusq]');
 	  botonBusqueda.parentNode.classList.remove('buscar');
     botonBusqueda.click();
     this.controlLista();

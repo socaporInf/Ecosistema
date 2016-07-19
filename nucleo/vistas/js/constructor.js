@@ -2115,12 +2115,6 @@ var Arquitecto = function(){
 		contenedor.appendChild(campoNuevo.nodo);
 		return campoNuevo;
 	};
-	//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
-	this.agregarCampos = function(campos,contenedor){
-		for(var x=0;x<campos.length;x++){
-			this.agregarCampo(campos[x],contenedor);
-		}
-	};
 	//con esta funcion asigno los valores a los campos edicion que contenga un contenedor
 	this.asignarValores = function(registro,contenedor){
 		var campos = contenedor.campos;
@@ -2257,6 +2251,7 @@ var Ventana = function(atributos){
 		this.nodo = null;
 		this.atributos = atributos;
 		this.atributos.tipo = atributos.tipo || 'sector';
+		this.campos = [];
 
 		this.construirNodo = function(){
 
@@ -2267,18 +2262,25 @@ var Ventana = function(atributos){
 				nodo.innerHTML = atributos.html;
 			}
 
+			this.nodo = nodo;
 			if(atributos.campos){
-				nodo.style.paddingTop='30px';
-				UI.agregarCampos(atributos.campos,nodo);
+				//nodo.style.paddingTop='30px';
+				this.agregarCampos(atributos.campos);
 			}
 
 			if(atributos.alto){
 				nodo.style.height=atributos.alto+'px';
 			}
-
-			this.nodo = nodo;
 		};
-
+		this.agregarCampos = function(){
+			for (var i = 0; i < atributos.campos.length; i++) {
+				this.agregarCampo(atributos.campos[i]);
+			}
+		};
+		this.agregarCampo = function(campo){
+			var nuevoCampo = UI.agregarCampo(campo,this.nodo);
+			this.campos.push(nuevoCampo);
+		};
 		this.destruirNodo = function(){
 			this.nodo.parentNode.removeChild(this.nodo);
 		};
@@ -2309,8 +2311,32 @@ var Ventana = function(atributos){
 		if(atributos.alto){
 			this.nodo.style.height = atributos.alto+'px';
 		}
+		if(this.atributos.clases){
+			this.manejoDeClases();
+		}
 	};
-
+	this.manejoDeClases = function(){
+		this.eliminarClasesRepetidas();
+		for (var i = 0; i < this.atributos.clases.length; i++) {
+			this.nodo.classList.add(this.atributos.clases[i]);
+		}
+	};
+	this.eliminarClasesRepetidas = function(){
+		var clasesValidadas = [];
+		var existe;
+		for (var i = 0; i < this.atributos.clases.length; i++) {
+			existe = false;
+			for (var x = 0; x < clasesValidadas.length; x++) {
+				if(clasesValidadas[x]==this.atributos.clases[i]){
+					existe = true;
+				}
+			}
+			if(!existe){
+				clasesValidadas.push(this.atributos.clases[i]);
+			}
+		}
+		this.atributos.clases = clasesValidadas;
+	};
 	this.agregarSector = function(atributos){
 		var sector = new Sector(atributos);
 		this.sectores.push(sector);
