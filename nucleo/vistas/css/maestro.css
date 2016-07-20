@@ -1,0 +1,80 @@
+div[lista][mat-window].maestro{
+    width: calc( 40% - 50px);
+    float:left;
+}
+div[mat-window].maestro:not([lista]){
+    transition: all 0.3s ease-in-out;
+    width: calc(60% - 100px);
+    float: left;
+    opacity: 0;
+}
+div[mat-window].maestro.aparecer{
+    opacity: 1;
+}
+@media (max-width: 1000px) {
+    div[lista][mat-window].maestro{
+        width: calc(40%);
+        float:left;
+        margin-left: 0px;
+    }
+    div[mat-window].maestro:not([lista]){
+        width: calc(60% - 1px);
+        float: left;
+        margin-left: 1px;
+    }
+}
+@media (max-width: 800px) {
+    /*modal window*/
+    div[capa='contenido'] {
+        background-color: white;
+        top: 100%;
+        left: 23%;
+        height: auto;
+        position: absolute;
+        z-index: 12;
+    }
+    /*fin modal*/
+    div[lista][mat-window].maestro {
+        width: 85%;
+        margin-bottom: 10px;
+        min-height: 50px;
+        margin-left: 50px;
+    }
+    div[lista][mat-window].maestro section:not([busqueda]) button {
+        display: inline-block;
+        z-index: 1;
+    }
+    div[mat-window].maestro:not([lista]) {
+        width: 85%;
+        margin-top: 10px;
+        margin-left: 50px;
+    }
+    div[mat-window].maestro:not([lista]) section[sector] {
+        max-width: 830px;
+    }
+    div[mat-window].maestro:not([lista]) section[sector]:not(div.grupo) {
+        margin-left: 20px;
+    }
+    div[mat-window].maestro:not([lista]) section[sector] div.grupo {
+        margin-left: 5%;
+    }
+    div[lista][mat-window].maestro section[slot] article[title] {
+        width: calc(100% - 60px);
+    }
+}
+
+@media (max-width: 600px) {
+    div[lista][mat-window].maestro {
+        width: 100%;
+        margin-left: 0px;
+        min-height: 50px;
+    }
+    div[lista][mat-window].maestro section:not([busqueda]) button {
+        display: inline-block;
+        z-index: 1;
+    }
+    div[mat-window].maestro:not([lista]) {
+        width: 100%;
+        margin-left: 0px;
+    }
+}

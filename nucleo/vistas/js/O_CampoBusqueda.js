@@ -32,6 +32,7 @@ var CampoBusqueda = function(atributos){
       		},
           onclickSlot: asignarSlot
       	},ventSelec.nodo);
+        ventSelec.agregarParte('pie',{html:'<section modalButtons></modalButtons>'});
       };
     };
     this.construirNodo();
@@ -82,6 +83,8 @@ var CampoBusqueda = function(atributos){
     UI.quitarVentana(yo.atributos.nombre);
     UI.elementos.modalWindow.eliminarUltimaCapa();
   };
-
+  this.asignarValor = function(valor){
+    this.comboBox.asignarValor(valor);
+  };
   this.construirNodo();
 };

@@ -1,8 +1,27 @@
 construirUI = function(){
   armarListaProductores(document.querySelector('div[contenedor]'));
+  var btnNuevo = UI.elementos.botonera.buscarBoton('nuevo');
+  btnNuevo.nodo.onclick = productorNuevo;
+};
+var productorNuevo = function(){
+  var nuevo = UI.crearVentanaModal({
+    contenido: 'ancho',
+    cabecera:{
+      html: 'Nuevo '+UI.buscarConstructor('productor').formulario.titulo
+    },
+    cuerpo:{
+      alto: UI.buscarConstructor('productor').formulario.altura,
+      campos: UI.buscarConstructor('productor').formulario.campos
+    },
+    pie:{
+        html:   '<section modalButtons>'+
+                '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
+                '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
+                '</section>'
+    }
+  });
 };
 armarListaProductores = function(contenedor){
-  console.log();
   var lista = UI.agregarLista({
     titulo: 'Cañicultores',
     clase: 'ventana',
@@ -36,18 +55,35 @@ armarListaProductores = function(contenedor){
     }
   },contenedor);
 };
-editarProductor = function(){
+var editarProductor = function(){
   var nodoPro = this;
-  var formModificar = UI.agregarVentana({
-    nombre:'editarProductor',
-    tipo: 'formulario',
-    clases: ['not-first'],
-    sectores:[
-      {
+  var formModificar;
+  if(!UI.buscarVentana('editarProductor')){
+    formModificar = UI.agregarVentana({
+      nombre:'editarProductor',
+      tipo: 'formulario',
+      clases: ['not-first'],
+      sectores:[
+        {
+          nombre:'carga',
+        }
+      ]
+    },document.querySelector('div[contenedor]'));
+    formEditarPro(nodoPro);
+  }else{
+    formModificar = UI.buscarVentana('editarProductor');
+    for (var i = formModificar.sectores.length -1 ; i > -1 ; i--){
+      formModificar.desvanecerSector(formModificar.sectores[i].atributos.nombre);
+    }
+    setTimeout(function () {
+      formModificar.agregarSector({
         nombre:'carga',
-      }
-    ]
-  },document.querySelector('div[contenedor]'));
+      });
+      formEditarPro(nodoPro);
+    }, 600);
+  }
+};
+var  formEditarPro = function(nodoPro){
   var peticion = {
      modulo: "agronomia",
      entidad: "productor",
@@ -66,8 +102,9 @@ editarProductor = function(){
     ventanaEditar.quitarSector('carga');
     ventanaEditar.agregarSector({
       nombre:'formulario',
-      alto : UI.buscarConstructor('productor').modificar.alto,
-      campos : UI.buscarConstructor('productor').modificar.campos
+      alto : UI.buscarConstructor('productor').formulario.alto,
+      campos : UI.buscarConstructor('productor').formulario.campos,
+      campo_nombre :  UI.buscarConstructor('productor').campo_nombre
     });
     UI.asignarValores(respuesta.registros,ventanaEditar.buscarSector('formulario'));
     //sector Listado
@@ -81,7 +118,7 @@ var agregarListadoFincas = function(codigo_productor,ventana){
     nombre:'listado',
   });
   var listaFincas = UI.agregarLista({
-    titulo: 'Fincas',
+    titulo: 'Listado fincas',
     clase: 'embebida',
     campo_nombre: UI.buscarConstructor('finca').campo_nombre,
     carga: {

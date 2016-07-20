@@ -76,7 +76,6 @@ var Lista = function(data){
         UI.elementos.formulario.ventanaList.Slots.splice(indice,1);
       },1110);
     };
-
     this.activar = function(){
       this.nodo.getElementsByTagName('article')[0].click();
     };
@@ -88,13 +87,13 @@ var Lista = function(data){
   this.atributos = data;
   this.atributos.onclickSlot = this.atributos.onclickSlot || null;
   this.nodo = null;
+  this.clases = data.clases || [];
 
   this.construir = function(){
     var contenedor = data.contenedor || 'noPosee';
     var nodo = document.createElement('div');
     nodo.setAttribute('lista','');
     nodo.setAttribute('mat-window','');
-    nodo.classList.add(this.atributos.clase);
 
     //contruir sector busqueda
     var html='';
@@ -135,6 +134,9 @@ var Lista = function(data){
       this.manejarPaginacion();
     }
     */
+    if(this.atributos.clases){
+			UI.manejoDeClases(this);
+		}
   };
 
   this.manejarPaginacion = function(){
@@ -335,7 +337,13 @@ var Lista = function(data){
     }
     return seleccionado;
   };
-
+  this.destruirNodo = function(){
+		this.nodo.style.height='0px';
+		var l = this;
+		setTimeout(function(){
+			l.nodo.parentNode.removeChild(l.nodo);
+		},510);
+	};
   this.construir();
 };
 /*--------------------------Fin Objeto VentanaList-----------------------------------*/

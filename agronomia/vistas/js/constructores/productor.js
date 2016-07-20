@@ -2,7 +2,7 @@ productor= {
 	nombre: 'productor',
  	modulo: 'agronomia',
 	campo_nombre: 'nombre_completo',
-	nuevo:{
+	formulario:{
 		titulo: 'Cañicultor',
 		altura: 220,
 		campos:[
@@ -11,8 +11,8 @@ productor= {
 				parametros:{
 					nombre: 'rif',
 					requerido:true,
-					titulo: 'Cedula',
-					tipo: 'Cedula'
+					titulo: 'Rif',
+					tipo: 'Rif'
 				}
 			},{
 				tipo: 'campoDeTexto',
@@ -48,39 +48,6 @@ productor= {
 					tipo:'simple',
 					eslabon: 'area',
 					usaToolTip: true
-				}
-			}
-		]
-	},
-	modificar: {
-		altura: 220,
-		campos: [
-			{
-        tipo : 'campoEdicion',
-        parametros : {nombre:'nombre_completo',titulo:'Nombre completo',tipo:'titulo'}
-      },{
-				tipo: 'campoEdicion',
-				parametros:{
-					nombre: 'rif',
-					titulo: 'Rif',
-					tipo:'simple',
-					eslabon: 'simple'
-				}
-			},{
-				tipo: 'campoEdicion',
-				parametros:{
-					nombre: 'codigo_tipo_persona',
-					titulo: 'tipo de Persona',
-					tipo:'simple',
-					eslabon: 'simple'
-				}
-			},{
-				tipo: 'campoEdicion',
-				parametros:{
-					nombre: 'codigo_productor',
-					titulo: 'Codigo de productor',
-					tipo:'simple',
-					eslabon: 'simple'
 				}
 			}
 		]

@@ -7,6 +7,7 @@
 @import url('toasts.css');
 @import url('iconos.css');
 @import url('colores-material.css');
+@import url('maestro.css');
 * {
     outline: none;
     overflow: hidden;
@@ -87,36 +88,6 @@ button.mat-text-but {
 button.mat-text-but:hover {
     border: 1px solid #607D8B;
 }
-/*----------------------------------------Capa Formulario-------------------------------*/
-div[capaForm] {
-    transition: all 0.6s ease-in-out;
-    width: calc(100% - 450px);
-    height: 0px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-    float: left;
-    margin: 80px 0px 100px 50px;
-    background-color: white;
-}
-div[capaForm] section[titulo] {
-    position: relative;
-    transition: all 0.5s ease-in-out;
-    padding: 10px 0px 0px 50px;
-    font-size: 23px;
-    background-color: #4CAF50;
-    color: white;
-}
-div[capaform] section[titulo] div {
-    width: calc(100% - 90px);
-}
-div[capaForm] section[sector] {
-    padding: 30px 0px 0px 15px;
-}
-div[capaForm] section[operaciones] {
-    height: 50px;
-    padding-top: 15px;
-    padding-right: 15px;
-    border-top: 1px solid rgba(160, 160, 160, 0.5);
-}
 
 /*---------------funcionamiento boton update-----------*/
 
@@ -175,162 +146,7 @@ section[contenedor] article {
 article:first-child {
     margin-left: 10px;
 }
-div[capaForm] section[contenedor] article[add] {
-    width: 18px;
-    height: 21px;
-    padding: 1px;
-    background-image: url('../imagenes/plus_16.png');
-    background-repeat: no-repeat;
-    background-position: 2px;
-    background-color: forestgreen;
-    float: left;
-    transform: scale(1.4);
-    margin-top: 7px;
-}
-/*----------------------------------------Capa Listado-------------------------------*/
-
-div[capaList] {
-    width: 300px;
-    background-color: white;
-    height: auto;
-    overflow-x: hidden;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-    margin: 80px 0px 50px 50px;
-    float: left;
-    max-height: 510px;
-    overflow-y: auto;
-}
-div[capaList] section {
-    width: 100%;
-    background-color: white;
-    height: 30px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    padding: 10px 0px 10px 10px;
-    transition: all 0.2s ease-in-out;
-    margin-bottom: 1px
-}
-div[capaList] section[busqueda] {
-    background-color: #4CAF50;
-    position: absolute;
-    width: inherit;
-    z-index: 2;
-    padding: 10px 0px;
-}
-section[busqueda]+ section[slot] {
-    margin-top: 51px !important;
-}
-div[capaList] section[busqueda] div[listBuscar] {
-    transition: all 0.3s ease-in-out;
-    float: left;
-    width: 0px;
-    height: 0px;
-}
-div[capaList] section[busqueda] div[tituloForm] {
-    transition: all 0.3s ease-in-out;
-    border: none;
-    padding: 3px 3px 3px 30px;
-    font-size: 20px;
-    float: left;
-    width: calc(100% - 103px);
-    color: white;
-    height: 32px;
-}
-div[capaList] section[busqueda] input[campBusq] {
-    transition: all 0.3s ease-in-out;
-    border: none;
-    padding: 8px;
-    font-size: 15px;
-    float: left;
-    width: 100%;
-    height: 20px;
-    margin-left: 10px;
-}
-div[capaList] section[busqueda] button[cerrarBusq] {
-    transition: inherit;
-    border: none;
-    border-radius: 100px;
-    width: 32px;
-    height: 32px;
-    background-position: 4px;
-    float: right;
-    margin-top: -34px;
-    background-color: transparent;
-    margin-right: 3px
-}
-
-div[capaList] section button:after {
-    font-family: 'Material Icons';
-    font-style: initial;
-}
-div[capaList] section[busqueda] button[btnBusq]:after {
-    content: 'search';
-    font-size: 48px;
-    color:white;
-}
-
-div[capaList] section[busqueda] button[cerrarBusq]:after {
-    content: 'clear';
-    color: #f44336;
-    font-size:24px;
-}
-div[capaList] section[busqueda] button[cerrarBusq]:hover {
-    box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
-}
-div[capaList] section[busqueda] button[btnBusq] {
-    border: none;
-    width: 50px;
-    height: 50px;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: 8px;
-    float: right;
-    margin: -10px 10px;
-    border-left: 1px solid silver;
-}
-div[capaList] section:not([busqueda]) button {
-    background-position: 12px;
-    background-repeat: no-repeat;
-    width: 40px;
-    height: 40px;
-    float: right;
-    margin: -34px 15px 0px 5px;
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
-    border-left: 1px solid silver;
-    display: none;
-    border-radius: 50px;
-    border-left: none;
-}
-div[capaList] section:not([busqueda]) {
-    height: 30px;
-    position: relative;
-}
-div[capaList] section[slot] article[title] {
-    width: 100%;
-    height: 100%;
-    margin: 0px;
-}
-div[capaList] section button[btnModificar] {
-    background-color: #4CAF50;
-}
-div[capaList] section button[btnModificar]:after {
-    color: white;
-    font-size: 24px;
-    content: 'create';
-}
-div[capaList] section button[btnEliminar] {
-    background-color: #e57373;
-}
-div[capaList] section button[btnEliminar]:after {
-    color: white;
-    font-size: 24px;
-    content: 'delete';
-}
-
 /*------------------------MATERIAL ELEMENTs---------------------*/
-
-
 /*---------------------------Contenedores-----------------------*/
 
 div[formElements] {
@@ -790,10 +606,16 @@ div[mat-window] section[titulo].inverso {
 /*-------------------------------Sector----------------------------------------*/
 
 div[mat-window] section[sector] {
+    transition: all 0.3s ease-in-out;
     width: 100%;
     min-height: 40px;
     border-bottom: 1px solid rgba(160, 160, 160, 0.5);
     position: relative;
+    opacity: 1;
+}
+div[mat-window] section[formulario] {
+    padding-top: 30px;
+    padding-left: 10px;
 }
 div[mat-window] section[operaciones] {
     height: 50px;
@@ -834,44 +656,5 @@ div[mat-window] section[botonera] button.icon{
         z-index: 12;
     }
     /*fin modal*/
-    div[capaList] {
-        width: 85%;
-        margin-bottom: 10px;
-        min-height: 50px;
-    }
-    div[capaList] section:not([busqueda]) button {
-        display: inline-block;
-        z-index: 1;
-    }
-    div[capaform] {
-        width: 85%;
-        margin-top: 10px;
-    }
-    div[capaForm] section[sector] {
-        max-width: 830px;
-    }
-    div[capaForm] section[sector]:not(div.grupo) {
-        margin-left: 20px;
-    }
-    div[capaForm] section[sector] div.grupo {
-        margin-left: 5%;
-    }
-    div[capaList] section[slot] article[title] {
-        width: calc(100% - 60px);
-    }
-}
-@media (max-width: 700px) {
-    div[capaList] {
-        width: 100%;
-        margin-left: 0px;
-        min-height: 50px;
-    }
-    div[capaList] section:not([busqueda]) button {
-        display: inline-block;
-        z-index: 1;
-    }
-    div[capaform] {
-        width: 100%;
-        margin-left: 0px;
-    }
+
 }
