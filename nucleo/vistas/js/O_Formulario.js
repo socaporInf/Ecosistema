@@ -12,7 +12,8 @@ var Formulario = function(atributos){
 
   this.agregarCampos = function(campos){
     for (var i = 0; i < campos.length; i++) {
-      this.agregarCampo(campos[i]);
+      var campo = this.agregarCampo(campos[i]);
+			this.campos.push(campo);
     }
   };
   this.agregarCampo = function(campo){
@@ -81,6 +82,7 @@ var Formulario = function(atributos){
 				valor:this.campos[i].captarValor()
 			});
 		}
+		return registro;
 	};
 	this.validar = function(){
 		for (var i = 0; i < campos.length; i++) {
