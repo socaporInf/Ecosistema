@@ -85,6 +85,7 @@ var Formulario = function(atributos){
 		return registro;
 	};
 	this.validar = function(){
+		var campos = this.campos;
 		for (var i = 0; i < campos.length; i++) {
 	    //valido el campo
 	    if((campos[i].captarRequerido())&&(!campos[i].captarValor())){
