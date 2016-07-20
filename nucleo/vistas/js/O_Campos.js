@@ -129,6 +129,7 @@ var Radio = function(info){
 	this.data = info;
 	this.estado = 'porConstriur';
 	this.nodo = null;
+	this.opciones = [];
 
 	this.construirNodo = function(){
 		var nodo = document.createElement('div');
@@ -142,6 +143,7 @@ var Radio = function(info){
 		var html = '';
 		html+='<input type="radio" name="'+this.data.nombre+'" value="'+opcion.valor+'"><span class="outer"><span class="inner"></span></span>'+opcion.nombre;
 		nodoOpcion.innerHTML=html;
+		this.opciones.push(nodoOpcion);
 		this.nodo.appendChild(nodoOpcion);
 	};
 	this.agregarOpciones = function(){
@@ -163,6 +165,16 @@ var Radio = function(info){
 	this.asignarValor = function(valor){
 		this.valor = valor;
 		this.nodo.querySelector('radio').value = valor;
+	};
+	this.deshabilitar = function(){
+		for (var i = 0; i < this.opciones.length; i++) {
+			this.opciones[i].disabled = true;
+		}
+	};
+	this.habilitar = function(){
+		for (var i = 0; i < this.opciones.length; i++) {
+			this.opciones[i].disabled = false;
+		}
 	};
 	this.construirNodo();
 };
@@ -332,6 +344,14 @@ var CampoDeTexto = function(info){
 	this.asignarValor = function(valor) {
 		var tipo = this.captarTipo();
 		this.nodo.querySelector(tipo).value = valor;
+	};
+	this.habilitar = function(){
+		this.nodo.classList.remove('deshabilitado');
+		this.nodo.querySelector(this.captarTipo()).disabled = false;
+	};
+	this.deshabilitar = function(){
+		this.nodo.classList.add('deshabilitado');
+		this.nodo.querySelector(this.captarTipo()).disabled = true;
 	};
 	this.construir();
 };

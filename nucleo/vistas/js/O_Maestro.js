@@ -94,7 +94,7 @@ var Maestro = function(atributos){
 				tipo:'basico',
 				html: 'Nueva '+UI.buscarConstructor(this.entidadActiva).nombre
 		});
-		agregarSectorFormulario();
+		this.agregarSectorFormulario();
 		UI.elementos.botonera.gestionarBotones({
 			quitar: ['nuevo'],
 			agregar: [
@@ -112,7 +112,7 @@ var Maestro = function(atributos){
 			tipo:'basico',
 			html: 'Modificar Registro'
 		});
-		this.ventanaForm.agregarSectorFormulario();
+		this.agregarSectorFormulario();
 		// TODO: buscar em la base de datos el registro a modificar
 		var agregar = [
 			{
