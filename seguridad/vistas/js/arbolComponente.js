@@ -102,12 +102,12 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 
 		var btnGuardar = capaContenido.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
 		btnGuardar.onclick = function(){
-			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
+			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario);
 			peticion ={
 				entidad : 'privilegio',
 				modulo:'seguridad',
 				operacion : 'guardarOperacionesDisponibles',
-				codigo : UI.elementos.modalWindow.buscarUltimaCapaContenido().registroId,
+				codigo : UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario.registroId,
 				data : JSON.stringify(data)
 			};
 			var cuadro = {
@@ -143,11 +143,11 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 function crearventananuevo(){
 	var ventanaNuevo = UI.crearVentanaModal({
 		cabecera: {
-			html: UI.buscarConstructor('operacion').nuevo.titulo
+			html: UI.buscarConstructor('operacion').titulo
 		},
 		cuerpo: {
-			alto: UI.buscarConstructor('operacion').nuevo.altura,
-			campos: UI.buscarConstructor('operacion').nuevo.campos
+			tipo: 'nuevo',
+			formulario: UI.buscarConstructor('operacion')
 		},
 		pie: {
 			html: 	'<section modalButtons>'+
@@ -162,35 +162,31 @@ function crearventananuevo(){
 		UI.elementos.modalWindow.eliminarUltimaCapa();
 	};
 	btnGuardar.onclick = function(){
-		var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
-		peticion ={
-			entidad : 'operacion',
-			modulo : 'seguridad',
-			operacion : 'guardar'
-		};
-		for (var i = 0; i < data.length; i++) {
-		  peticion[data[i].nombre] = data[i].valor;
+		var formulario = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
+		if(formulario.validar()){
+			var peticion = formulario.captarValores();
+			peticion.entidad = 'operacion';
+			peticion.modulo = 'seguridad';
+			peticion.operacion = 'guardar';
+			var cuadro = {
+				contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+				cuadro:{
+					nombre: 'guardarOperaciones',
+					mensaje : 'Guardando Cambios'
+				}
+			};
+			torque.manejarOperacion(peticion,cuadro,function(respuesta){
+				if (respuesta.success) {
+					UI.agregarToasts({
+						texto: respuesta.mensaje.cuerpo,
+						tipo: 'web-arriba-derecha-alto'
+					});
+					UI.elementos.modalWindow.eliminarUltimaCapa();
+				}else{
+					UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+				}
+			});
 		}
-		var cuadro = {
-			contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
-			cuadro:{
-				nombre: 'guardarOperaciones',
-				mensaje : 'Guardando Cambios'
-			}
-		};
-		var guardarOperaciones = function(respuesta){
-			if (respuesta.success) {
-				UI.agregarToasts({
-					texto: respuesta.mensaje.cuerpo,
-					tipo: 'web-arriba-derecha-alto'
-				});
-				UI.elementos.modalWindow.eliminarUltimaCapa();
-			}else{
-				UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
-			}
-		};
-
-		torque.manejarOperacion(peticion,cuadro,guardarOperaciones);
 	};
 }
 //------------------------------------ Campos -----------------------------------
@@ -227,13 +223,15 @@ var buscarCampos = function camposHoja(nodo){
 	});
 };
 var formCampoNuevo = function(capaContenido,nodo){
+	var constructor = UI.buscarConstructor('campo');
+	constructor.campos.splice(2,1);
 	capaContenido.convertirEnFormulario({
 		cabecera:{
-			html: 'Nuevo '+UI.buscarConstructor('campo').nuevo.titulo+' Restringido para '+nodo.getAttribute('titulo')
+			html: 'Nuevo '+UI.buscarConstructor('campo').titulo+' Restringido para '+nodo.getAttribute('titulo')
 		},
 		cuerpo:{
-			campos: [UI.buscarConstructor('campo').nuevo.campos[0],UI.buscarConstructor('campo').nuevo.campos[1]],
-			alto:UI.buscarConstructor('campo').nuevo.altura
+			formulario: constructor ,
+			tipo: 'nuevo'
 		},
 		pie:{
 			html: '<section modalButtons>'+
@@ -244,7 +242,7 @@ var formCampoNuevo = function(capaContenido,nodo){
 	});
 };
 function construirFormularioAsignarCampo(capaContenido,campos,nodo){
-		//creo la ventana de asignacion dependiendo a lo que necesito
+		// TODO: formulario de campos disponibles
 		capaContenido.convertirEnFormulario({
 			cabecera: {
 				html: 'Campos Disponibles'
@@ -271,27 +269,38 @@ function construirFormulario(){
 		contenido: 'ancho',
 		cabecera:'Nuevo Componente',
 		cuerpo:{
-			alto: UI.buscarConstructor('componente').nuevo.altura,
-			campos: UI.buscarConstructor('componente').nuevo.campos
+			tipo: 'nuevo',
+			formulario: UI.buscarConstructor('componente')
 		},
 		pie:{
 			html: '<section modalButtons>'+
-						'<button type="button" cancelar> </button>'+
-						'<button type="button" guardar> </button>'+
+						'<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
+						'<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
 					'</section>'
 		}
 	});
-	var cerrar = formComponente.nodo.querySelector('button[cancelar]');
+	var cerrar = formComponente.nodo.querySelector('button.icon-cerrar-rojo-32');
 	cerrar.onclick = function cerrarVentanta(){
 		UI.elementos.modalWindow.eliminarUltimaCapa();
 	};
-	var guardar = formComponente.nodo.querySelector('button[guardar]');
+	var guardar = formComponente.nodo.querySelector('button.icon-guardar-indigo-32');
 	guardar.onclick = guardarComponente;
 }
 function guardarComponente(){
-	var peticion = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
-	if(peticion){
-		torque.guardar('seguridad','componente',peticion,function guardar(respuesta){
+	var formulario = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
+	if(formulario.validar()){
+		var peticion = formulario.captarValores();
+		peticion.entidad = 'componente';
+		peticion.modulo = 'seguridad';
+		peticion.operacion = 'guardar';
+		var cuadro = {
+			contenedor : UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+			cuadro :{
+			  nombre: 'Guardar Componente nuevo',
+			  mensaje: 'Guardando registro'
+			}
+		};
+		torque.manejarOperacion(peticion,cuadro,function guardar(respuesta){
 			UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 			llenarArbol(UI.buscarVentana('formularioArbol'));
 		});
@@ -322,25 +331,27 @@ function formularioEditarComponente(nodo){
 		}
 	};
   torque.manejarOperacion(peticion,cuadroCarga,function motarFormularioNuevo(respuesta){
-		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnFormulario({
+		var formulario = UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnFormulario({
 			contenido: 'ancho',
+			cabecera:{
+				html: 'Modificar '+respuesta.registros.titulo
+			},
 			cuerpo:{
-				clase: 'lista',
-				alto: UI.buscarConstructor('componente').modificar.altura,
-				campos: UI.buscarConstructor('componente').modificar.campos
+				tipo: 'modificar',
+				formulario: UI.buscarConstructor('componente'),
+				registro: respuesta.registros
 			},
 			pie:{
 				html: '<section modalButtons>'+
-							'<button type="button" class="icon-cerrar-rojo-32"> </button>'+
+							'<button type="button" class="icon icon-modificar-verde"> </button>'+
+							'<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
 						'</section>'
 			}
 		});
-    UI.asignarValores(respuesta.registros,formComp.partes.cuerpo);
-    formComp.partes.cuerpo.registroId = respuesta.registros.codigo;
     formComp.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
       UI.elementos.modalWindow.eliminarUltimaCapa();
     };
-    formComp.partes.cuerpo.nodo.querySelector('article[update]').onclick = activarEdicion;
+    formComp.partes.pie.nodo.querySelector('button.icon-modificar-verde').onclick = activarEdicion;
   });
 }
 var activarEdicion = function(){

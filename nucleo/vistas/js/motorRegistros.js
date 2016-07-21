@@ -151,11 +151,6 @@ var Motor = function(moduloActivo,entidadActiva){
 		//la entidad que se encuentra activa en el momento de la misma
 		peticion.entidad = peticion.entidad || this.entidadActiva;
 
-		//lo mismo sucede con el codigo si no se le pasa en el objeto el tomara por defecto el codigo
-		//del registro que esta activo en el formulario
-		codigoPorDefecto = (UI.elementos.formulario!=='noPosee')?UI.elementos.formulario.ventanaForm.registroId:'';
-		peticion.codigo = peticion.codigo || codigoPorDefecto;
-
 		//si no recive el parametro de manejarCarga toma por defecto el valor de falso
 		peticion.manejarOperacion = peticion.manejarOperacion || false;
 		var conexionMotor=crearXMLHttpRequest();

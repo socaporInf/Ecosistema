@@ -8,31 +8,41 @@ var CampoBusqueda = function(atributos){
       nodo.classList.add('icon-search');
       nodo.classList.add('icon');
       this.nodo = nodo;
-      this.nodo.onclick = function activarCampo(){
-        //monto venta modal
-        var ventSelec = UI.crearVentanaModal({
-          contenido: 'ancho'
-        });
-        //agrego la lista a la ventanaModal
-        var lista = UI.agregarLista({
-      		titulo: atributos.titulo,
-          nombre: atributos.nombre,
-          requerido: atributos.requerido,
-      		clase: 'lista',
-      		carga: {
-      			uso:true,
-      			peticion:atributos.peticion,
-      			espera:{
-      				cuadro:atributos.cuadro
-      			},
-            respuesta: atributos.respuesta
+      this.habilitar();
+    };
+    this.habilitar = function(){
+      this.nodo.classList.remove('deshabilitado');
+      this.nodo.onclick = this.activarCampo;
+    };
+    this.deshabilitar = function(){
+      this.nodo.classList.add('deshabilitado');
+      this.nodo.onclick = function(){};
+    };
+    this.activarCampo = function activarCampo(){
+      //monto venta modal
+      var ventSelec = UI.crearVentanaModal({
+        contenido: 'ancho'
+      });
+      //agrego la lista a la ventanaModal
+      var lista = UI.agregarLista({
+        titulo: atributos.titulo,
+        nombre: atributos.nombre,
+        requerido: atributos.requerido,
+        clase: 'lista',
+        carga: {
+          uso:true,
+          peticion:atributos.peticion,
+          espera:{
+            cuadro:atributos.cuadro
           },
-      		paginacion: {
-      			uso:false
-      		},
-          onclickSlot: asignarSlot
-      	},ventSelec.nodo);
-      };
+          respuesta: atributos.respuesta
+        },
+        paginacion: {
+          uso:false
+        },
+        onclickSlot: asignarSlot
+      },ventSelec.nodo);
+      ventSelec.agregarParte('pie',{html:'<section modalButtons></modalButtons>'});
     };
     this.construirNodo();
   };
@@ -69,6 +79,12 @@ var CampoBusqueda = function(atributos){
   this.captarRequerido = function(){
     return yo.comboBox.requerido;
   };
+  this.habilitar = function(){
+    this.boton.habilitar();
+  };
+  this.deshabilitar = function(){
+    this.boton.deshabilitar();
+  };
   //funciones internas
   asignarSlot = function(slot){
     //agrego opcion al combo
@@ -82,6 +98,8 @@ var CampoBusqueda = function(atributos){
     UI.quitarVentana(yo.atributos.nombre);
     UI.elementos.modalWindow.eliminarUltimaCapa();
   };
-
+  this.asignarValor = function(valor){
+    this.comboBox.asignarValor(valor);
+  };
   this.construirNodo();
 };

@@ -13,7 +13,7 @@ div[campoBusqueda] div[formelements]{
 }
 div[campoBusqueda] button{
   position: absolute;
-  margin-left: calc(100% - 35px);
+  margin-left: calc(100% - 60px);
   z-index: 10;
   margin-top: 3px;
 }
@@ -35,4 +35,7 @@ button.mat-but-transp{
 }
 div[campoBusqueda] select{
   padding: 6px 9px 7px 9px;
+}
+div[campoBusqueda] button.deshabilitado{
+  background-color: #999 !important;
 }
