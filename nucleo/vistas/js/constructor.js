@@ -956,7 +956,8 @@ var Ventana = function(atributos){
 				this.formulario = new Formulario({
 					contenedor: this.nodo,
 					plano: atributos.formulario,
-					tipo: this.tipo
+					tipo:atributos.tipo,
+					registroAct: atributos.registro
 				});
 				atributos.alto = atributos.formulario.altura;
 			}
@@ -968,15 +969,6 @@ var Ventana = function(atributos){
 			if(atributos.tipo){
 				this.nodo.setAttribute(atributos.tipo,'');
 			}
-		};
-		this.agregarCampos = function(){
-			for (var i = 0; i < atributos.campos.length; i++) {
-				this.agregarCampo(atributos.campos[i]);
-			}
-		};
-		this.agregarCampo = function(campo){
-			var nuevoCampo = UI.agregarCampo(campo,this.nodo);
-			this.campos.push(nuevoCampo);
 		};
 		this.desvanecerNodo = function(){
 			this.nodo.style.opacity='0';
@@ -1156,8 +1148,14 @@ var modalWindow = function(){
 				}else{
 					porConstruir = contenido;
 				}
-				if(porConstruir.campos){
-					this.agregarCampos(porConstruir.campos);
+				if(porConstruir.formulario){
+					this.formulario = new Formulario({
+						contenedor: this.nodo,
+						plano: porConstruir.formulario,
+						tipo: porConstruir.tipo,
+						registroAct: porConstruir.registro
+					});
+					porConstruir.alto = porConstruir.formulario.altura;
 				}
 				if(porConstruir.html){
 					this.nodo.innerHTML = porConstruir.html;
@@ -1165,8 +1163,9 @@ var modalWindow = function(){
 				if(porConstruir.alto){
 					this.nodo.style.height = porConstruir.alto + 'px';
 				}
-				if(porConstruir.clase){
-					this.nodo.classList.add(porConstruir.clase);
+				if(porConstruir.clases){
+					this.clases = porConstruir.clases;
+					UI.manejoDeClases(this);
 				}
 			};
 
@@ -1317,6 +1316,7 @@ var modalWindow = function(){
 				}
 				this.agregarParte('pie',formulario.pie);
 			}
+			return this.partes.cuerpo.formulario;
 		};
 		this.convertirEnMensaje = function(mensaje){
 			//cambios Generales
@@ -1538,15 +1538,22 @@ function normalizarNodo(nodo){
 var Formulario = function(atributos){
 	this.campos = [];
 	this.plano = atributos.plano;
+	this.tipo = atributos.tipo;
 	this.nodo = null;
 	this.registroId = null;
-	this.registroAct= null;
+	this.registroAct= atributos.registroAct || null;
 
   this.construirNodo = function(){
 		this.nodo = document.createElement('form');
 		atributos.contenedor.appendChild(this.nodo);
 		atributos.contenedor.setAttribute('formulario','');
 		this.agregarCampos(this.plano.campos);
+		if(this.tipo.toLowerCase() === 'modificar'){
+			if(this.registroAct !== null){
+				this.asignarValores(this.registroAct);
+				this.deshabilitar();
+			}
+		}
   };
 
   this.agregarCampos = function(campos){
@@ -1598,7 +1605,6 @@ var Formulario = function(atributos){
 		for (var campo in registro) {
 			if (registro.hasOwnProperty(campo)) {
 				for(var y = 0; y < campos.length; y++){
-					console.log(campos[y]);
 					if(campos[y].captarNombre() == campo){
 						campos[y].asignarValor(registro[campo]);
 					}
@@ -1642,7 +1648,6 @@ var Formulario = function(atributos){
 var Lista = function(data){
   /*------------------------------Objeto Slot-------------------*/
   var Slot = function(registro){
-
     this.atributos = registro;
     this.estado = 'sinInicializar';
     this.rol = 'lista';
@@ -1695,7 +1700,6 @@ var Lista = function(data){
       }else{
         titulo=this.atributos[nombre];
       }
-      console.log(titulo);
       var html="<article  title>"+titulo+"</article>";
       setTimeout(function(){
         nodo.innerHTML=html;
@@ -2238,6 +2242,12 @@ var ComboBox = function(info){
 	this.seleccionarOpcion = function(opcion){
 		var select=this.nodo.getElementsByTagName('select')[0];
 		select.value = opcion.codigo;
+		var opciones = select.options;
+		for (var i = 0; i < opciones.length; i++) {
+			if(opciones[i].value === opcion.codigo){
+				select.selectedIndex = i;
+			}
+		}
 	};
 	this.captarValor = function(){
 		var valor = (this.nodo.querySelector('select').value==='-')?null:this.nodo.querySelector('select').value;
@@ -2262,6 +2272,7 @@ var ComboBox = function(info){
 			construirCapaSelect(this);
 		};
 	};
+	// TODO: cargar datos de base de datos para combobox
 	this.construir();
 };
 

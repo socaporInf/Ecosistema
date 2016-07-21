@@ -17,6 +17,8 @@
 <!-- scripts que construyen la interfaz y su funcionamiento -->
 <script type="text/javascript" src='../../nucleo/vistas/js/motorRegistros.js'></script>
 <script type="text/javascript" src='../../nucleo/vistas/js/constructor.js'></script>
+<script type="text/javascript" src='../../nucleo/vistas/js/O_Maestro.js'></script>
+<script type="text/javascript" src='../../nucleo/vistas/js/O_CampoIdentificacion.js'></script>
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/empresa.js'></script>
 
@@ -32,9 +34,8 @@
 	var UI = new Arquitecto();
 	UI.agregarConstructor(empresa);
 	UI.configure({
-		formulario:{
-			entidad: torque.entidadActiva,
-			usoConstructor: true
+		maestro:{
+			entidad: torque.entidadActiva
 		},
 		botonera:{
 			botones:['buscar','nuevo','abrir']

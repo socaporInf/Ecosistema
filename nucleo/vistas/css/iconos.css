@@ -70,6 +70,11 @@ button{
     color:  #4CAF50;
     font-size: 24px;
 }
+.icon-modificar-blanco:after{
+    content: 'create';
+    color:  white;
+    font-size: 24px;
+}
 .icon-eliminar-rojo:after{
     content: 'delete';
     color:  #f44336;

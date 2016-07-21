@@ -95,7 +95,7 @@ class cls_Componente extends cls_Conexion{
      $la_respuesta['enlace']=$la_registros['enlace'];
      $la_respuesta['icono']=$la_registros['icono'];
      $la_respuesta['componente_padre']=$la_registros['componente_padre'];
-     $la_respuesta['tipo']=$la_registros['tipo'];
+     $la_respuesta['tipoComponente']=$la_registros['tipo'];
      $la_respuesta['descripcion']=$la_registros['descripcion'];
      $lb_Enc=true;
    }
@@ -114,7 +114,7 @@ class cls_Componente extends cls_Conexion{
    $lb_Hecho=false;
    $ls_Sql="INSERT INTO seguridad.vcomponente (titulo,color,icono,enlace,componente_padre,tipo,descripcion) values
        ('".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['color']."','".$this->aa_Atributos['icono']."',
-       '".$this->aa_Atributos['enlace']."','".$this->aa_Atributos['padre']."','".$this->aa_Atributos['tipocomponente']."',
+       '".$this->aa_Atributos['enlace']."','".$this->aa_Atributos['padre']."','".$this->aa_Atributos['tipoComponente']."',
        '".$this->aa_Atributos['descripcion']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);

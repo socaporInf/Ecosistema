@@ -16,7 +16,13 @@ var CampoIdentificacion = function(atributos){
     //partes
     this.comboLetra = new ComboBox({
       nombre:atributos.nombre,
-      opciones: [{nombre:'V',codigo:'V'}],
+      opciones: [
+        {nombre:'V',codigo:'V'},
+        {nombre:'J',codigo:'J'},
+        {nombre:'G',codigo:'G'},
+        {nombre:'P',codigo:'P'},
+        {nombre:'E',codigo:'E'}
+      ],
       eslabon:'campo-'+this.tipo,
       deshabilitado: false
     });
@@ -84,12 +90,10 @@ var CampoIdentificacion = function(atributos){
   this.asignarValor = function(valor){
     var valorCombo = valor.substring(0,1);
     var valorNumero = valor.substring(1,9);
-    console.log(valorCombo);
     this.comboLetra.asignarValor(valorCombo);
     this.campoNumero.asignarValor(valorNumero);
     if(this.tipo === 'rif'){
       var valorFinal = valor.substring(9,10);
-      console.log(valorFinal);
       this.campoFinal.asignarValor(valorFinal);
     }
   };
@@ -99,13 +103,13 @@ var CampoIdentificacion = function(atributos){
     if(this.captarTipo() === 'rif'){
       this.campoFinal.habilitar();
     }
-  }
+  };
   this.deshabilitar = function(){
     this.comboLetra.deshabilitar();
     this.campoNumero.deshabilitar();
     if(this.captarTipo() === 'rif'){
       this.campoFinal.deshabilitar();
     }
-  }
+  };
   this.construirNodo();
 };

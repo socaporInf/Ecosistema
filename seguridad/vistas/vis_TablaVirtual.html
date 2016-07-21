@@ -19,7 +19,7 @@
 <script type="text/javascript" src='../../nucleo/vistas/js/constructor.js'></script>
 <!-- scripts PLUGINS-->
 <script type="text/javascript" src='../../nucleo/vistas/js/O_CampoBusqueda.js'></script>
-<script type="text/javascript" src='../../nucleo/vistas/js/O_lista.js'></script>
+<script type="text/javascript" src='../../nucleo/vistas/js/O_Maestro.js'></script>
 <!-- script con los constructores del formulario-->
 <script type="text/javascript" src='js/constructores/tablaVirtual.js'></script>
 <script type="text/javascript" src='js/constructores/registroVirtual.js'></script>
@@ -39,9 +39,8 @@
 	UI.agregarConstructor(tablaVirtual);
 	UI.agregarConstructor(registroVirtual);
 	UI.configure({
-		formulario:{
-			entidad: torque.entidadActiva,
-			usoConstructor: true
+		maestro:{
+			entidad: torque.entidadActiva
 		},
 		botonera:{
 			botones:['buscar','nuevo','abrir']
