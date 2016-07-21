@@ -1,8 +1,8 @@
-clase = {
-	nombre: 'clase',
+finca = {
+	nombre: 'finca',
  	modulo: 'agronomia',
 	campo_nombre: 'nombre',
-	titulo: 'Clase',
+	titulo: 'finca',
 	altura: 220,
 	campos:[
 		{

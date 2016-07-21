@@ -107,11 +107,6 @@ class cls_Variedad extends cls_Conexion{
 	}
 
 	private function f_Guardar(){
-		//encripto la contraseña
-		include_once('cls_acceso.php');
-		$lobj_Acceso = new cls_acceso;
-		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['clave']);
-
 		$lb_Hecho=false;
 		$ls_Sql="INSERT INTO agronomia.vvariedad (nombre,descripcion,codigo_variedad_capca,dias_punto_maduracion) values
 				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."',";

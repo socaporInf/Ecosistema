@@ -7,13 +7,13 @@ div.campo-identificacion{
     width: 32%;
 }
 div[campo-rif].combo-letra{
-  width:20%;
+  width:28%;
 }
 div[campo-rif].campo-numero{
-  width: 50%;
+  width: 44%;
 }
 div[campo-rif].campo-final{
-  width: 30%;
+  width: 28%;
 }
 div[campo-cedula].combo-letra{
   width:30%;

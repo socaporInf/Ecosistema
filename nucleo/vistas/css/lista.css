@@ -5,6 +5,14 @@ div[lista]{
    overflow-x: hidden;
    overflow-y:auto;
 }
+div[lista].ventana{
+  width: 90%;
+  margin-bottom: 25px;
+}
+div[lista].embebida{
+  margin: 0px;
+  width: 100%;
+}
 div[lista] section{
     width: 100%;
     background-color: white;

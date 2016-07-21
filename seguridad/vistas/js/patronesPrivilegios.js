@@ -24,13 +24,17 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 		}
 		campos.push(campo);
 	}
+	var constructor = {
+		campos : campos,
+		altura : (campos.length * 40) + 20
+	};
 	capaContenido.convertirEnFormulario({
 		cabecera: {
 			html: nodo.getAttribute('titulo')
 		},
 		cuerpo: {
-			alto: (campos.length * 40) + 20,
-			campos: campos
+			tipo: 'nuevo',
+			formulario: constructor
 		},
 		pie: {
 			html: '<section modalButtons>'+
@@ -40,6 +44,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 					'</section>'
 		}
 	});
+	capaContenido.partes.cuerpo.formulario.registroId = nodo.getAttribute('codigo');
 	capaContenido.nodo.classList.remove('ancho');
 	var btnCerrrar = capaContenido.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32');
 	btnCerrrar.onclick = function(){

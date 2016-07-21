@@ -5,7 +5,7 @@ function construirUI(){
 	//notificaciones
 	var notificaciones = UI.agregarLista({
 		titulo: 'notificaciones',
-		clase: 'notificaciones',
+		clases: ['notificaciones'],
 		carga: {
 			uso:true,
 			peticion:{

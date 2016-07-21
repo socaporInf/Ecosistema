@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>    
+    <title></title>
     <meta charset="UTF-8">
     <!-- Estilos externos //google -->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
@@ -17,6 +17,7 @@
 <!-- scripts que construyen la interfaz y su funcionamiento -->
 <script type="text/javascript" src='../../nucleo/vistas/js/motorRegistros.js'></script>
 <script type="text/javascript" src='../../nucleo/vistas/js/constructor.js'></script>
+<script type="text/javascript" src='../../nucleo/vistas/js/O_Maestro.js'></script>
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/operacion.js'></script>
 
@@ -30,11 +31,10 @@
 
     //Inicialiazion de UI(Interfaz De Usuario)
     var UI = new Arquitecto(); //el objeto con el cual se interactua con la interfaz de usuario
-    UI.agregarConstructor(operacion); 
+    UI.agregarConstructor(operacion);
     UI.configure({
-        formulario:{
-            entidad: torque.entidadActiva,
-            usoConstructor: true
+        maestro:{
+            entidad: torque.entidadActiva
         },
         botonera:{
             botones:['buscar','nuevo','abrir']

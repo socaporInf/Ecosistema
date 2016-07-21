@@ -16,7 +16,13 @@ var CampoIdentificacion = function(atributos){
     //partes
     this.comboLetra = new ComboBox({
       nombre:atributos.nombre,
-      opciones: [{nombre:'V',codigo:'V'}],
+      opciones: [
+        {nombre:'V',codigo:'V'},
+        {nombre:'J',codigo:'J'},
+        {nombre:'G',codigo:'G'},
+        {nombre:'P',codigo:'P'},
+        {nombre:'E',codigo:'E'}
+      ],
       eslabon:'campo-'+this.tipo,
       deshabilitado: false
     });
@@ -35,13 +41,22 @@ var CampoIdentificacion = function(atributos){
     this.nodo.appendChild(this.campoNumero.nodo);
     //campo ultima sigla
     if(this.tipo === 'rif'){
-      this.campoFinal = new CampoDeTexto({
-        requerido:true,
-        titulo:'',
-        nombre:'titulo',
-        tipo:'simple',
-        eslabon:'campo-rif',
-        max:1
+      this.campoFinal = new ComboBox({
+        nombre:atributos.nombre+'Final',
+        opciones: [
+          {nombre:0,codigo:0},
+          {nombre:1,codigo:1},
+          {nombre:2,codigo:2},
+          {nombre:3,codigo:3},
+          {nombre:4,codigo:4},
+          {nombre:5,codigo:5},
+          {nombre:6,codigo:6},
+          {nombre:7,codigo:7},
+          {nombre:8,codigo:8},
+          {nombre:9,codigo:9}
+        ],
+        eslabon:'campo-'+this.tipo,
+        deshabilitado: false
       });
       this.campoFinal.nodo.classList.add('campo-final');
       this.nodo.appendChild(this.campoFinal.nodo);
@@ -71,6 +86,30 @@ var CampoIdentificacion = function(atributos){
   };
   this.captarTipo = function(){
     return this.tipo;
+  };
+  this.asignarValor = function(valor){
+    var valorCombo = valor.substring(0,1);
+    var valorNumero = valor.substring(1,9);
+    this.comboLetra.asignarValor(valorCombo);
+    this.campoNumero.asignarValor(valorNumero);
+    if(this.tipo === 'rif'){
+      var valorFinal = valor.substring(9,10);
+      this.campoFinal.asignarValor(valorFinal);
+    }
+  };
+  this.habilitar = function(){
+    this.comboLetra.habilitar();
+    this.campoNumero.habilitar();
+    if(this.captarTipo() === 'rif'){
+      this.campoFinal.habilitar();
+    }
+  };
+  this.deshabilitar = function(){
+    this.comboLetra.deshabilitar();
+    this.campoNumero.deshabilitar();
+    if(this.captarTipo() === 'rif'){
+      this.campoFinal.deshabilitar();
+    }
   };
   this.construirNodo();
 };

@@ -1,255 +1,338 @@
-/*---------------------MEDIA QUERY CHANGES-----------------------------------*/
-var handleMediaChange = function (mediaQueryList) {
-	if(UI.estado=='inicializado'){
-		var formulario = UI.elementos.formulario;
-		if(formulario.ventanaForm!==undefined){
-			if(formulario.ventanaForm.nodo!==undefined){
-				if (mediaQueryList.matches) {
-			    	//cambio UI Ventana Form
-			        formulario.ventanaList.cambiarTextoSlots('completa');
-			    }
-			    else {
-			    	//cambio UI Ventana Form
-			        formulario.ventanaList.cambiarTextoSlots('mediaQuery');
-			    }
-			}else{
-				if (mediaQueryList.matches) {
-					formulario.ventanaList.cambiarTextoSlots('completa');
-				}else{
-					formulario.ventanaList.cambiarTextoSlots('mediaQuery');
-				}
-			}
-		}
-	}
-};
+var Arquitecto = function(){
 
-/*----------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------Objeto Botonera-----------------------------------------*/
-/*----------------------------------------------------------------------------------------------------*/
-var Botonera = function(estructura){
+	this.elementos = [];
 
-	var Boton = function(atributos){
-		this.atributos = atributos;
-		this.tipo = atributos.tipo.toLowerCase();
-		this.nodo =  null;
-		this.estado = 'porConstruir';
+	this.estado = 'sinInicializar';
 
-		this.construirNodo = function(){
-			var nodo = document.createElement('button');
-			nodo.setAttribute('type','button');
-			switch(this.atributos.tipo){
-				case 'abrir':
-					nodo.setAttribute('btnAbrir','');
-					nodo.setAttribute('estado','oculto');
-				break;
-				case 'nuevo':
-					nodo.setAttribute('btnNuevo','');
-				break;
-				case 'buscar':
-					nodo.setAttribute('btnBuscar','');
-				break;
-				case 'modificar':
-					nodo.setAttribute('btnModificar','');
-				break;
-				case 'eliminar':
-					nodo.setAttribute('btnEliminar','');
-					nodo.onclick=UI.elementos.formulario.eliminar;
-				break;
-				case 'detalle':
-					nodo.setAttribute('btnDetalle','');
-				break;
-				case 'redactar':
-					nodo.setAttribute('btnRedactar','');
-				break;
-				case 'cancelar':
-					nodo.setAttribute('btnCancelar','');
-				break;
-				case 'guardar':
-					nodo.setAttribute('btnGuardar','');
-					//configuracion por defecto para cuando existe el formulario es decir que es un maestro
-					if(UI.elementos.formulario!=='noPosee'){
-						nodo.onclick=UI.elementos.formulario.ventanaForm.validar;
-					}
-				break;
-			}
-			this.nodo = nodo;
-			this.estado = 'enUso';
-			var yo = this;
-			if(this.atributos.click){
-				this.nodo.onclick = function(){
-					yo.atributos.click(yo);
-				};
-			}
-
+	this.configure = function(objetoInicializar){
+		var contenedorGeneral = document.querySelector('div[contenedor]');
+		objetoInicializar = objetoInicializar || {};
+		this.elementos = {
+			 menu : new Menu(),
+			 cabecera : new Cabecera(),
+			 URL: new URL(),
+			 maestro : 'noPosee',
+			 botonera : 'noPosee',
+			 constructores: this.elementos.constructores
 		};
-		this.construirNodo();
+		if(objetoInicializar.maestro){
+			objetoInicializar.maestro.contenedor = contenedorGeneral;
+			this.elementos.maestro = new Maestro(objetoInicializar.maestro);
+		}
+
+		if(objetoInicializar.botonera){
+			objetoInicializar.botonera.contenedor = contenedorGeneral;
+			this.elementos.botonera = new Botonera(objetoInicializar.botonera);
+		}
+
+		this.estado='inicializado';
+	};
+//------------------------- Manejo de ventanas Modales ----------------------------
+	this.crearVentanaModal = function(data){
+		//creo la venta modal
+		if(!this.elementos.modalWindow){
+			this.elementos.modalWindow = new modalWindow();
+		}
+		var capaContenido=this.elementos.modalWindow.arranque(data);
+		return capaContenido;
 	};
 
-	this.estructura = estructura;
-	this.estado = 'porConstruir';
-	this.nodo = null;
+	this.crearMensaje = function(mensaje){
+		var capa = this.crearVentanaModal({cuerpo: 'mesaje'});
+		capa.convertirEnMensaje(mensaje);
+	};
+//------------------------- Manejo Cuadros de carga -------------------------------
+	this.agregarCuadroCarga = function(cuadroCarga){
+		if(!this.elementos.cuadroCarga){
+			this.elementos.cuadroCarga = [];
+		}
+		this.elementos.cuadroCarga.push(cuadroCarga);
+	};
+	this.removerCuadroCarga = function(nombre){
+		var cuadroCarga = this.buscarCuadroCarga(nombre);
+		this.elementos.cuadroCarga.splice(this.elementos.cuadroCarga.indexOf(cuadroCarga),1);
+	};
+	this.buscarCuadroCarga = function(nombre){
+		if(this.elementos.cuadroCarga){
+			for (var i = 0; i < this.elementos.cuadroCarga.length; i++){
+				if(this.elementos.cuadroCarga[i].nombre === nombre){
+					return this.elementos.cuadroCarga[i];
+				}
+			}
+			console.log('cuadroCarga '+nombre+' no existe');
+			return false;
+		}
+	};
+ 	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
+	this.iniciarCarga = function(info,callback){
+		cuadroCarga = new CuadroCarga(info,callback);
+		this.agregarCuadroCarga(cuadroCarga);
+		cuadroCarga.manejarCarga(info.nombre);
+		return cuadroCarga.nodo;
+	};
+	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
+	this.crearCuadroDeCarga = function(info,contenedor){
+		info.contenedor = contenedor;
+		cuadroCarga = new CuadroCarga(info,null);
+		this.agregarCuadroCarga(cuadroCarga);
+		return cuadroCarga.nodo;
+	};
+//------------------------- Manejo de ventanas ------------------------------------
+	this.agregarVentana = function(ventana,contenedor){
+		if(!this.elementos.ventanas){
+			this.elementos.ventanas = [];
+		}
+		var newVentana = new Ventana(ventana);
+		this.elementos.ventanas.push(newVentana);
+		contenedor.appendChild(newVentana.nodo);
+		return newVentana;
+	};
 
-	this.botones = [];
+	this.agregarLista = function(lista,contenedor){
+		if(!this.elementos.ventanas){
+			this.elementos.ventanas = [];
+		}
+		var nuevaLista = new Lista(lista);
+		contenedor.appendChild(nuevaLista.nodo);
+		nuevaLista.atributos.nombre = nuevaLista.atributos.titulo;
+		this.elementos.ventanas.push(nuevaLista);
+		return nuevaLista;
+	};
+
+	this.buscarVentana = function(nombre){
+		var ventanas =this.elementos.ventanas;
+		for(var x = 0; x < ventanas.length; x++){
+			if(ventanas[x].atributos.nombre===nombre){
+				return ventanas[x];
+			}
+		}
+		return false;
+	};
+
+	this.quitarVentana = function(nombre){
+		var ventana = this.buscarVentana(nombre);
+		if(ventana){
+			ventana.destruirNodo();
+			this.elementos.ventanas.splice(this.elementos.ventanas.indexOf(ventana),1);
+		}
+	};
+	//------------------------- Manejo de toast ----------------------------
+	//agrega mensaje pequeño
+	this.agregarToasts = function(atributos){
+		if(!this.elementos.toasts){
+			this.elementos.toasts = [
+				{cont:1}
+			];
+		}else{
+			this.elementos.toasts[0].cont++;
+		}
+		var tiempo= 5000 * (this.elementos.toasts[0].cont - 1);
+		setTimeout(function(){
+			var toast = new Toasts(atributos);
+			UI.elementos.toasts.push(toast);
+			setTimeout(function(){
+				removerToasts(toast);
+			},5000);
+		},tiempo);
+	};
+	function removerToasts(toast){
+		UI.elementos.toasts.splice(UI.elementos.toasts.indexOf(toast),1);
+		UI.elementos.toasts[0].cont--;
+	}
+	//------------------------- Manejo de Constructores ----------------------------
+	//agrega constructores para formularios
+	this.agregarConstructor  = function(objetoConstructor){
+		if(!this.elementos.constructores){
+			this.elementos.constructores = [];
+		}
+		this.elementos.constructores.push(objetoConstructor);
+	};
+	this.buscarConstructor = function(nombre){
+		if(this.elementos.constructores){
+			for (var i = 0; i < this.elementos.constructores.length; i++) {
+				if(this.elementos.constructores[i].nombre == nombre){
+					return this.elementos.constructores[i];
+				}
+			}
+			console.log('no se encontro el constructor '+nombre);
+		}else{
+			console.log('no existe ningun constructor en la lista');
+		}
+	};
+	//------------------------- Manejo Iconos ----------------------------
+	this.crearIcono = function(atributos){
+		var icono = document.createElement('i');
+		icono.classList.add('material-icons');
+		icono.textContent = atributos.nombre;
+		if(atributos.tamano){
+			switch(atributos.tamano){
+				case 24:
+					icono.classList.add('md-24');
+					break;
+
+				case 36:
+					icono.classList.add('md-36');
+					break;
+
+				case 48:
+					icono.classList.add('md-48');
+					break;
+			}
+		}
+		if(atributos.color){
+			icono.classList.add(atributos.color);
+		}
+		if(atributos.tono){
+			if(atributos.tono.toLowerCase()==='claro'){
+				icono.classList.add('md-light');
+			}else if(atributos.tono.toLowerCase()==='oscuro'){
+				icono.classList.add('md-dark');
+			}
+		}
+		if(atributos.inactivo){
+			icono.classList.add('md-inactive');
+		}
+		return icono;
+	};
+	this.manejoDeClases = function(contenedor){
+		this.eliminarClasesRepetidas(contenedor);
+		for (var i = 0; i < contenedor.clases.length; i++) {
+			contenedor.nodo.classList.add(contenedor.clases[i]);
+		}
+	};
+	this.eliminarClasesRepetidas = function(contenedor){
+		var clasesValidadas = [];
+		var existe;
+		for (var i = 0; i < contenedor.clases.length; i++) {
+			existe = false;
+			for (var x = 0; x < clasesValidadas.length; x++) {
+				if(clasesValidadas[x]==contenedor.clases[i]){
+					existe = true;
+				}
+			}
+			if(!existe){
+				clasesValidadas.push(contenedor.clases[i]);
+			}
+		}
+		contenedor.clases = clasesValidadas;
+	};
+};
+
+//-------------------- Toasts ------------------------------------------------------------
+var Toasts = function(atributos){
+	this.atributos = atributos;
+	this.nodo = null;
+	this.atributos.efecto = atributos.efecto || 'mostrar';
+	this.atributos.tipo = atributos.tipo || 'mobile';
+	this.construirNodo = function(){
+		var nodo = document.createElement('div');
+		nodo.setAttribute('toasts-'+this.atributos.tipo,'');
+		nodo.textContent = this.atributos.texto;
+		var contenedor = this.atributos.contenedor || document.body;
+		contenedor.appendChild(nodo);
+
+		var toasts = this;
+		setTimeout(function aparecerToasts(){
+			toasts.nodo.classList.toggle(toasts.atributos.efecto);
+		},10);
+
+		setTimeout(function desaparecerToasts(){
+			toasts.nodo.classList.toggle(toasts.atributos.efecto);
+			setTimeout(function eliminarToast(){
+				toasts.nodo.parentNode.removeChild(toasts.nodo);
+			},500);
+		},5000);
+		this.nodo = nodo;
+	};
+	this.construirNodo();
+};
+//---------------------------Ink Event------------------------
+agregarRippleEvent= function(parent,evento){
+	var html;
+	var ink;
+	//se crea el elemento si no existe
+	if(parent.getElementsByTagName('div')[0]===undefined){
+		ink=document.createElement('div');
+		ink.classList.toggle('ink');
+		parent.insertBefore(ink,parent.firstChild);
+	}
+	ink=parent.getElementsByTagName('div')[0];
+
+	//en caso de doble click rapido remuevo la clase
+	ink.classList.remove('animated');
+
+	//guardo todo el estilo del elemento
+	var style = window.getComputedStyle(ink);
+
+	//se guardan los valores de akto y ancho
+	if(parseInt(style.height.substring(0,style.height.length-2))===0 && parseInt(style.width.substring(0,style.width.length-2))===0){
+		//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
+		d = Math.max(parent.offsetHeight, parent.offsetWidth);
+		ink.style.height=d+'px';
+		ink.style.width=d+'px';
+	}
+	//declaro el offset del parent
+	var rect =parent.getBoundingClientRect();
+
+	parent.offset={
+	  top: rect.top + document.body.scrollTop,
+	  left: rect.left + document.body.scrollLeft
+	};
+	//re evaluo los valores de alto y ancho del ink
+	style = window.getComputedStyle(ink);
+
+	//ubico el lugar donde se dispara el click
+	var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2;
+	var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2;
+	//cambio los valores de ink para iniciar la animacion
+	ink.style.top=y+'px';
+	ink.style.left=x+'px';
+	setTimeout(function(){
+		ink.classList.toggle('animate');
+	},10);
+	setTimeout(function(){
+		ink.classList.toggle('animate');
+	},660);
+};
+//---------------------------Ink Event------------------------
+var URL = function(){
+	this.estado = 'construido';
+	this.captarParametroPorNombre = function(nombre) {
+    nombre = nombre.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + nombre + "=([^&#]*)"),
+    results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	};
+};
+/*----------------------------------------------------------------------------------------------------*/
+/*------------------------------------------------Objeto Cabecera ------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
+var Cabecera = function(){
+
+	this.estado = 'porConstriur';
 
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
-		var nodo = document.createElement('div');
-		nodo.setAttribute('botonera','');
-		contenedor.parentNode.insertBefore(nodo,contenedor.nextSibling);
-		this.nodo = nodo;
-		this.inicializarBotones();
-		//boton nuevo
-		if(UI.elementos.formulario!=='noPosee'){
-			this.buscarBoton('nuevo').nodo.onclick=function(){
-				console.log('presiono Nuevo');
-				var data = {
-					tipo:'nuevo'
-				};
-				var formulario = UI.elementos.formulario;
-				formulario.construirUI(data);
-			};
-			//boton buscar
-			this.buscarBoton('buscar').nodo.onclick=function(){
-				UI.elementos.formulario.ventanaList.nodo.firstChild.getElementsByTagName('button')[1].click();
-			};
-		}
-	};
-	this.inicializarBotones = function(){
-		var botones = this.estructura;
-		for(var x = 0; x < botones.length; x++){
-			this.agregarBoton(botones[x]);
-		}
-		this.agregarEfectos();
-	};
-	this.agregarBoton = function(constructorBoton){
-		var botonera = this.nodo;
-		var existe = false;
-		if(typeof constructorBoton == 'string'){
-			constructorBoton = {tipo:constructorBoton};
-		}
-		for(var x=0;x<this.botones.length;x++){
-			if(this.botones[x].tipo==constructorBoton.tipo.toLowerCase()){
-				existe=true;
-				console.log('el boton '+constructorBoton.tipo+' ya existe');
+		var elemento = document.createElement('div');
+		elemento.setAttribute('cabecera','');
+		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'><i class='material-icons md-36 white'>menu</i></button><div titulo>SOCA-PORTUGUESA</div>";
+		contenedor.insertBefore(elemento,contenedor.firstChild);
+		//funcionamiento boton
+		var botonMenu=document.getElementById('menuBtn');
+		botonMenu.onclick=function(){
+			var menu = document.getElementById('menu');
+			if(menu.getAttribute('estado')=='visible'){
+				menu.style.marginLeft='-350px';
+				menu.setAttribute('estado','oculto');
+			}else if(menu.getAttribute('estado')=='oculto'){
+				menu.style.marginLeft='0px';
+				menu.setAttribute('estado','visible');
 			}
-		}
-		if(!existe){
-
-			boton = new Boton(constructorBoton);
-			botonera.appendChild(boton.nodo);
-			//esta parte es solo para cuando se agrega un boton en un momento posterior a la inicializacion
-			if(this.buscarBoton('abrir')!=-1){
-				if(this.buscarBoton('abrir').nodo.getAttribute('estado')=='visible'){
-					setTimeout(function(){
-						var top=(UI.elementos.botonera.botones.length-1)*45;
-						boton.nodo.style.top='-'+top+'px';
-					},10);
-				}
-			}
-			this.botones.push(boton);
-		}
-		return boton;
-	};
-	this.agregarBotones = function(botones){
-		var tiempo = 20;
-		for(var x = 0; x < botones.length; x++){
-			espera(x,tiempo,botones,'agregar');
-			tiempo+=20;
-		}
-	};
-	function espera(x,tiempo,botones,operacion){
-		setTimeout(function(){
-			if(operacion === 'quitar'){
-				UI.elementos.botonera.quitarBoton(botones[x]);
-			}else{
-				UI.elementos.botonera.agregarBoton(botones[x]);
-			}
-		},tiempo);
-	}
-	this.quitarBotones = function(botones){
-		var tiempo = 20;
-		for(var x = 0; x < botones.length; x++){
-			espera(x,tiempo,botones,'quitar');
-			tiempo+=20;
-		}
-	};
-	this.gestionarBotones = function(botones){
-		var tiempo = 20;
-		for(var x = 0; x < botones.quitar.length; x++){
-			espera(x,tiempo,botones.quitar,'quitar');
-			tiempo+=20;
-		}
-		for(var i = 0; i < botones.agregar.length; i++){
-			espera(i,tiempo,botones.agregar,'agregar');
-			tiempo+=20;
-		}
-	};
-	this.agregarEfectos = function(){
-		var botones = this.botones;
-		if(botones.length>1){
-			if(!this.buscarBoton('abrir')){
-				console.log('no se encuentra el boton de apertura');
-			}else{
-				this.buscarBoton('abrir').nodo.onclick = function(){
-					if(this.getAttribute('estado')=='oculto'){
-						var top = 0;
-						this.classList.toggle('apertura');
-						this.setAttribute('estado','visible');
-						for(var x = 0; x < botones.length; x++){
-							if(botones[x].tipo!='abrir'){
-								top+=45;
-								botones[x].nodo.style.top = '-'+top+'px';
-							}
-						}
-					}else{
-						this.classList.toggle('apertura');
-						this.setAttribute('estado','oculto');
-						for(var i = 0; i < botones.length; i++){
-							if(botones[i].tipo!='abrir'){
-								botones[i].nodo.style.top = 0+'px';
-							}
-						}
-					}
-				};
-			}
-		}
-	};
-	this.buscarBoton = function(tipo){
-		var botones = this.botones;
-		for(var x = 0; x < botones.length; x++){
-			if(botones[x].tipo==tipo){
-				return botones[x];
-			}
-		}
-		return -1;
-	};
-	this.listarBotones = function(){
-		var lista = this.botones;
-		var resultado = 'estos son los botones agregados:\n';
-		for( var x = 0; x < lista.length; x++){
-			resultado += '\t'+lista[x].tipo+'\n';
-		}
-		console.log(resultado);
-	};
-	this.getEstado = function(){
-		console.log(this.estado);
-	};
-	this.quitarBoton = function(constructorBoton){
-		if(typeof constructorBoton == 'string'){
-			constructorBoton = {tipo:constructorBoton};
-		}
-		var eliminar=this.buscarBoton(constructorBoton.tipo);
-		if(eliminar!=-1){
-			eliminar.nodo.style.top='0px';
-			setTimeout(function(){
-				eliminar.nodo.parentNode.removeChild(eliminar.nodo);
-			},510);
-			this.botones.splice(this.botones.indexOf(eliminar),1);
-		}
+		};
+		this.estado='enUso';
 	};
 	this.construir();
 };
-
 /*----------------------------------------------------------------------------------------------------*/
 /*------------------------------------------------Objeto Menu ----------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
@@ -498,888 +581,486 @@ var Menu = function(){
 	};
 	this.construir();
 };
-
 /*----------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------Objeto Cabecera ----------------------------------------*/
+/*------------------------------------------------Objeto Botonera ------------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
-var Cabecera = function(){
+var Botonera = function(atributos){
 
-	this.estado = 'porConstriur';
+	var Boton = function(atributos){
+		this.atributos = atributos;
+		this.tipo = atributos.tipo.toLowerCase();
+		this.nodo =  null;
+		this.estado = 'porConstruir';
+
+		this.construirNodo = function(){
+			var nodo = document.createElement('button');
+			nodo.setAttribute('type','button');
+			switch(this.atributos.tipo){
+				case 'abrir':
+					nodo.setAttribute('btnAbrir','');
+					nodo.setAttribute('estado','oculto');
+				break;
+				case 'nuevo':
+					nodo.setAttribute('btnNuevo','');
+				break;
+				case 'buscar':
+					nodo.setAttribute('btnBuscar','');
+				break;
+				case 'modificar':
+					nodo.setAttribute('btnModificar','');
+				break;
+				case 'eliminar':
+					nodo.setAttribute('btnEliminar','');
+				break;
+				case 'detalle':
+					nodo.setAttribute('btnDetalle','');
+				break;
+				case 'redactar':
+					nodo.setAttribute('btnRedactar','');
+				break;
+				case 'cancelar':
+					nodo.setAttribute('btnCancelar','');
+				break;
+				case 'guardar':
+					nodo.setAttribute('btnGuardar','');
+				break;
+			}
+			this.nodo = nodo;
+			this.estado = 'enUso';
+			var yo = this;
+			if(this.atributos.click){
+				this.nodo.onclick = function(){
+					yo.atributos.click(yo);
+				};
+			}
+
+		};
+		this.construirNodo();
+	};
+	//-------------------------------------------- fin objeto boton ----------------------
+	this.estructura = atributos.botones;
+	this.estado = 'porConstruir';
+	this.nodo = null;
+
+	this.botones = [];
 
 	this.construir = function(){
-		var contenedor = obtenerContenedor();
-		var elemento = document.createElement('div');
-		elemento.setAttribute('cabecera','');
-		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'><i class='material-icons md-36 white'>menu</i></button><div titulo>SOCA-PORTUGUESA</div>";
-		contenedor.insertBefore(elemento,contenedor.firstChild);
-		//funcionamiento boton
-		var botonMenu=document.getElementById('menuBtn');
-		botonMenu.onclick=function(){
-			var menu = document.getElementById('menu');
-			if(menu.getAttribute('estado')=='visible'){
-				menu.style.marginLeft='-350px';
-				menu.setAttribute('estado','oculto');
-			}else if(menu.getAttribute('estado')=='oculto'){
-				menu.style.marginLeft='0px';
-				menu.setAttribute('estado','visible');
+		var contenedor = atributos.contenedor;
+		var nodo = document.createElement('div');
+		nodo.setAttribute('botonera','');
+		contenedor.parentNode.insertBefore(nodo,contenedor.nextSibling);
+		this.nodo = nodo;
+		this.inicializarBotones();
+		//boton nuevo
+		if(UI.elementos.maestro!=='noPosee'){
+			this.buscarBoton('nuevo').nodo.onclick=function(){
+				console.log('presiono Nuevo');
+				var data = {
+					tipo:'nuevo'
+				};
+				var maestro = UI.elementos.maestro;
+				maestro.agregarFormulario(data);
+			};
+			//boton buscar
+			this.buscarBoton('buscar').nodo.onclick=function(){
+				UI.elementos.maestro.ventanaList.abrirCampoBusqueda();
+			};
+		}
+	};
+	this.inicializarBotones = function(){
+		var botones = this.estructura;
+		for(var x = 0; x < botones.length; x++){
+			this.agregarBoton(botones[x]);
+		}
+		this.agregarEfectos();
+	};
+	this.agregarBoton = function(constructorBoton){
+		var botonera = this.nodo;
+		var existe = false;
+		if(typeof constructorBoton == 'string'){
+			constructorBoton = {tipo:constructorBoton};
+		}
+		for(var x=0;x<this.botones.length;x++){
+			if(this.botones[x].tipo==constructorBoton.tipo.toLowerCase()){
+				existe=true;
+				console.log('el boton '+constructorBoton.tipo+' ya existe');
 			}
-		};
-		this.estado='enUso';
+		}
+		if(!existe){
+
+			boton = new Boton(constructorBoton);
+			botonera.appendChild(boton.nodo);
+			//esta parte es solo para cuando se agrega un boton en un momento posterior a la inicializacion
+			if(this.buscarBoton('abrir')!=-1){
+				if(this.buscarBoton('abrir').nodo.getAttribute('estado')=='visible'){
+					setTimeout(function(){
+						var top=(UI.elementos.botonera.botones.length-1)*45;
+						boton.nodo.style.top='-'+top+'px';
+					},10);
+				}
+			}
+			this.botones.push(boton);
+		}
+		return boton;
+	};
+	this.agregarBotones = function(botones){
+		var tiempo = 20;
+		for(var x = 0; x < botones.length; x++){
+			espera(x,tiempo,botones,'agregar');
+			tiempo+=20;
+		}
+	};
+	function espera(x,tiempo,botones,operacion){
+		setTimeout(function(){
+			if(operacion === 'quitar'){
+				UI.elementos.botonera.quitarBoton(botones[x]);
+			}else{
+				UI.elementos.botonera.agregarBoton(botones[x]);
+			}
+		},tiempo);
+	}
+	this.quitarBotones = function(botones){
+		var tiempo = 20;
+		for(var x = 0; x < botones.length; x++){
+			espera(x,tiempo,botones,'quitar');
+			tiempo+=20;
+		}
+	};
+	this.gestionarBotones = function(botones){
+		var tiempo = 20;
+		for(var x = 0; x < botones.quitar.length; x++){
+			espera(x,tiempo,botones.quitar,'quitar');
+			tiempo+=20;
+		}
+		for(var i = 0; i < botones.agregar.length; i++){
+			espera(i,tiempo,botones.agregar,'agregar');
+			tiempo+=20;
+		}
+	};
+	this.agregarEfectos = function(){
+		var botones = this.botones;
+		if(botones.length>1){
+			if(!this.buscarBoton('abrir')){
+				console.log('no se encuentra el boton de apertura');
+			}else{
+				this.buscarBoton('abrir').nodo.onclick = function(){
+					if(this.getAttribute('estado')=='oculto'){
+						var top = 0;
+						this.classList.toggle('apertura');
+						this.setAttribute('estado','visible');
+						for(var x = 0; x < botones.length; x++){
+							if(botones[x].tipo!='abrir'){
+								top+=45;
+								botones[x].nodo.style.top = '-'+top+'px';
+							}
+						}
+					}else{
+						this.classList.toggle('apertura');
+						this.setAttribute('estado','oculto');
+						for(var i = 0; i < botones.length; i++){
+							if(botones[i].tipo!='abrir'){
+								botones[i].nodo.style.top = 0+'px';
+							}
+						}
+					}
+				};
+			}
+		}
+	};
+	this.buscarBoton = function(tipo){
+		var botones = this.botones;
+		for(var x = 0; x < botones.length; x++){
+			if(botones[x].tipo==tipo){
+				return botones[x];
+			}
+		}
+		return -1;
+	};
+	this.listarBotones = function(){
+		var lista = this.botones;
+		var resultado = 'estos son los botones agregados:\n';
+		for( var x = 0; x < lista.length; x++){
+			resultado += '\t'+lista[x].tipo+'\n';
+		}
+		console.log(resultado);
+	};
+	this.getEstado = function(){
+		console.log(this.estado);
+	};
+	this.quitarBoton = function(constructorBoton){
+		if(typeof constructorBoton == 'string'){
+			constructorBoton = {tipo:constructorBoton};
+		}
+		var eliminar=this.buscarBoton(constructorBoton.tipo);
+		if(eliminar!=-1){
+			eliminar.nodo.style.top='0px';
+			setTimeout(function(){
+				eliminar.nodo.parentNode.removeChild(eliminar.nodo);
+			},510);
+			this.botones.splice(this.botones.indexOf(eliminar),1);
+		}
 	};
 	this.construir();
 };
-
 /*----------------------------------------------------------------------------------------------------*/
-/*------------------------------Objeto Formulario(lista)----------------------------------------------*/
+/*--------------------------------------------Objeto Cuadro de Carga ---------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
-var Formulario = function(atributos){
+var CuadroCarga = function(info,callback){
 
-	//----------------------------------Objeto Ventana Formulario-------------------
-	var VentanaForm = function(atributos){
+	//manejo de interfaz
+	this.contenedor=info.contenedor;
+	this.tipo=info.tipo || 'carga';
+	this.clases=info.clases || [];
+	this.nodo = null;
+	this.nombre = info.nombre || 'unico';
 
-		this.atributos = atributos;
-		this.tipo = 'noPosee';
-		this.nodo = null;
-		this.estado = 'sinConstruir';
-		this.formNode = null;
-		this.titulo = null;
-		this.campos = [];
-		//este es el registro que se esta editando
-		this.registroId='';
-		//el registro despues de buscarlo
-		this.registroAct = null;
+	//maenjo de carga
+	this.intervalID = null;
+	this.contEspera = 0;
+	this.callback = callback || null;
 
-		this.construirNodo = function(data){
-			var nodo = document.createElement('div');
-			nodo.setAttribute('capaForm','');
-			nodo.id='VentanaForm';
-			this.tipo=data.tipo;
-			this.nodo=nodo;
-			if(data.tipo=='modificar'){
-				this.registroId=data.codigo;
-			}else if(data.tipo=='nuevo'){
-				this.registroId='';
-			}
-			if(atributos.usoConstructor){
-				this.iniciarConstructor();
+	this.estado = 'sinIniciar';
+
+	this.construirNodo = function(){
+
+		var cuadro = document.createElement('div');
+		cuadro.classList.toggle('ContenedorCarga');
+
+		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center;width:inherit">'+info.mensaje+'</article>'+
+		'<div class="showbox">'+
+			'<div class="loader">'+
+				'<svg class="circular" viewBox="25 25 50 50">'+
+					'<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>'+
+			    '</svg>'+
+			  '</div>'+
+			'</div>';
+		this.contenedor.appendChild(cuadro);
+		var circulo=document.querySelector('.path');
+
+		//asigno color al circulo de carga
+		if(this.tipo.toLowerCase()=='advertencia'){
+			circulo.classList.toggle('pathAdvertencia');
+		}else if(this.tipo.toLowerCase()=='carga'){
+			circulo.classList.toggle('pathCarga');
+		}
+		this.estado = 'iniciado';
+		this.nodo = cuadro;
+		UI.manejoDeClases(this);
+		this.tamanoTexto(info.mensaje);
+	};
+	this.tamanoTexto = function(texto){
+			var tamano = texto.length;
+			if(tamano < 40){
+				this.nodo.style.width = (tamano * 12) +'px';
 			}else{
-				this.reconstruirUI();
+					this.nodo.style.width = ((tamano/2) * 10) +'px';
 			}
+	};
+	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
+	this.manejarCarga = function(nombre){
+		UI.buscarCuadroCarga(nombre).contEspera=0;
+		this.intervalID=setInterval(function(){
+			var callback = UI.buscarCuadroCarga(nombre).callback;
+			UI.buscarCuadroCarga(nombre).contEspera++;
+			if(callback!==null){
+				callback();
+			}
+			if(!UI.buscarCuadroCarga(nombre)){
+
+				if(UI.buscarCuadroCarga(nombre).contEspera>=500){
+					//cuando el tiempo de espera es exedido muestro el mensaje
+					console.log('tiempo de espera exedido');
+					clearInterval(UI.buscarCuadroCarga(nombre).intervalID);
+					var ventana = {
+						tipo:'error',
+						bloqueo:true,
+						cabecera:'Error de Conexion',
+						cuerpo:'Tiempo de espera Culminado por Favor Refresque la Pagina'
+					};
+					UI.crearVentanaModal(ventana);
+					//funcionamiento de recarga
+					var capaContenido=UI.elementos.modalWindow.buscarUltimaCapaContenido();
+					capaContenido.partes.cuerpo.nodo.onclick=function(){
+						location.reload();
+					};
+				}
+			}
+		},50);
+	};
+	//funcion en la cual se le pasa parametros al callback al culminar la carga
+	// y muestra un mensaje al culminar la carga
+	this.culminarCarga = function(respuesta,callback){
+		callback = callback || null;
+		this.estado = 'cargaCulminada';
+		var titulo = this.nodo.firstChild;
+		var circulo = this.nodo.getElementsByTagName('circle')[0];
+		circulo.parentNode.removeChild(circulo);
+		titulo.textContent = respuesta.mensaje.titulo;
+		UI.removerCuadroCarga(this.nombre);
+		if(callback!==null){
+			callback(respuesta);
+		}
+	};
+	//esta funcion mata el intervalo al ejecultarce el callback de dicha carga
+	this.terminarCarga = function(){
+		var cuadro = this;
+		clearInterval(this.intervalID);
+		this.estado = 'cargaCulminada';
+		cuadro.nodo.parentNode.removeChild(cuadro.nodo);
+		UI.removerCuadroCarga(cuadro.nombre);
+	};
+	this.construirNodo();
+};
+/*----------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------Objeto Ventana -----------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
+var Ventana = function(atributos){
+	//-----------------Titulo---------------------------
+	var Titulo = function(atributos){
+
+		this.nodo = null;
+		this.atributos = atributos;
+		//valores por defecto
+		atributos.tipo = atributos.tipo || 'basico';
+
+		this.construirNodo = function(){
+
+			var nodo = document.createElement('section');
+			nodo.setAttribute('titulo','');
+
+			nodo.innerHTML = atributos.texto || atributos.html;
+			nodo.classList.add(atributos.tipo);
+
+			this.nodo = nodo;
+		};
+		this.construirNodo();
+	};
+	//--------------------Sector----------------------------
+	var Sector = function(atributos){
+		this.nodo = null;
+		this.atributos = atributos;
+		this.atributos.tipo = atributos.tipo || 'sector';
+		this.campos = [];
+
+		this.construirNodo = function(){
+
+			var nodo = document.createElement('section');
+			nodo.setAttribute(this.atributos.tipo,'');
+
+			if(atributos.html){
+				nodo.innerHTML = atributos.html;
+			}
+
+			this.nodo = nodo;
+			if(atributos.formulario){
+				this.formulario = new Formulario({
+					contenedor: this.nodo,
+					plano: atributos.formulario,
+					tipo:atributos.tipo,
+					registroAct: atributos.registro
+				});
+				atributos.alto = atributos.formulario.altura;
+			}
+
+			if(atributos.alto){
+				nodo.style.height=atributos.alto+'px';
+			}
+
+			if(atributos.tipo){
+				this.nodo.setAttribute(atributos.tipo,'');
+			}
+		};
+		this.desvanecerNodo = function(){
+			this.nodo.style.opacity='0';
+			var s = this;
+			setTimeout(function () {
+				s.nodo.parentNode.removeChild(s.nodo);
+			}, 310);
 		};
 		this.destruirNodo = function(){
-			if(this.registroId!==''){
-				this.registroId='';
-				UI.elementos.formulario.ventanaList.controlLista();
-				UI.elementos.botonera.quitarBoton('eliminar');
-			}else{
-				UI.elementos.botonera.quitarBoton('guardar');
-			}
-			this.nodo.style.height='0px';
-			setTimeout(function(){
-				var vf=UI.elementos.formulario.ventanaForm;
-				vf.nodo.parentNode.removeChild(vf.nodo);
-				vf.estado='sinConstruir';
-			},510);
+			this.nodo.parentNode.removeChild(this.nodo);
 		};
-
-		this.edicion = function(){
-			var formulario =  UI.elementos.formulario.ventanaForm;
-			var lista = Array.prototype.slice.call(formulario.formNode.childNodes);
-			lista.splice(lista.length,0,formulario.titulo);
-			for(var x = 0; x < lista.length; x++){
-				lista[x].classList.add('edicion');
-
-				//contenedor
-				var contenedorEdit = lista[x].querySelector('div[cont]');
-
-				//campo donde se muestra el valor del campo pero de solo lectura
-				var display = contenedorEdit.getElementsByTagName('div')[0];
-
-				//campo donde se edita la informacion
-				var campoEdit = null;
-
-				if(lista[x].getAttribute('area')===null){
-					campoEdit = contenedorEdit.querySelector('input');
-				}else{
-					campoEdit = contenedorEdit.querySelector('textarea');
-				}
-				campoEdit.value = display.textContent;
-				campoEdit.focus();
-			}
-			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
-			boton.classList.add('edicion');
-			boton.onclick = UI.elementos.formulario.ventanaForm.finEdicion;
-		};
-
-		this.finEdicion = function(){
-			var formulario =  UI.elementos.formulario.ventanaForm;
-			var newReg = {};
-			var lista = Array.prototype.slice.call(formulario.formNode.childNodes);
-			lista.splice(lista.length,0,formulario.titulo);
-			for(var x = 0; x < lista.length; x++){
-				lista[x].classList.remove('edicion');
-
-				//contenedor
-				var contenedorEdit = lista[x].querySelector('div[cont]');
-
-				//campo donde se muestra el valor del campo pero de solo lectura
-				var display = contenedorEdit.getElementsByTagName('div')[0];
-
-				//campo donde se edita la informacion
-				var campoEdit = null;
-
-				if(lista[x].getAttribute('area')===null){
-					campoEdit = contenedorEdit.querySelector('input');
-				}else{
-					campoEdit = contenedorEdit.querySelector('textarea');
-				}
-				display.textContent = campoEdit.value;
-
-				//creo el nuevo registro para posteriormete verificar cambios
-				var propiedad = campoEdit.name;
-				newReg[propiedad] = campoEdit.value;
-			}
-			//verifico si hubo algun cambio y en que campo y armo la peticion
-			var oldReg = UI.elementos.formulario.ventanaForm.registroAct;
-			var peticion = { cambios:0, codigo:oldReg.codigo, operacion:'modificar', entidad:torque.entidadActiva};
-			for (var oldPropiedad in oldReg){
-
-				for(var newPropiedad in newReg){
-
-					if(oldPropiedad.toLowerCase() == newPropiedad.toLowerCase()){
-
-						if(oldReg[oldPropiedad] !== newReg[newPropiedad]){
-							peticion[oldPropiedad] = newReg[newPropiedad];
-							peticion.cambios++;
-						}
-					}
-				}
-			}
-			//en caso de haber cambios envio a la base de datos y actualizo dicho cambio en el registro local
-			if(peticion.cambios!==0){
-				var contenedor = UI.elementos.formulario.ventanaForm.nodo;
-				contenedor.innerHTML = '';
-				//------------Cuadro Carga-------------------------------
-				var infoCuadro = {
-					nombre: 'guardarEdicion',
-					mensaje:'Guardando cambios',
-				};
-				var cuadroDeCarga=UI.crearCuadroDeCarga(infoCuadro,contenedor);
-				cuadroDeCarga.style.marginTop='80px';
-				//------------Cuadro Carga-------------------------------
-
-				torque.Operacion(peticion,function(respuesta){
-					UI.buscarCuadroCarga('guardarEdicion').culminarCarga(respuesta,function(respuesta){
-						if(respuesta.success===0){
-							var ventana = {
-								tipo : 'error',
-								cabecera: 'Error interno del Servidor',
-								cuerpo: respuesta.mensaje,
-							};
-							UI.crearVentanaModal(ventana);
-							UI.elementos.formulario.ventanaForm.destruirNodo();
-						}else{
-							UI.elementos.formulario.ventanaList.actualizarSlot(respuesta.registro);
-							UI.elementos.formulario.ventanaList.obtenerSeleccionado().activar();
-						}
-					});
-				});
-			}
-			var boton = UI.elementos.formulario.ventanaForm.titulo.getElementsByTagName('article')[0];
-			boton.classList.remove('edicion');
-			boton.onclick = UI.elementos.formulario.ventanaForm.edicion;
-		};
-
-		//funcion para agregar de forma dinamica campos a la interfaz
-		this.agregarCampo = function(campo){
-		//para que no agregue el titulo dado que ya viene con la estructura basica de modificar
-	      if((campo.tipo.toLowerCase() !== 'campoedicion')||((campo.tipo.toLowerCase() === 'campoedicion')&&(campo.parametros.tipo!=='titulo'))){
-	        var contenedor = this.nodo.getElementsByTagName('form')[0];
-	        var campoNuevo = UI.agregarCampo(campo,contenedor);
-	        this.campos.push(campoNuevo);
-	      }
-		};
-		//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
-		this.agregarCampos = function(campos){
-			for(var x=0;x<campos.length;x++){
-				this.agregarCampo(campos[x]);
-			}
-		};
-
-		this.crearEstructuraBasicaNuevo = function(titulo,altura){
-				this.nodo.style.height=altura+'px';
-				var html='<section titulo>Nuevo '+titulo+'</section>'+
-							'<section sector>'+
-								'<form name ="formNuevo"></form>'+
-							'</section>'+
-						'</section>';
-				this.nodo.innerHTML=html;
-				//asigno el nodo formulario de html
-				this.formNode = this.nodo.getElementsByTagName('form')[0];
-				//asigo el titulo del formulario
-				this.titulo = this.nodo.getElementsByTagName('section')[0];
-		};
-
-		this.crearEstructuraBasicaModificar = function(titulo,altura){
-				this.nodo.style.height=altura+'px';
-				var html="<section titulo area>"+
-								"<div cont>"+
-									"<textarea  name='"+titulo.nombre+"'></textarea>"+
-									"<div display>"+titulo.valor+"</div>"+
-								"</div>"+
-								"<article update='campo'></article>"+
-						"</section>"+
-						"<section sector>"+
-							"<!-- Aqui va el contenido -->"+
-							"<form name ='formModificar'></form>"+
-						"</section>";
-				this.nodo.innerHTML=html;
-				//asigno el nodo formulario de html
-				this.formNode = this.nodo.getElementsByTagName('form')[0];
-				//asigo el titulo del formulario
-				this.titulo = this.nodo.querySelector('section[titulo]');
-				//agrego funcionamiento del boton editar
-				var article = this.titulo.querySelector('article[update]');
-				article.onclick=function(){
-					UI.elementos.formulario.ventanaForm.edicion();
-				};
-		};
-		//esta funcion se usa solo si el valor usarConstructor es === true
-		this.iniciarConstructor = function(){
-			if(this.campos.length){
-				this.campos = [];
-			}
-		  var constructor = UI.buscarConstructor(this.atributos.entidad);
-		  var tiempo = (this.estado=='agregado')?600:0;
-		  var html='';
-		  if(this.tipo=='nuevo'){
-		    this.registroId='';
-		    UI.elementos.formulario.ventanaList.controlLista();
-		    this.nodo.style.height='0px';
-		    setTimeout(function(){
-		      //guardo el objeto venana formulario para mejor entendimiento y acceso rapido
-		      var capaForm=UI.elementos.formulario.ventanaForm;
-		      //inicializo los datos del titulo del formulario y la altura del mismo
-		      var titulo = constructor.nuevo.titulo;
-		      var altura = constructor.nuevo.altura;
-		      capaForm.crearEstructuraBasicaNuevo(titulo,altura);
-		      //agrego los campos
-		      UI.elementos.formulario.ventanaForm.agregarCampos(constructor.nuevo.campos);
-		    },tiempo);
-
-		    //funcionamiento botones
-		    //quito
-		    var gestionar = {quitar:['eliminar'],agregar:['guardar']};
-	        if(constructor.modificar.botones){
-	        	gestionar.quitar = gestionar.quitar.concat(constructor.modificar.botones);
-	        }
-		    //agrego
-	        if(constructor.nuevo.botones){
-	        	gestionar.agregar = gestionar.agregar.concat(constructor.nuevo.botones);
-	        }
-	        UI.elementos.botonera.gestionarBotones(gestionar);
-		  }else if(this.tipo=='modificar'){
-
-		    //funcinamiento botones
-				var quitar = ['guardar','eliminar'];
-	      if(constructor.nuevo.botones){
-	      	quitar = quitar.concat(constructor.nuevo.botones);
-	      }
-				if(constructor.modificar.botones){
-	      	quitar = quitar.concat(constructor.modificar.botones);
-	      }
-				UI.elementos.botonera.quitarBotones(quitar);
-
-		    this.nodo.style.height = '0px';
-
-		    setTimeout(function(){
-		      var nodo=UI.elementos.formulario.ventanaForm.nodo;
-		      nodo.style.height='300px';
-		      nodo.style.borderRadius='0px';
-		      //------------Cuadro Carga-------------------------------
-		      var infoCuadro = {
-		        mensaje:'Buscando'
-		      };
-		      nodo.innerHTML='';
-		      var cuadroDeCarga = UI.crearCuadroDeCarga(infoCuadro,nodo);
-		      cuadroDeCarga.style.marginTop = '80px';
-		      //--------------------------------------------------------
-		      var info={
-		        codigo:UI.elementos.formulario.ventanaForm.registroId,
-		        entidad:constructor.nombre,
-		        operacion:'buscarRegistro',
-		        modulo:constructor.modulo
-		      };
-		      torque.Busqueda(info,function(respuesta){
-		        //guardo de forma local los datos para facil acceso
-		        var data = respuesta.registros;
-		        /*Actualizo en el objeto formulario la informacion recibida de manera que
-		        si en un futuro cercano necesito consultar no debo salir del cliente para lo mismo*/
-		        UI.elementos.formulario.ventanaForm.registroAct=data;
-		        //guardo el objeto ventana formulario para mejor entendimiento y acceso rapido
-		        var formulario = UI.elementos.formulario.ventanaForm;
-		        var nombre;
-		        if(constructor.campo_nombre){
-		        	nombre = constructor.campo_nombre;
-		        }else{
-		        	nombre = 'nombre';
-		        }
-		        //inicializo los datos del titulo del formulario y la altura del mismo
-		        var titulo = {
-		          nombre: nombre,
-		          valor:data.nombre
-		        };
-		        var altura = constructor.modificar.altura;
-		        //monto la estructura basica sobre la cual se montan los campos a agregar
-		        formulario.crearEstructuraBasicaModificar(titulo,altura);
-		        //inicializo el arreglo con los campos a agregar
-		        formulario.agregarCampos(constructor.modificar.campos);
-		        UI.asignarValores(data,formulario);
-		        //si se añadieron botones
-
-						var agregar = ['eliminar'];
-		        if(constructor.modificar.botones){
-							agregar = agregar.concat(constructor.modificar.botones);
-						}
-						UI.elementos.botonera.agregarBotones(agregar);
-		      });
-		    },tiempo);
-		  }
-		};
-
-		this.agregarSectorOperaciones = function(){
-			var operaciones = document.createElement('section');
-			operaciones.setAttribute('operaciones','');
-			operaciones.innerHTML='<section contOp ></section>';
-			this.nodo.appendChild(operaciones);
-		};
-
-		this.agregarSector = function(sector){
-			var newSector = document.createElement('section');
-			newSector.setAttribute('sector','');
-			this.nodo.appendChild(newSector);
-			//operaciones dependiendo de los datos
-			if(sector.html){
-				newSector.innerHTML = sector.html;
-			}
-			if(sector.division){
-				newSector.classList.add('division');
-			}
-			return newSector;
-		};
-
-		this.validar = function(){
-			funcionGuardar =(typeof(guardar)==='undefined')?UI.elementos.formulario.ventanaForm.guardarPorDefecto:guardar;
-			var formulario = document.formNuevo;
-			var data = [];
-			var elemento;
-			var validacion=false;
-			for(var x=0;x<formulario.elements.length;x++){
-				if((formulario.elements[x].type=='text')||(formulario.elements[x].type=='password')){
-					if(formulario.elements[x].value===''){
-						validacion=true;
-					}
-				}
-				if(formulario.elements[x].type=='select-one'){
-					if(formulario.elements[x].value=='-'){
-						validacion=true;
-					}
-				}
-				elemento = {nombre:formulario.elements[x].name,valor:formulario.elements[x].value};
-				data.push(elemento);
-			}
-			if(!validacion){
-				//guardo en base de datos
-				funcionGuardar(data);
-			}else{
-				console.log('formulario no paso la validacion');
-			}
-		};
-
-		this.guardarPorDefecto =  function(data){
-			torque.guardar(torque.entidadActiva,data,function(respuesta){
-				var nuevoSlot=UI.elementos.formulario.ventanaList.agregarSlot(respuesta.registros);
-
-				//cambio al slot modificado
-				nuevoSlot.firstChild.click();
-			});
-		};
+		this.construirNodo();
 	};
-
-	/*------------------------------Objeto VentanaList-------------------------------------------------------------*/
-	var VentanaList = function(entidadActiva){
-		/*------------------------------Objeto Slot-------------------*/
-		var Slot = function(data){
-			this.atributos = data;
-			this.estado = 'sinInicializar';
-			this.rol = 'lista';
-			this.nodo = null;
-
-			this.construirNodo = function(nombre){
-				var nodo = document.createElement('section');
-				nodo.setAttribute('slot','');
-				nodo.id=this.atributos.codigo;
-				var html ="";
-				var titulo;
-				var campo_nombre;
-				if(UI.buscarConstructor(entidadActiva)){
-					campo_nombre = this.atributos[UI.buscarConstructor(entidadActiva).campo_nombre];
-				}else{
-					campo_nombre = this.atributos.nombre;
-				}
-				if(campo_nombre.length>28){
-					titulo = campo_nombre.substr(0,28)+'...';
-				}else{
-					titulo = campo_nombre;
-				}
-				html+="<article  title>"+titulo+"</article>"+
-					"<button type='button' btnEliminar></button>";
-				nodo.innerHTML=html;
-				this.nodo = nodo;
-				this.estado='enUso';
-				this.funcionamiento();
-			};
-			this.funcionamiento = function(){
-				var nodo = this.nodo;
-				var article =nodo.getElementsByTagName('article')[0];
-				var btnEliminar = nodo.getElementsByTagName('button')[0];
-				article.onclick=function(e){
-					var formulario = UI.elementos.formulario;
-					formulario.ventanaList.controlLista(this.parentNode);
-					var newSelec = formulario.ventanaList.obtenerSeleccionado();
-					var data = {
-							tipo:'modificar',
-							codigo:newSelec.atributos.codigo
-						};
-					formulario.construirUI(data);
-
-					agregarRippleEvent(this.parentNode,e);
-				};
-				btnEliminar.onclick=function(){
-					var slot = UI.elementos.formulario.ventanaList.buscarSlot({id:this.parentNode.id});
-					if(slot.estado=='seleccionado'){
-						var ventana = {
-							tipo : 'error',
-							cabecera : 'Error',
-							cuerpo : 'No puede Eliminar un registro mientras este modificandolo'
-						};
-						UI.crearVentanaModal(ventana);
-					}else{
-						UI.elementos.formulario.eliminar(slot);
-					}
-				};
-			};
-			this.reconstruirNodo = function(){
-				this.nodo.style.marginLeft="120%";
-				var nodo=this.nodo;
-				var slot=this;
-				var titulo;
-				if(UI.buscarConstructor(entidadActiva)){
-					campo_nombre = this.atributos[UI.buscarConstructor(entidadActiva).campo_nombre];
-				}else{
-					campo_nombre = this.atributos.nombre;
-				}
-				if(campo_nombre.length>28){
-					titulo = campo_nombre.substr(0,28)+'...';
-				}else{
-					titulo = campo_nombre;
-				}
-				var html="<article  title>"+titulo+"</article>"+
-				"<button type='button' btnEliminar></button>";
-				setTimeout(function(){
-					nodo.innerHTML=html;
-					slot.funcionamiento();
-					UI.elementos.formulario.ventanaList.controlLista(nodo);
-				},510);
-
-			};
-			this.destruirNodo = function(){
-				var nodo = this.nodo;
-				var slot = this;
-				nodo.style.marginLeft="120%";
-				nodo.style.marginBotton='0px';
-				nodo.style.boxShadow='none';
-				setTimeout(function(){
-					nodo.style.height='0px';
-					nodo.style.padding='0px';
-				},510);
-				setTimeout(function(){
-					nodo.parentNode.removeChild(nodo);
-					var indice = UI.elementos.formulario.ventanaList.Slots.indexOf(slot);
-					UI.elementos.formulario.ventanaList.Slots.splice(indice,1);
-				},1110);
-			};
-			this.activar = function(){
-				this.nodo.getElementsByTagName('article')[0].click();
-			};
-			this.construirNodo();
-		};
-		/*--------------------------Fin Objeto Slot-------------------*/
-
-		this.Slots = [];
-
-		this.nodo = null;
-		this.entidadActiva=entidadActiva;
-
-		this.abrirCampoBusqueda = function(){
-			var botonBusqueda = UI.elementos.formulario.ventanaList.nodo.getElementsByTagName('button')[1];
-			var campoBusqueda=botonBusqueda.previousSibling;
-			var titulo=campoBusqueda.previousSibling;
-
-			titulo.style.padding='0px';
-			titulo.style.width='0px';
-
-			campoBusqueda.style.width='calc(100% - 70px)';
-			campoBusqueda.style.height='40px';
-
-			campoBusqueda.focus();
-			setTimeout(function(){
-				botonBusqueda.onclick=UI.elementos.formulario.ventanaList.buscarElementos;
-			},10);
-		};
-		this.buscarElementos = function(){
-			var formulario=UI.elementos.formulario;
-
-			if(formulario.ventanaForm.estado!='sinConstruir'){
-				formulario.ventanaForm.destruirNodo();
-			}
-
-			var botonBusqueda=formulario.ventanaList.nodo.getElementsByTagName('button')[1];
-			var valorBusqueda=botonBusqueda.previousSibling.firstChild.value.toLowerCase();
-
-			var registros=torque.registrosEntAct;
-			var nuevosRegistros= [];
-			var contRegEnc=0;
-			for(var x=0; x<registros.length;x++){
-				if(registros[x].nombre.toLowerCase().search(valorBusqueda)!=-1){
-					contRegEnc++;
-					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='0px';
-
-					if(contRegEnc==1){
-						formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='51px';
-					}
-
-					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.display='block';
-				}else{
-					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.marginTop='0px';
-					formulario.ventanaList.buscarSlot(registros[x]).nodo.style.display='none';
-				}
-			}
-		};
-		this.listarSlots = function(){
-			console.log('Slots:');
-			for(var x=0;x<this.Slots.length;x++){
-				console.log('nombre: '+this.Slots[x].atributos.nombre+'\testado: '+this.Slots[x].estado);
-			}
-		};
-		this.agregarSlot = function(data){
-			var slot = new Slot(data);
-			this.Slots.push(slot);
-			this.nodo.appendChild(slot.nodo);
-			return slot.nodo;
-		};
-		this.cargarRegistros = function(registros){
-			for(var x=0; x<registros.length;x++){
-				this.agregarSlot(registros[x]);
-			}
-		};
-		this.controlLista = function(nodo){
-			var obj=false;
-			for(var x=0;x<this.Slots.length;x++){
-				if(this.Slots[x].nodo==nodo){
-					this.Slots[x].estado='seleccionado';
-					this.Slots[x].nodo.style.marginLeft='20px';
-					obj=this.Slots[x];
-				}else{
-					this.Slots[x].estado='enUso';
-					this.Slots[x].nodo.style.marginLeft='0px';
-				}
-			}
-		};
-		this.buscarSlot = function(registro){
-			for(x=0;x<this.Slots.length;x++){
-				if(this.Slots[x].atributos.codigo==registro.codigo){
-					return this.Slots[x];
-				}
-			}
-			console.log('el slot no existe');
-			return false;
-		};
-		this.buscarSlotPorNombre = function(registro){
-			for(x=0;x<this.Slots.length;x++){
-				if(this.Slots[x].atributos.nombre==registro.nombre){
-					return this.Slots[x];
-				}
-			}
-			console.log('el slot no existe');
-			return false;
-		};
-		this.cambiarTextoSlots = function(cambio){
-			if(cambio=='mediaQuery'){
-				for(var x=0;x<this.Slots.length;x++){
-					var nodo=this.Slots[x].nodo;
-					var slot=this.Slots[x];
-					var titulo;
-					if(UI.buscarConstructor(entidadActiva)){
-						campo_nombre = slot.atributos[UI.buscarConstructor(entidadActiva).campo_nombre];
-					}else{
-						campo_nombre = slot.atributos.nombre;
-					}
-					if(campo_nombre.length>28){
-						titulo = campo_nombre.substr(0,28)+'...';
-					}else{
-						titulo = campo_nombre;
-					}
-					var html="<article  title>"+titulo+"</article>"+
-					"<button type='button' btnEliminar></button>";
-					nodo.innerHTML=html;
-					slot.funcionamiento();
-				}
-			}else{
-				for(var i=0;i<this.Slots.length;i++){
-					var contenido="<article  title>"+this.Slots[i].atributos.nombre+"</article>";
-					contenido+="<button type='button' btnEliminar></button>";
-					this.Slots[i].nodo.innerHTML=contenido;
-					this.Slots[i].funcionamiento();
-				}
-			}
-		};
-
-		this.actualizarLista = function(cambios){
-			if(cambios instanceof Array){
-
-			}else{
-				this.actualizarSlot(cambios);
-			}
-		};
-		this.actualizarSlot = function(registro){
-			var slot=this.buscarSlot(registro);
-			if(slot){
-				slot.atributos=registro;
-				slot.reconstruirNodo();
-			}
-		};this.obtenerSeleccionado = function(){
-			var seleccionado=false;
-			for(var x=0;x<this.Slots.length;x++){
-				if(this.Slots[x].estado=='seleccionado'){
-					seleccionado=this.Slots[x];
-				}
-			}
-			return seleccionado;
-		};
-		this.construir = function(){
-			var contenedor = obtenerContenedor();
-			var elemento = document.createElement('div');
-			elemento.setAttribute('capaList','');
-			var html='';
-			html+="<section busqueda>";
-			html+=	"<div tituloForm>"+this.entidadActiva.toUpperCase()+"</div>";
-			html+=	"<div listBuscar>";
-			html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
-			html+=		"<button type='button' cerrarBusq></button>";
-			html+=	"</div>";
-			html+=	"<button type='button' btnBusq></button>";
-			html+="</section>";
-			elemento.innerHTML = html;
-			this.nodo=elemento;
-
-			var botonBusqueda=elemento.getElementsByTagName('button')[1];
-			var botonCerrarBusq=elemento.getElementsByTagName('button')[0];
-
-			botonBusqueda.onclick=this.abrirCampoBusqueda;
-
-			botonCerrarBusq.onclick=function(){
-				console.log('presiono Cerrar buscar');
-
-				var botonBusqueda=UI.elementos.formulario.ventanaList.nodo.getElementsByTagName('button')[1];
-				var campoBusqueda=this.parentNode;
-				var titulo=campoBusqueda.previousSibling;
-
-				titulo.style.padding='3px 3px 3px 30px';
-				titulo.style.width='calc(100% - 103px)';
-
-				campoBusqueda.style.width='0px';
-				campoBusqueda.style.height='0px';
-				campoBusqueda.firstChild.value='';
-
-				botonBusqueda.click();
-				UI.elementos.formulario.ventanaList.controlLista();
-
-				setTimeout(function(){
-					botonBusqueda.onclick=UI.elementos.formulario.ventanaList.abrirCampoBusqueda;
-				},20);
-			};
-			contenedor.insertBefore(elemento,document.getElementById('menu').nextSibling);
-			this.estado='enUso';
-			//declaro la variable para usarla dentro del intervalo
-			var ventanaForm=this;
-			//------------Cuadro Carga-------------------------------
-			var infoCuadro = {
-				nombre: 'cargaVentanaList',
-				mensaje:'Buscando',
-				contenedor:this.nodo
-			};
-			var cuadroDeCarga=UI.iniciarCarga(infoCuadro,function(){
-				if(torque.registrosEntAct!==null){
-					UI.buscarCuadroCarga('cargaVentanaList').terminarCarga();
-					ventanaForm.cargarRegistros(torque.registrosEntAct);
-				}
-			});
-			cuadroDeCarga.style.marginTop='80px';
-			//------------Cuadro Carga-------------------------------
-		};
-		this.construir();
-	};
-	/*--------------------------Fin Objeto VentanaList-----------------------------------*/
-	this.entidadActiva = atributos.entidad;
+	//--------------------fin Objeto Sector--------------------
 	this.atributos = atributos;
-	this.ventanaList = new VentanaList(this.entidadActiva);
-	this.ventanaForm = new VentanaForm(atributos);
+	this.estado = 'porConstruir';
+	this.sectores = [];
+	this.nodo = null;
+	this.clases = atributos.clases || [];
 
-	this.estado = 'sinInicializar';
+	this.construirNodo = function(){
+		var nodo = document.createElement('div');
+		nodo.setAttribute('mat-window','');
+		nodo.classList.add(this.atributos.tipo);
+		this.nodo = nodo;
 
-	this.interval=null;
+		if(atributos.titulo){
+			this.agregarTitulo(this.atributos.titulo);
+		}
 
-	//metodo para hacer el objeto ventana form capaz de recibir funciones en forma de herencia
-	this.ventanaForm.prototype = VentanaForm.prototype;
-	this.ventanaForm.prototype.constructor = this.ventanaForm;
-	//-----------------------------Metodos----------------------------------------------
+		if(atributos.sectores){
+			for(var x = 0; x < atributos.sectores.length; x++){
+				this.agregarSector(atributos.sectores[x]);
+			}
+		}
 
-	this.construirVentanaForm=function(data){
-		this.ventanaForm.registroId=data.codigo;
-		this.ventanaForm.construirNodo(data);
+		if(atributos.alto){
+			this.nodo.style.height = atributos.alto+'px';
+		}
+		if(this.atributos.clases){
+			UI.manejoDeClases(this);
+		}
+	};
+	this.agregarSector = function(atributos){
+		var sector = new Sector(atributos);
+		this.sectores.push(sector);
+		this.nodo.appendChild(sector.nodo);
+		return sector;
 	};
 
-	this.validarCombo = function(valoresNoPermitidos,lista){
-		normalizarNodo(lista);
-		for(var i=0;i<lista.length;i++){
-			lista[i].style.display='block';
-		}
-		for(var x=0;x<lista.length;x++){
-			for(var y=0;y<valoresNoPermitidos.length;y++){
-				if(lista[x].value==valoresNoPermitidos[y]){
-					lista.removeChild(lista[x]);
-					x--;
+	this.buscarSector = function(nombre){
+		for(var x = 0; x < this.sectores.length; x++){
+			if(this.sectores[x].atributos.nombre){
+				if(this.sectores[x].atributos.nombre===nombre){
+					return this.sectores[x];
 				}
 			}
 		}
-		if(lista.length==1){
-			lista.options[0].textContent='No Posee Valores Disponibles';
-			lista.options[0].value='cerrar';
-		}
+		return false;
 	};
-	this.abrirtooltipInput = function(event){
-		var parent = this;
-		var input = parent.firstChild;
-		while(input.nodeName=='#text'){
-			input=input.nextSibling;
-		}
-		if(input.value!==''){
-			this.interval=setTimeout(function(){
-				parent.style.zIndex='4';
-				var tooltip = document.createElement('div');
-				tooltip.textContent=input.value;
-				tooltip.setAttribute('tooltip','');
-				parent.appendChild(tooltip);
-				setTimeout(function(){
-					tooltip.style.opacity=1;
-					tooltip.style.top=40+'px';
-					tooltip.style.transform='scale(1)';
-				},10);
-			},1000);
-		}
 
+	this.quitarSector = function(nombre){
+		var sector = this.buscarSector(nombre);
+		sector.destruirNodo();
+		this.sectores.splice(this.sectores.indexOf(sector),1);
 	};
-	this.cerrartooltipInput = function(event){
-		var parent = this;
-		var input = parent.firstChild;
-		while(input.nodeName=='#text'){
-			input=input.nextSibling;
-		}
-		if(this.interval!==null){
-			clearInterval(this.interval);
-			this.interval=null;
-			if(parent.lastChild.nodeName.toLowerCase()=='div'){
-				if(parent.lastChild.getAttribute('tooltip')!==null){
-					var tooltip=parent.lastChild;
-						tooltip.style.opacity=0;
-						tooltip.style.top='-20px';
-						tooltip.style.transform='scale(0)';
-					setTimeout(function(){
-						parent.style.zIndex=null;
-						parent.removeChild(parent.lastChild);
-					},310);
-				}
-			}
-		}
+	this.desvanecerSector = function(nombre) {
+		var sector = this.buscarSector(nombre);
+		sector.desvanecerNodo();
+		this.sectores.splice(this.sectores.indexOf(sector),1);
 	};
-	//------------------------------------Funciones Operacionales de Formulario-----------------------------------
-	this.eliminar = function(slot){
-		if(slot instanceof MouseEvent){
-			var registro =torque.buscarRegistro(UI.elementos.formulario.ventanaForm.registroId,torque.entidadActiva);
-			slot = UI.elementos.formulario.ventanaList.buscarSlot(registro);
-		}
-		var verificacion = {
-			tipo : 'advertencia',
-			cabecera : 'Advertencia',
-			cuerpo : '¿Desea eliminar '+slot.atributos.nombre+' ?',
-			pie : '<section modalButtons>'+
-						'<button type="button" cancelar id="modalButtonCancelar"></button>'+
-						'<button type="button" aceptar registro="'+slot.atributos.codigo+'" id="modalButtonAceptar"></button>'+
-					'</section>'
-		};
 
-		UI.crearVentanaModal(verificacion);
-
-		var btnAceptar = document.getElementById('modalButtonAceptar');
-		var btnCancelar = document.getElementById('modalButtonCancelar');
-
-		btnCancelar.onclick=function(){
-			UI.elementos.modalWindow.eliminarUltimaCapa();
-		};
-		btnAceptar.onclick=function(){
-
-			var slot = UI.elementos.formulario.ventanaList.buscarSlot({codigo:this.getAttribute('registro')});
-			var nodo = slot.nodo;
-
-			UI.elementos.modalWindow.eliminarUltimaCapa();
-			torque.eliminar(registro,torque.entidadActiva);
-
-			slot.destruirNodo();
-		};
+	this.agregarTitulo = function(atributos){
+		var titulo = new Titulo(atributos);
+		this.nodo.insertBefore(titulo.nodo,this.nodo.firstChild);
+		this.titulo = titulo;
 	};
-	//-------------------------------------Manejo de UI-----------------------------------------------------------
-	this.agregarVentanaForm = function(){
-		this.ventanaForm.estado='agregado';
-		this.ventanaList.nodo.parentNode.insertBefore(this.ventanaForm.nodo,this.ventanaList.nodo.nextSibling);
+
+	this.destruirNodo = function(){
+		this.nodo.style.height='0px';
+		var v = this;
+		setTimeout(function(){
+			v.nodo.parentNode.removeChild(v.nodo);
+		},510);
 	};
-	this.construirUI = function(data){
-		var existeVentana=(this.ventanaForm.estado=='agregado')?true:false;
-		if(existeVentana){
-			if(data.tipo=='modificar'){
-				this.ventanaForm.tipo='modificar';
-				this.ventanaForm.registroId=data.codigo;
-			}else if(data.tipo=='nuevo'){
-				this.ventanaForm.tipo='nuevo';
-				this.ventanaForm.registroId='';
-			}
-			if(this.ventanaForm.atributos.usoConstructor){
-				this.ventanaForm.iniciarConstructor();
-			}else{
-				this.ventanaForm.reconstruirUI();
-			}
-		}else{
-			this.construirVentanaForm(data);
-			this.agregarVentanaForm();
-		}
-	};
+	this.construirNodo();
 };
-
 /*----------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------Objeto Ventana Modal------------------------------------*/
+/*--------------------------------------------Objeto Ventana Modal -----------------------------------*/
 /*----------------------------------------------------------------------------------------------------*/
 var modalWindow = function(){
-
+	/*--------------------------------------------Objeto CapaContenido--------------------------------*/
 	var capaContenido = function(){
 
 		//------------------- Partes-------------------------------------
@@ -1467,8 +1148,14 @@ var modalWindow = function(){
 				}else{
 					porConstruir = contenido;
 				}
-				if(porConstruir.campos){
-					this.agregarCampos(porConstruir.campos);
+				if(porConstruir.formulario){
+					this.formulario = new Formulario({
+						contenedor: this.nodo,
+						plano: porConstruir.formulario,
+						tipo: porConstruir.tipo,
+						registroAct: porConstruir.registro
+					});
+					porConstruir.alto = porConstruir.formulario.altura;
 				}
 				if(porConstruir.html){
 					this.nodo.innerHTML = porConstruir.html;
@@ -1476,8 +1163,9 @@ var modalWindow = function(){
 				if(porConstruir.alto){
 					this.nodo.style.height = porConstruir.alto + 'px';
 				}
-				if(porConstruir.clase){
-					this.nodo.classList.add(porConstruir.clase);
+				if(porConstruir.clases){
+					this.clases = porConstruir.clases;
+					UI.manejoDeClases(this);
 				}
 			};
 
@@ -1628,6 +1316,7 @@ var modalWindow = function(){
 				}
 				this.agregarParte('pie',formulario.pie);
 			}
+			return this.partes.cuerpo.formulario;
 		};
 		this.convertirEnMensaje = function(mensaje){
 			//cambios Generales
@@ -1641,8 +1330,6 @@ var modalWindow = function(){
 				}
 				this.partes.cabecera.nodo.class = '';
 				this.partes.cabecera.agregarTipo(mensaje.nombre_tipo.toLowerCase());
-
-				//this.partes.cabecera.nodo.textContent = mensaje.titulo;
 			}
 
 			//cambio el cuerpo
@@ -1820,264 +1507,65 @@ var modalWindow = function(){
 		}
 	};
 };
-/*----------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------Objeto Cuadro de Carga ---------------------------------*/
-/*----------------------------------------------------------------------------------------------------*/
-var CuadroCarga = function(info,callback){
 
-	//manejo de interfaz
-	this.contenedor=info.contenedor;
-	this.tipo=info.tipo || 'carga';
-	this.clases=info.clases || [];
+/*---------------Utilidades---------------------------------------------*/
+function obtenerContenedor(){
+	var contenedor = document.body.firstChild;
+	while(contenedor.nodeName=='#text'){
+		contenedor=contenedor.nextSibling;
+	}
+	return contenedor;
+}
+function normalizarNodo(nodo){
+	var hijo=null;
+	var eliminar;
+	while(hijo!=nodo.lastChild){
+		if(hijo===null){
+			hijo=nodo.firstChild;
+		}
+		if(hijo.nodeName=='#text'){
+			eliminar=hijo;
+			hijo=hijo.nextSibling;
+			eliminar.parentNode.removeChild(eliminar);
+		}else{
+			hijo=hijo.nextSibling;
+		}
+	}
+}
+/*----------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------Objeto Formulario --------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
+var Formulario = function(atributos){
+	this.campos = [];
+	this.plano = atributos.plano;
+	this.tipo = atributos.tipo;
 	this.nodo = null;
-	this.nombre = info.nombre || 'unico';
+	this.registroId = null;
+	this.registroAct= atributos.registroAct || null;
 
-	//maenjo de carga
-	this.intervalID = null;
-	this.contEspera = 0;
-	this.callback = callback || null;
-
-	this.estado = 'sinIniciar';
-
-	this.construirNodo = function(){
-
-		var cuadro = document.createElement('div');
-		cuadro.classList.toggle('ContenedorCarga');
-
-		cuadro.innerHTML='<article style="color:#7b7b7b;text-align:center;width:inherit">'+info.mensaje+'</article>'+
-		'<div class="showbox">'+
-			'<div class="loader">'+
-				'<svg class="circular" viewBox="25 25 50 50">'+
-					'<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>'+
-			    '</svg>'+
-			  '</div>'+
-			'</div>';
-		this.contenedor.appendChild(cuadro);
-		var circulo=document.querySelector('.path');
-
-		//asigno color al circulo de carga
-		if(this.tipo.toLowerCase()=='advertencia'){
-			circulo.classList.toggle('pathAdvertencia');
-		}else if(this.tipo.toLowerCase()=='carga'){
-			circulo.classList.toggle('pathCarga');
-		}
-		this.estado = 'iniciado';
-		this.nodo = cuadro;
-		this.manejoDeClases();
-		this.tamanoTexto(info.mensaje);
-	};
-	this.tamanoTexto = function(texto){
-			var tamano = texto.length;
-			if(tamano < 40){
-				this.nodo.style.width = (tamano * 12) +'px';
-			}else{
-					this.nodo.style.width = ((tamano/2) * 10) +'px';
-			}
-	};
-	this.manejoDeClases = function(){
-		this.eliminarClasesRepetidas();
-		for (var i = 0; i < this.clases.length; i++) {
-			this.nodo.classList.add(this.clases[i]);
-		}
-	};
-	this.eliminarClasesRepetidas = function(){
-		var clasesValidadas = [];
-		var existe;
-		for (var i = 0; i < this.clases.length; i++) {
-			existe = false;
-			for (var x = 0; x < clasesValidadas.length; x++) {
-				if(clasesValidadas[x]==this.clases[i]){
-					existe = true;
-				}
-			}
-			if(!existe){
-				clasesValidadas.push(this.clases[i]);
+  this.construirNodo = function(){
+		this.nodo = document.createElement('form');
+		atributos.contenedor.appendChild(this.nodo);
+		atributos.contenedor.setAttribute('formulario','');
+		this.agregarCampos(this.plano.campos);
+		if(this.tipo.toLowerCase() === 'modificar'){
+			if(this.registroAct !== null){
+				this.asignarValores(this.registroAct);
+				this.deshabilitar();
 			}
 		}
-		this.clases = clasesValidadas;
-	};
-	//esta funcion crea un intervalo de carga que permite manejar dicha carga colocandole un tiempo de espera 5 segundos
-	this.manejarCarga = function(nombre){
-		UI.buscarCuadroCarga(nombre).contEspera=0;
-		this.intervalID=setInterval(function(){
-			var callback = UI.buscarCuadroCarga(nombre).callback;
-			UI.buscarCuadroCarga(nombre).contEspera++;
-			if(callback!==null){
-				callback();
-			}
-			if(!UI.buscarCuadroCarga(nombre)){
+  };
 
-				if(UI.buscarCuadroCarga(nombre).contEspera>=500){
-					//cuando el tiempo de espera es exedido muestro el mensaje
-					console.log('tiempo de espera exedido');
-					clearInterval(UI.buscarCuadroCarga(nombre).intervalID);
-					var ventana = {
-						tipo:'error',
-						bloqueo:true,
-						cabecera:'Error de Conexion',
-						cuerpo:'Tiempo de espera Culminado por Favor Refresque la Pagina'
-					};
-					UI.crearVentanaModal(ventana);
-					//funcionamiento de recarga
-					var capaContenido=UI.elementos.modalWindow.buscarUltimaCapaContenido();
-					capaContenido.partes.cuerpo.nodo.onclick=function(){
-						location.reload();
-					};
-				}
-			}
-		},50);
-	};
-	//funcion en la cual se le pasa parametros al callback al culminar la carga
-	// y muestra un mensaje al culminar la carga
-	this.culminarCarga = function(respuesta,callback){
-		callback = callback || null;
-		this.estado = 'cargaCulminada';
-		var titulo = this.nodo.firstChild;
-		var circulo = this.nodo.getElementsByTagName('circle')[0];
-		circulo.parentNode.removeChild(circulo);
-		titulo.textContent = respuesta.mensaje.titulo;
-		UI.removerCuadroCarga(this.nombre);
-		if(callback!==null){
-			callback(respuesta);
-		}
-	};
-	//esta funcion mata el intervalo al ejecultarce el callback de dicha carga
-	this.terminarCarga = function(){
-		var cuadro = this;
-		clearInterval(this.intervalID);
-		this.estado = 'cargaCulminada';
-		cuadro.nodo.parentNode.removeChild(cuadro.nodo);
-		UI.removerCuadroCarga(cuadro.nombre);
-	};
-	this.construirNodo();
-};
-/*----------------------------------------------------------------------------------------------------*/
-/*-----------------------------------------Objeto Constructor-----------------------------------------*/
-/*----------------------------------------------------------------------------------------------------*/
-var Arquitecto = function(){
-
-	this.elementos = [];
-
-	this.estado = 'sinInicializar';
-
-	this.configure = function(objetoInicializar){
-		objetoInicializar = objetoInicializar || {};
-		this.elementos = {
-			 menu : new Menu(),
-			 cabecera : new Cabecera(),
-			 URL: new URL(),
-			 formulario : 'noPosee',
-			 botonera : 'noPosee',
-			 constructores: this.elementos.constructores
-		};
-		if(objetoInicializar.formulario){
-			this.elementos.formulario = new Formulario(objetoInicializar.formulario);
-		}
-
-		if(objetoInicializar.botonera){
-			this.elementos.botonera = new Botonera(objetoInicializar.botonera.botones);
-		}
-
-
-		this.estado='inicializado';
-		var mql = window.matchMedia("(max-width: 1000px)");
-		mql.addListener(handleMediaChange);
-		handleMediaChange(mql);
-		document.body.onmousedown=this.activarEfecto;
-	};
-//------------------------- Manejo de ventanas Modales ----------------------------
-	this.crearVentanaModal = function(data){
-		//creo la venta modal
-		if(!this.elementos.modalWindow){
-			this.elementos.modalWindow = new modalWindow();
-		}
-		var capaContenido=this.elementos.modalWindow.arranque(data);
-		return capaContenido;
-	};
-
-	this.crearMensaje = function(mensaje){
-		var capa = this.crearVentanaModal({cuerpo: 'mesaje'});
-		capa.convertirEnMensaje(mensaje);
-	};
-//------------------------- Manejo Cuadros de carga -------------------------------
-	this.agregarCuadroCarga = function(cuadroCarga){
-		if(!this.elementos.cuadroCarga){
-			this.elementos.cuadroCarga = [];
-		}
-		this.elementos.cuadroCarga.push(cuadroCarga);
-	};
-	this.removerCuadroCarga = function(nombre){
-		var cuadroCarga = this.buscarCuadroCarga(nombre);
-		this.elementos.cuadroCarga.splice(this.elementos.cuadroCarga.indexOf(cuadroCarga),1);
-	};
-	this.buscarCuadroCarga = function(nombre){
-		if(this.elementos.cuadroCarga){
-			for (var i = 0; i < this.elementos.cuadroCarga.length; i++){
-				if(this.elementos.cuadroCarga[i].nombre === nombre){
-					return this.elementos.cuadroCarga[i];
-				}
-			}
-			console.log('cuadroCarga '+nombre+' no existe');
-			return false;
-		}
-	};
- 	//funcion se utiliza cuando no se necesita pasar parametros al callback al culminar la carga
-	this.iniciarCarga = function(info,callback){
-		cuadroCarga = new CuadroCarga(info,callback);
-		this.agregarCuadroCarga(cuadroCarga);
-		cuadroCarga.manejarCarga(info.nombre);
-		return cuadroCarga.nodo;
-	};
-	//funcion se utiliza cuando se necesita pasar parametros al callback al culminar la carga
-	this.crearCuadroDeCarga = function(info,contenedor){
-		info.contenedor = contenedor;
-		cuadroCarga = new CuadroCarga(info,null);
-		this.agregarCuadroCarga(cuadroCarga);
-		return cuadroCarga.nodo;
-	};
-//------------------------- Manejo de ventanas ------------------------------------
-	this.agregarVentana = function(ventana,contenedor){
-		if(!this.elementos.ventanas){
-			this.elementos.ventanas = [];
-		}
-		var newVentana = new Ventana(ventana);
-		this.elementos.ventanas.push(newVentana);
-		contenedor.appendChild(newVentana.nodo);
-		return newVentana;
-	};
-
-	this.agregarLista = function(lista,contenedor){
-		if(!this.elementos.ventanas){
-			this.elementos.ventanas = [];
-		}
-		var nuevaLista = new Lista(lista);
-		contenedor.appendChild(nuevaLista.nodo);
-		nuevaLista.atributos.nombre = nuevaLista.atributos.titulo;
-		this.elementos.ventanas.push(nuevaLista);
-		return nuevaLista;
-	};
-
-	this.buscarVentana = function(nombre){
-		var ventanas =this.elementos.ventanas;
-		for(var x = 0; x < ventanas.length; x++){
-			if(ventanas[x].atributos.nombre===nombre){
-				return ventanas[x];
-			}
-		}
-		return false;
-	};
-
-	this.quitarVentana = function(nombre){
-		var ventana = this.buscarVentana(nombre);
-		if(ventana){
-			ventana.destruirNodo();
-			this.elementos.ventanas.splice(this.elementos.ventanas.indexOf(ventana),1);
-		}
-	};
-//------------------------- Manejo de Campos en interfaz ----------------------------
-	//funcion para agregar de forma dinamica campos a la interfaz
-	this.agregarCampo = function(campo,contenedor){
-		var campoNuevo;
+  this.agregarCampos = function(campos){
+    for (var i = 0; i < campos.length; i++) {
+    	var campo = this.agregarCampo(campos[i]);
+    	if(!(campo instanceof SaltoDeLinea)){
+			this.campos.push(campo);
+    	}
+    }
+  };
+  this.agregarCampo = function(campo){
+    var campoNuevo;
 		switch(campo.tipo.toLowerCase()){
 			case 'campodetexto':
 				campoNuevo = new CampoDeTexto(campo.parametros);
@@ -2087,9 +1575,6 @@ var Arquitecto = function(){
 				break;
 			case 'radio':
 				campoNuevo = new Radio(campo.parametros);
-				break;
-			case 'campoedicion':
-				campoNuevo = new CampoEdicion(campo.parametros);
 				break;
 			case 'saltodelinea':
 				campoNuevo = new SaltoDeLinea();
@@ -2112,245 +1597,407 @@ var Arquitecto = function(){
 				}
 				break;
 		}
-		contenedor.appendChild(campoNuevo.nodo);
+		this.nodo.appendChild(campoNuevo.nodo);
 		return campoNuevo;
-	};
-	//funcion con la cual puedo agregar mas de un campo de forma dinamica a la interfaz
-	this.agregarCampos = function(campos,contenedor){
-		for(var x=0;x<campos.length;x++){
-			this.agregarCampo(campos[x],contenedor);
-		}
-	};
-	//con esta funcion asigno los valores a los campos edicion que contenga un contenedor
-	this.asignarValores = function(registro,contenedor){
-		var campos = contenedor.campos;
+  };
+	this.asignarValores = function(registro){
+		var campos = this.campos;
 		for (var campo in registro) {
 			if (registro.hasOwnProperty(campo)) {
 				for(var y = 0; y < campos.length; y++){
-					if(campos[y].data.nombre == campo){
+					if(campos[y].captarNombre() == campo){
 						campos[y].asignarValor(registro[campo]);
 					}
 				}
 			}
 		}
 	};
-	//funcion solo se utiliza para formularios de modificacion(update)
-	this.modificar = function(contenedor){
-		var Reg = [];
-		var campos = contenedor.campos;
+	this.habilitar = function(){
+		for (var i = this.campos.length -1; i > -1 ; i--) {
+			this.campos[i].habilitar();
+		}
+	};
+	this.deshabilitar = function(){
+		for (var i = 0; i < this.campos.length; i++) {
+			this.campos[i].deshabilitar();
+		}
+	};
+	this.captarValores = function(){
+		var registro = {};
+		for (var i = 0; i < this.campos.length; i++) {
+			registro[this.campos[i].captarNombre()] = this.campos[i].captarValor();
+		}
+		return registro;
+	};
+	this.validar = function(){
+		var campos = this.campos;
 		for (var i = 0; i < campos.length; i++) {
-			Reg.push({
-				nombre:campos[i].captarNombre(),
-				valor:campos[i].captarValor()
-			});
-			if(campos[i].estado === 'editando'){
-				campos[i].finalizarEdicion();
-			}else{
-				campos[i].activarEdicion();
-			}
-		}
-		return Reg;
+	    //valido el campo
+	    if((campos[i].captarRequerido())&&(!campos[i].captarValor())){
+	      return false;
+	    }
+	  }
+	  return true;
 	};
-	//------------------------- Manejo de toast ----------------------------
-	//agrega mensaje pequeño
-	this.agregarToasts = function(atributos){
-		if(!this.elementos.toasts){
-			this.elementos.toasts = [
-				{cont:1}
-			];
-		}else{
-			this.elementos.toasts[0].cont++;
-		}
-		var tiempo= 5000 * (this.elementos.toasts[0].cont - 1);
-		setTimeout(function(){
-			var toast = new Toasts(atributos);
-			UI.elementos.toasts.push(toast);
-			setTimeout(function(){
-				removerToasts(toast);
-			},5000);
-		},tiempo);
-	};
-	function removerToasts(toast){
-		UI.elementos.toasts.splice(UI.elementos.toasts.indexOf(toast),1);
-		UI.elementos.toasts[0].cont--;
-	}
-	//------------------------- Manejo de Constructores ----------------------------
-	//agrega constructores para formularios
-	this.agregarConstructor  = function(objetoConstructor){
-		if(!this.elementos.constructores){
-			this.elementos.constructores = [];
-		}
-		this.elementos.constructores.push(objetoConstructor);
-	};
-	this.buscarConstructor = function(nombre){
-		if(this.elementos.constructores){
-			for (var i = 0; i < this.elementos.constructores.length; i++) {
-				if(this.elementos.constructores[i].nombre == nombre){
-					return this.elementos.constructores[i];
-				}
-			}
-			console.log('no se encontro el constructor '+nombre);
-		}else{
-			console.log('no existe ningun constructor en la lista');
-		}
-	};
-	//------------------------- Manejo Iconos ----------------------------
-	this.crearIcono = function(atributos){
-		var icono = document.createElement('i');
-		icono.classList.add('material-icons');
-		icono.textContent = atributos.nombre;
-		if(atributos.tamano){
-			switch(atributos.tamano){
-				case 24:
-					icono.classList.add('md-24');
-					break;
-
-				case 36:
-					icono.classList.add('md-36');
-					break;
-
-				case 48:
-					icono.classList.add('md-48');
-					break;
-			}
-		}
-		if(atributos.color){
-			icono.classList.add(atributos.color);
-		}
-		if(atributos.tono){
-			if(atributos.tono.toLowerCase()==='claro'){
-				icono.classList.add('md-light');
-			}else if(atributos.tono.toLowerCase()==='oscuro'){
-				icono.classList.add('md-dark');
-			}
-		}
-		if(atributos.inactivo){
-			icono.classList.add('md-inactive');
-		}
-		return icono;
-	};
+  this.construirNodo();
 };
-/*---------------Objetos de interfaz---------------------------------------------*/
-var Ventana = function(atributos){
-	//-----------------Titulo---------------------------
-	var Titulo = function(atributos){
 
-		this.nodo = null;
-		this.atributos = atributos;
-		//valores por defecto
-		atributos.tipo = atributos.tipo || 'basico';
+/*----------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------Objeto Listas ------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
+var Lista = function(data){
+  /*------------------------------Objeto Slot-------------------*/
+  var Slot = function(registro){
+    this.atributos = registro;
+    this.estado = 'sinInicializar';
+    this.rol = 'lista';
+    this.nodo = null;
 
-		this.construirNodo = function(){
+    this.construirNodo = function(nombre){
+      var nodo = document.createElement('section');
+      nodo.setAttribute('slot','');
+      nodo.id=this.atributos.codigo;
+      var html ="";
+      var titulo;
+      var nombreAMostrar;
+      if(data.campo_nombre){
+        nombreAMostrar = data.campo_nombre;
+      }else {
+        nombreAMostrar = 'nombre';
+      }
+      if(this.atributos[nombreAMostrar].length>28){
+        titulo=this.atributos[nombreAMostrar].substr(0,28)+'...';
+      }else{
+        titulo=this.atributos[nombreAMostrar];
+      }
+      html+="<article  title>"+titulo+"</article>";
+      nodo.innerHTML=html;
+      this.nodo = nodo;
+      this.estado='enUso';
+      this.funcionamiento();
+    };
 
-			var nodo = document.createElement('section');
-			nodo.setAttribute('titulo','');
+    this.funcionamiento = function(){
+      var nodo = this.nodo;
+      var article =nodo.getElementsByTagName('article')[0];
+      article.onclick=function(e){
+        agregarRippleEvent(this.parentNode,e);
+      };
+    };
 
-			nodo.innerHTML = atributos.texto || atributos.html;
-			nodo.classList.add(atributos.tipo);
+    this.reconstruirNodo = function(){
+      var nodo=this.nodo;
+      var slot=this;
+      var titulo;
+      var nombre;
+      if(data.campo_nombre){
+        nombre = data.campo_nombre;
+      }else {
+        nombre = 'nombre';
+      }
+      if(this.atributos[nombre].length>28){
+        titulo=this.atributos[nombre].substr(0,28)+'...';
+      }else{
+        titulo=this.atributos[nombre];
+      }
+      var html="<article  title>"+titulo+"</article>";
+      setTimeout(function(){
+        nodo.innerHTML=html;
+        slot.funcionamiento();
+      },510);
+    };
 
-			this.nodo = nodo;
+    this.destruirNodo = function(){
+      var nodo = this.nodo;
+      var slot = this;
+      nodo.classList.add('desaparecer');
+      setTimeout(function(){
+        nodo.classList.add('desaparecerPorCompleto');
+      },510);
+      setTimeout(function(){
+        nodo.parentNode.removeChild(nodo);
+        var indice = UI.elementos.formulario.ventanaList.Slots.indexOf(slot);
+        UI.elementos.formulario.ventanaList.Slots.splice(indice,1);
+      },1110);
+    };
+    this.activar = function(){
+      this.nodo.getElementsByTagName('article')[0].click();
+    };
+    this.construirNodo();
+  };
+  /*--------------------------Fin Objeto Slot-------------------*/
+
+  this.Slots = [];
+  this.atributos = data;
+  this.atributos.onclickSlot = this.atributos.onclickSlot || null;
+  this.nodo = null;
+  this.clases = data.clases || [];
+
+  this.construir = function(){
+    var contenedor = data.contenedor || 'noPosee';
+    var nodo = document.createElement('div');
+    nodo.setAttribute('lista','');
+    nodo.setAttribute('mat-window','');
+
+    //contruir sector busqueda
+    var html='';
+    html+="<section busqueda>";
+    html+=	"<div titulo>"+this.atributos.titulo+"</div>";
+    html+=	"<div listBuscar>";
+    html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
+    html+=		"<button type='button' cerrarBusq></button>";
+    html+=	"</div>";
+    html+=	"<button type='button' btnBusq></button>";
+    html+="</section>";
+    nodo.innerHTML = html;
+    this.nodo = nodo;
+
+    var botonBusqueda = nodo.getElementsByTagName('button')[1];
+    var botonCerrarBusq = nodo.getElementsByTagName('button')[0];
+		var lista = this;
+    botonBusqueda.onclick = function(){
+			lista.abrirCampoBusqueda();
 		};
-		this.construirNodo();
-	};
-	//--------------------Sector----------------------------
-	var Sector = function(atributos){
-		this.nodo = null;
-		this.atributos = atributos;
-		this.atributos.tipo = atributos.tipo || 'sector';
-
-		this.construirNodo = function(){
-
-			var nodo = document.createElement('section');
-			nodo.setAttribute(this.atributos.tipo,'');
-
-			if(atributos.html){
-				nodo.innerHTML = atributos.html;
-			}
-
-			if(atributos.campos){
-				nodo.style.paddingTop='30px';
-				UI.agregarCampos(atributos.campos,nodo);
-			}
-
-			if(atributos.alto){
-				nodo.style.height=atributos.alto+'px';
-			}
-
-			this.nodo = nodo;
+    botonCerrarBusq.onclick = function(){
+			lista.cerrarCampoBusqueda();
 		};
 
-		this.destruirNodo = function(){
-			this.nodo.parentNode.removeChild(this.nodo);
-		};
-		this.construirNodo();
-	};
-	//--------------------fin Objeto Sector--------------------
-	this.atributos = atributos;
-	this.estado = 'porConstruir';
-	this.sectores = [];
-	this.nodo = null;
+    //agrego la lista al contenedor
+    if(contenedor !== 'noPosee'){
+      contenedor.appendChild(this.nodo);
+    }
 
-	this.construirNodo = function(){
-		var nodo = document.createElement('div');
-		nodo.setAttribute('mat-window','');
-		nodo.classList.add(this.atributos.tipo);
-		this.nodo = nodo;
-
-		if(atributos.titulo){
-			this.agregarTitulo(this.atributos.titulo);
+    //carga de elementos ya sea por busqueda a la BD o que sean suministrados en la
+    //construccion
+    setTimeout(function(){
+      lista.manejarCarga();
+    },10);
+     /*TODO
+    //en caso de que la paginacion este activa
+    if(this.atributos.paginacion.uso === 'true'){
+      this.manejarPaginacion();
+    }
+    */
+    if(this.atributos.clases){
+			UI.manejoDeClases(this);
 		}
+  };
 
-		if(atributos.sectores){
-			for(var x = 0; x < atributos.sectores.length; x++){
-				this.agregarSector(atributos.sectores[x]);
-			}
-		}
+  this.manejarPaginacion = function(){
+    //TODO
+    console.log('paginacion activa');
+  };
 
-		if(atributos.alto){
-			this.nodo.style.height = atributos.alto+'px';
-		}
+  this.manejarCarga = function(){
+      var carga = this.atributos.carga;
+      //si no posee la info del cuadro de carga toma los valore por defecto
+      if(carga.uso === true){
+
+        var contenedor = this.crearContenedorCarga();
+        if(!carga.espera){
+          carga.espera = {
+            contenedor: contenedor,
+            cuadro:{
+              nombre: this.atributos.titulo,
+              mensaje: 'Buscando',
+              clases: ['lista']
+            }
+          };
+        }else{
+          carga.espera.contenedor = contenedor;
+          console.log('contenedor sobre escrito a nodo de la lista');
+        }
+        if(!carga.peticion){
+          console.log('no se puede realizar una carga de elementos sin una peticion');
+        }else{
+          var lista = this;
+          torque.manejarOperacion(carga.peticion,carga.espera,function cargaAutomaticaLista(respuesta){
+            lista.removerContenedorCarga();
+            if(respuesta.success){
+              lista.cargarElementos(respuesta.registros);
+            }else{
+              lista.noExistenRegistros();
+            }
+            if(lista.atributos.carga.respuesta){
+              lista.atributos.carga.respuesta();
+            }
+        });
+      }
+    }
+    else if(this.atributos.elementos){
+      //si lo elementos de la lista fueron suministrados en la creacion
+      this.cargarElementos(this.atributos.elementos);
+    }else{
+      console.log('la lista se encuentra vacia');
+    }
+  };
+
+  this.crearContenedorCarga = function(){
+    var contenedor = document.createElement('section');
+    contenedor.setAttribute('contenedorCarga','');
+    this.nodo.appendChild(contenedor);
+    return contenedor;
+  };
+  this.removerContenedorCarga = function(){
+    var contenedor = this.nodo.querySelector('section[contenedorCarga]');
+    this.nodo.removeChild(contenedor);
+  };
+  this.noExistenRegistros = function(){
+    var ayuda = document.createElement('section');
+    ayuda.classList.add('vacio');
+    ayuda.textContent = 'No existen Registros';
+    this.nodo.appendChild(ayuda);
+  };
+  this.abrirCampoBusqueda = function(){
+	var botonBusqueda = this.nodo.querySelector('button[btnbusq]');
+    botonBusqueda.parentNode.classList.add('buscar');
+		var lista = this;
+    setTimeout(function(){
+      botonBusqueda.onclick=lista.buscarElementos;
+    },10);
+  };
+
+	this.cerrarCampoBusqueda = function(){
+		var botonBusqueda = this.nodo.querySelector('button[btnbusq]');
+	  botonBusqueda.parentNode.classList.remove('buscar');
+    botonBusqueda.click();
+    this.controlLista();
+		var lista = this;
+     setTimeout(function(){
+       botonBusqueda.onclick=function(){lista.abrirCampoBusqueda();};
+     },20);
 	};
 
-	this.agregarSector = function(atributos){
-		var sector = new Sector(atributos);
-		this.sectores.push(sector);
-		this.nodo.appendChild(sector.nodo);
-		return sector;
-	};
+  this.buscarElementos = function(){
+    /*TODO*/
+  };
 
-	this.buscarSector = function(nombre){
-		for(var x = 0; x < this.sectores.length; x++){
-			if(this.sectores[x].atributos.nombre){
-				if(this.sectores[x].atributos.nombre===nombre){
-					return this.sectores[x];
-				}
-			}
-		}
-		return false;
-	};
+  this.listarSlots = function(){
+    console.log('Slots:');
+    for(var x=0;x<this.Slots.length;x++){
+      console.log('nombre: '+this.Slots[x].atributos.nombre+'\testado: '+this.Slots[x].estado);
+    }
+  };
 
-	this.quitarSector = function(nombre){
-		var sector = this.buscarSector(nombre);
-		sector.destruirNodo();
-		this.sectores.splice(this.sectores.indexOf(sector),1);
-	};
+  this.agregarSlot = function(data){
+    var slot = new Slot(data);
+    this.Slots.push(slot);
+    this.nodo.appendChild(slot.nodo);
+    var lista = this;
+    if(this.atributos.onclickSlot!==null){
+      slot.nodo.onclick = function(){
+        lista.controlLista(this);
+        lista.atributos.onclickSlot(slot);
+      };
+    }
+    return slot.nodo;
+  };
 
-	this.agregarTitulo = function(atributos){
-		var titulo = new Titulo(atributos);
-		this.nodo.appendChild(titulo.nodo);
-		this.titulo = titulo;
-	};
+  this.cargarElementos = function(registros){
+    for(var x=0; x<registros.length;x++){
+      this.agregarSlot(registros[x]);
+    }
+  };
 
-	this.destruirNodo = function(){
+  this.controlLista = function(nodo){
+    var obj=false;
+    for(var x=0;x<this.Slots.length;x++){
+      if(this.Slots[x].nodo==nodo){
+        this.Slots[x].estado='seleccionado';
+        this.Slots[x].nodo.classList.add('seleccionado');
+        obj=this.Slots[x];
+      }else{
+        this.Slots[x].estado='enUso';
+        this.Slots[x].nodo.classList.remove('seleccionado');
+      }
+    }
+  };
+
+  this.buscarSlot = function(objeto){
+    for(x=0;x<this.Slots.length;x++){
+      if(this.Slots[x].atributos.codigo==objeto.codigo){
+        return this.Slots[x];
+      }
+    }
+    console.log('el slot no existe');
+    return false;
+  };
+
+  this.buscarSlotPorNombre = function(objeto){
+    for(x=0;x<this.Slots.length;x++){
+      if(this.Slots[x].atributos.nombre==objeto.nombre){
+        return this.Slots[x];
+      }
+    }
+    console.log('el slot no existe');
+    return false;
+  };
+
+  this.cambiarTextoSlots = function(cambio){
+    if(cambio=='mediaQuery'){
+      for(var x=0;x<this.Slots.length;x++){
+        var nodo=this.Slots[x].nodo;
+        var slot=this.Slots[x];
+        var titulo;
+        if(slot.atributos.nombre.length>28){
+          titulo=slot.atributos.nombre.substr(0,28)+'...';
+        }else{
+          titulo=slot.atributos.nombre;
+        }
+        var html="<article  title>"+titulo+"</article>]";
+        nodo.innerHTML=html;
+        slot.funcionamiento();
+      }
+    }else{
+      for(var i=0;i<this.Slots.length;i++){
+        var contenido = "<article  title>"+this.Slots[i].atributos.nombre+"</article>";
+        this.Slots[i].nodo.innerHTML = contenido;
+        this.Slots[i].funcionamiento();
+      }
+    }
+  };
+
+  this.actualizarLista = function(cambios){
+    if(cambios instanceof Array){
+
+    }else{
+      this.actualizarSlot(cambios);
+    }
+  };
+
+  this.actualizarSlot = function(objeto){
+    var slot=this.buscarSlot(objeto);
+    var yo = this;
+    if(slot){
+      slot.atributos=objeto;
+      slot.reconstruirNodo();
+      setTimeout(function() {
+        yo.controlLista(slot.nodo);
+      }, 510);
+    }
+  };
+
+  this.obtenerSeleccionado = function(){
+    var seleccionado=false;
+    for(var x=0;x<this.Slots.length;x++){
+      if(this.Slots[x].estado=='seleccionado'){
+        seleccionado=this.Slots[x];
+      }
+    }
+    return seleccionado;
+  };
+  this.destruirNodo = function(){
 		this.nodo.style.height='0px';
-		var v = this;
+		var l = this;
 		setTimeout(function(){
-			v.nodo.parentNode.removeChild(v.nodo);
+			l.nodo.parentNode.removeChild(l.nodo);
 		},510);
 	};
-	this.construirNodo();
+  this.construir();
 };
-
+/*----------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------Objeto Campos ------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------*/
 //-----------------------------Objeto CheckBox-------------------------
 var CheckBox = function(info){
 	//marcado,habilitado,valor,nombre,requerido,usaTitulo,eslabon
@@ -2482,6 +2129,7 @@ var Radio = function(info){
 	this.data = info;
 	this.estado = 'porConstriur';
 	this.nodo = null;
+	this.opciones = [];
 
 	this.construirNodo = function(){
 		var nodo = document.createElement('div');
@@ -2495,6 +2143,7 @@ var Radio = function(info){
 		var html = '';
 		html+='<input type="radio" name="'+this.data.nombre+'" value="'+opcion.valor+'"><span class="outer"><span class="inner"></span></span>'+opcion.nombre;
 		nodoOpcion.innerHTML=html;
+		this.opciones.push(nodoOpcion);
 		this.nodo.appendChild(nodoOpcion);
 	};
 	this.agregarOpciones = function(){
@@ -2512,6 +2161,20 @@ var Radio = function(info){
 	};
 	this.captarRequerido = function(){
 		return this.atributos.requerido;
+	};
+	this.asignarValor = function(valor){
+		this.valor = valor;
+		this.nodo.querySelector('radio').value = valor;
+	};
+	this.deshabilitar = function(){
+		for (var i = 0; i < this.opciones.length; i++) {
+			this.opciones[i].disabled = true;
+		}
+	};
+	this.habilitar = function(){
+		for (var i = 0; i < this.opciones.length; i++) {
+			this.opciones[i].disabled = false;
+		}
 	};
 	this.construirNodo();
 };
@@ -2579,6 +2242,12 @@ var ComboBox = function(info){
 	this.seleccionarOpcion = function(opcion){
 		var select=this.nodo.getElementsByTagName('select')[0];
 		select.value = opcion.codigo;
+		var opciones = select.options;
+		for (var i = 0; i < opciones.length; i++) {
+			if(opciones[i].value === opcion.codigo){
+				select.selectedIndex = i;
+			}
+		}
 	};
 	this.captarValor = function(){
 		var valor = (this.nodo.querySelector('select').value==='-')?null:this.nodo.querySelector('select').value;
@@ -2590,6 +2259,9 @@ var ComboBox = function(info){
 	this.captarRequerido = function(){
 		return this.data.requerido;
 	};
+	this.asignarValor = function(valor){
+		this.seleccionarOpcion({codigo:valor});
+	};
 	this.deshabilitar = function(){
 		var article = this.nodo.querySelector('article');
 		article.onclick = function(){};
@@ -2600,6 +2272,7 @@ var ComboBox = function(info){
 			construirCapaSelect(this);
 		};
 	};
+	// TODO: cargar datos de base de datos para combobox
 	this.construir();
 };
 
@@ -2644,8 +2317,8 @@ var CampoDeTexto = function(info){
 		CampoDeTexto.innerHTML=html;
 		this.nodo=CampoDeTexto;
 		if(this.data.usaToolTip!==false){
-			this.nodo.onmouseover=UI.elementos.formulario.abrirtooltipInput;
-			this.nodo.onmouseout=UI.elementos.formulario.cerrartooltipInput;
+			this.nodo.onmouseover=UI.elementos.maestro.abrirtooltipInput;
+			this.nodo.onmouseout=UI.elementos.maestro.cerrartooltipInput;
 		}
 		this.estado='enUso';
 	};
@@ -2675,293 +2348,95 @@ var CampoDeTexto = function(info){
 	this.captarRequerido = function(){
 		return this.data.requerido;
 	};
+	this.asignarValor = function(valor) {
+		var tipo = this.captarTipo();
+		this.nodo.querySelector(tipo).value = valor;
+	};
+	this.habilitar = function(){
+		this.nodo.classList.remove('deshabilitado');
+		this.nodo.querySelector(this.captarTipo()).disabled = false;
+		this.nodo.querySelector(this.captarTipo()).focus();
+	};
+	this.deshabilitar = function(){
+		this.nodo.classList.add('deshabilitado');
+		this.nodo.querySelector(this.captarTipo()).disabled = true;
+	};
 	this.construir();
 };
-//-------------------- Campo Edicion----------------------------------------------------------
-var CampoEdicion = function(info){
-
-	this.data =  info;
-	this.nodo = null;
-	this.tipo = info.tipo || 'simple';
-	this.data.valor = info.valor || '';
-	this.estado = 'mostrando';
-
-	this.construirNodo = function(){
-		var nodo =  null;
-		var campo = '';
-		var html = '';
-		if(this.tipo.toLowerCase() === 'titulo'){
- 			nodo = document.createElement('section');
- 			nodo.setAttribute('titulo','');
- 			nodo.setAttribute('area','');
- 			html = "<div cont>"+
-						"<textarea  name='"+this.data.nombre+"'></textarea>"+
-						"<div display>"+this.data.valor+"</div>"+
-					"</div>"+
-					"<article update='campo'></article>";
-		}else{
-			nodo = document.createElement('div');
-			nodo.setAttribute('formUpdate','');
-			if(this.tipo=='simple'){
-				campo+="<input  type='text' edit name='"+this.data.nombre+"'>";
-			}else if(this.tipo=='area'){
-				campo+="<textarea name='"+this.data.nombre+"'></textarea>";
-				nodo.setAttribute('area','');
-			}
-			html+="<label>"+this.data.titulo+"</label>";
-			html+="<div clear></div>";
-			html+="<div cont>";
-			html+=	campo;
-			html+=	"<div display>"+this.data.valor+"</div>";
-			html+="</div>";
-		}
-		nodo.innerHTML=html;
-		this.nodo=nodo;
-	};
-	this.asignarValor = function(valor){
-		this.data.valor = valor;
-		this.nodo.querySelector('div[display]').textContent = valor;
-	};
-	this.activarEdicion = function(){
-		this.nodo.classList.add('edicion');
-		//contenedor
-		var contenedorEdit = this.nodo.querySelector('div[cont]');
-		//campo donde se muestra el valor del campo pero de solo lectura
-		var display = contenedorEdit.querySelector('div[display]');
-		//campo donde se edita la informacion
-		var campoEdit = null;
-		if(this.tipo === 'simple'){
-			campoEdit = contenedorEdit.querySelector('input');
-		}else{
-			campoEdit = contenedorEdit.querySelector('textarea');
-		}
-		campoEdit.value = display.textContent;
-		campoEdit.focus();
-		this.estado = 'editando';
-		if(this.tipo === 'titulo'){
-			this.nodo.querySelector('article[update]').classList.add('edicion');
-		}
-	};
-	this.finalizarEdicion = function(){
-		this.nodo.classList.remove('edicion');
-		//contenedor
-		var contenedorEdit = this.nodo.querySelector('div[cont]');
-		//campo donde se muestra el valor del campo pero de solo lectura
-		var display = contenedorEdit.querySelector('div[display]');
-		//campo donde se edita la informacion
-		var campoEdit = null;
-		if(this.tipo === 'simple'){
-			campoEdit = contenedorEdit.querySelector('input');
-		}else{
-			campoEdit = contenedorEdit.querySelector('textarea');
-		}
-		display.textContent = campoEdit.value;
-		this.estado = 'mostrando';
-		if(this.tipo === 'titulo'){
-			this.nodo.querySelector('article[update]').classList.remove('edicion');
-		}
-	};
-	this.captarValor = function(){
-		if(this.estado === 'mostrando'){
-			return this.nodo.querySelector('div[display]').textContent;
-		}else{
-			if(this.tipo === 'simple'){
-				return this.nodo.querySelector('input').value;
-			}else{
-				return this.nodo.querySelector('textarea').value;
-			}
-		}
-	};
-	this.captarNombre = function(){
-		return this.data.nombre;
-	};
-	this.construirNodo();
-};
-//-------------------- Toasts ------------------------------------------------------------
-var Toasts = function(atributos){
-	this.atributos = atributos;
-	this.nodo = null;
-	this.atributos.efecto = atributos.efecto || 'mostrar';
-	this.atributos.tipo = atributos.tipo || 'mobile';
-	this.construirNodo = function(){
-		var nodo = document.createElement('div');
-		nodo.setAttribute('toasts-'+this.atributos.tipo,'');
-		nodo.textContent = this.atributos.texto;
-		var contenedor = this.atributos.contenedor || document.body;
-		contenedor.appendChild(nodo);
-
-		var toasts = this;
-		setTimeout(function aparecerToasts(){
-			toasts.nodo.classList.toggle(toasts.atributos.efecto);
-		},10);
-
-		setTimeout(function desaparecerToasts(){
-			toasts.nodo.classList.toggle(toasts.atributos.efecto);
-			setTimeout(function eliminarToast(){
-				toasts.nodo.parentNode.removeChild(toasts.nodo);
-			},500);
-		},5000);
-		this.nodo = nodo;
-	};
-	this.construirNodo();
-};
 /*----------------------------------Funciones del Objeto Select-------------------------------*/
-		construirCapaSelect= function(capaSelect){
-			capaSelect.onclick=function(){};
-			var opciones =[];
-			var opcion = null;
-			var nodo = null;
-			var select = capaSelect.nextSibling;
-			while(select.nodeName=='#text'){
-				select=select.nextSibling;
-			}
-			var margen;
-			for(var x = 0; x < select.options.length;x++){
+construirCapaSelect= function(capaSelect){
+	capaSelect.onclick=function(){};
+	var opciones =[];
+	var opcion = null;
+	var nodo = null;
+	var select = capaSelect.nextSibling;
+	while(select.nodeName=='#text'){
+		select=select.nextSibling;
+	}
+	var margen;
+	for(var x = 0; x < select.options.length;x++){
 
-				opcion = {
-					nombre:select.options[x].textContent,
-					value:select.options[x].value,
-					nodo:null
-				};
-
-				nodo=document.createElement('div');
-				nodo.setAttribute('option','');
-				nodo.textContent=opcion.nombre;
-				if(select.options[x]==select.options[select.selectedIndex]){
-					nodo.setAttribute('selecionado','');
-					margen='-'+parseInt(opciones.length*41)+'px';
-					capaSelect.style.marginTop=margen;
-				}
-
-				nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
-				nodo.style.marginTop=parseInt(opciones.length*41)+'px';
-
-				nodo.setAttribute('valor',opcion.value);
-				nodo.onclick = capaClick;
-				opcion.nodo=nodo;
-				opciones.push(opcion);
-				capaSelect.appendChild(nodo);
-			}
-
-			//creo el contenedor de las opciones
-			capaSelect.style.opacity='1';
-			capaSelect.style.height=parseInt(opciones.length*41)+'px';
-			capaSelect.style.width='60px';
+		opcion = {
+			nombre:select.options[x].textContent,
+			value:select.options[x].value,
+			nodo:null
 		};
 
-		//funcion extraida de un bucle
-		function capaClick(e){
-			//agrego el efecto Ripple
-			agregarRippleEvent(this,e);
-			var select = this.parentNode.nextSibling;
-			while(select.nodeName=='#text'){
-				select=select.nextSibling;
-			}
-			select.value=this.getAttribute('valor');
-			destruirCapaSelect(this.parentNode);
+		nodo=document.createElement('div');
+		nodo.setAttribute('option','');
+		nodo.textContent=opcion.nombre;
+		if(select.options[x]==select.options[select.selectedIndex]){
+			nodo.setAttribute('selecionado','');
+			margen='-'+parseInt(opciones.length*41)+'px';
+			capaSelect.style.marginTop=margen;
 		}
 
-		destruirCapaSelect = function(capaSelect){
-			var lista = capaSelect.childNodes;
-			var opcion;
-			capaSelect.style.opacity='0';
-			capaSelect.style.height='100%';
-			capaSelect.style.width='100%';
-			capaSelect.style.marginTop='0px';
-			for(var x = 0;x < lista.length;x++){
-				lista[x].style.transition='all 0.3s linear';
-				lista[x].style.marginTop='0px';
-			}
-			setTimeout(function(){
-				while(capaSelect.childNodes.length>0){
-					capaSelect.removeChild(capaSelect.lastChild);
-				}
-				capaSelect.onclick=function(){
-					construirCapaSelect(this);
-				};
-			},300);
+		nodo.style.transition='all '+parseInt(opciones.length*0.2)+'s ease-in-out';
+		nodo.style.marginTop=parseInt(opciones.length*41)+'px';
+
+		nodo.setAttribute('valor',opcion.value);
+		nodo.onclick = capaClick;
+		opcion.nodo=nodo;
+		opciones.push(opcion);
+		capaSelect.appendChild(nodo);
+	}
+
+	//creo el contenedor de las opciones
+	capaSelect.style.opacity='1';
+	capaSelect.style.height=parseInt(opciones.length*41)+'px';
+	capaSelect.style.width='60px';
+};
+
+//funcion extraida de un bucle
+function capaClick(e){
+	//agrego el efecto Ripple
+	agregarRippleEvent(this,e);
+	var select = this.parentNode.nextSibling;
+	while(select.nodeName=='#text'){
+		select=select.nextSibling;
+	}
+	select.value=this.getAttribute('valor');
+	destruirCapaSelect(this.parentNode);
+}
+
+destruirCapaSelect = function(capaSelect){
+	var lista = capaSelect.childNodes;
+	var opcion;
+	capaSelect.style.opacity='0';
+	capaSelect.style.height='100%';
+	capaSelect.style.width='100%';
+	capaSelect.style.marginTop='0px';
+	for(var x = 0;x < lista.length;x++){
+		lista[x].style.transition='all 0.3s linear';
+		lista[x].style.marginTop='0px';
+	}
+	setTimeout(function(){
+		while(capaSelect.childNodes.length>0){
+			capaSelect.removeChild(capaSelect.lastChild);
+		}
+		capaSelect.onclick=function(){
+			construirCapaSelect(this);
 		};
+	},300);
+};
 	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
-
-//---------------------------Ink Event------------------------
-	agregarRippleEvent= function(parent,evento){
-		var html;
-		var ink;
-		//se crea el elemento si no existe
-		if(parent.getElementsByTagName('div')[0]===undefined){
-			ink=document.createElement('div');
-			ink.classList.toggle('ink');
-			parent.insertBefore(ink,parent.firstChild);
-		}
-		ink=parent.getElementsByTagName('div')[0];
-
-		//en caso de doble click rapido remuevo la clase
-		ink.classList.remove('animated');
-
-		//guardo todo el estilo del elemento
-		var style = window.getComputedStyle(ink);
-
-		//se guardan los valores de akto y ancho
-		if(parseInt(style.height.substring(0,style.height.length-2))===0 && parseInt(style.width.substring(0,style.width.length-2))===0){
-			//se usa el alto y el ancho del padre, del de mayor tamaño para q el efecto ocupe todo el elemento
-			d = Math.max(parent.offsetHeight, parent.offsetWidth);
-			ink.style.height=d+'px';
-			ink.style.width=d+'px';
-		}
-		//declaro el offset del parent
-		var rect =parent.getBoundingClientRect();
-
-		parent.offset={
-		  top: rect.top + document.body.scrollTop,
-		  left: rect.left + document.body.scrollLeft
-		};
-		//re evaluo los valores de alto y ancho del ink
-		style = window.getComputedStyle(ink);
-
-		//ubico el lugar donde se dispara el click
-		var x=evento.pageX - parent.offset.left - parseInt(style.width.substring(0,style.width.length-2))/2;
-		var y=evento.pageY - parent.offset.top - parseInt(style.height.substring(0,style.height.length-2))/2;
-		//cambio los valores de ink para iniciar la animacion
-		ink.style.top=y+'px';
-		ink.style.left=x+'px';
-		setTimeout(function(){
-			ink.classList.toggle('animate');
-		},10);
-		setTimeout(function(){
-			ink.classList.toggle('animate');
-		},660);
-	};
-	//---------------------------Ink Event------------------------
-	var URL = function(){
-		this.estado = 'construido';
-		this.captarParametroPorNombre = function(nombre) {
-	    nombre = nombre.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	    var regex = new RegExp("[\\?&]" + nombre + "=([^&#]*)"),
-	    results = regex.exec(location.search);
-	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-		};
-	};
-/*---------------Utilidades---------------------------------------------*/
-function obtenerContenedor(){
-	var contenedor = document.body.firstChild;
-	while(contenedor.nodeName=='#text'){
-		contenedor=contenedor.nextSibling;
-	}
-	return contenedor;
-}
-function normalizarNodo(nodo){
-	var hijo=null;
-	var eliminar;
-	while(hijo!=nodo.lastChild){
-		if(hijo===null){
-			hijo=nodo.firstChild;
-		}
-		if(hijo.nodeName=='#text'){
-			eliminar=hijo;
-			hijo=hijo.nextSibling;
-			eliminar.parentNode.removeChild(eliminar);
-		}else{
-			hijo=hijo.nextSibling;
-		}
-	}
-}
