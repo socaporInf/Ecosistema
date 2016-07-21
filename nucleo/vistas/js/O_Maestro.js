@@ -10,7 +10,7 @@ var Maestro = function(atributos){
 
 	this.agregarLista = function (){
 		var yo = this;
-		UI.agregarLista({
+		this.ventanaList = UI.agregarLista({
 			clases : ['maestro'],
 			titulo: UI.buscarConstructor(this.entidadActiva).nombre,
 		  campo_nombre: UI.buscarConstructor(this.entidadActiva).campo_nombre,
@@ -37,14 +37,7 @@ var Maestro = function(atributos){
 			}
 		},this.atributos.contenedor);
 	};
-	this.quitarformulario = function(){
-		this.ventanaForm.nodo.classList.remove('aparecer');
-		var yo = this;
-		setTimeout(function () {
-			yo.ventanaForm.nodo.parentNode.removeChild(yo.ventanaForm.nodo);
-			yo.ventanaForm = null;
-		}, 500);
-	};
+	
 	this.agregarFormulario = function(atributos){
 		if(!atributos.tipo){
 			atributos.tipo = 'modificar';
@@ -60,6 +53,14 @@ var Maestro = function(atributos){
 		}else{
 			this.crearformulario(atributos);
 		}
+	};
+	this.quitarformulario = function(){
+		this.ventanaForm.nodo.classList.remove('aparecer');
+		var yo = this;
+		setTimeout(function () {
+			yo.ventanaForm.nodo.parentNode.removeChild(yo.ventanaForm.nodo);
+			yo.ventanaForm = null;
+		}, 500);
 	};
 	this.crearformulario = function(atributos){
 		this.construirVentana();
@@ -88,15 +89,18 @@ var Maestro = function(atributos){
 			tipo:'sector',
 			formulario : UI.buscarConstructor(this.entidadActiva)
 		});
+		this.ventanaForm.formulario = this.ventanaForm.buscarSector('formulario').formulario;
+		return this.ventanaForm.buscarSector('formulario').formulario;
 	};
 	this.cambiosNuevo = function(){
 		this.ventanaForm.agregarTitulo({
 				tipo:'basico',
 				html: 'Nueva '+UI.buscarConstructor(this.entidadActiva).nombre
 		});
+		this.ventanaForm.buscarSector('carga').destruirNodo();
 		this.agregarSectorFormulario();
 		UI.elementos.botonera.gestionarBotones({
-			quitar: ['nuevo'],
+			quitar: ['nuevo','modificar','eliminar'],
 			agregar: [
 				{
 					tipo: 'guardar',
@@ -112,27 +116,88 @@ var Maestro = function(atributos){
 			tipo:'basico',
 			html: 'Modificar Registro'
 		});
-		this.agregarSectorFormulario();
-		// TODO: buscar em la base de datos el registro a modificar
-		var agregar = [
-			{
-				tipo: 'eliminar',
-				click: function(boton){
-					console.log('eliminar');
-				}
-			},{
-				tipo:'modificar',
-				click: function(){
-					console.log('modificar');
-				}
+		var peticion = {
+			entidad: this.entidadActiva,
+			modulo: UI.buscarConstructor(this.entidadActiva).modulo,
+			operacion: 'buscarRegistro',
+			codigo: atributos.codigo
+		}
+		var cuadro = {
+			contenedor : this.ventanaForm.buscarSector('carga').nodo,
+			cuadro: {
+				nombre: 'cargaRegistros',
+				mensaje: 'Cargando Registro '+atributos.nombre
 			}
-		];
-		var gestionar = {
-			agregar: agregar,
-			quitar: []
-		};
-		UI.elementos.botonera.gestionarBotones(gestionar);
+		}
+		torque.manejarOperacion(peticion,cuadro,function(respuesta){
+			UI.elementos.maestro.ventanaForm.buscarSector('carga').destruirNodo();
+			if(respuesta.success){
+				var formulario = UI.elementos.maestro.agregarSectorFormulario();
+				formulario.registroId = atributos.codigo;
+				formulario.asignarValores(respuesta.registros);
+				formulario.deshabilitar();
+			}else{
+				UI.crearMensaje(respuesta.mensaje);
+			}
+			var agregar = [
+				{
+					tipo: 'eliminar',
+					click: function(boton){
+						console.log('eliminar');
+					}
+				},{
+					tipo:'modificar',
+					click: function(){
+						UI.elementos.maestro.modificar();
+					}
+				}
+			];
+			var gestionar = {
+				agregar: agregar,
+				quitar: ['guardar']
+			};
+			UI.elementos.botonera.gestionarBotones(gestionar);
+		});
 	};
+	this.modificar = function(){
+		var formulario = this.ventanaForm.formulario;
+		formulario.habilitar();
+		var gestionar = {
+			quitar: ['modificar'],
+			agregar: [
+				{
+					tipo:'guardar',
+					click: function(){
+						UI.elementos.maestro.guardarCambios();
+					}
+				}
+			]
+		}
+		UI.elementos.botonera.gestionarBotones(gestionar);
+	}
+	this.guardarCambios = function(){
+		var formulario = this.ventanaForm.formulario;
+		var peticion = formulario.captarValores();
+		peticion.entidad = this.entidadActiva;
+		peticion.modulo = formulario.plano.modulo;
+		peticion.codigo = formulario.registroId;
+		peticion.operacion = 'modificar';
+		var cuadro = {
+			contenedor: this.ventanaForm.buscarSector('formulario').nodo,
+			cuadro: {
+				nombre: 'guardandoCambiosMaestro',
+				mensaje: 'Guardando Cambios'
+			}
+		}
+		torque.manejarOperacion(peticion,cuadro,function(respuesta){
+			if(respuesta.success){
+				UI.elementos.maestro.ventanaList.actualizarLista(respuesta.registro);
+				UI.elementos.maestro.ventanaList.buscarSlot(respuesta.registro).activar();
+			}else{
+				UI.crearMensaje(respuesta.mensaje);
+			}
+		});
+	}
 	this.validarCombo = function(valoresNoPermitidos,lista){
 		normalizarNodo(lista);
 		for(var i=0;i<lista.length;i++){

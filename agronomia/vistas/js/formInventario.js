@@ -24,7 +24,7 @@ var productorNuevo = function(){
 armarListaProductores = function(contenedor){
   var lista = UI.agregarLista({
     titulo: 'Cañicultores',
-    clase: 'ventana',
+    clases: ['ventana'],
     campo_nombre: UI.buscarConstructor('productor').campo_nombre,
     carga: {
       uso:true,

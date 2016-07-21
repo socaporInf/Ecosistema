@@ -1,4 +1,4 @@
-clase= {
+clase = {
 	nombre: 'clase',
  	modulo: 'agronomia',
 	campo_nombre: 'nombre',

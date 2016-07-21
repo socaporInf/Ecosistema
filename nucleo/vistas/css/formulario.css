@@ -199,7 +199,7 @@ div.group input:focus {
 /* LABEL ======================================= */
 
 div.group label {
-    color: #999;
+    color: #212121;
     font-size: 14px;
     font-weight: normal;
     position: absolute;
@@ -223,7 +223,11 @@ div.group textarea:focus~ label, div.group textarea:valid~ label {
     font-size: 12px;
     color: #4CAF50;
 }
-
+div.group.deshabilitado > label{
+    top: -20px;
+    font-size: 12px;
+    color: #212121;
+} 
 /* BOTTOM BARS ================================= */
 
 .bar {

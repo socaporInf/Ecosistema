@@ -93,5 +93,19 @@ var CampoIdentificacion = function(atributos){
       this.campoFinal.asignarValor(valorFinal);
     }
   };
+  this.habilitar = function(){
+    this.comboLetra.habilitar();
+    this.campoNumero.habilitar();
+    if(this.captarTipo() === 'rif'){
+      this.campoFinal.habilitar();
+    }
+  }
+  this.deshabilitar = function(){
+    this.comboLetra.deshabilitar();
+    this.campoNumero.deshabilitar();
+    if(this.captarTipo() === 'rif'){
+      this.campoFinal.deshabilitar();
+    }
+  }
   this.construirNodo();
 };
