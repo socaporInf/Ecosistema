@@ -134,6 +134,7 @@ section[sector] div[cont] {
 section[contenedor] {
     overflow-y: auto;
     max-height: 35px;
+    margin:10px;
 }
 section[contenedor] article {
     width: auto;
@@ -145,6 +146,17 @@ section[contenedor] article {
 }
 article:first-child {
     margin-left: 10px;
+}
+section[contenedor] article[add]{background-color: #4CAF50;
+    max-height: 32px;
+    padding: 0px;
+}
+section[contenedor] article[add]:after{    
+    content: 'add';
+    font-family: 'Material Icons';
+    font-size: 32px;
+    font-style: initial;
+    color:white;
 }
 /*------------------------MATERIAL ELEMENTs---------------------*/
 /*---------------------------Contenedores-----------------------*/

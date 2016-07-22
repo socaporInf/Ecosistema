@@ -34,6 +34,14 @@ class cls_Rol extends cls_Conexion{
 				}
 				break;
 
+			case 'buscarDetalle':
+				$registros=$this->f_Buscar_Detalle();
+				if(count($registros)){
+					$respuesta['registros'] = $registros;
+					$success=1;
+				}
+				break;
+
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
@@ -97,9 +105,6 @@ class cls_Rol extends cls_Conexion{
 		if($lb_Enc){
 			//guardo en atributo de la clase
 			$this->aa_Atributos['registro']=$la_respuesta;
-
-			//guardo en detalle
-			$this->aa_Atributos['registro']['detalle']=$this->f_Buscar_Detalle();
 		}
 
 		return $lb_Enc;
