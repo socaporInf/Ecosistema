@@ -1,9 +1,0 @@
-campoedicion(info): {
-  data: Object, ---- objeto con toda la informacion para la creacion del campoedicion
-  tipo: string, ---- trae por defecto el valor simple
-  nodo: DOM,
-
-  Metodos
-    construirNodo()
-    darVida() ------- en construccion
-}

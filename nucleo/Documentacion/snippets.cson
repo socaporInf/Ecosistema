@@ -1,0 +1,199 @@
+# Your snippets
+#
+# Atom snippets allow you to enter a simple prefix in the editor and hit tab to
+# expand the prefix into a larger code block with templated values.
+#
+# You can create a new snippet in this file by typing "snip" and then hitting
+# tab.
+#
+# An example CoffeeScript snippet to expand log to console.log:
+#
+# '.source.coffee':
+#   'Console log':
+#     'prefix': 'log'
+#     'body': 'console.log $1'
+#
+# Each scope (e.g. '.source.coffee' above) can only be declared once.
+#
+# This file uses CoffeeScript Object Notation (CSON).
+# If you are unfamiliar with CSON, you can read more about it in the
+# Atom Flight Manual:
+# https://atom.io/docs/latest/using-atom-basic-customization#cson
+'.source.js':
+  'elementos':
+    'prefix': 'elementos'
+    'body': 'UI.elementos.'
+  'modal Contenido':
+    'prefix': 'modalContenido'
+    'body': 'UI.elementos.modalWindow.buscarUltimaCapaContenido()'
+  'variable peticion':
+    'prefix': 'varPet'
+    'body': """var peticion = {
+        modulo: "${1:modulo al que pertenece}",
+        entidad: "${2:esta entidad}",
+        operacion: "${3:operacion a realizar}",
+        codigo: "${4:codigo de registro}"
+     };"""
+  'objeto peticion':
+    'prefix': 'objPet'
+    'body': """{
+        modulo: "${1:modulo al que pertenece}",
+        entidad: "${2:esta entidad}",
+        operacion: "${3:operacion a realizar}",
+        codigo: "${4:codigo de registro}"
+     }"""
+  'objeto cuadro cargar':
+    'prefix': 'objCuadro'
+    'body': """
+    {
+      nombre: '${1:nombre}',
+      mensaje: '${2:mensaje que se muestra en interfaz}'
+    }
+    """
+  'campo de texto':
+    'prefix': 'camptext'
+    'body': """
+    {
+      tipo : 'campoDeTexto',
+      parametros : {
+        requerido:true,
+        titulo:'Titulo',
+        nombre:'titulo',
+        tipo:'simple',
+        eslabon:'simple',
+        usaToolTip:true
+      }
+    }
+    """
+  'campo de texto min':
+    'prefix': 'minCamptext'
+    'body': """
+    {
+      tipo : 'campoDeTexto',
+      parametros : {requerido:true,titulo:'Titulo',nombre:'titulo',tipo:'simple',eslabon:'simple',usaToolTip:true}
+    }
+    """
+  'constructor campoDeTexto':
+    'prefix': 'ocamptext'
+    'body': """
+    {
+      requerido:true,
+      titulo:'Titulo',
+      nombre:'titulo',
+      tipo:'simple',
+      eslabon:'simple',
+      usaToolTip:true
+    }
+    """
+  'formulario nuevo modal':
+    'prefix': 'modalNF'
+    'body': """
+      UI.crearVentanaModal({
+        contenido: 'ancho',
+        cabecera:{
+          html: 'Nuevo '+UI.buscarConstructor('${1:nombre de la entidad del formulario}').nuevo.titulo
+        },
+        cuerpo:{
+          tipo:'${2:modificar o nuevo}',
+          formulario: UI.buscarConstructor('${3:nombre del constructor}'),
+          registro : ${4:solo en caso de que sea tipo modificar la variable con el registro}
+        },
+        pie:{
+            html:   '<section modalButtons>'+
+                    '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
+                    '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
+                    '</section>'
+        }
+      });"""
+  'plantilla constructor':
+    'prefix': 'planCons'
+    'body': """
+    {
+    nombre: 'entidad',
+    modulo: 'modulo',
+    campo_nombre: 'campo',
+    titulo: 'titulo',
+    altura: 220,
+    campos: [
+      {
+	       tipo: 'campoDeTexto',
+	       parametros:{
+	        nombre: 'nombre',
+	        requerido:true,
+	        titulo: 'Nombre',
+	        tipo:'simple',
+	        eslabon: 'simple',
+	        usaToolTip: true
+	       }
+	    },
+	    {
+	      tipo: 'campoDeTexto',
+	      parametros:{
+	        nombre: 'descripcion',
+	        requerido:false,
+	        titulo: 'Descripción',
+	        tipo:'simple',
+	        eslabon: 'area',
+	        usaToolTip: true
+	      }
+      }
+	  ]
+  	};"""
+   'ventana nueva':
+    'prefix': 'newVentana'
+    'body': """UI.agregarVentana({
+        nombre:'${1:ventana}',
+        tipo: '${2:}',
+        titulo: {
+          tipo:'${3:basico o inverso}',
+          html:'${4:contenido}'
+        },
+        sectores:[${5:sectores}]
+      });
+    """
+  'sector nuevo':
+    'prefix': 'newSec'
+    'body': """{
+				nombre:'${1:nombre}',
+				html:'${2:contenido}'
+			}
+    """
+  'sector formulario':
+    'prefix': 'newSecForm'
+    'body': """{
+				nombre:'${1:nombre}',
+        tipo: '${2:modificar o nuevo}',
+				formulario:UI.buscarConstructor('${3:nombre del constructor}'),
+        registro : ${4:solo en caso de que sea tipo modificar la variable con el registro}
+			}
+    """
+  'lista nueva':
+    'prefix': 'newList'
+    'body': """
+      UI.agregarLista({
+    		titulo: '${1:titulo que se muestra}',
+    		clase: '${2:clase predefinida en css}',
+        campo_nombre: '${3:campo que se muestra en la interfaz}',
+    		carga: {
+    			uso:true,
+    			peticion:${4:peticion},
+    			espera:{
+    				cuadro:${5:cuadroCarga}
+    			},
+    			respuesta: ${6:callback}
+    		},
+    		paginacion: {
+    			uso:false
+    		},
+        onclickSlot: ${7:funcionClick}
+    	},${7:'nodo contenedor'});
+    """
+  'constructor formulario':
+    'prefix': 'consAttrform'
+    'body': "UI.buscarConstructor('${1:nombre del constructor}')"
+  'html botonera':
+    'prefix': 'htmlBot'
+    'body': """html:   '<section modalButtons>'+
+              '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
+              '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
+              '</section>'"""
