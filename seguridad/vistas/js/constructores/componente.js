@@ -17,15 +17,15 @@ componente = {
     },{
       tipo: 'comboBox',
       parametros : {
-        nombre:'tipoComponente',
+        nombre:'tipocomponente',
         titulo:'Tipos de Componente',
         eslabon : 'area',
-        opciones: [
-          {codigo:'S',nombre:'Sistemas'},
-          {codigo:'F',nombre:'Formulario'},
-          {codigo:'R',nombre:'Reporte'},
-          {codigo:'M',nombre:'Modulo'}
-        ]
+        peticion : {
+  			   modulo: "seguridad",
+  			   entidad: "tablaVirtual",
+  			   operacion: "buscarRegistrosPorNombreTabla",
+  			   nombre_tabla: "TIPO_COMPONENTE"
+  			}
       }
     },{
       tipo : 'campoDeTexto',

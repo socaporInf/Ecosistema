@@ -2187,6 +2187,7 @@ var ComboBox = function(info){
 	this.data.eslabon = info.eslabon||'simple';
 	this.data.seleccionado = info.seleccionado||'-';
 	this.nodo = null;
+	this.select = null;
 
 	this.construir = function(){
 		var nodo=document.createElement('div');
@@ -2210,23 +2211,39 @@ var ComboBox = function(info){
 		if(this.data.id!==undefined){
 			select.id=this.data.id;
 		}
-
+		this.select = select;
 		nodo.appendChild(select);
 
 		this.nodo=nodo;
-		if(this.data.titulo){
-			//creo la primera opcion
-			var opcion = {
+		var opcion;
+		if(!this.data.peticion){
+			opcion = {
 				codigo : '-',
 				nombre : 'Elija un '+this.data.titulo
 			};
 			this.agregarOpcion(opcion);
+		}else{
+			 opcion = {
+				codigo : '-',
+				nombre : 'Cargando Opciones ... '
+			};
+			this.agregarOpcion(opcion);
+			var yo = this;
+			torque.Operacion(this.data.peticion,function(respuesta){
+				yo.data.opciones = respuesta.registros;
+				arranqueOpciones(yo);
+			});
 		}
 
-		//genero y asigno el resto de las opciones
-		this.agregarOpciones(this.data.opciones);
-		this.estado='enUso';
 	};
+	function arranqueOpciones(combo){
+		if(combo.data.titulo){
+			combo.select.options[0].textContent='Elija un '+combo.data.titulo;
+		}
+		//genero y asigno el resto de las opciones
+		combo.agregarOpciones(combo.data.opciones);
+		combo.estado='enUso';
+	}
 	this.agregarOpciones = function(opciones){
 		for(var x=0;x<opciones.length;x++){
 			this.agregarOpcion(opciones[x]);
@@ -2272,7 +2289,6 @@ var ComboBox = function(info){
 			construirCapaSelect(this);
 		};
 	};
-	// TODO: cargar datos de base de datos para combobox
 	this.construir();
 };
 
