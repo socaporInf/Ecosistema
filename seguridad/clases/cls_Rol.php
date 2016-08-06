@@ -145,7 +145,7 @@ class cls_Rol extends cls_Conexion{
 			$la_respuesta[$x]['codigo']=$la_registros['codigo_empresa'];
 			$la_respuesta[$x]['codigo_rol']=$la_registros['codigo_rol'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre_empresa'];
-			$la_respuesta[$x]['codigoRelacion']=$la_registros['codigo_relacion'];
+			$la_respuesta[$x]['codigoRelacion']=$la_registros['llave_acceso'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);

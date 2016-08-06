@@ -77,12 +77,13 @@ class cls_Notificacion extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo']=$la_registros['codigo_notificacion'];
-     $la_respuesta[$x]['titulo']=$la_registros['titulo'];
-     $la_respuesta[$x]['cuerpo']=$la_registros['cuerpo'];
-     $la_respuesta[$x]['usuario']=$la_registros['usuario'];
-     $la_respuesta[$x]['tipo']=$la_registros['codigo_tipo_notificacion'];
-     $la_respuesta[$x]['color']=$la_registros['color'];
+     $la_respuesta[$x]['codigo'] = $la_registros['codigo_notificacion'];
+     $la_respuesta[$x]['titulo'] = $la_registros['titulo'];
+     $la_respuesta[$x]['cuerpo'] = $la_registros['cuerpo'];
+     $la_respuesta[$x]['tipo'] = $la_registros['codigo_tipo_notificacion'];
+     $la_respuesta[$x]['nombreTipoNotificacion'] = $la_registros['tipo_notificacion'];
+     $la_respuesta[$x]['codigo_prioridad'] = $la_registros['codigo_prioridad'];
+     $la_respuesta[$x]['prioridad'] = $la_registros['prioridad'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -96,12 +97,13 @@ class cls_Notificacion extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
-      $la_respuesta['codigo']=$la_registros['codigo_notificacion'];
-      $la_respuesta['titulo']=$la_registros['titulo'];
-      $la_respuesta['cuerpo']=$la_registros['cuerpo'];
-      $la_respuesta['usuario']=$la_registros['usuario'];
-      $la_respuesta['codigo_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
-      $la_respuesta['color']=$la_registros['color'];
+     $la_respuesta[$x]['codigo'] = $la_registros['codigo_notificacion'];
+     $la_respuesta[$x]['titulo'] = $la_registros['titulo'];
+     $la_respuesta[$x]['cuerpo'] = $la_registros['cuerpo'];
+     $la_respuesta[$x]['tipo'] = $la_registros['codigo_tipo_notificacion'];
+     $la_respuesta[$x]['nombreTipoNotificacion'] = $la_registros['tipo_notificacion'];
+     $la_respuesta[$x]['codigo_prioridad'] = $la_registros['codigo_prioridad'];
+     $la_respuesta[$x]['prioridad'] = $la_registros['prioridad'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);
@@ -166,12 +168,11 @@ class cls_Notificacion extends cls_Conexion{
      $la_respuesta[$x]['nombre']=$la_registros['titulo'];
      $la_respuesta[$x]['titulo']=$la_registros['titulo'];
      $la_respuesta[$x]['cuerpo']=$la_registros['cuerpo'];
-     $la_respuesta[$x]['usuario']=$la_registros['usuario'];
-     $la_respuesta[$x]['codigo_tipo']=$la_registros['codigo_tipo'];
-     $la_respuesta[$x]['nombre_tipo']=$la_registros['nombre_tipo'];
+     $la_respuesta[$x]['codigo_tipo']=$la_registros['codigo_tipo_notificacion'];
+     $la_respuesta[$x]['nombre_tipo']=$la_registros['tipo_notificacion'];
+     $la_respuesta[$x]['codigo_prioridad']=$la_registros['prioridad'];
      $la_respuesta[$x]['prioridad']=$la_registros['prioridad'];
      $la_respuesta[$x]['fecha_hora']=$la_registros['fecha_hora'];
-     $la_respuesta[$x]['color']=$la_registros['color'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);

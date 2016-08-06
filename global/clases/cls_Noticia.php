@@ -75,7 +75,7 @@ class cls_Noticia extends cls_Conexion{
      $la_respuesta[$x]['cuerpo']=$la_registros['cuerpo'];
      $la_respuesta[$x]['usuario']=$la_registros['usuario'];
      $la_respuesta[$x]['tipo']=$la_registros['codigo_tipo_noticia'];
-     $la_respuesta[$x]['color']=$la_registros['color'];
+     $la_respuesta[$x]['nombreTipoNoticia']=$la_registros['tipo_noticia'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);

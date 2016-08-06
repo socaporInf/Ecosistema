@@ -4,7 +4,6 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Privilegio extends cls_Conexion{
 
 	private $aa_Atributos = array();
-	private $aa_Campos = array('codigo_clase','nombre','descripcion');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -144,7 +143,7 @@ class cls_Privilegio extends cls_Conexion{
 	private function f_Buscar(){
 		//Busco Detalle
 		$ls_Sql="SELECT * from seguridad.vroles_por_empresa
-				WHERE codigo_relacion='".$this->aa_Atributos['codigo']."'";
+				WHERE llave_acceso='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		if($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -152,7 +151,7 @@ class cls_Privilegio extends cls_Conexion{
 			$la_respuesta['codigoRol']=$la_registros['codigo_rol'];
 			$la_respuesta['empresa']=$la_registros['nombre_empresa'];
 			$la_respuesta['rol']=$la_registros['nombre_rol'];
-			$la_respuesta['codigoRelacion']=$la_registros['codigo_relacion'];
+			$la_respuesta['codigoRelacion']=$la_registros['llave_acceso'];
 		}
 		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
