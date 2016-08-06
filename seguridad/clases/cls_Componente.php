@@ -94,8 +94,8 @@ class cls_Componente extends cls_Conexion{
      $la_respuesta['color']=$la_registros['color'];
      $la_respuesta['enlace']=$la_registros['enlace'];
      $la_respuesta['icono']=$la_registros['icono'];
-     $la_respuesta['componente_padre']=$la_registros['componente_padre'];
-     $la_respuesta['tipoComponente']=$la_registros['tipo'];
+     $la_respuesta['padre']=$la_registros['componente_padre'];
+     $la_respuesta['tipocomponente']=$la_registros['tipo'];
      $la_respuesta['descripcion']=$la_registros['descripcion'];
      $lb_Enc=true;
    }

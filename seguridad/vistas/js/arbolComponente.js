@@ -356,26 +356,24 @@ function formularioEditarComponente(nodo){
 }
 var activarEdicion = function(){
   var formComp = UI.elementos.modalWindow.buscarUltimaCapaContenido();
-  formComp.partes.cuerpo.registro = UI.modificar(formComp.partes.cuerpo);
+  formComp.partes.cuerpo.formulario.habilitar();
+	var boton = formComp.partes.pie.nodo.querySelector('button.icon-modificar-verde');
+	boton.classList.remove('icon-modificar-verde');
+	boton.classList.add('icon-guardar-indigo-32');
   this.onclick = finalizarEdicion;
 };
 var finalizarEdicion = function(){
-  var formComp = UI.elementos.modalWindow.buscarUltimaCapaContenido();
-  var nuevoRegistro = UI.modificar(formComp.partes.cuerpo);
-  nuevoRegistro.push({nombre:'codigo',valor:formComp.partes.cuerpo.registroId});
-  enviarCambios(nuevoRegistro,formComp.partes.cuerpo.nodo);
+  var formComp = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
+  var nuevoRegistro = formComp.captarValores();
+  nuevoRegistro.codigo = formComp.registroId;
+	console.log(nuevoRegistro);
+	enviarCambios(nuevoRegistro,formComp.partes.cuerpo.nodo);
 };
 
-function enviarCambios(cambios,contenedor){
-	//armo la peticion
-	var peticion = {
-		entidad: 'componente',
-		modulo: 'seguridad',
-		operacion: 'modificar'
-	};
-	for (var i = 0; i < cambios.length; i++) {
-		peticion[cambios[i].nombre] = cambios[i].valor;
-	}
+function enviarCambios(peticion,contenedor){
+	peticion.entidad = 'componente';
+	peticion.modulo = 'seguridad';
+	peticion.operacion = 'modificar';
 	//luego el cuadro
 	var infoCuadro = {
 		contenedor: contenedor,

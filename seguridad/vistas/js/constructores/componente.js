@@ -13,7 +13,7 @@ componente = {
       parametros : {titulo:'Color',nombre:'color',tipo:'simple',eslabon:'simple',usaToolTip:false}
     },{
       tipo : 'campoDeTexto',
-      parametros : {titulo:'Enlace',nombre:'enlace',tipo:'simple',eslabon:'simple',usaToolTip:false}
+      parametros : {titulo:'Enlace',nombre:'enlace',tipo:'simple',eslabon:'simple',usaToolTip:false,usaMinuscula:true}
     },{
       tipo: 'comboBox',
       parametros : {
