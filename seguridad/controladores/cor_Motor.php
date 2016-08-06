@@ -36,13 +36,6 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
-	case 'tipoUsuario':
-		include_once('../clases/cls_TipoUsuario.php');
-		$lobj_Entidad = new cls_TipoUsuario;
-		$lobj_Entidad->setPeticion($la_Peticion);
-		$respuesta = $lobj_Entidad->gestionar();
-		break;
-
 	case 'usuario':
 		include_once('../clases/cls_Usuario.php');
 		$lobj_Entidad = new cls_Usuario;

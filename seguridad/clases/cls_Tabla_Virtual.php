@@ -137,7 +137,7 @@ class cls_Tabla_Virtual extends cls_Conexion{
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['id_registro'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_registro'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre_registro'];
 			$la_respuesta[$x]['descripcion']=$la_registros['descripcion_registro'];
 			$x++;
@@ -154,7 +154,7 @@ class cls_Tabla_Virtual extends cls_Conexion{
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['id_registro'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_registro'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre_registro'];
 			$la_respuesta[$x]['descripcion']=$la_registros['descripcion_registro'];
 			$x++;
@@ -263,7 +263,7 @@ class cls_Tabla_Virtual extends cls_Conexion{
 		$ls_Sql="UPDATE global.vregistro_virtual SET ";
 		$ls_Sql.="nombre_registro ='".$this->aa_Atributos['nombre']."', ";
 		$ls_Sql.="descripcion_registro ='".$this->aa_Atributos['descripcion']."' ";
-		$ls_Sql.="WHERE id_registro ='".$this->aa_Atributos['codigo']."' ";
+		$ls_Sql.="WHERE codigo_registro ='".$this->aa_Atributos['codigo']."' ";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
