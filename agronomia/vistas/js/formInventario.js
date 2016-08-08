@@ -7,11 +7,11 @@ var productorNuevo = function(){
   var nuevo = UI.crearVentanaModal({
     contenido: 'ancho',
     cabecera:{
-      html: 'Nuevo '+UI.buscarConstructor('productor').formulario.titulo
+      html: 'Nuevo '+UI.buscarConstructor('productor').titulo
     },
     cuerpo:{
-      alto: UI.buscarConstructor('productor').formulario.altura,
-      campos: UI.buscarConstructor('productor').formulario.campos
+      tipo: 'nuevo',
+      formulario:UI.buscarConstructor('productor'),
     },
     pie:{
         html:   '<section modalButtons>'+
@@ -20,6 +20,10 @@ var productorNuevo = function(){
                 '</section>'
     }
   });
+  nuevo.partes.pie.nodo.querySelector("button.icon-cerrar-rojo-32").onclick = function(){
+    UI.elementos.modalWindow.eliminarUltimaCapa();
+  };
+  //TODO: funcionamiento guardado formulario
 };
 armarListaProductores = function(contenedor){
   var lista = UI.agregarLista({
@@ -102,14 +106,28 @@ var  formEditarPro = function(nodoPro){
     ventanaEditar.quitarSector('carga');
     ventanaEditar.agregarSector({
       nombre:'formulario',
-      alto : UI.buscarConstructor('productor').formulario.alto,
-      campos : UI.buscarConstructor('productor').formulario.campos,
-      campo_nombre :  UI.buscarConstructor('productor').campo_nombre
+      tipo: 'modificar',
+      formulario:UI.buscarConstructor('productor'),
+      registro : respuesta.registros
     });
-    UI.asignarValores(respuesta.registros,ventanaEditar.buscarSector('formulario'));
     //sector Listado
     agregarListadoFincas(respuesta.registros.codigo_productor,ventanaEditar);
     var botonera = crearBotonera(ventanaEditar,'fincas');
+    var btnNuevaFinca = botonera.nodo.querySelector("button");
+    btnNuevaFinca.onclick = function(){
+      secForm = UI.buscarVentana("editarProductor").buscarSector('botonera fincas');
+      secForm.nodo.classList.add('desaparecer');
+      secForm.nodo.querySelector('section[botonera]').classList.add('desaparecer');
+      setTimeout(function () {
+        secForm.nodo.innerHTML = "";
+        secForm.agregarFormulario({
+          plano: UI.buscarConstructor('finca'),
+          tipo: 'nuevo'
+        });
+        secForm.nodo.classList.remove('desaparecer');
+        secForm.nodo.style.height = UI.buscarConstructor('finca').altura+'px';
+      }, 310);
+    };
   });
 };
 //-----------------------------------Fincas---------------------------
@@ -119,7 +137,7 @@ var agregarListadoFincas = function(codigo_productor,ventana){
   });
   var listaFincas = UI.agregarLista({
     titulo: 'Listado fincas',
-    clase: 'embebida',
+    clases: ['embebida'],
     campo_nombre: UI.buscarConstructor('finca').campo_nombre,
     carga: {
       uso:true,

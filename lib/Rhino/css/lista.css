@@ -5,14 +5,6 @@ div[lista]{
    overflow-x: hidden;
    overflow-y:auto;
 }
-div[lista].ventana{
-  width: 90%;
-  margin-bottom: 25px;
-}
-div[lista].embebida{
-  margin: 0px;
-  width: 100%;
-}
 div[lista] section{
     width: 100%;
     background-color: white;
@@ -144,9 +136,9 @@ div[lista] section button[btnEliminar]{
 }
 /*----------------------------------------funcionamiento lista-------------------------------------------*/
 div[lista] section[slot].desaparecer{
-    marginLeft:120%;
-    marginBotton:0px;
-    boxShadow:none;
+    margin-left: 120%;
+    margin-bottom: 0px;
+    box-shadow:none;
 }
 div[lista] section[slot].desaparecerPorCompleto{
   height: 0px;
@@ -162,4 +154,13 @@ div[lista] section[busqueda].buscar div[titulo]{
 div[lista] section[busqueda].buscar div[listBuscar]{
     width: calc(100% - 70px);
     height: 40px;
+}
+/*----------------------------------------Listas -------------------------------------------*/
+div[lista].ventana{
+  width: 90%;
+  margin-bottom: 25px;
+}
+div[lista].embebida{
+  margin: 0px;
+  width: 100%;
 }

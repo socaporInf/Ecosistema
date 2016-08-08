@@ -2,3 +2,29 @@ button.icon-green-add{
   margin: 5px auto !important;
   float: none !important;
 }
+button.expandir{
+  animation:
+    expandir 0.7s ease-in-out 0s normal 1 forwards;
+}
+
+section.desaparecer{
+    height: 0px;
+    min-height: 0px !important;
+}
+@keyframes expandir{
+    50% {
+      height: calc(100%);
+      width: calc(100%) ;
+      margin: 0px auto;
+    }
+    75% {
+      border-radius: 0px;
+    }
+    100% {
+      opacity: 0;
+      height: calc(100%);
+      width: calc(100%) ;
+      margin: 0px auto;
+      border-radius: 0px;
+    }
+}

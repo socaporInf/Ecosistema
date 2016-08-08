@@ -173,7 +173,7 @@ div[formElements] {
     width: 32%
 }
 div[area] {
-    width: calc(100% - 24px) !important;
+    width: calc(100% - 24px);
 }
 .group {
     position: relative;
@@ -399,6 +399,11 @@ select {
     font-size: 14px;
     width: 100%;
     z-index: inherit;
+    height: 40px;
+}
+select.deshabilitado{
+    background-color: #ebebe4;
+    color: #585454;
 }
 article[capaSelect] {
     transition: all 0.3s linear;
@@ -642,7 +647,8 @@ div[mat-window] section[operaciones] {
     border-top: 1px solid rgba(160, 160, 160, 0.5);
 }
 div[mat-window] section[botonera]{
-
+    height: calc(100%);
+    min-height: calc(100%);
 }
 div[mat-window] section[botonera] button.icon{
     transition: all 0.2s ease-in-out;

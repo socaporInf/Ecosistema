@@ -24,8 +24,8 @@ function abrirFormTabla(){
     carga: {
       uso:true,
       peticion:{
-        entidad: 'tablaVirtual',
-        operacion: 'listarRegistros',
+        entidad: 'registroVirtual',
+        operacion: 'listar',
         codigo: UI.elementos.maestro.ventanaForm.formulario.registroId
       },
       espera:{
@@ -92,8 +92,8 @@ var finalizarEdicion = function(){
 };
 var enviarCambios = function(cambios,contenedor){
   //armo la peticion
-  cambios.entidad = 'tablaVirtual';
-  cambios.operacion = 'modificarRegistro';
+  cambios.entidad = 'registroVirtual';
+  cambios.operacion = 'modificar';
   cambios.modulo = 'seguridad';
   //luego el cuadro
   var infoCuadro = {
@@ -139,8 +139,8 @@ var guardarRegistro = function(){
   if(formulario.validar()){
     var peticion = formulario.captarValores();
     peticion.codigo_tabla = UI.elementos.maestro.ventanaForm.formulario.registroId;
-    peticion.entidad = 'tablaVirtual';
-    peticion.operacion = 'guardarRegistro';
+    peticion.entidad = 'registroVirtual';
+    peticion.operacion = 'guardar';
     var InfoCuadro = {
       contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
       cuadro:{
