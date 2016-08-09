@@ -670,7 +670,6 @@ div[mat-window] section[botonera] button.icon{
 /*-----------------------------------Media Query-------------------------------*/
 
 @media (max-width: 1000px) {
-    /*modal window*/
     div[capa='contenido'] {
         background-color: white;
         top: 100%;
@@ -679,6 +678,20 @@ div[mat-window] section[botonera] button.icon{
         position: absolute;
         z-index: 12;
     }
-    /*fin modal*/
+}
+@media (max-width: 900px) {
+    div[mat-window].formulario,div[mat-window].ventana {
+        width: 85%;
+        margin-bottom: 10px;
+        min-height: 50px;
+        margin-left: 50px;
+    }
+}
 
+@media (max-width: 800px) {
+    div[mat-window].formulario,div[mat-window].ventana{
+        width: 100%;
+        margin-left: 0px;
+        min-height: 50px;
+    }
 }
