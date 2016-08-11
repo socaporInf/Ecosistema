@@ -25,9 +25,19 @@ button{
     color:  #3F51B5;
     font-size: 24px;
 }
+.icon-guardar-blanco-32:after {
+    content: 'save';
+    color:  white;
+    font-size: 24px;
+}
 .icon-cerrar-rojo-32:after {
     content: 'clear';
     color: #f44336;
+    font-size: 24px;
+}
+.icon-cerrar-blanco-32:after {
+    content: 'clear';
+    color: white;
     font-size: 24px;
 }
 .icon-nuevo-azul-claro-32:after {

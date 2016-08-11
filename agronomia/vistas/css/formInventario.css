@@ -8,8 +8,9 @@ button.expandir{
 }
 
 section.desaparecer{
-    height: 0px;
+    height: 0px !important;
     min-height: 0px !important;
+    padding: 0px !important;
 }
 @keyframes expandir{
     50% {

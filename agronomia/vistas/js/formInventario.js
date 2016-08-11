@@ -43,15 +43,14 @@ armarListaProductores = function(contenedor){
           mensaje: 'Cargando registros'
         }
       },
-      respuesta: function prueba(){
+      respuesta: function(){
         var slot;
         var lista = UI.buscarVentana('Cañicultores');
-        for (var i = 0; i < lista.Slots.length; i++) {
-          slot = lista.Slots[i];
+        lista.Slots.forEach(function(slot){
           slot.nodo.setAttribute('codigo',slot.atributos.codigo);
           slot.nodo.setAttribute('nombre_completo',slot.atributos.nombre_completo);
           slot.nodo.onclick=editarProductor;
-        }
+        });
       }
     },
     paginacion: {
@@ -66,7 +65,7 @@ var editarProductor = function(){
     formModificar = UI.agregarVentana({
       nombre:'editarProductor',
       tipo: 'formulario',
-      clases: ['not-first'],
+      clases: ['not-first','last'],
       sectores:[
         {
           nombre:'carga',
@@ -77,6 +76,9 @@ var editarProductor = function(){
   }else{
     formModificar = UI.buscarVentana('editarProductor');
     for (var i = formModificar.sectores.length -1 ; i > -1 ; i--){
+      if(UI.buscarVentana('Listado fincas')){
+        UI.quitarVentana('Listado fincas');
+      }
       formModificar.desvanecerSector(formModificar.sectores[i].atributos.nombre);
     }
     setTimeout(function () {
@@ -87,7 +89,7 @@ var editarProductor = function(){
     }, 600);
   }
 };
-var  formEditarPro = function(nodoPro){
+var formEditarPro = function(nodoPro){
   var peticion = {
      modulo: "agronomia",
      entidad: "productor",
@@ -112,55 +114,8 @@ var  formEditarPro = function(nodoPro){
     });
     //sector Listado
     agregarListadoFincas(respuesta.registros.codigo_productor,ventanaEditar);
-    var botonera = crearBotonera(ventanaEditar,'fincas');
-    var btnNuevaFinca = botonera.nodo.querySelector("button");
-    btnNuevaFinca.onclick = function(){
-      secForm = UI.buscarVentana("editarProductor").buscarSector('botonera fincas');
-      secForm.nodo.classList.add('desaparecer');
-      secForm.nodo.querySelector('section[botonera]').classList.add('desaparecer');
-      setTimeout(function () {
-        secForm.nodo.innerHTML = "";
-        secForm.agregarFormulario({
-          plano: UI.buscarConstructor('finca'),
-          tipo: 'nuevo'
-        });
-        secForm.nodo.classList.remove('desaparecer');
-        secForm.nodo.style.height = UI.buscarConstructor('finca').altura+'px';
-      }, 310);
-    };
+    var botonera = crearBotoneraFincas(ventanaEditar);
   });
-};
-//-----------------------------------Fincas---------------------------
-var agregarListadoFincas = function(codigo_productor,ventana){
-  var contList = ventana.agregarSector({
-    nombre:'listado',
-  });
-  var listaFincas = UI.agregarLista({
-    titulo: 'Listado fincas',
-    clases: ['embebida'],
-    campo_nombre: UI.buscarConstructor('finca').campo_nombre,
-    carga: {
-      uso:true,
-      peticion:{
-         modulo: "agronomia",
-         entidad: "finca",
-         operacion: "buscarFincasPorProductor",
-         codigo_productor: codigo_productor
-      },
-      espera:{
-        cuadro:{
-          nombre: 'cargaFincas',
-          mensaje: 'Cargando Fincas'
-        }
-      },
-      respuesta: function(){
-        var lista = UI.buscarVentana('Fincas');
-      }
-    },
-    paginacion: {
-      uso:false
-    }
-  },contList.nodo);
 };
 //-----------------------------------Generales---------------------------
 crearBotonera = function(contenedor,nombre){

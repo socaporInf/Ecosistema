@@ -1,7 +1,7 @@
 finca = {
 	nombre: 'finca',
  	modulo: 'agronomia',
-	campo_nombre: 'nombre',
+	campo_nombre: 'nombre_finca_completo',
 	titulo: 'finca',
 	altura: 220,
 	campos:[
@@ -19,7 +19,7 @@ finca = {
 		},
 		{
 		  tipo : 'campoDeTexto',
-		  parametros : {requerido:true,titulo:'Kilimetros al central',nombre:'titulo',tipo:'simple',eslabon:'simple',usaToolTip:true}
+		  parametros : {requerido:true,titulo:'Kilometros al central',nombre:'km_central',tipo:'simple',eslabon:'simple',usaToolTip:true}
 		},{
 	  	tipo : 'campoBusqueda',
 	    parametros : {
@@ -40,7 +40,7 @@ finca = {
 	  	tipo : 'campoBusqueda',
 	    parametros : {
 	      titulo:'Tipo de Afiliacion',
-	      nombre:'codigo_tipo_Afiliacion',
+	      nombre:'codigo_tipo_afiliacion',
 	      requerido:true,
 				eslabon:'simple',
 	      peticion:{

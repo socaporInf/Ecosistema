@@ -34,6 +34,13 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+	case 'zona':
+		include_once('../clases/cls_Zona.php');
+		$lobj_Entidad = new cls_Zona;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	default:
 		$respuesta['success'] = 0;
 		$respuesta['mensaje']['nombre_tipo'] =  'error';
