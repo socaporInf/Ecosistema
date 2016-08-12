@@ -2,6 +2,10 @@ finca = {
 	nombre: 'finca',
  	modulo: 'agronomia',
 	campo_nombre: 'nombre_finca_completo',
+	campo_codigo:'id_finca',
+	entidad_padre:'productor',
+	campo_padre:'codigo_productor',
+	entidad_hijo:'lote',
 	titulo: 'finca',
 	altura: 220,
 	campos:[
@@ -19,7 +23,7 @@ finca = {
 		},
 		{
 		  tipo : 'campoDeTexto',
-		  parametros : {requerido:true,titulo:'Kilometros al central',nombre:'km_central',tipo:'simple',eslabon:'simple',usaToolTip:true}
+		  parametros : {requerido:true,titulo:'Kilometros al central',nombre:'kilometros_central',tipo:'simple',eslabon:'simple',usaToolTip:true}
 		},{
 	  	tipo : 'campoBusqueda',
 	    parametros : {

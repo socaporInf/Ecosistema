@@ -23,7 +23,7 @@ var productorNuevo = function(){
   nuevo.partes.pie.nodo.querySelector("button.icon-cerrar-rojo-32").onclick = function(){
     UI.elementos.modalWindow.eliminarUltimaCapa();
   };
-  //TODO: funcionamiento guardado formulario
+  //TODO: funcionamiento guardado formulario(revisar)
 };
 armarListaProductores = function(contenedor){
   var lista = UI.agregarLista({
@@ -104,26 +104,27 @@ var formEditarPro = function(nodoPro){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(respuesta){
-    var  ventanaEditar= UI.buscarVentana('editarProductor');
-    ventanaEditar.quitarSector('carga');
-    ventanaEditar.agregarSector({
-      nombre:'formulario',
+    UI.buscarVentana('editarProductor').desvanecerSector('carga');
+    var formulario = {
+      nombre: 'form'+respuesta.entidad, //puede ser lo que sea
+      formulario: UI.buscarConstructor(respuesta.entidad),
       tipo: 'modificar',
-      formulario:UI.buscarConstructor('productor'),
-      registro : respuesta.registros
+      registro: respuesta.registros, //registro activo para el formulario
+    };
+    var secBotonera = {
+      nombre:'botonera '+respuesta.entidad,
+      html: '<section botonera>'+
+          '<button type="button" class="icon icon-editar-blanco-32 mat-green500"></button>'+
+          '<button type="button" class="icon icon-cerrar-blanco-32 mat-red500"></button>'+
+          '<button type="button" class="icon icon-green-add"></button>'+
+        '</section>'
+    };
+    agregarFormulario(formulario,secBotonera,respuesta.entidad);
+    agregarListado(UI.buscarVentana('editarProductor'),{
+       modulo: "agronomia",
+       entidad: "finca",
+       operacion: "buscarHijos",
+       codigo_productor: respuesta.registros.codigo_productor
     });
-    //sector Listado
-    agregarListadoFincas(respuesta.registros.codigo_productor,ventanaEditar);
-    var botonera = crearBotoneraFincas(ventanaEditar);
   });
-};
-//-----------------------------------Generales---------------------------
-crearBotonera = function(contenedor,nombre){
-  var botonera = contenedor.agregarSector({
-    nombre:'botonera '+nombre,
-    html: '<section botonera>'+
-      '<button type="button" class="icon icon-green-add"></button>'+
-      '</section>'
-  });
-  return botonera;
 };

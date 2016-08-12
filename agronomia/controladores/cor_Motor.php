@@ -20,6 +20,14 @@ switch ($la_Peticion['entidad']) {
 		$lobj_Entidad->setPeticion($la_Peticion);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
+
+	case 'lote':
+		include_once('../clases/cls_Lote.php');
+		$lobj_Entidad = new cls_Lote;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'productor':
 		include_once('../clases/cls_Productor.php');
 		$lobj_Entidad = new cls_Productor;
@@ -49,6 +57,7 @@ switch ($la_Peticion['entidad']) {
 		$respuesta['tipo'] = 'error';
 		break;
 }
+$respuesta['entidad'] = $la_Peticion['entidad'];
 header('Content-type: application/json; charset=utf-8');
 echo json_encode($respuesta);
 exit();

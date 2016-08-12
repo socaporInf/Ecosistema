@@ -29,7 +29,7 @@ class cls_Finca extends cls_Conexion{
        }
        break;
 
-    case 'buscarFincasPorProductor':
+    case 'buscarHijos':
      $registros=$this->f_BuscarFincasPorProductor();
      if(count($registros)!=0){
        $success=1;
@@ -99,12 +99,13 @@ class cls_Finca extends cls_Conexion{
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['id_finca'];
+     $la_respuesta[$x]['id_finca']=$la_registros['id_finca'];
      $la_respuesta[$x]['nombre_finca_completo']=$la_registros['codigo_productor'].'-'.$la_registros['letra'].' '.$la_registros['nombre_finca'];
      $la_respuesta[$x]['codigo_productor']=$la_registros['codigo_productor'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
      $la_respuesta[$x]['letra']=$la_registros['letra'];
      $la_respuesta[$x]['nombre_finca']=$la_registros['nombre_finca'];
-     $la_respuesta[$x]['km_central']=$la_registros['kilometros_central'];
+     $la_respuesta[$x]['kilometros_central']=$la_registros['kilometros_central'];
      $la_respuesta[$x]['codigo_tipo_carretera']=$la_registros['codigo_tipo_carretera'];
      $la_respuesta[$x]['tipo_carretera']=$la_registros['nombre_tipo_carretera'];
      $la_respuesta[$x]['codigo_tipo_afiliacion']=$la_registros['codigo_tipo_afiliacion'];
@@ -119,46 +120,44 @@ class cls_Finca extends cls_Conexion{
    $this->f_Des();
    return $la_respuesta;
 }
- private function f_Buscar(){
-   $lb_Enc=false;
-   //Busco El rol
-   $ls_Sql="SELECT * FROM agronomia.vfinca where codigo_productor='".$this->aa_Atributos['codigo_productor']."'";
-   $this->f_Con();
-   $lr_tabla=$this->f_Filtro($ls_Sql);
-   if($la_registros=$this->f_Arreglo($lr_tabla)){
-      $la_respuesta['nombre_finca_completo']=$la_registros['codigo_productor'].'-'.$la_registros['letra'].' '.$la_registros['nombre_finca'];
-      $la_respuesta['codigo_productor']=$la_registros['codigo_productor'];
-      $la_respuesta['nombre_completo']=$la_registros['nombre_completo'];
-      $la_respuesta['letra']=$la_registros['letra'];
-      $la_respuesta['nombre_finca']=$la_registros['nombre_finca'];
-      $la_respuesta['km_central']=$la_registros['kilometros_central'];
-      $la_respuesta['codigo_tipo_afiliacion']=$la_registros['codigo_tipo_afiliacion'];
-      $la_respuesta['tipo_carretera']=$la_registros['tipo_carretera'];
-      $la_respuesta['codigo_tipo_afiliacion']=$la_registros['codigo_tipo_afiliacion'];
-      $la_respuesta['tipo_afiliacion']=$la_registros['tipo_afiliacion'];
-      $la_respuesta['codigo_zona']=$la_registros['codigo_zona'];
-      $la_respuesta['zona']=$la_registros['zona'];
-      $la_respuesta['codigo_municipio']=$la_registros['codigo_municipio'];
-      $la_respuesta['municipio']=$la_registros['municipio'];
-      $lb_Enc=true;
-   }
-   $this->f_Cierra($lr_tabla);
-   $this->f_Des();
-
-   if($lb_Enc){
-     //guardo en atributo de la clase
-     $this->aa_Atributos['registro']=$la_respuesta;
-   }
-
-   return $lb_Enc;
- }
-
+private function f_Buscar(){
+  $lb_Enc = false;
+  $la_respuesta=array();
+  $ls_Sql="SELECT * FROM agronomia.vfinca where id_finca = '".$this->aa_Atributos['codigo']."'";
+  $this->f_Con();
+  $lr_tabla=$this->f_Filtro($ls_Sql);
+  if($la_registros=$this->f_Arreglo($lr_tabla)){
+    $la_respuesta['codigo']=$la_registros['id_finca'];
+    $la_respuesta['id_finca']=$la_registros['id_finca'];
+    $la_respuesta['nombre_finca_completo']=$la_registros['codigo_productor'].'-'.$la_registros['letra'].' '.$la_registros['nombre_finca'];
+    $la_respuesta['codigo_productor']=$la_registros['codigo_productor'];
+    $la_respuesta['nombre_completo']=$la_registros['nombre_completo'];
+    $la_respuesta['letra']=$la_registros['letra'];
+    $la_respuesta['nombre_finca']=$la_registros['nombre_finca'];
+    $la_respuesta['kilometros_central']=$la_registros['kilometros_central'];
+    $la_respuesta['codigo_tipo_carretera']=$la_registros['codigo_tipo_carretera'];
+    $la_respuesta['tipo_carretera']=$la_registros['nombre_tipo_carretera'];
+    $la_respuesta['codigo_tipo_afiliacion']=$la_registros['codigo_tipo_afiliacion'];
+    $la_respuesta['tipo_afiliacion']=$la_registros['nombre_tipo_afiliacion'];
+    $la_respuesta['codigo_zona']=$la_registros['codigo_zona'];
+    $la_respuesta['zona']=$la_registros['nombre_zona'];
+    $la_respuesta['codigo_municipio']=$la_registros['codigo_municipio'];
+    $la_respuesta['municipio']=$la_registros['nombre_municipio'];
+    $lb_Enc = true;
+  }
+  $this->f_Cierra($lr_tabla);
+  $this->f_Des();
+  if($lb_Enc){
+     $this->aa_Atributos['registro'] = $la_respuesta;
+  }
+  return $lb_Enc;
+}
  private function f_Guardar(){
 
    $lb_Hecho=false;
    $ls_Sql="INSERT INTO agronomia.vfinca (codigo_productor,letra,nombre_finca,kilometros_central,codigo_zona,codigo_municipio,codigo_tipo_afiliacion,codigo_tipo_carretera) values
       ('".$this->aa_Atributos['codigo_productor']."','".$this->aa_Atributos['letra']."',
-      '".$this->aa_Atributos['nombre_finca']."','".$this->aa_Atributos['km_central']."',
+      '".$this->aa_Atributos['nombre_finca']."','".$this->aa_Atributos['kilometros_central']."',
       '".$this->aa_Atributos['codigo_zona']."','".$this->aa_Atributos['codigo_municipio']."',
       '".$this->aa_Atributos['codigo_tipo_afiliacion']."','".$this->aa_Atributos['codigo_tipo_carretera']."')";
    $this->f_Con();
@@ -169,12 +168,12 @@ class cls_Finca extends cls_Conexion{
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
-   $ls_Sql="UPDATE agronomia.vproductor SET ";
+   $ls_Sql="UPDATE agronomia.vfinca SET ";
 
    //arma la cadena sql en base a los campos pasados en la peticion
    $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-   $ls_Sql.="WHERE id_fin ='".$this->aa_Atributos['id_finca']."'";
+   $ls_Sql.="WHERE id_finca ='".$this->aa_Atributos['id_finca']."'";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();

@@ -109,35 +109,35 @@
     'prefix': 'planCons'
     'body': """
     {
-    nombre: 'entidad',
-    modulo: 'modulo',
-    campo_nombre: 'campo',
-    titulo: 'titulo',
-    altura: 220,
-    campos: [
-      {
-	       tipo: 'campoDeTexto',
-	       parametros:{
-	        nombre: 'nombre',
-	        requerido:true,
-	        titulo: 'Nombre',
-	        tipo:'simple',
-	        eslabon: 'simple',
-	        usaToolTip: true
-	       }
-	    },
-	    {
-	      tipo: 'campoDeTexto',
-	      parametros:{
-	        nombre: 'descripcion',
-	        requerido:false,
-	        titulo: 'Descripción',
-	        tipo:'simple',
-	        eslabon: 'area',
-	        usaToolTip: true
-	      }
-      }
-	  ]
+      nombre: 'entidad',
+      modulo: 'modulo',
+      campo_nombre: 'campo',
+      titulo: 'titulo',
+      altura: 220,
+      campos: [
+        {
+  	       tipo: 'campoDeTexto',
+  	       parametros:{
+  	        nombre: 'nombre',
+  	        requerido:true,
+  	        titulo: 'Nombre',
+  	        tipo:'simple',
+  	        eslabon: 'simple',
+  	        usaToolTip: true
+  	       }
+  	    },
+  	    {
+  	      tipo: 'campoDeTexto',
+  	      parametros:{
+  	        nombre: 'descripcion',
+  	        requerido:false,
+  	        titulo: 'Descripción',
+  	        tipo:'simple',
+  	        eslabon: 'area',
+  	        usaToolTip: true
+  	      }
+        }
+  	  ]
   	};"""
    'ventana nueva':
     'prefix': 'newVentana'
