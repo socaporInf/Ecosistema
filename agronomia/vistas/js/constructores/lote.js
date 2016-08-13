@@ -5,6 +5,7 @@ lote = {
   campo_codigo: 'id_lote',
   entidad_padre:'finca',
   campo_padre: 'id_finca',
+  entidad_hijo: 'tablon',
   titulo: 'Lotes',
   altura: 150,
   campos: [
@@ -38,7 +39,6 @@ lote = {
 	      peticion:{
 		        entidad: 'finca',
 		        operacion: 'buscar',
-						nombre_tabla: 'finca',
 						modulo: 'agronomia'
 		      },
 	      cuadro: {nombre: 'listafinca',mensaje: 'Cargando Fincas'}

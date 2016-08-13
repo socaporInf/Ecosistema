@@ -1,7 +1,7 @@
 <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
-class cls_Finca extends cls_Conexion{
+class cls_Tablon extends cls_Conexion{
 
  private $aa_Atributos = array();
  private $aa_Campos = array('nombre_finca','codigo_zona','kilometros_central','codigo_municipio','codigo_productor','id_finca','letra','codigo_tipo_carretera','codigo_tipo_afiliacion');
@@ -30,7 +30,7 @@ class cls_Finca extends cls_Conexion{
        break;
 
     case 'buscarHijos':
-     $registros=$this->f_BuscarFincasPorProductor();
+     $registros=$this->f_BuscarTablonesPorLote();
      if(count($registros)!=0){
        $success=1;
        $respuesta['registros']=$registros;
@@ -91,29 +91,34 @@ class cls_Finca extends cls_Conexion{
    $this->f_Des();
    return $la_respuesta;
  }
- private function f_BuscarFincasPorProductor(){
+ private function f_BuscarTablonesPorLote(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vfinca  WHERE codigo_productor = ".$this->aa_Atributos['codigo_productor'];
+   $ls_Sql="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote'];
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo']=$la_registros['id_finca'];
-     $la_respuesta[$x]['id_finca']=$la_registros['id_finca'];
-     $la_respuesta[$x]['nombre_finca_completo']=$la_registros['codigo_productor'].'-'.$la_registros['letra'].' '.$la_registros['nombre_finca'];
-     $la_respuesta[$x]['codigo_productor']=$la_registros['codigo_productor'];
-     $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
-     $la_respuesta[$x]['letra']=$la_registros['letra'];
-     $la_respuesta[$x]['nombre_finca']=$la_registros['nombre_finca'];
-     $la_respuesta[$x]['kilometros_central']=$la_registros['kilometros_central'];
-     $la_respuesta[$x]['codigo_tipo_carretera']=$la_registros['codigo_tipo_carretera'];
-     $la_respuesta[$x]['tipo_carretera']=$la_registros['nombre_tipo_carretera'];
-     $la_respuesta[$x]['codigo_tipo_afiliacion']=$la_registros['codigo_tipo_afiliacion'];
-     $la_respuesta[$x]['tipo_afiliacion']=$la_registros['nombre_tipo_afiliacion'];
-     $la_respuesta[$x]['codigo_zona']=$la_registros['codigo_zona'];
-     $la_respuesta[$x]['zona']=$la_registros['nombre_zona'];
-     $la_respuesta[$x]['codigo_municipio']=$la_registros['codigo_municipio'];
-     $la_respuesta[$x]['municipio']=$la_registros['nombre_municipio'];
+     $la_respuesta[$x]['codigo']=$la_registros['id_tablon'];
+     $la_respuesta[$x]['id_tablon']=$la_registros['id_tablon'];
+     $la_respuesta[$x]['codigo_tablon']=$la_registros['codigo_tablon'];
+     $la_respuesta[$x]['id_lote']=$la_registros['id_lote'];
+     $la_respuesta[$x]['codigo_lote']=$la_registros['codigo_lote'];
+     $la_respuesta[$x]['nombre_lote']=$la_registros['nombre_lote'];
+     $la_respuesta[$x]['codigo_tipo_corte']=$la_registros['codigo_tipo_corte'];
+     $la_respuesta[$x]['tipo_corte']=$la_registros['nombre_tipo_corte'];
+     $la_respuesta[$x]['codigo_clase']=$la_registros['codigo_clase'];
+     $la_respuesta[$x]['nombre_clase']=$la_registros['nombre_clase'];
+     $la_respuesta[$x]['codigo_variedad']=$la_registros['codigo_variedad'];
+     $la_respuesta[$x]['nombre_variedad']=$la_registros['nombre_variedad'];
+     $la_respuesta[$x]['codigo_indicador_cana_diferida']=$la_registros['codigo_indicador_cana_diferida'];
+     $la_respuesta[$x]['indicador_cana_diferida']=$la_registros['nombre_indicador_cana_diferida'];
+     $la_respuesta[$x]['area_cana']=$la_registros['area_cana'];
+     $la_respuesta[$x]['area_semilla']=$la_registros['area_semilla'];
+     $la_respuesta[$x]['fecha_siembra_corte']=$la_registros['fecha_siembra_corte'];
+     $la_respuesta[$x]['fecha_ultimo_arrime']=$la_registros['fecha_ultimo_arrime'];
+     $la_respuesta[$x]['toneladas_estimadas_hectarea']=$la_registros['toneladas_estimadas_hectarea'];
+     $la_respuesta[$x]['toneladas_real']=$la_registros['toneladas_real'];
+     $la_respuesta[$x]['toneladas_azucar']=$la_registros['toneladas_azucar'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -127,23 +132,28 @@ private function f_Buscar(){
   $this->f_Con();
   $lr_tabla=$this->f_Filtro($ls_Sql);
   if($la_registros=$this->f_Arreglo($lr_tabla)){
-    $la_respuesta['codigo']=$la_registros['id_finca'];
-    $la_respuesta['id_finca']=$la_registros['id_finca'];
-    $la_respuesta['nombre_finca_completo']=$la_registros['codigo_productor'].'-'.$la_registros['letra'].' '.$la_registros['nombre_finca'];
-    $la_respuesta['nombre']=$la_registros['codigo_productor'].'-'.$la_registros['letra'].' '.$la_registros['nombre_finca'];
-    $la_respuesta['codigo_productor']=$la_registros['codigo_productor'];
-    $la_respuesta['nombre_completo']=$la_registros['nombre_completo'];
-    $la_respuesta['letra']=$la_registros['letra'];
-    $la_respuesta['nombre_finca']=$la_registros['nombre_finca'];
-    $la_respuesta['kilometros_central']=$la_registros['kilometros_central'];
-    $la_respuesta['codigo_tipo_carretera']=$la_registros['codigo_tipo_carretera'];
-    $la_respuesta['tipo_carretera']=$la_registros['nombre_tipo_carretera'];
-    $la_respuesta['codigo_tipo_afiliacion']=$la_registros['codigo_tipo_afiliacion'];
-    $la_respuesta['tipo_afiliacion']=$la_registros['nombre_tipo_afiliacion'];
-    $la_respuesta['codigo_zona']=$la_registros['codigo_zona'];
-    $la_respuesta['zona']=$la_registros['nombre_zona'];
-    $la_respuesta['codigo_municipio']=$la_registros['codigo_municipio'];
-    $la_respuesta['municipio']=$la_registros['nombre_municipio'];
+     $la_respuesta['codigo']=$la_registros['id_tablon'];
+     $la_respuesta['nombre']=$la_registros['codigo_tablon'];
+     $la_respuesta['id_tablon']=$la_registros['id_tablon'];
+     $la_respuesta['codigo_tablon']=$la_registros['codigo_tablon'];
+     $la_respuesta['id_lote']=$la_registros['id_lote'];
+     $la_respuesta['codigo_lote']=$la_registros['codigo_lote'];
+     $la_respuesta['nombre_lote']=$la_registros['nombre_lote'];
+     $la_respuesta['codigo_tipo_corte']=$la_registros['codigo_tipo_corte'];
+     $la_respuesta['tipo_corte']=$la_registros['nombre_tipo_corte'];
+     $la_respuesta['codigo_clase']=$la_registros['codigo_clase'];
+     $la_respuesta['nombre_clase']=$la_registros['nombre_clase'];
+     $la_respuesta['codigo_variedad']=$la_registros['codigo_variedad'];
+     $la_respuesta['nombre_variedad']=$la_registros['nombre_variedad'];
+     $la_respuesta['codigo_indicador_cana_diferida']=$la_registros['codigo_indicador_cana_diferida'];
+     $la_respuesta['indicador_cana_diferida']=$la_registros['nombre_indicador_cana_diferida'];
+     $la_respuesta['area_cana']=$la_registros['area_cana'];
+     $la_respuesta['area_semilla']=$la_registros['area_semilla'];
+     $la_respuesta['fecha_siembra_corte']=$la_registros['fecha_siembra_corte'];
+     $la_respuesta['fecha_ultimo_arrime']=$la_registros['fecha_ultimo_arrime'];
+     $la_respuesta['toneladas_estimadas_hectarea']=$la_registros['toneladas_estimadas_hectarea'];
+     $la_respuesta['toneladas_real']=$la_registros['toneladas_real'];
+     $la_respuesta['toneladas_azucar']=$la_registros['toneladas_azucar'];
     $lb_Enc = true;
   }
   $this->f_Cierra($lr_tabla);
@@ -155,15 +165,7 @@ private function f_Buscar(){
 }
  private function f_Guardar(){
 
-   $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vfinca (codigo_productor,letra,nombre_finca,kilometros_central,codigo_zona,codigo_municipio,codigo_tipo_afiliacion,codigo_tipo_carretera) values
-      ('".$this->aa_Atributos['codigo_productor']."','".$this->aa_Atributos['letra']."',
-      '".$this->aa_Atributos['nombre_finca']."','".$this->aa_Atributos['kilometros_central']."',
-      '".$this->aa_Atributos['codigo_zona']."','".$this->aa_Atributos['codigo_municipio']."',
-      '".$this->aa_Atributos['codigo_tipo_afiliacion']."','".$this->aa_Atributos['codigo_tipo_carretera']."')";
-   $this->f_Con();
-   $lb_Hecho=$this->f_Ejecutar($ls_Sql);
-   $this->f_Des();
+   //TODO funcion guardar
    return false;
  }
  private function f_Modificar(){
