@@ -35,6 +35,28 @@ tablon = {
     },{
       tipo:'saltodelinea'
     },{
+      tipo: 'campoDeTexto',
+      parametros:{
+          nombre: 'area_cana',
+          requerido:false,
+          titulo: 'Area Caña',
+          tipo:'simple',
+          eslabon: 'simple',
+          usaToolTip: true
+      }
+    },{
+      tipo: 'campoDeTexto',
+      parametros:{
+          nombre: 'area_semilla',
+          requerido:false,
+          titulo: 'Area Semilla',
+          tipo:'simple',
+          eslabon: 'simple',
+          usaToolTip: true
+      }
+    },{
+			tipo: 'saltodelinea'
+		},{
 	  	tipo : 'campoBusqueda',
 	    parametros : {
 	      titulo:'Clase',
@@ -47,20 +69,6 @@ tablon = {
 						modulo: 'agronomia'
 		      },
 	      cuadro: {nombre: 'listaClase',mensaje: 'Cargando Clases'}
-	    }
-		},{
-	  	tipo : 'campoBusqueda',
-	    parametros : {
-	      titulo:'Lote',
-	      nombre:'id_lote',
-	      requerido:true,
-				eslabon:'simple',
-	      peticion:{
-		        entidad: 'lote',
-		        operacion: 'buscar',
-						modulo: 'agronomia'
-		      },
-	      cuadro: {nombre: 'listafinca',mensaje: 'Cargando Fincas'}
 	    }
 		},{
 	  	tipo : 'campoBusqueda',
@@ -109,28 +117,6 @@ tablon = {
 		},{
       tipo:'saltodelinea'
     },{
-      tipo: 'campoDeTexto',
-      parametros:{
-          nombre: 'area_cana',
-          requerido:false,
-          titulo: 'Area Caña',
-          tipo:'simple',
-          eslabon: 'simple',
-          usaToolTip: true
-      }
-    },{
-      tipo: 'campoDeTexto',
-      parametros:{
-          nombre: 'area_semilla',
-          requerido:false,
-          titulo: 'Area Semilla',
-          tipo:'simple',
-          eslabon: 'simple',
-          usaToolTip: true
-      }
-    },{
-			tipo: 'saltodelinea'
-		},{
       tipo: 'campoDeTexto',
       parametros:{
           nombre: 'toneladas_estimadas_hectarea',
