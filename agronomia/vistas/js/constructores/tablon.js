@@ -93,7 +93,7 @@ tablon = {
 				eslabon:'simple',
 	      peticion:{
 		        entidad: 'registroVirtual',
-		        operacion: 'buscar',
+		        operacion: 'listar',
 						modulo: 'seguridad',
 						nombre_tabla: 'TIPO_CORTE'
 		      },
@@ -108,14 +108,32 @@ tablon = {
 				eslabon:'simple',
 	      peticion:{
 		        entidad: 'registroVirtual',
-		        operacion: 'buscar',
+		        operacion: 'listar',
 						modulo: 'seguridad',
 						nombre_tabla: 'INDICADOR_CANA_DIFERIDA'
 		      },
 	      cuadro: {nombre: 'listaICD',mensaje: 'Cargando Registros'}
 	    }
 		},{
-      tipo:'saltodelinea'
+      tipo: 'campoDeTexto',
+      parametros:{
+          nombre: 'fecha_ultimo_arrime',
+          requerido:false,
+          titulo: 'Fecha Ultimo Arrime',
+          tipo:'simple',
+          eslabon: 'simple',
+          usaToolTip: true
+      }
+    },{
+      tipo: 'campoDeTexto',
+      parametros:{
+          nombre: 'fecha_siembra_corte',
+          requerido:false,
+          titulo: 'Fecha Siembra/Corte',
+          tipo:'simple',
+          eslabon: 'simple',
+          usaToolTip: true
+      }
     },{
       tipo: 'campoDeTexto',
       parametros:{

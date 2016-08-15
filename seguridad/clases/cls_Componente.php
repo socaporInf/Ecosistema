@@ -112,6 +112,9 @@ class cls_Componente extends cls_Conexion{
 
  private function f_Guardar(){
    $lb_Hecho=false;
+   if($this->aa_Atributos['enlace']=='null'){
+      $this->aa_Atributos['enlace'] ='';
+   }
    $ls_Sql="INSERT INTO seguridad.vcomponente (titulo,color,icono,enlace,componente_padre,tipo,descripcion) values
        ('".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['color']."','".$this->aa_Atributos['icono']."',
        '".$this->aa_Atributos['enlace']."','".$this->aa_Atributos['padre']."','".$this->aa_Atributos['tipocomponente']."',
@@ -125,6 +128,9 @@ class cls_Componente extends cls_Conexion{
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
+   if($this->aa_Atributos['enlace']=='null'){
+      $this->aa_Atributos['enlace'] ='';
+   }
    $ls_Sql="UPDATE seguridad.vcomponente SET ";
 
    //arma la cadena sql en base a los campos pasados en la peticion

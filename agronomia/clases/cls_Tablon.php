@@ -4,7 +4,7 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Tablon extends cls_Conexion{
 
  private $aa_Atributos = array();
- private $aa_Campos = array('nombre_finca','codigo_zona','kilometros_central','codigo_municipio','codigo_productor','id_finca','letra','codigo_tipo_carretera','codigo_tipo_afiliacion');
+ private $aa_Campos = array('id_tablon','codigo_tablon','codigo_lote','codigo_clase','codigo_variedad','codigo_tipo_corte','codigo_indicador_cana_diferida','area_cana','area_semilla','fecha_siembra_corte','fecha_ultimo_arrime','toneladas_estimadas_hectarea','toneladas_real','toneladas_azucar');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
@@ -51,7 +51,6 @@ class cls_Tablon extends cls_Conexion{
      case 'guardar':
        $lb_Hecho=$this->f_Guardar();
        if($lb_Hecho){
-         $this->f_BuscarUltimo();
          $respuesta['registros'] = $this->aa_Atributos['registro'];
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(9);
          $success = 1;
@@ -79,12 +78,12 @@ class cls_Tablon extends cls_Conexion{
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vfinca ";
+   $ls_Sql="SELECT * FROM agronomia.vtablon ";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo']=$la_registros['codigo_productor'];
-     $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
+     $la_respuesta[$x]['codigo']=$la_registros['id_tablon'];
+     $la_respuesta[$x]['nombre_completo']=$la_registros['codigo_tablon'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -164,25 +163,45 @@ private function f_Buscar(){
   return $lb_Enc;
 }
  private function f_Guardar(){
-
-   //TODO funcion guardar
-   return false;
+    $lb_Hecho=false;
+    if($this->aa_Atributos['fecha_ultimo_arrime']=='null'){
+      $this->aa_Atributos['fecha_ultimo_arrime'] = date('d/m/Y');
+    }
+    if($this->aa_Atributos['fecha_siembra_corte']=='null'){
+      $this->aa_Atributos['fecha_siembra_corte'] = date('d/m/Y');
+    }
+    $ls_Sql="INSERT INTO agronomia.vtablon
+        (codigo_tablon,id_lote,codigo_clase,codigo_variedad,codigo_tipo_corte
+       ,codigo_indicador_cana_diferida,area_cana,area_semilla,fecha_siembra_corte,fecha_ultimo_arrime,
+       toneladas_estimadas_hectarea,toneladas_real,toneladas_azucar) values
+       ('".$this->aa_Atributos['codigo_tablon']."','".$this->aa_Atributos['id_lote']."',
+       '".$this->aa_Atributos['codigo_clase']."','".$this->aa_Atributos['codigo_variedad']."',
+       '".$this->aa_Atributos['codigo_tipo_corte']."','".$this->aa_Atributos['codigo_indicador_cana_diferida']."',
+       '".$this->aa_Atributos['area_cana']."','".$this->aa_Atributos['area_semilla']."',
+       '".$this->aa_Atributos['fecha_siembra_corte']."','".$this->aa_Atributos['fecha_ultimo_arrime']."',
+       ".$this->aa_Atributos['toneladas_estimadas_hectarea'].",".$this->aa_Atributos['toneladas_real'].",
+       ".$this->aa_Atributos['toneladas_azucar'].")";
+    $this->f_Con();
+    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+    $this->f_Des();
+    return $lb_Hecho;
  }
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
-   $ls_Sql="UPDATE agronomia.vfinca SET ";
+   $ls_Sql="UPDATE agronomia.vtablon SET ";
 
    //arma la cadena sql en base a los campos pasados en la peticion
    $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-   $ls_Sql.="WHERE id_finca ='".$this->aa_Atributos['id_finca']."'";
+   $ls_Sql.="WHERE id_tablon ='".$this->aa_Atributos['id_tablon']."'";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
 
 
    if($lb_Hecho){
+     $this->aa_Atributos['codigo'] = $this->aa_Atributos['id_tablon'];
      $this->f_Buscar();
      $respuesta['registro'] = $this->aa_Atributos['registro'];
      $respuesta['success'] = 1;

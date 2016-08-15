@@ -16,7 +16,7 @@ var agregarListado = function(ventana,peticion){
         }
       },
       respuesta: function(){
-        var lista = UI.buscarVentana('listado de ' + peticion.entidad );
+        var lista = UI.buscarVentana('listado de ' + peticion.entidad);
         var Slots = lista.Slots;
         Slots.forEach(function(each){
           each.nodo.onclick = function(){
@@ -41,12 +41,14 @@ function agregarNuevo(entidad) {
   secForm.formulario.habilitar();
   if(cons.entidad_padre){
     var formularioPadre = ventana.buscarSector('form'+cons.entidad_padre).formulario;
-    var valorCampoPadre = formularioPadre.buscarCampo(cons.campo_padre).captarValor();
+    var valorCampoPadre = formularioPadre.registroAct[cons.campo_padre];
     secForm.formulario.buscarCampo(cons.campo_padre).asignarValor(valorCampoPadre);
     secForm.formulario.buscarCampo(cons.campo_padre).deshabilitar();
   }
   //listado
-  listado.nodo.classList.add('desaparecer');
+  if(listado){
+    listado.nodo.classList.add('desaparecer');
+  }
 
   //botonera
   botonera.nodo.classList.add('desaparecer');
@@ -57,6 +59,9 @@ function agregarNuevo(entidad) {
         '</section>';
     botonera.nodo.innerHTML = html;
     botonera.nodo.classList.remove('desaparecer');
+    botonera.nodo.querySelector("button.icon-cerrar-blanco-32").onclick = function(){
+      cerrarFormulario(entidad);
+    };
     var btnGuardar = botonera.nodo.querySelector("button.icon-guardar-blanco-32");
     btnGuardar.onclick = function(){
       var peticion = {
@@ -77,13 +82,17 @@ function modificar(registro,entidad){
       tipo: 'modificar',
       registro: registro,
     };
+    var htmlBot = '<section botonera>'+
+        '<button type="button" class="icon icon-editar-blanco-32 mat-green500"></button>'+
+        '<button type="button" class="icon icon-cerrar-blanco-32 mat-red500"></button>'+
+        '<button type="button" class="icon icon-nuevo-blanco-32 mat-lightblue500"></button>';
+    if(UI.buscarConstructor(entidad).entidad_hijo){
+        htmlBot += '<button type="button" class="icon icon-green-add"></button>';
+    }
+    htmlBot+='</section>';
     var secBotonera = {
       nombre:'botonera '+entidad,
-      html: '<section botonera>'+
-          '<button type="button" class="icon icon-editar-blanco-32 mat-green500"></button>'+
-          '<button type="button" class="icon icon-cerrar-blanco-32 mat-red500"></button>'+
-          '<button type="button" class="icon icon-green-add"></button>'+
-        '</section>'
+      html: htmlBot
     };
     agregarFormulario(formulario,secBotonera,entidad);
     var pet ={
@@ -94,12 +103,16 @@ function modificar(registro,entidad){
     pet[UI.buscarConstructor(entidad).campo_codigo] = registro[UI.buscarConstructor(entidad).campo_codigo];
     var ventana = UI.buscarVentana("editarProductor");
     if(UI.buscarConstructor(entidad).entidad_hijo){
-      agregarListado(ventana,pet);
+      if(pet[UI.buscarConstructor(entidad).campo_codigo] !== undefined){
+        agregarListado(ventana,pet);
+      }
     }
     var secForm = ventana.buscarSector('form'+entidad);
     var botonera = ventana.buscarSector('botonera '+entidad);
     var btnEditar = botonera.nodo.querySelector("button.icon-editar-blanco-32");
     btnEditar.onclick = function(){
+      //cierro listado si lo tiene
+      cerrarListado(UI.buscarConstructor(entidad).entidad_hijo);
       //cambios de formulario
       secForm.formulario.habilitar();
       secForm.formulario.buscarCampo(UI.buscarConstructor(entidad).campo_padre).deshabilitar();
@@ -115,14 +128,22 @@ function modificar(registro,entidad){
            entidad: entidad,
            operacion: "modificar"
         };
-        peticion[UI.buscarConstructor.campo_codigo] = secForm.formulario.registroAct.codigo;
+        peticion[UI.buscarConstructor(entidad).campo_codigo] = secForm.formulario.registroAct.codigo;
         guardarCambios(peticion);
       };
     };
-    var btnNueva = botonera.nodo.querySelector("button.icon-green-add");
-    btnNueva.onclick = function(){
+    botonera.nodo.querySelector("button.icon-nuevo-blanco-32").onclick = function(){
       agregarNuevo(entidad);
     };
+    if(UI.buscarConstructor(entidad).entidad_hijo){      
+      botonera.nodo.querySelector("button.icon-green-add").onclick = function(){
+        var reg = {};
+        //creo el formulario con el valor principal
+        modificar(reg,UI.buscarConstructor(entidad).entidad_hijo);
+        //activo edicion para guardar nuevo
+        agregarNuevo(UI.buscarConstructor(entidad).entidad_hijo);
+      };
+    }
   }else{
     UI.agregarToasts({
       texto: 'cierre el formulario antes de continuar',
@@ -146,9 +167,18 @@ function guardarCambios(pet){
     torque.manejarOperacion(peticion,cuadro,function(respuesta){
       if(respuesta.success){
         var ventana = UI.buscarVentana("editarProductor");
+        cerrarListado(respuesta.entidad);
         cerrarFormulario(respuesta.entidad);
-        var codigo = respuesta.registro[UI.buscarConstructor(respuesta.entidad).campo_padre];
-        agregarListado(codigo,ventana,respuesta.entidad);
+        var pet ={
+           modulo: "agronomia",
+           entidad: respuesta.entidad,
+           operacion: "buscarHijos"
+        };
+        var cons = UI.buscarConstructor(respuesta.entidad);
+        pet[UI.buscarConstructor(cons.entidad_padre).campo_codigo] = registro[UI.buscarConstructor(cons.entidad_padre).campo_codigo];
+        setTimeout(function () {
+          agregarListado(ventana,pet);
+        }, 320);
       }else{
         UI.agregarToasts({
           texto: respuesta.mensaje.titulo,
@@ -175,21 +205,33 @@ function agregarFormulario(formulario,secBotonera,entidad){
 }
 function cerrarFormulario(entidad){
   var ventanaEditar = UI.buscarVentana("editarProductor");
+  if(UI.buscarConstructor(entidad).entidad_hijo){
+    cerrarFormulario(UI.buscarConstructor(entidad).entidad_hijo);
+  }
+  //si el formulario existe
   if(ventanaEditar.buscarSector('form'+entidad)){
     ventanaEditar.buscarSector('form'+entidad).nodo.classList.add('desaparecer');
     ventanaEditar.buscarSector('botonera '+entidad).nodo.classList.add('desaparecer');
   }
-  ventanaEditar.buscarSector('form'+entidad);
-  if(ventanaEditar.buscarSector('listado de '+UI.buscarConstructor(entidad).entidad_hijo)){
-      ventanaEditar.buscarSector('listado de '+UI.buscarConstructor(entidad).entidad_hijo).nodo.classList.add('desaparecer');
-  }
+  //Si el listado de la entidad hijo existe
+  cerrarListado(UI.buscarConstructor(entidad).entidad_hijo);
   setTimeout(function () {
     if(ventanaEditar.buscarSector('form'+entidad)){
       ventanaEditar.quitarSector('form'+entidad);
       ventanaEditar.quitarSector('botonera '+entidad);
     }
-    if(ventanaEditar.buscarSector('listado de '+UI.buscarConstructor(entidad).entidad_hijo)){
-      ventanaEditar.quitarSector('listado de '+UI.buscarConstructor(entidad).entidad_hijo);
+  }, 310);
+}
+function cerrarListado(entidad){
+  var ventanaEditar = UI.buscarVentana("editarProductor");
+  //Si el listado de la entidad hijo existe
+  if(ventanaEditar.buscarSector('listado de '+entidad)){
+      ventanaEditar.buscarSector('listado de '+entidad).nodo.classList.add('desaparecer');
+  }
+  setTimeout(function () {
+    if(ventanaEditar.buscarSector('listado de '+entidad)){
+      ventanaEditar.quitarSector('listado de '+entidad);
+      UI.quitarVentana('listado de '+entidad);
     }
   }, 310);
 }

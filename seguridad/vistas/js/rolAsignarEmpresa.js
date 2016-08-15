@@ -28,7 +28,7 @@ var editarRol = function(slot){
     var formulario = UI.buscarVentana('editarRol').buscarSector('formulario').formulario;
     formulario.asignarValores(slot.atributos);
     formulario.registroId = slot.atributos.codigo;
-    agregarEmpresas(formulario.registroId)
+    agregarEmpresas(formulario.registroId);
   }else{
     var ventForm = UI.agregarVentana({
       nombre:'editarRol',
@@ -127,7 +127,7 @@ function abrirEdicionAsignacion(){
       html: nodo.textContent
     },
     cuerpo: {
-      html: 'AQUI VA EL TEXTO'
+      html: 'Se puede Modificar los privilegios sobre '+nodo.textContent+' O eliminar dicha relacion'
     },
     pie:{
         html: '<section modalButtons>'+
@@ -140,5 +140,5 @@ function abrirEdicionAsignacion(){
   var btnModificar = ventanaOperaciones.nodo.querySelector('button.icon-modificar-verde');
   btnModificar.onclick = function(){
     location.href = 'vis_AsignarPrivilegios.html?ruta='+nodo.getAttribute('codigo');
-  }
+  };
 }

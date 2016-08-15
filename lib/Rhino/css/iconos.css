@@ -45,6 +45,11 @@ button{
     color:  #66d0ff;
     font-size: 24px;
 }
+.icon-nuevo-blanco-32:after {
+    content: 'insert_drive_file';
+    color:  white;
+    font-size: 24px;
+}
 .icon-operaciones-blanco-32:after{
     content: 'settings';
     color:  white;

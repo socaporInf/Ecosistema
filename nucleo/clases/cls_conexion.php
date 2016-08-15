@@ -140,8 +140,10 @@
 		$ls_Sql = '';
 		for($x = 0; $x < count($pa_Campos);$x++){
 			if($this->evaluarCampo($pa_Campos[$x],$pa_Peticion)){
-				$ls_Sql = $this->evaluarComa($contCampos,$ls_Sql);
-				$ls_Sql.= $pa_Campos[$x]."='".$pa_Peticion[$pa_Campos[$x]]."' ";
+				if($pa_Peticion[$pa_Campos[$x]]!='null'){
+					$ls_Sql = $this->evaluarComa($contCampos,$ls_Sql);					
+					$ls_Sql.= $pa_Campos[$x]."='".$pa_Peticion[$pa_Campos[$x]]."' ";
+				}
 				$contCampos++;
 			}
 		}

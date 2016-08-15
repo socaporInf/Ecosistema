@@ -51,7 +51,6 @@ class cls_Finca extends cls_Conexion{
      case 'guardar':
        $lb_Hecho=$this->f_Guardar();
        if($lb_Hecho){
-         $this->f_BuscarUltimo();
          $respuesta['registros'] = $this->aa_Atributos['registro'];
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(9);
          $success = 1;
@@ -164,7 +163,7 @@ private function f_Buscar(){
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
-   return false;
+   return $lb_Hecho;
  }
  private function f_Modificar(){
    $lb_Hecho=false;
@@ -181,6 +180,7 @@ private function f_Buscar(){
 
 
    if($lb_Hecho){
+     $this->aa_Atributos['codigo'] = $this->aa_Atributos['id_finca'];
      $this->f_Buscar();
      $respuesta['registro'] = $this->aa_Atributos['registro'];
      $respuesta['success'] = 1;
