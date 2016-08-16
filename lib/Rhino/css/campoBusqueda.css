@@ -1,19 +1,18 @@
 div[campoBusqueda]{
   width: 32%;
   position: relative;
-  padding-top: 5px;
   margin-left: 0px !important;
   float: left;
 }
 div[campoBusqueda][area]{
-  width: 100%;
+  width: calc(100% - 24px);
 }
 div[campoBusqueda] div[formelements]{
   width: calc(100%);
 }
 div[campoBusqueda] button{
   position: absolute;
-  margin-left: calc(100% - 60px);
+  margin-left: calc(100% - 34px);
   z-index: 10;
   margin-top: 3px;
 }

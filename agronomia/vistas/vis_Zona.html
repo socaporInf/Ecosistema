@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Estilos locales -->
     <link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
-    <link rel="stylesheet" type="text/css" href="css/formInventario.css">
 </head>
 <body>
 	<div contenedor></div>
@@ -17,17 +16,9 @@
 <script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
 <!-- scripts PLUGINS-->
-<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoIdentificacion.js'></script>
-<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_Maestro.js'></script>
 <!-- script con el constructor del formulario-->
-<script type="text/javascript" src='js/constructores/productor.js'></script>
-<script type="text/javascript" src='js/constructores/finca.js'></script>
-<script type="text/javascript" src='js/constructores/lote.js'></script>
-<script type="text/javascript" src='js/constructores/tablon.js'></script>
-<!-- script con el funcionamiento de este formulario -->
-<script type="text/javascript" src='js/formInventario.js'></script>
-<script type="text/javascript" src='js/formInventarioLotes.js'></script>
-
+<script type="text/javascript" src='js/constructores/zona.js'></script>
 
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
@@ -35,21 +26,21 @@
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('agronomia','productor');
+	var torque = new Motor('agronomia','zona');
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.agregarConstructor(productor);
-	UI.agregarConstructor(finca);
-	UI.agregarConstructor(lote);
-	UI.agregarConstructor(tablon);
+	UI.agregarConstructor(zona);
 	UI.configure({
+		maestro:{
+			entidad: torque.entidadActiva
+		},
 		botonera:{
-			botones:['nuevo','abrir']
+			botones:['buscar','nuevo','abrir']
 		}
 	});
+
 	sesion.obtenerSesion();
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
-construirUI();
 </script>
 </html>

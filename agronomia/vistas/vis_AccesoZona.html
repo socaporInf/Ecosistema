@@ -17,16 +17,12 @@
 <script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
 <!-- scripts PLUGINS-->
-<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoIdentificacion.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
 <!-- script con el constructor del formulario-->
-<script type="text/javascript" src='js/constructores/productor.js'></script>
-<script type="text/javascript" src='js/constructores/finca.js'></script>
-<script type="text/javascript" src='js/constructores/lote.js'></script>
-<script type="text/javascript" src='js/constructores/tablon.js'></script>
+<script type="text/javascript" src='js/constructores/zona.js'></script>
+<script type="text/javascript" src='../../seguridad/vistas/js/constructores/usuario.js'></script>
 <!-- script con el funcionamiento de este formulario -->
-<script type="text/javascript" src='js/formInventario.js'></script>
-<script type="text/javascript" src='js/formInventarioLotes.js'></script>
+<script type="text/javascript" src='js/zonaRol.js'></script>
 
 
 <script type="text/javascript">
@@ -35,19 +31,12 @@
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('agronomia','productor');
-
+	var torque = new Motor('agronomia');
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.agregarConstructor(productor);
-	UI.agregarConstructor(finca);
-	UI.agregarConstructor(lote);
-	UI.agregarConstructor(tablon);
-	UI.configure({
-		botonera:{
-			botones:['nuevo','abrir']
-		}
-	});
+	UI.agregarConstructor(zona);
+  UI.agregarConstructor(usuario);
+	UI.configure({});
 	sesion.obtenerSesion();
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 construirUI();

@@ -20,6 +20,14 @@ switch ($la_Peticion['entidad']) {
 		$lobj_Entidad->setPeticion($la_Peticion);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
+
+	case 'lote':
+		include_once('../clases/cls_Lote.php');
+		$lobj_Entidad = new cls_Lote;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'productor':
 		include_once('../clases/cls_Productor.php');
 		$lobj_Entidad = new cls_Productor;
@@ -27,9 +35,30 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+	case 'tablon':
+		include_once('../clases/cls_Tablon.php');
+		$lobj_Entidad = new cls_Tablon;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'variedad':
 		include_once('../clases/cls_Variedad.php');
 		$lobj_Entidad = new cls_Variedad;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
+	case 'zona':
+		include_once('../clases/cls_Zona.php');
+		$lobj_Entidad = new cls_Zona;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
+	case 'accesoZona':
+		include_once('../clases/cls_AccesoZona.php');
+		$lobj_Entidad = new cls_AccesoZona;
 		$lobj_Entidad->setPeticion($la_Peticion);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
@@ -42,6 +71,7 @@ switch ($la_Peticion['entidad']) {
 		$respuesta['tipo'] = 'error';
 		break;
 }
+$respuesta['entidad'] = $la_Peticion['entidad'];
 header('Content-type: application/json; charset=utf-8');
 echo json_encode($respuesta);
 exit();

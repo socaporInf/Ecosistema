@@ -22,8 +22,8 @@ componente = {
         eslabon : 'area',
         peticion : {
   			   modulo: "seguridad",
-  			   entidad: "tablaVirtual",
-  			   operacion: "buscarRegistrosPorNombreTabla",
+  			   entidad: "registroVirtual",
+  			   operacion: "listar",
   			   nombre_tabla: "TIPO_COMPONENTE"
   			}
       }

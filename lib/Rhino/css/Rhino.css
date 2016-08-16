@@ -173,7 +173,7 @@ div[formElements] {
     width: 32%
 }
 div[area] {
-    width: calc(100% - 24px) !important;
+    width: calc(100% - 24px);
 }
 .group {
     position: relative;
@@ -399,6 +399,11 @@ select {
     font-size: 14px;
     width: 100%;
     z-index: inherit;
+    height: 40px;
+}
+select.deshabilitado{
+    background-color: #ebebe4;
+    color: #585454;
 }
 article[capaSelect] {
     transition: all 0.3s linear;
@@ -591,6 +596,9 @@ div[mat-window].columna {
 div[mat-window].not-first {
     margin-top: 10px;
 }
+div[mat-window].last {
+    margin-bottom:  80px !important;
+}
 div[mat-window].formulario {
     width: calc(90%);
     float: left;
@@ -642,7 +650,8 @@ div[mat-window] section[operaciones] {
     border-top: 1px solid rgba(160, 160, 160, 0.5);
 }
 div[mat-window] section[botonera]{
-
+    height: calc(100%);
+    min-height: calc(100%);
 }
 div[mat-window] section[botonera] button.icon{
     transition: all 0.2s ease-in-out;
@@ -656,15 +665,14 @@ div[mat-window] section[botonera] button.icon{
     background-position: 8px;
     float: right;
     overflow: visible;
-    margin-top: 10px;
+    margin-top: 5px;
     background-color: white;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 /*-----------------------------------Media Query-------------------------------*/
 
 @media (max-width: 1000px) {
-    /*modal window*/
     div[capa='contenido'] {
         background-color: white;
         top: 100%;
@@ -673,6 +681,18 @@ div[mat-window] section[botonera] button.icon{
         position: absolute;
         z-index: 12;
     }
-    /*fin modal*/
+}
+@media (max-width: 900px) {
+    div[mat-window].formulario,div[mat-window].ventana {
+        width: 85%;
+        margin-bottom: 10px;
+        margin-left: 50px;
+    }
+}
 
+@media (max-width: 800px) {
+    div[mat-window].formulario,div[mat-window].ventana{
+        width: 100%;
+        margin-left: 0px;
+    }
 }

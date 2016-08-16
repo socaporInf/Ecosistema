@@ -112,7 +112,7 @@ class cls_Clase extends cls_Conexion{
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
-		return false;
+		return $lb_Hech;
 	}
 
 	private function f_BuscarUltimo(){

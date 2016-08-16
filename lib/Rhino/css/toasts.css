@@ -7,7 +7,7 @@ div[toasts-mobile]{
   background-color: #333333;
   font-size: 18px;
   bottom: 0px;
-  position: absolute;
+  position: fixed;
   margin-bottom: -48px;
 }
 div[toasts-mobile].mostrar{
@@ -23,7 +23,7 @@ div[toasts-web-arriba-derecha-alto]{
   color: white;
   background-color: #333333;
   font-size: 15px;
-  position: absolute;
+  position: fixed;
   float: right;
   top: -48px;
   right: 10px;
