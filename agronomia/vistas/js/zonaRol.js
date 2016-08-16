@@ -76,38 +76,39 @@ function activarBotonera(secBotonera){
   btnAgregar.onclick = function(){
     var ventana = UI.crearVentanaModal({
       cabecera:{
+        tipo: 'informacion',
         html: 'Asignar Usuario'
       },
       cuerpo:{
-        html:'<div>'+
-                '<i class="icon blue500">info</i>'+
+        html:'<div style="position:relative;">'+
+                '<i class="material-icons blue500 md-36">info_ouline</i>'+
                 '<div textoModal>Seleccione un Usuario para que este pueda gestiona la zona en cuestion</div>'+
               '</div>'
       },
       pie:{
+          tipo:   'informacion',
           html:   '<section modalButtons>'+
                   '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
                   '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
                   '</section>'
       }
     });
-
-      var contenedor = ventana.partes.cuerpo;
-      var responsables = new CampoBusqueda({
-          titulo:'Usuario',
-          nombre:'nombre',
-          requerido:true,
-          eslabon:'area',
-          peticion:{
-              entidad: 'usuario',
-              operacion: 'buscar',
-              modulo: 'seguridad'
-            },
-          cuadro: {nombre: 'listaResponsables',mensaje: 'Cargando Posibles Responsables'}
-        });
-        contenedor.nodo.appendChild(responsables.nodo);
-        contenedor.nodo.style.height = '100px';
-        contenedor.nodo.style.paddingTop  = '0px';
+    var contenedor = ventana.partes.cuerpo;
+    var responsables = new CampoBusqueda({
+        titulo:'Usuario',
+        nombre:'nombre',
+        requerido:true,
+        eslabon:'area',
+        peticion:{
+            entidad: 'usuario',
+            operacion: 'buscar',
+            modulo: 'seguridad'
+          },
+        cuadro: {nombre: 'listaResponsables',mensaje: 'Cargando Posibles Responsables'}
+      });
+    contenedor.nodo.appendChild(responsables.nodo);
+    contenedor.nodo.style.height = '100px';
+    contenedor.nodo.style.paddingTop  = '0px';
   };
 
 }

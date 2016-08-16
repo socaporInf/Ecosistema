@@ -82,7 +82,10 @@ div[capa='contenido'] section[cuerpo].lista {
     margin-top: 0px;
 }
 div[capa='contenido'] section[cuerpo] div[textoModal]{
-    margin: 20px 20px 5px 20px;
+    margin-top: 0px;
+    margin-left: 45px;
+    margin-right: 25px;
+    margin-bottom: 10px;
 }
 div[capa='contenido'] section[pie] {
     width: 100%;
