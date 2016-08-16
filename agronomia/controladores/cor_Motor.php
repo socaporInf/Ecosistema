@@ -56,6 +56,13 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+	case 'accesoZona':
+		include_once('../clases/cls_AccesoZona.php');
+		$lobj_Entidad = new cls_AccesoZona;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	default:
 		$respuesta['success'] = 0;
 		$respuesta['mensaje']['nombre_tipo'] =  'error';

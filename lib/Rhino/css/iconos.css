@@ -10,8 +10,15 @@ button{
     align-items: center;
     justify-content: center;
 }
+i{
+    position: absolute;
+}
 /*se puede borrar despues*/
 .icon:after {
+    font-family: inherit;
+    font-style: initial;
+}
+.icon {
     font-family: 'Material Icons';
     font-style: initial;
 }
