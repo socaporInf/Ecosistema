@@ -70,7 +70,9 @@ div[lista] section[busqueda] button[btnBusq]:after {
     font-size: 48px;
     color:white;
 }
-
+div[lista] section[busqueda] button[btnBusq].invisible{
+  visibility: hidden;
+}
 div[lista] section[busqueda] button[cerrarBusq]:after {
     content: 'clear';
     color: #f44336;

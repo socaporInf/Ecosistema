@@ -47,13 +47,16 @@ div[capa='contenido'] section[cabecera].error, div[capa='contenido'] section[cab
     padding-left: 60px;
 }
 div[capa='contenido'] section[cabecera].error {
-    background-color: #f44336;
+    background-color: white;
+    color: #f44336;
 }
 div[capa='contenido'] section[cabecera].informacion {
-    background-color: #3F51B5;
+    color: #3F51B5;
+    background-color: white;
 }
 div[capa='contenido'] section[cabecera].advertencia {
-    background-color: #FFC107;
+    color: #FFC107;
+    background-color: white;
 }
 div[capa='contenido'] section[cabecera].error i,
 div[capa='contenido'] section[cabecera].informacion i,
@@ -68,6 +71,9 @@ div[capa='contenido'] section[pie].error {
 div[capa='contenido'] section[pie].advertencia {
     background-color: #FFD54F;
 }
+div[capa='contenido'] section[pie].informacion {
+    background-color: #5C6BC0;
+}
 div[capa='contenido'] section[cuerpo] {
     transition: all 0.3s ease-in-out;
     width: auto;
@@ -76,6 +82,7 @@ div[capa='contenido'] section[cuerpo] {
     margin-bottom: 50px;
     margin-top: 18px;
     overflow: visible;
+    min-height: 80px;
 }
 div[capa='contenido'] section[cuerpo].lista {
     padding: 0px;
