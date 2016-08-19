@@ -28,7 +28,7 @@ class cls_Acceso extends cls_Conexion{
 		$this->setDatosConexion($ps_Nombre,$ps_Pass);
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
-		if($la_registro=$this->f_Arreglo($lr_tabla)){
+		if($la_registro = $this->f_Arreglo($lr_tabla)){
 			if($la_registro['contrasena']==$ls_PassBD){
 				$lb_Enc=true;
 			}
