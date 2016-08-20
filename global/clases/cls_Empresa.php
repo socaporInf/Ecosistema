@@ -70,9 +70,9 @@ class cls_Empresa extends cls_Conexion{
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_empresa'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
 			$la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_empresa'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);

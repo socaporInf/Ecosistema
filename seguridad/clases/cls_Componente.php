@@ -66,14 +66,20 @@ class cls_Componente extends cls_Conexion{
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM seguridad.vcomponente ";
+   $ls_Sql="SELECT * FROM seguridad.vcomponente ORDER BY componente_padre";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['titulo']=$la_registros['titulo'];
+     $la_respuesta[$x]['color']=$la_registros['color'];
+     $la_respuesta[$x]['Componente Padre']=$la_registros['titulo_padre'];
+     $la_respuesta[$x]['enlace']=$la_registros['enlace'];
+     $la_respuesta[$x]['icono']=$la_registros['icono'];
+     $la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+     $la_respuesta[$x]['padre']=$la_registros['componente_padre'];
      $la_respuesta[$x]['codigo']=$la_registros['codigo_componente'];
      $la_respuesta[$x]['nombre']=$la_registros['titulo'];
-     $la_respuesta[$x]['titulo']=$la_registros['titulo'];
-     $la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+     $la_respuesta[$x]['tipocomponente']=$la_registros['tipo'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -88,15 +94,16 @@ class cls_Componente extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta['codigo']=$la_registros['codigo_componente'];
-     $la_respuesta['nombre']=$la_registros['titulo'];
      $la_respuesta['titulo']=$la_registros['titulo'];
      $la_respuesta['color']=$la_registros['color'];
+     $la_respuesta['tipocomponente']=$la_registros['tipo'];
+     $la_respuesta['descripcion']=$la_registros['descripcion'];
+     $la_respuesta['Componente Padre']=$la_registros['titulo_padre'];
      $la_respuesta['enlace']=$la_registros['enlace'];
      $la_respuesta['icono']=$la_registros['icono'];
      $la_respuesta['padre']=$la_registros['componente_padre'];
-     $la_respuesta['tipocomponente']=$la_registros['tipo'];
-     $la_respuesta['descripcion']=$la_registros['descripcion'];
+     $la_respuesta['codigo']=$la_registros['codigo_componente'];
+     $la_respuesta['nombre']=$la_registros['titulo'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);

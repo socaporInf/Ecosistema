@@ -13,7 +13,6 @@ div[lista] section{
     padding: 10px 0px 10px 10px;
     transition: all 0.2s ease-in-out;
     transition:background-position 0s linear;
-    margin-bottom: 1px
 }
 div[lista] section[busqueda]{
   background-color: #4CAF50;
@@ -119,35 +118,76 @@ div[lista] section:not([busqueda]) button{
     border-radius: 50px;
     border-left: none;
 }
-div[lista] section:not([busqueda]){
-  height: 30px;
+div[lista] section[slot]{
+  height: auto;
   position: relative;
+  padding: 0px;
 }
 div[lista] section[slot] article[title]{
   width: 100%;
   height: 100%;
   margin: 0px;
+  padding: 10px;
 }
-div[lista] section button[btnModificar]{
-    background-color: #4CAF50;
-    background-image: url('../imagenes/pencil_white_16.png');
+/*----------------------------------------------- Celdas ------------------------------------------------*/
+div[lista] section[slot] div[celda],div[lista] section[slot] div[cabeceraCelda],div[lista] section[slot] div[selector]{
+  float: left;
+  height: 50px;
+  margin-left: 0px;-ms-display: flex;
+  display: flex;
+  /* alineacion vertical */
+  align-items: center;
+   /* alineacion horizontal */
 }
-div[lista] section button[btnEliminar]{
-    background-color: #e57373;
-    background-image: url('../imagenes/trash_white_16.png');
+div[lista] section[slot] div[cabeceraCelda]{
+  color: rgba(0,0,0,0.54);
+  justify-content: center;
+  text-transform: capitalize;
+}
+div[lista] section[slot] div[selector]{
+  width: 40px;
+  padding-left: 10px
+}
+div[lista] section[slot] div.dos{
+    width: calc(50% - 40px);
+    font-size: 15px;
+}
+div[lista] section[slot] div.tres{
+    width: calc((100% / 3) - (50px / 3));
+    font-size: 13px;
+}
+div[lista] section[slot] div.cuatro{
+    width: calc((100% / 4)  - (50px / 4));
+    font-size: 12px;
+}
+div[lista] section[slot] div.cinco{
+    width: calc((100% / 5) - (50px / 5));
+    font-size: 10px;
+}
+div[lista] section[slot] div.seis{
+    width: calc((100% / 6) - (50px / 6));
+    font-size: 9px;
+}
+div[lista] section[slot] div.siete{
+    width: calc((100% / 7) - (50px / 7));
+    font-size: 8px;
+}
+div[lista] section[slot] div.ocho{
+    width: calc((100% / 8) - (50px / 8));
+    font-size: 7px;
 }
 /*----------------------------------------funcionamiento lista-------------------------------------------*/
 div[lista] section[slot].desaparecer{
-    margin-left: 120%;
-    margin-bottom: 0px;
-    box-shadow:none;
+  margin-left: 120%;
+  margin-bottom: 0px;
+  box-shadow:none;
 }
 div[lista] section[slot].desaparecerPorCompleto{
   height: 0px;
   padding: 0px;
 }
 div[lista] section[slot].seleccionado{
-  margin-left: 20px;
+  background-color: #F5F5F5;
 }
 div[lista] section[busqueda].buscar div[titulo]{
   padding: 0px;

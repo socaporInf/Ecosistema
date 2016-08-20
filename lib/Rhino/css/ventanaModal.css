@@ -93,6 +93,7 @@ div[capa='contenido'] section[cuerpo] div[textoModal]{
     margin-left: 45px;
     margin-right: 25px;
     margin-bottom: 10px;
+    color:#616161;
 }
 div[capa='contenido'] section[pie] {
     width: 100%;
