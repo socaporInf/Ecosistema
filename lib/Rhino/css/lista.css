@@ -21,6 +21,9 @@ div[lista] section[busqueda]{
   padding: 10px 0px;
   width: inherit;
 }
+div[lista].inversa section[busqueda]{
+  background-color: white;
+}
 section[busqueda] + section[slot]{
     margin-top: 51px !important;
 }
@@ -49,6 +52,9 @@ div[lista] section[busqueda] div[titulo]{
     color:white;
     height: 32px;
 }
+div[lista].inversa section[busqueda] div[titulo]{
+  color: #4CAF50;
+}
 div[lista] section[busqueda] input[campBusq]{
     transition:all 0.3s ease-in-out;
     border: none;
@@ -59,7 +65,6 @@ div[lista] section[busqueda] input[campBusq]{
     height: 20px;
     margin-left: 10px;
 }
-
 div[lista] section button:after {
     font-family: 'Material Icons';
     font-style: initial;
@@ -68,6 +73,9 @@ div[lista] section[busqueda] button[btnBusq]:after {
     content: 'search';
     font-size: 48px;
     color:white;
+}
+div[lista].inversa section[busqueda] button[btnBusq]:after {
+  color: #4CAF50;
 }
 div[lista] section[busqueda] button[btnBusq].invisible{
   visibility: hidden;

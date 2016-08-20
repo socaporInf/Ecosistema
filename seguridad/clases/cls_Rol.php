@@ -42,6 +42,14 @@ class cls_Rol extends cls_Conexion{
 				}
 				break;
 
+			case 'buscarDisponible':
+				$registros=$this->f_Buscar_Disponible();
+				if(count($registros)){
+					$respuesta['registros'] = $registros;
+					$success=1;
+				}
+				break;
+
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
@@ -134,8 +142,6 @@ class cls_Rol extends cls_Conexion{
 	}
 
 	private function f_Buscar_Detalle(){
-
-		//Busco Detalle
 		$ls_Sql="SELECT * from seguridad.vroles_por_empresa
 				WHERE codigo_rol='".$this->aa_Atributos['codigo']."'";
 		$this->f_Con();
@@ -146,6 +152,24 @@ class cls_Rol extends cls_Conexion{
 			$la_respuesta[$x]['codigo_rol']=$la_registros['codigo_rol'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre_empresa'];
 			$la_respuesta[$x]['codigoRelacion']=$la_registros['llave_acceso'];
+			$x++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+
+		return $la_respuesta;
+	}
+
+	private function f_Buscar_Disponible(){
+		$ls_Sql="SELECT * from global.vempresa where codigo_empresa not in
+						(select codigo_empresa from seguridad.vroles_por_empresa
+							WHERE codigo_rol='".$this->aa_Atributos['codigo']."')";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$x=0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_empresa'];
+			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);

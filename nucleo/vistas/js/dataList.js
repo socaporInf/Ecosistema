@@ -1,7 +1,7 @@
 function construirUI(){
   var lista = UI.agregarLista({
     titulo: 'dataList',
-    clases: ['ventana'],
+    clases: ['ventana','inversa'],
     celdas: "3",
     carga:{
       uso:true,

@@ -91,15 +91,21 @@ function activarEmpresas(){
   }
 }
 function asignarEmpresa(){
-  var constructor = {
+  var cons = {
+    altura:220,
     campos: [
       {
         tipo: 'comboBox',
         parametros : {
-          nombre:'tipoComponente',
-          titulo:'Tipos de Componente',
+          nombre:'empresa',
+          titulo:'Empresa',
           eslabon : 'area',
-          //TODO: carga de base de datos
+          peticion : {
+    			   modulo: "seguridad",
+    			   entidad: "rol",
+    			   operacion: "buscarDisponible",
+             codigo: UI.buscarVentana('rol').obtenerSeleccionado().atributos.codigo
+    			}
         }
       }
     ]
@@ -110,7 +116,7 @@ function asignarEmpresa(){
     },
     cuerpo: {
       tipo: 'asignacion',
-      formulario: constructor
+      formulario: cons
     },
     pie:{
         html: '<section modalButtons>'+
@@ -119,6 +125,36 @@ function asignarEmpresa(){
             '</section>'
       }
   });
+  ventanaAsignar.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){UI.elementos.modalWindow.eliminarUltimaCapa();};
+  var btnGuardar = ventanaAsignar.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
+  btnGuardar.onclick = function(){
+    if(ventanaAsignar.partes.cuerpo.formulario.buscarCampo('empresa').captarValor()){
+      var empresa = ventanaAsignar.partes.cuerpo.formulario.buscarCampo('empresa').captarValor();
+      var peticion = {
+         modulo: "seguridad",
+         entidad: "rol",
+         operacion: "guardarDetalle",
+         codigo: UI.buscarVentana('rol').obtenerSeleccionado().atributos.codigo,
+         codigo_empresa: empresa
+      };
+      var cuadro = {
+        contenedor: ventanaAsignar.partes.cuerpo.nodo,
+        cuadro: {
+          nombre: 'guardarDetalle',
+          mensaje: 'Guardando Cambios'
+        }
+      };
+      torque.manejarOperacion(peticion,cuadro,function(){
+        UI.elementos.modalWindow.eliminarUltimaCapa();
+        agregarEmpresas(UI.buscarVentana('rol').obtenerSeleccionado().atributos.codigo);
+      });
+    }else{
+      UI.agregarToasts({
+        texto: 'Elija una empresa antes de continuar',
+        tipo: 'web-arriba-derecha-alto'
+      });
+    }
+  };
 }
 function abrirEdicionAsignacion(){
   var nodo = this;
