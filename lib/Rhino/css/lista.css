@@ -14,6 +14,11 @@ div[lista] section{
     transition: all 0.2s ease-in-out;
     transition:background-position 0s linear;
 }
+div[lista] section[cont-slots]{
+    position: relative;
+    padding: 0px;
+    height: auto;
+}
 div[lista] section[busqueda]{
   background-color: #4CAF50;
   position: absolute;
@@ -136,6 +141,30 @@ div[lista] section[slot] article[title]{
   height: 100%;
   margin: 0px;
   padding: 10px;
+}
+/*----------------------------------------------- Paginas ------------------------------------------------*/
+div[lista] section[slot].barra-paginacion{
+  margin-top: 1px;
+}
+div[lista] section[slot].barra-paginacion article[pagina]{
+  padding: 5px 10px;
+  float: left;
+  position: relative;
+  overflow:hidden;
+  cursor: pointer;
+}
+div[lista] section[slot].barra-paginacion article[pagina].primera{
+  margin-left: 0px;
+  margin-right: 10px;
+}
+div[lista] section[slot].barra-paginacion article[pagina].actual{
+  margin-left: 5px;
+  margin-right:  5px;
+  background-color: #4CAF50;
+  color:white;
+}
+div[lista] section[slot].barra-paginacion article[pagina].ultima{
+  margin-left: 10px;
 }
 /*----------------------------------------------- Celdas ------------------------------------------------*/
 div[lista] section[slot] div[celda],div[lista] section[slot] div[cabeceraCelda],div[lista] section[slot] div[selector]{

@@ -6,6 +6,9 @@ var agregarListado = function(ventana,peticion){
     titulo: 'listado de '+ peticion.entidad,
     clases: ['embebida'],
     campo_nombre: UI.buscarConstructor(peticion.entidad).campo_nombre,
+    registrosPorPagina:'libre',
+    columnas:3,
+    selector: 'apagado',
     carga: {
       uso:true,
       peticion: peticion,
@@ -135,7 +138,7 @@ function modificar(registro,entidad){
     botonera.nodo.querySelector("button.icon-nuevo-blanco-32").onclick = function(){
       agregarNuevo(entidad);
     };
-    if(UI.buscarConstructor(entidad).entidad_hijo){      
+    if(UI.buscarConstructor(entidad).entidad_hijo){
       botonera.nodo.querySelector("button.icon-green-add").onclick = function(){
         var reg = {};
         //creo el formulario con el valor principal
