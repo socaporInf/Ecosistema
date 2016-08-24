@@ -702,4 +702,13 @@ div[mat-window] section[botonera] button.icon{
         width: 100%;
         margin-left: 0px;
     }
+    section[formulario]{
+        height: auto !important;
+    }
+    .group {
+        width: calc(100% - 10px);
+    }
+    div[formElements] {
+        width: calc(100% - 10px);
+    }
 }

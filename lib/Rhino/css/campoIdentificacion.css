@@ -21,3 +21,9 @@ div[campo-cedula].combo-letra{
 div[campo-cedula].campo-numero{
   width: 70%;
 }
+/*-----------------------------------Media screen-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    div.campo-identificacion{
+      width: calc(100% - 10px);
+    }
+}

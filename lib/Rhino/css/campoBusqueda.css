@@ -38,3 +38,8 @@ div[campoBusqueda] select{
 div[campoBusqueda] button.deshabilitado{
   background-color: #999 !important;
 }
+@media only screen and (max-device-width: 480px) {
+    div[campoBusqueda]{
+      width: calc(100% - 10px);
+    }
+}

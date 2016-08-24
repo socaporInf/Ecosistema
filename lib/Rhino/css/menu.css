@@ -12,6 +12,12 @@ div[capaMenu]{
     z-index: 999;
     background-color: white;
 }
+div[capaMenu][estado="oculto"]{
+    margin-left: -350px;
+}
+div[capaMenu][estado="visible"]{
+    margin-left: 0px;
+}
 div[capaMenu] section[titulo],div[capaMenu] section[pie]{
     width: 100%;
     height: 55px;
@@ -22,11 +28,11 @@ div[capaMenu] section[titulo],div[capaMenu] section[pie]{
 }
 div[capaMenu] section[titulo]{
     color: white;
-    padding-left:5px; 
+    padding-left:5px;
     font-size: 22px;
 }
 div[capaMenu] section[pie]{
-    bottom:48px; 
+    bottom:48px;
 }
 div[SubCapaMenu]{
     float:left;
@@ -35,8 +41,8 @@ div[SubCapaMenu]{
     width: 100%;
     height: calc(100% - 152px);
     overflow-y:visible;
-    overflow-x:hidden; 
-    opacity: 0; 
+    overflow-x:hidden;
+    opacity: 0;
     margin-top: 56px;
 }
 div[SubCapaMenu].capaActiva{
@@ -84,7 +90,7 @@ div[SubCapaMenu] section[enlace^='<']:after{
     content: 'chevron_left';
     font-family: 'Material Icons';
     font-size: 24px;
-    font-style: initial;    
+    font-style: initial;
     left: calc(100% - 24px);
     position: absolute;
 }
@@ -126,8 +132,20 @@ div[capamenu] section[pie] article:hover i:after{
     content: 'chevron_left';
     font-family: 'Material Icons';
     font-size: 30px;
-    font-style: initial;    
+    font-style: initial;
     left: calc(100% - 40px);
     position: absolute;
     top:10px;
+}
+@media only screen and (max-device-width: 480px) {
+    div[capaMenu]{
+        width: 100%;
+        margin-left: calc(-100%);
+    }
+    div[capaMenu][estado="oculto"]{
+        margin-left: calc(-100%);
+    }
+    div[capaMenu][estado="visible"]{
+        margin-left: 0px;
+    }
 }
