@@ -696,3 +696,10 @@ div[mat-window] section[botonera] button.icon{
         margin-left: 0px;
     }
 }
+/*-----------------------------------Media screen-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    div[mat-window].formulario,div[mat-window].ventana{
+        width: 100%;
+        margin-left: 0px;
+    }
+}
