@@ -71,7 +71,7 @@ armarListaProductores = function(rif){
       nombre:'listadoCanicultores',
       clases: ['ventana','not-first','last'],
       campo_nombre: UI.buscarConstructor('productor').campo_nombre,
-      registrosPorPagina:'libre',
+      tamano:'libre',
       columnas:3,
       carga: {
         uso:true,

@@ -198,6 +198,7 @@ function armarVentanaArbol(){
 	},document.querySelector('div[contenedor]'));
 
 	formularioArbol.nodo.classList.add('not-first');
+	formularioArbol.nodo.classList.add('last');
 	formularioArbol.buscarSector('arbol').nodo.style.overflow='auto';
 	formularioArbol.buscarSector('arbol').nodo.style.minHeight='100px';
 
@@ -304,4 +305,3 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 	}
 }
-

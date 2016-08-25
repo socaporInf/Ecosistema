@@ -698,11 +698,11 @@ div[mat-window] section[botonera] button.icon{
 }
 /*-----------------------------------Media screen-------------------------------*/
 @media only screen and (max-device-width: 480px) {
-    div[mat-window].formulario,div[mat-window].ventana{
+    div[mat-window].formulario,div[mat-window].ventana,div[mat-window].titulo{
         width: 100%;
         margin-left: 0px;
     }
-    section[formulario]{
+    div[mat-window] section[formulario]{
         height: auto !important;
     }
     .group {

@@ -128,7 +128,7 @@ class cls_Productor extends cls_Conexion{
    $offset = $paginaActual * $registrosPorPagina;
 
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vproductor_organizacion $cadenaBusqueda LIMIT $registrosPorPagina OFFSET $offset";
+   $ls_Sql="SELECT * FROM agronomia.vproductor_organizacion $cadenaBusqueda order by nombre_completo LIMIT $registrosPorPagina OFFSET $offset ";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){

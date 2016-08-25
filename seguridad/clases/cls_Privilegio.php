@@ -37,7 +37,7 @@ class cls_Privilegio extends cls_Conexion{
 					$success=1;
 				}else{
 					$respuesta['success'] = 0;
-					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(21);
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(22);
 				}
 				break;
 
@@ -122,7 +122,7 @@ class cls_Privilegio extends cls_Conexion{
 					$success=1;
 				}else{
 					$respuesta['success'] = 0;
-					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(21);
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(20);
 				}
 				break;
 

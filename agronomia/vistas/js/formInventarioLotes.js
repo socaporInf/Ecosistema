@@ -6,7 +6,7 @@ var agregarListado = function(ventana,peticion){
     titulo: 'listado de '+ peticion.entidad,
     clases: ['embebida'],
     campo_nombre: UI.buscarConstructor(peticion.entidad).campo_nombre,
-    registrosPorPagina:'libre',
+    tamano:'libre',
     selector: 'apagado',
     carga: {
       uso:true,

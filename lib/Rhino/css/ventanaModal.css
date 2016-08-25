@@ -27,7 +27,7 @@ div[capa='contenido'].aparecer{
 }
 div[capa='contenido'].ancho{
     width: calc(90%);
-    left: calc(5%)
+    left: calc(5%) !important;
 }
 div[capa='contenido'] section[cabecera] {
     width: 100%;
@@ -133,4 +133,14 @@ div[capa='contenido'] div[lista]{
 }
 div[capa='contenido'] div.ContenedorCarga{
     margin-top: 15px !important;
+}
+/*-----------------------------------Media screen-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    div[capa='contenido'] {
+        width: 80%;
+        left: 10% !important;
+    }
+    div[capa='contenido'] section[pie]{
+        position:static;
+    }
 }

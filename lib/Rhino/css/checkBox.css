@@ -33,7 +33,7 @@ div[checkbox] div[box]{
   background-color: transparent;
 }
 div[checkbox] div[box]:after,
-div[checkbox] div[check]:after{  
+div[checkbox] div[check]:after{
     font-family: 'Material Icons';
     font-size: 24px;
     font-style: initial;
@@ -88,4 +88,10 @@ div[checkbox].marcado div[check].aparecer{
 }
 div[checkbox].marcado div[box].aparecer{
   opacity: 0;
+}
+/*-----------------------------------Media screen-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    div[o-checkbox]{
+      width: 100%;
+    }
 }
