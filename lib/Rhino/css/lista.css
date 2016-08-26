@@ -115,6 +115,8 @@ div[lista] section[busqueda] button[btnBusq]{
     float: right;
     margin: -10px 10px;
     border-left: 1px solid silver;
+    border:0px;
+    display: block;
 }
 div[lista] section:not([busqueda]) button{
     background-position: 12px;
@@ -165,6 +167,18 @@ div[lista] section[slot].barra-paginacion article[pagina].actual{
 }
 div[lista] section[slot].barra-paginacion article[pagina].ultima{
   margin-left: 10px;
+}
+div[lista] section[slot].barra-paginacion div[cont-pag]{
+  float:left;
+}
+div[lista] section[slot].barra-paginacion div[busq-pag]{
+  float: right;
+}
+div[lista] section[slot].barra-paginacion div[busq-pag] input[type='text']{
+
+}
+div[lista] section[slot].barra-paginacion div[busq-pag] l{
+
 }
 /*----------------------------------------------- Celdas ------------------------------------------------*/
 div[lista] section[slot] div[celda],div[lista] section[slot] div[cabeceraCelda],div[lista] section[slot] div[selector]{

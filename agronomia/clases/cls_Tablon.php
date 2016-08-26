@@ -30,10 +30,11 @@ class cls_Tablon extends cls_Conexion{
        break;
 
     case 'buscarHijos':
-     $registros=$this->f_BuscarTablonesPorLote();
-     if(count($registros)!=0){
+     $lb_Enc=$this->f_BuscarTablonesPorLote();
+     if($lb_Enc){
        $success=1;
-       $respuesta['registros']=$registros;
+       $respuesta['registros']=$this->aa_Atributos['registros'];
+       $respuesta['paginas']=$this->aa_Atributos['paginas'];
      }else{
        $respuesta['success'] = 0;
        $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
@@ -92,8 +93,17 @@ class cls_Tablon extends cls_Conexion{
  }
  private function f_BuscarTablonesPorLote(){
    $x=0;
+    //varibles paginacion
+   $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
+   $paginaActual = $this->aa_Atributos['pagina'] - 1;
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_lote like '%".$this->aa_Atributos['valor']."%'";
+   $numero_registros = $this->f_ObtenerNumeroRegistrosTablones($cadenaBusqueda);
+   $paginas = $numero_registros / $registrosPorPagina;
+   $paginas = ceil($paginas);
+   $offset = $paginaActual * $registrosPorPagina;
+
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote'];
+   $ls_Sql="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda order by codigo_tablon LIMIT $registrosPorPagina OFFSET $offset " ;
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -122,7 +132,19 @@ class cls_Tablon extends cls_Conexion{
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   return $la_respuesta;
+   $this->aa_Atributos['paginas'] = $paginas;
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return true;
+}
+private function f_ObtenerNumeroRegistrosTablones($cadenaBusqueda){
+   $ls_Sql="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda" ;
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   $registros = $this->f_Registro($lr_tabla);
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   return $registros;
 }
 private function f_Buscar(){
   $lb_Enc = false;

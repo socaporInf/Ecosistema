@@ -43,7 +43,7 @@ div[capaLog] button[type='button']{
     z-index: 2;
 }
 div[loginForm] div[cuerpo]{
-	border-bottom: 1px solid silver; 
+	border-bottom: 1px solid silver;
 	height: 300px;
 	background-color: white;
 }
@@ -62,7 +62,7 @@ div[loginForm] div[olvido]{
 	width: 100%;
 	text-align: center;
 	color:silver;
-	margin-top: 73px; 
+	margin-top: 73px;
 }
 section[cuerpo]{
 	display: flex;
@@ -104,4 +104,17 @@ div[cont-log-input] i{
     position: absolute;
     top:30px;
     left:24px;
+}
+/*-----------------------------------Media screen-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    div[loginForm]{
+        width: 90%;
+        margin-left: 7%;
+    }
+    div[loginForm] div[cuerpo] input{
+        width: 70%;
+    }
+    div[capaLog] button[type='button']{
+        margin-left: 89%;
+    }
 }

@@ -143,7 +143,7 @@ class cls_Productor extends cls_Conexion{
    $this->aa_Atributos['paginas'] = $paginas;
    $this->aa_Atributos['registros'] = $la_respuesta;
    $lb_Enc=($x == 0)?false:true;
-   return true;
+   return $lb_Enc;
  }
 
    private function f_ObtenerNumeroRegistros($cadenaBusqueda){
