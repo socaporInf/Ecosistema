@@ -175,9 +175,24 @@ div[lista] section[slot].barra-paginacion div[busq-pag]{
   float: right;
 }
 div[lista] section[slot].barra-paginacion div[busq-pag] input[type='text']{
-
+  height: 100%;
+  width: 35px;
+  padding: 3px 10px;
+  color: #4caf50;
+  font-size: 16px;
+  margin-left: 0px;
+  border-top: 2px solid #4caf50;
+  border-bottom: 2px solid #4caf50;
+  border-left: 2px solid #4caf50;
+  border-style: solid;
+  border-right: 0px;
+  float: left;
 }
 div[lista] section[slot].barra-paginacion div[busq-pag] l{
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  float: left;
 
 }
 /*----------------------------------------------- Celdas ------------------------------------------------*/

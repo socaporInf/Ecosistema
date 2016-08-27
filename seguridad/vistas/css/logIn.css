@@ -109,7 +109,7 @@ div[cont-log-input] i{
 @media only screen and (max-device-width: 480px) {
     div[loginForm]{
         width: 90%;
-        margin-left: 7%;
+        margin-left: 9%;
     }
     div[loginForm] div[cuerpo] input{
         width: 70%;
