@@ -69,7 +69,7 @@ armarListaProductores = function(rif){
     var lista = UI.agregarLista({
       titulo: 'Cañicultores',
       nombre:'listadoCanicultores',
-      clases: ['ventana','not-first','last'],
+      clases: ['ventana','not-first'],
       campo_nombre: UI.buscarConstructor('productor').campo_nombre,
       tamano:'libre',
       columnas:3,
@@ -120,8 +120,8 @@ var editarProductor = function(){
   }else{
     formModificar = UI.buscarVentana('editarProductor');
     for (var i = formModificar.sectores.length -1 ; i > -1 ; i--){
-      if(UI.buscarVentana('Listado fincas')){
-        UI.quitarVentana('Listado fincas');
+      if(UI.buscarVentana('listado de finca')){
+        UI.quitarVentana('listado de finca');
       }
       formModificar.desvanecerSector(formModificar.sectores[i].atributos.nombre);
     }

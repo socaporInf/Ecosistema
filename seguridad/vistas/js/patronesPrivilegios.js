@@ -24,7 +24,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 		}
 		campos.push(campo);
 	}
-	var constructor = {
+	var cons = {
 		campos : campos,
 		altura : (campos.length * 40) + 20
 	};
@@ -34,7 +34,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 		},
 		cuerpo: {
 			tipo: 'nuevo',
-			formulario: constructor
+			formulario: cons
 		},
 		pie: {
 			html: '<section modalButtons>'+
@@ -53,7 +53,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 	return capaContenido;
 }
 function obtenenrValoresFormulario(contenedor){
-	var campos = contenedor.campos;
+	var campos = contenedor.formulario.campos;
 	var data = [];
 	var validado = false;
 	for (var i = 0; i < campos.length; i++) {

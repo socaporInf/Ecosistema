@@ -21,6 +21,13 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+	case 'inventario':
+		include_once('../clases/cls_Inventario.php');
+		$lobj_Entidad = new cls_Inventario;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'lote':
 		include_once('../clases/cls_Lote.php');
 		$lobj_Entidad = new cls_Lote;

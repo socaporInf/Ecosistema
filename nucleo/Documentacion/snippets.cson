@@ -203,3 +203,16 @@
         texto: '${1:'mensaje a mostrar'}',
         tipo: '${2:web-arriba-derecha-alto}'
       }); """
+  'campBusq':
+    'prefix': 'nuevo campo busqueda'
+    'body': """{
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'${1,'nombre que se ve en la interfaz'}',
+        nombre:'${2:'nombre interno'}',
+        requerido:true,
+        eslabon:'simple',
+        peticion:peticion,
+        cuadro: {nombre: 'listaTipoPersona',mensaje: 'Cargando Registros'}
+      }
+  }"""

@@ -608,7 +608,11 @@ div[mat-window].titulo {
     float: left;
     margin-bottom: 10px;
 }
-
+div[mat-window].ventana {
+    width: calc(90%);
+    float: left;
+    margin-bottom: 10px;
+}
 /*-----------------------------titulo---------------------------------------*/
 
 div[mat-window] section[titulo] {

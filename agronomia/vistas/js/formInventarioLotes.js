@@ -232,8 +232,8 @@ function cerrarListado(entidad){
   }
   setTimeout(function () {
     if(ventanaEditar.buscarSector('listado de '+entidad)){
-      ventanaEditar.quitarSector('listado de '+entidad);
       UI.quitarVentana('listado de '+entidad);
+      ventanaEditar.quitarSector('listado de '+entidad);
     }
   }, 310);
 }
