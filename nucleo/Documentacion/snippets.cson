@@ -203,16 +203,27 @@
         texto: '${1:'mensaje a mostrar'}',
         tipo: '${2:web-arriba-derecha-alto}'
       }); """
-  'campBusq':
-    'prefix': 'nuevo campo busqueda'
+  'campo busqueda':
+    'prefix': 'campBusq'
     'body': """{
       tipo : 'campoBusqueda',
       parametros : {
-        titulo:'${1,'nombre que se ve en la interfaz'}',
-        nombre:'${2:'nombre interno'}',
+        titulo:'',
+        nombre: '',
         requerido:true,
         eslabon:'simple',
         peticion:peticion,
         cuadro: {nombre: 'listaTipoPersona',mensaje: 'Cargando Registros'}
       }
   }"""
+  'comboBox':
+    'prefix': 'comBox'
+    'body': """{
+      tipo: 'comboBox',
+      parametros : {
+        nombre: ${1:'NombreInterno'},
+        titulo: ${2:'NombreInterfaz'},
+        eslabon : 'area',
+        peticion : peticion
+      }
+    }"""

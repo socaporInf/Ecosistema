@@ -1,70 +1,106 @@
-div[mat-window].form-rep div[formelements] {
+div[mat-window].form-rep div[formelements],div[mat-window].form-rep div.group {
     margin-bottom: 0px;
 }
-
-/*--------------------------------------Lista----------------------------------------- */
-div[lista] section[slot] div[celda='Cañicultor'],
-div[lista] section[slot] div[cabeceraCelda='Cañicultor']{
+/*--------------------------------------Lista inventario Fincas----------------------------------------- */
+div[lista].inventario-fincas section[slot] div[celda],div[lista].inventario-fincas section[slot] div[cabeceraCelda]{
+  font-size: 10px;
+}
+div[lista].inventario-fincas section[slot] div[celda='Cañicultor'],
+div[lista].inventario-fincas section[slot] div[cabeceraCelda='Cañicultor']{
+  width: calc(20%);
+}
+div[lista].inventario-fincas section[slot] div[celda='Codigo'],
+div[lista].inventario-fincas section[slot] div[cabeceraCelda='Codigo']{
+  width: calc(9%);
+}
+div[lista].inventario-fincas section[slot] div[celda='Finca'],
+div[lista].inventario-fincas section[slot] div[cabeceraCelda='Finca']{
   width: calc(15%);
 }
-div[lista] section[slot] div[celda='Codigo'],
-div[lista] section[slot] div[cabeceraCelda='Codigo']{
-  width: calc(4%);
+div[lista].inventario-fincas section[slot] div[celda='Codigo Zona'],
+div[lista].inventario-fincas section[slot] div[cabeceraCelda='Codigo Zona']{
+  width: calc(8%);
 }
-div[lista] section[slot] div[celda='Finca'],
-div[lista] section[slot] div[cabeceraCelda='Finca']{
-  width: calc(10%);
-}
-div[lista] section[slot] div[celda='Codigo Zona'],
-div[lista] section[slot] div[cabeceraCelda='Codigo Zona']{
-  width: calc(3%);
-}
-div[lista] section[slot] div[celda='Zona'],
-div[lista] section[slot] div[cabeceraCelda='Zona']{
+div[lista].inventario-fincas section[slot] div[celda='Zona'],
+div[lista].inventario-fincas section[slot] div[cabeceraCelda='Zona']{
   width: calc(11%);
 }
-div[lista] section[slot] div[celda='Lote'],
-div[lista] section[slot] div[cabeceraCelda='Lote']{
-  width: calc(5%);
+div[lista].inventario-fincas section[slot] div[celda='Area Cana'],
+div[lista].inventario-fincas section[slot] div[cabeceraCelda='Area Cana']{
+  width: calc(8%);
 }
-div[lista] section[slot] div[celda='Tablon'],
-div[lista] section[slot] div[cabeceraCelda='Tablon']{
-  width: calc(5%);
+div[lista].inventario-fincas section[slot] div[celda='Area Semilla'],
+div[lista].inventario-fincas section[slot] div[cabeceraCelda='Area Semilla']{
+  width: calc(8%);
 }
-div[lista] section[slot] div[celda='Area Cana'],
-div[lista] section[slot] div[cabeceraCelda='Area Cana']{
+div[lista].inventario-fincas section[slot] div[celda='Ton Est Hec'],
+div[lista].inventario-fincas section[slot] div[cabeceraCelda='Ton Est Hec']{
+  padding-left: 3px;
+  width: calc(8%);
+}
+/*--------------------------------------Lista inventario----------------------------------------- */
+div[lista].inventario section[slot] div[celda='Cañicultor'],
+div[lista].inventario section[slot] div[cabeceraCelda='Cañicultor']{
+  width: calc(15%);
+}
+div[lista].inventario section[slot] div[celda='Codigo'],
+div[lista].inventario section[slot] div[cabeceraCelda='Codigo']{
   width: calc(4%);
 }
-div[lista] section[slot] div[celda='Area Semilla'],
-div[lista] section[slot] div[cabeceraCelda='Area Semilla']{
-  width: calc(4%);
+div[lista].inventario section[slot] div[celda='Finca'],
+div[lista].inventario section[slot] div[cabeceraCelda='Finca']{
+  width: calc(10%);
 }
-div[lista] section[slot] div[celda='Ton Est Hec'],
-div[lista] section[slot] div[cabeceraCelda='Ton Est Hec']{
-  padding-left: 3px;
-  width: calc(5%);
-}
-div[lista] section[slot] div[celda='Ton Real'],
-div[lista] section[slot] div[cabeceraCelda='Ton Real']{
-  padding-left: 3px;
-  width: calc(5%);
-}
-div[lista] section[slot] div[celda='Ton Azucar'],
-div[lista] section[slot] div[cabeceraCelda='Ton Azucar']{
-  padding-left: 3px;
-  width: calc(5%);
-}
-div[lista] section[slot] div[celda='Tipo Corte'],
-div[lista] section[slot] div[cabeceraCelda='Tipo Corte']{
-  width: calc(7%);
-}
-div[lista] section[slot] div[celda='Clase'],
-div[lista] section[slot] div[cabeceraCelda='Clase']{
+div[lista].inventario section[slot] div[celda='Codigo Zona'],
+div[lista].inventario section[slot] div[cabeceraCelda='Codigo Zona']{
   width: calc(3%);
+}
+div[lista].inventario section[slot] div[celda='Zona'],
+div[lista].inventario section[slot] div[cabeceraCelda='Zona']{
+  width: calc(11%);
+}
+div[lista].inventario section[slot] div[celda='Lote'],
+div[lista].inventario section[slot] div[cabeceraCelda='Lote']{
+  width: calc(5%);
+}
+div[lista].inventario section[slot] div[celda='Tablon'],
+div[lista].inventario section[slot] div[cabeceraCelda='Tablon']{
+  width: calc(5%);
+}
+div[lista].inventario section[slot] div[celda='Area Cana'],
+div[lista].inventario section[slot] div[cabeceraCelda='Area Cana']{
+  width: calc(4%);
+}
+div[lista].inventario section[slot] div[celda='Area Semilla'],
+div[lista].inventario section[slot] div[cabeceraCelda='Area Semilla']{
+  width: calc(4%);
+}
+div[lista].inventario section[slot] div[celda='Ton Est Hec'],
+div[lista].inventario section[slot] div[cabeceraCelda='Ton Est Hec']{
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista].inventario section[slot] div[celda='Ton Real'],
+div[lista].inventario section[slot] div[cabeceraCelda='Ton Real']{
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista].inventario section[slot] div[celda='Ton Azucar'],
+div[lista].inventario section[slot] div[cabeceraCelda='Ton Azucar']{
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista].inventario section[slot] div[celda='Tipo Corte'],
+div[lista].inventario section[slot] div[cabeceraCelda='Tipo Corte']{
+  width: calc(5%);
+}
+div[lista].inventario section[slot] div[celda='Clase'],
+div[lista].inventario section[slot] div[cabeceraCelda='Clase']{
+  width: calc(5%);
   font-size: 7px !important;
 }
-div[lista] section[slot] div[celda='Variedad'],
-div[lista] section[slot] div[cabeceraCelda='Variedad']{
+div[lista].inventario section[slot] div[celda='Variedad'],
+div[lista].inventario section[slot] div[cabeceraCelda='Variedad']{
   width: calc(5%);
   font-size: 7px !important;
 }
