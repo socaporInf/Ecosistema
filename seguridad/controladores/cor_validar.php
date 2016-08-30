@@ -33,26 +33,43 @@ if($la_Form['Operacion']=='acceso'){
 			);
 	}
 
-}else if($la_Form['Operacion']=="iniciarSession"){
+}else if(($la_Form['Operacion']=="iniciarSession")||($la_Form['Operacion']=="buscarEmpresasDisponibles")){
 
 	include_once('../clases/cls_Permisos.php');
 	$lobj_Permisos = new cls_Permisos;
 	$lobj_Permisos->setPeticion($la_Form);
-	$privilegios=$lobj_Permisos->f_ObtenerPrivilegios();
-	$llaves = $lobj_Permisos->f_ObtenerLlavesAcceso($privilegios);
-	if(count($privilegios)==0){
-		$respuesta=array(
-				'mensaje'=>'Este Usuario No Posee Privilegios Para Esta Empresa',
-				'success'=>0
-				);
-	}else{
-		$_SESSION['Usuario']['privilegios']=array($privilegios);
-		$_SESSION['Usuario']['llaves_acceso']=$llaves;
-		$respuesta=array(
-				'mensaje'=>'Sesion Iniciada con exito',
-				'privilegios'=>$_SESSION['Usuario']['privilegios'],
-				'success'=>1
-				);
+	if($la_Form['Operacion']=="iniciarSession"){
+		$privilegios=$lobj_Permisos->f_ObtenerPrivilegios();
+		$llaves = $lobj_Permisos->f_ObtenerLlavesAcceso($privilegios);
+		if(count($privilegios)==0){
+			$respuesta=array(
+					'mensaje'=>'Este Usuario No Posee Privilegios Para Esta Empresa',
+					'success'=>0
+					);
+		}else{
+			$_SESSION['Usuario']['privilegios']=array($privilegios);
+			$_SESSION['Usuario']['llaves_acceso']=$llaves;
+			$respuesta=array(
+					'mensaje'=>'Sesion Iniciada con exito',
+					'privilegios'=>$_SESSION['Usuario']['privilegios'],
+					'success'=>1
+					);
+		}
+	}else if($la_Form['Operacion']=="buscarEmpresasDisponibles"){
+		$empresas = $lobj_Permisos->f_EmpresasDisponibles();
+		if(count($empresas)==0){
+			$respuesta=array(
+					'mensaje'=>array('cuerpo'=>'Ese Usuario no tiene Empresas Asignadas','nombre_tipo'=>'ADVERTENCIA','titulo'=>'Error de Acceso'),
+					'success'=>0
+					);
+		}else{
+			$respuesta=array(
+					'mensaje'=>'Empresas disponibles',
+					'registros'=>$empresas,
+					'success'=>1
+					);
+
+		}
 	}
 
 }else if($la_Form['Operacion']=="CargarPrivilegios"){

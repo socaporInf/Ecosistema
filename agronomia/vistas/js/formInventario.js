@@ -63,7 +63,7 @@ armarListaProductores = function(rif){
   if(UI.buscarVentana('listadoCanicultores')){
       var listado = UI.buscarVentana('listadoCanicultores');
       listado.atributos.carga.peticion.valor = rif;
-      listado.recargarLista();
+      listado.recargar();
       cerrarFormulario('productor');
   }else{
     var lista = UI.agregarLista({

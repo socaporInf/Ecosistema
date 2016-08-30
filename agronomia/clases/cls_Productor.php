@@ -121,7 +121,7 @@ class cls_Productor extends cls_Conexion{
    //varibles paginacion
    $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
    $paginaActual = $this->aa_Atributos['pagina'] - 1;
-   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where codigo_productor like '%".$this->aa_Atributos['valor']."%'";
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where nombre_completo like '%".$this->aa_Atributos['valor']."%'";
    $numero_registros = $this->f_ObtenerNumeroRegistrosProductores($cadenaBusqueda);
    $paginas = $numero_registros / $registrosPorPagina;
    $paginas = ceil($paginas) - 1;

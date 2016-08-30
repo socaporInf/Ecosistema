@@ -24,7 +24,7 @@
 	}
 
 	protected function setDatosConexion($pcUsuario, $pcPassword){
-		$this->db_usuario=$pcUsuario;
+		$this->db_usuario=strtolower($pcUsuario);
 		$this->db_password=$pcPassword;
 	}
 /*-----------------------------------

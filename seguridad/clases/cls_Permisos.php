@@ -13,7 +13,22 @@ class cls_Permisos extends cls_Conexion{
 	public function getForm(){
 		return $this->aa_Atributos;
 	}
-
+	public function f_EmpresasDisponibles(){
+		$x=0;
+		$la_Privilegios=array();
+		$ls_Sql="SELECT empresa,nombre_empresa from seguridad.varbol_privilegio_usuario
+				WHERE estado_privilegio='A' AND codigo_usuario='".$this->aa_Atributos['Nombre']."' group by empresa,nombre_empresa";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		while($la_registro=$this->f_Arreglo($lr_tabla)){
+			$la_Empresas[$x]['codigo']=$la_registro['empresa'];
+			$la_Empresas[$x]['nombre']=$la_registro['nombre_empresa'];
+			$x++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_Empresas;
+	}
 	public function f_ObtenerPrivilegios(){
 		$x=0;
 		$la_Privilegios=array();

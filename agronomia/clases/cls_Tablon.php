@@ -96,7 +96,7 @@ class cls_Tablon extends cls_Conexion{
     //varibles paginacion
    $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
    $paginaActual = $this->aa_Atributos['pagina'] - 1;
-   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_lote like '%".$this->aa_Atributos['valor']."%'";
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_tablon like '%".$this->aa_Atributos['valor']."%'";
    $numero_registros = $this->f_ObtenerNumeroRegistrosTablones($cadenaBusqueda);
    $paginas = $numero_registros / $registrosPorPagina;
    $paginas = ceil($paginas);
