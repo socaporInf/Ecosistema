@@ -1,4 +1,8 @@
+//TODO: funcionamiento nuevo y modificar para este formulario
 function construirUI(){
+  UI.elementos.botonera.buscarBoton('nuevo').nodo.onclick = function(){
+    nuevoRol();
+  };
   var lista =  UI.agregarLista({
     titulo: 'rol',
     clases: ['maestro'],
@@ -23,36 +27,69 @@ function construirUI(){
     onclickSlot: editarRol
   },document.querySelector('div[contenedor]'));
 }
+function construirFormulario(tipo,slot){
+  var sect;
+  if(tipo === 'modificar'){
+    sect = [
+      {
+        nombre:'formulario',
+        tipo: tipo,
+        formulario:UI.buscarConstructor('rol'),
+        registro : slot.atributos
+      },{
+        nombre:'empresas',
+        html: 'aqui van las empresas'
+      }
+    ];
+  }else if(tipo === 'nuevo'){
+    sect = [
+      {
+        nombre:'formulario',
+        tipo: tipo,
+        formulario:UI.buscarConstructor('rol')
+      },{
+        nombre:'empresas'
+      }
+    ];
+  }
+  var ventForm = UI.agregarVentana({
+    nombre:'Formulario',
+    tipo: 'formulario',
+    clases: ['maestro','aparecer'],
+    titulo: {
+      tipo:'basico',
+      html:tipo.toUpperCase()
+    },
+    sectores:sect
+  },document.querySelector('div[contenedor]'));
+}
+/************************** Editar ********************************************/
 var editarRol = function(slot){
-  if(UI.buscarVentana('editarRol')){
-    var formulario = UI.buscarVentana('editarRol').buscarSector('formulario').formulario;
+  if(UI.buscarVentana('Formulario')){
+    var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+    UI.buscarVentana('Formulario').titulo.nodo.innerHTML = 'MODIFICAR';
+    formulario.deshabilitar();
     formulario.asignarValores(slot.atributos);
     formulario.registroId = slot.atributos.codigo;
     agregarEmpresas(formulario.registroId);
   }else{
-    var ventForm = UI.agregarVentana({
-      nombre:'editarRol',
-      tipo: 'formulario',
-      clases: ['maestro','aparecer'],
-      titulo: {
-        tipo:'basico',
-        html:'Modificar '+slot.atributos.nombre
-      },
-      sectores:[
-        {
-          nombre:'formulario',
-          tipo: 'modificar',
-          formulario:UI.buscarConstructor('rol'),
-          registro : slot.atributos
-        },{
-          nombre:'empresas',
-          html: 'aqui van las empresas'
-        }
-      ]
-    },document.querySelector('div[contenedor]'));
+    construirFormulario('modificar',slot);
     agregarEmpresas(slot.atributos.codigo);
   }
 };
+/************************** Nuevo *********************************************/
+function nuevoRol(){
+  if(UI.buscarVentana('Formulario')){
+    var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+    formulario.limpiar();
+    formulario.habilitar();
+    UI.buscarVentana('Formulario').titulo.nodo.innerHTML = 'NUEVO';
+    UI.buscarVentana('Formulario').buscarSector('empresas').nodo.innerHTML = "";
+  }else{
+    construirFormulario('nuevo');
+  }
+}
+/************************** Empresas ******************************************/
 function agregarEmpresas(codigo){
   var peticion = {
     entidad : 'rol',
@@ -61,7 +98,7 @@ function agregarEmpresas(codigo){
     codigo: codigo
   };
   var cuadro = {
-    contenedor: UI.buscarVentana('editarRol').buscarSector('empresas').nodo,
+    contenedor: UI.buscarVentana('Formulario').buscarSector('empresas').nodo,
     cuadro:{
       nombre: 'Cargado Detalle',
       mensaje: 'Cargando Detalle'
@@ -77,7 +114,7 @@ function agregarEmpresas(codigo){
             empresas[i].nombre+"</article>";
     }
     html += '</section>';
-    var sector = UI.buscarVentana('editarRol').buscarSector('empresas').nodo;
+    var sector = UI.buscarVentana('Formulario').buscarSector('empresas').nodo;
     sector.innerHTML = html;
     activarEmpresas();
   });

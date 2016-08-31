@@ -49,7 +49,20 @@ class cls_Permisos extends cls_Conexion{
 		$this->f_Des();
 		return $la_Privilegios;
 	}
-
+	public function obtenerEmpresa(){
+		$la_Privilegios=array();
+		$ls_Sql="SELECT * from global.vempresa
+				WHERE codigo_empresa='".$this->aa_Atributos['Empresa']."'";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		if($la_registro=$this->f_Arreglo($lr_tabla)){
+			$la_Empresa['codigo']=$la_registro['codigo_empresa'];
+			$la_Empresa['nombre']=$la_registro['nombre'];
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_Empresa;
+	}
 	public function f_ObtenerLlavesAcceso($arreglo){
 		$llaves = array();
 		for($x = 0; $x < count($arreglo); $x++){

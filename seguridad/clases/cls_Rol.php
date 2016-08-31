@@ -50,6 +50,14 @@ class cls_Rol extends cls_Conexion{
 				}
 				break;
 
+			case 'consultarRolesAsignados':
+				$registros=$this->f_consultarRolesAsignados();
+				if(count($registros)){
+					$respuesta['registros'] = $registros;
+					$success=1;
+				}
+				break;
+
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
@@ -117,7 +125,21 @@ class cls_Rol extends cls_Conexion{
 
 		return $lb_Enc;
 	}
-
+	public function f_consultarRolesAsignados(){
+		$ls_Sql="SELECT * from seguridad.vrol_usuario
+				WHERE codigo_empresa='".$_SESSION['Usuario']['Empresa']['codigo']."' and codigo_usuario ='".$this->aa_Atributos['codigo_usuario']."'";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$x=0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_rol'];
+			$la_respuesta[$x]['nombre']=$la_registros['nombre_rol'];
+			$x++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_respuesta;
+	}
 	private function f_BuscarUltimo(){
 		$lb_Enc=false;
 		//Busco El rol

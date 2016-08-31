@@ -657,7 +657,7 @@ div[mat-window] section[botonera]{
     height: calc(100%);
     min-height: calc(100%);
 }
-div[mat-window] section[botonera] button.icon{
+section[botonera] button.icon,section.botonera button.icon{
     transition: all 0.2s ease-in-out;
     border: none;
     width: 40px;

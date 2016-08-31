@@ -49,6 +49,7 @@ if($la_Form['Operacion']=='acceso'){
 		}else{
 			$_SESSION['Usuario']['privilegios']=array($privilegios);
 			$_SESSION['Usuario']['llaves_acceso']=$llaves;
+			$_SESSION['Usuario']['Empresa'] = $lobj_Permisos->obtenerEmpresa();
 			$respuesta=array(
 					'mensaje'=>'Sesion Iniciada con exito',
 					'privilegios'=>$_SESSION['Usuario']['privilegios'],

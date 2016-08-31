@@ -274,6 +274,9 @@ div[lista].embebida{
   margin: 0px;
   width: 100%;
 }
+div[lista].interna{
+  margin: 0px 0px 1px 0px !important;
+}
 div[lista].ventana-lateral{
     width: 35%;
     margin-bottom: 25px;

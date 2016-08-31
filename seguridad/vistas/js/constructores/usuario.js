@@ -47,5 +47,21 @@
           ]
         }
       }
-    ]
+    ],
+    botones:{
+      nuevo:{
+        quitar:['seguridad']
+      },
+      modificar: {
+        agregar:[
+          {
+            tipo:'seguridad',
+            click: function(boton){
+              abrirFormSeg();
+            }
+          }
+        ],
+        quitar:[]
+      }
+    }
 };

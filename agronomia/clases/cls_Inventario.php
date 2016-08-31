@@ -160,12 +160,14 @@ class cls_Inventario extends cls_Conexion{
    private function f_obtenerCadenaBusqueda($tipo){
      $cadenaBusqueda = '';
      if($this->aa_Atributos['valor']!=''){
-        $cadenaBusqueda.="where finca_letra like '%".$this->aa_Atributos['valor']."%'";
+        $cadenaBusqueda .= "finca_letra like '%".$this->aa_Atributos['valor']."%'";
+     }else{
+        $cadenaBusqueda .= '';
      }
      $zona = "";
      $finca = "";
      if($this->aa_Atributos['zona'] != 'null'){
-        if(count($cadenaBusqueda) != 1){
+        if(strlen($cadenaBusqueda) != 0){
            $zona = 'and';
         }
         $zona .= ' codigo_zona = '.$this->aa_Atributos['zona'];
@@ -173,7 +175,11 @@ class cls_Inventario extends cls_Conexion{
      if($this->aa_Atributos['finca'] != 'null'){
         $finca = ' and id_finca = '.$this->aa_Atributos['finca'];
      }
-     return $cadenaBusqueda.$zona.$finca;
+     $cadenaBusqueda = $cadenaBusqueda.$zona.$finca;
+     if(strlen($cadenaBusqueda)>1){
+        $cadenaBusqueda = 'where '.$cadenaBusqueda;
+     }
+     return $cadenaBusqueda;
    }
 }
 ?>
