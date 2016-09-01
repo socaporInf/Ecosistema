@@ -16,6 +16,7 @@ function abrirFormSeg(){
   });
   //agrego la lista
   var lista = UI.agregarLista({
+    nombre: 'asignados',
     titulo: 'Roles Asignados',
     clases: ['embebida','inversa','interna'],
     campo_nombre: 'nombre',
@@ -35,6 +36,9 @@ function abrirFormSeg(){
           mensaje: 'Buscando Roles de '+ UI.elementos.maestro.ventanaForm.formulario.buscarCampo('codigo').captarValor()
         }
       },
+      onclickSlot: function(slot){
+        console.log(slot);
+      }
       //respuesta: callback
     }
   },formSeg.partes.cuerpo.nodo.querySelector('section[lista]'));
@@ -73,7 +77,8 @@ function asignarRol(){
                 peticion:{
                    modulo: "seguridad",
                    entidad: "rol",
-                   operacion: "buscar"
+                   operacion: "buscarDisponiblesUsuario",
+                   codigo: UI.elementos.maestro.ventanaForm.formulario.registroId
                 },
                 cuadro: {nombre: 'listaRol',mensaje: 'Cargando Registros'}
               }
@@ -87,4 +92,35 @@ function asignarRol(){
             '<button type="button" class="icon icon-cerrar-rojo-32"> </button>',
     }
   });
+  formAsig.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
+    UI.quitarVentana('asignados');
+    UI.elementos.modalWindow.eliminarUltimaCapa();
+  };
+  formAsig.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32').onclick = function(){
+    if(formAsig.partes.cuerpo.formulario.buscarCampo('codigo_rol').captarValor()){
+      var peticion = {
+         modulo: "seguridad",
+         entidad: "rol",
+         operacion: "asignarRol",
+         codigo_usuario: UI.elementos.maestro.ventanaForm.formulario.registroId,
+         codigo_rol: formAsig.partes.cuerpo.formulario.buscarCampo('codigo_rol').captarValor()
+      };
+      var cuadro = {
+        contenedor : formAsig.partes.cuerpo.nodo,
+        cuadro: {
+          nombre: 'asignarRol',
+          mensaje: 'Asignando Rol'
+        }
+      };
+      torque.manejarOperacion(peticion,cuadro,function(respuesta){
+        UI.elementos.modalWindow.eliminarUltimaCapa();
+        UI.buscarVentana('asignados').recargar();
+      });
+    }else{
+        UI.agregarToasts({
+          texto: 'Debe llenar elegir el rol antes de poder guardar',
+          tipo: 'web-arriba-derecha-alto'
+        });
+    }
+  };
 }

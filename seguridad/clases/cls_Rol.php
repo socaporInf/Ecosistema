@@ -4,6 +4,7 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Rol extends cls_Conexion{
 
 	private $aa_Atributos = array();
+  private $aa_Campos = array('nombre','descripcion');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -42,8 +43,8 @@ class cls_Rol extends cls_Conexion{
 				}
 				break;
 
-			case 'buscarDisponible':
-				$registros=$this->f_Buscar_Disponible();
+			case 'buscarDisponiblesUsuario':
+				$registros=$this->f_Buscar_Disponibles_Usuario();
 				if(count($registros)){
 					$respuesta['registros'] = $registros;
 					$success=1;
@@ -62,7 +63,7 @@ class cls_Rol extends cls_Conexion{
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
 					$this->f_BuscarUltimo();
-					$respuesta['registros'] = $this->aa_Atributos['registro'];
+					$respuesta['registro'] = $this->aa_Atributos['registro'];
 					$respuesta['mensaje'] = 'Insercion realizada con exito';
 					$success = 1;
 				}else{
@@ -71,6 +72,16 @@ class cls_Rol extends cls_Conexion{
 				}
 				break;
 
+			case 'asignarRol':
+				$lb_Hecho=$this->f_Asignar();
+				if($lb_Hecho){
+					$respuesta['mensaje'] = 'Insercion realizada con exito';
+					$success = 1;
+				}else{
+					$respuesta['mensaje'] = 'Error al ejecutar la insercion';
+					$success = 0;
+				}
+				break;
 			case 'guardarDetalle':
 				$respuesta=$this->guardarDetalle();
 				if($respuesta!=false){
@@ -90,10 +101,16 @@ class cls_Rol extends cls_Conexion{
 					$respuesta['codigo_empresa'] = $this->aa_Atributos['codigo_empresa'];
 					$success=1;
 				}
-			break;
+				break;
+
+			case 'modificar':
+	        $respuesta = $this->f_Modificar();
+					$success = $respuesta['success'];
+	        break;
 
 			default:
-				$respuesta['mensaje'] = 'Operacion "'.strtoupper($this->aa_Atributos['operacion']).'" no existe para esta entidad';
+				$valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
+				$respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
 				$success = 0;
 				break;
 		}
@@ -200,6 +217,25 @@ class cls_Rol extends cls_Conexion{
 		return $la_respuesta;
 	}
 
+	private function f_Buscar_Disponibles_Usuario(){
+		$ls_Sql="SELECT * from seguridad.vllave_acceso where codigo_rol not in
+						(select codigo_rol from seguridad.vrol_usuario
+							WHERE codigo_usuario='".$this->aa_Atributos['codigo']."' and codigo_empresa = '".$_SESSION['Usuario']['Empresa']['codigo']."')
+							and codigo_empresa = '".$_SESSION['Usuario']['Empresa']['codigo']."'";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$x=0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_rol'];
+			$la_respuesta[$x]['nombre']=$la_registros['nombre_rol'];
+			$x++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+
+		return $la_respuesta;
+	}
+
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
@@ -222,6 +258,16 @@ class cls_Rol extends cls_Conexion{
 		$lb_Hecho=false;
 		$ls_Sql="INSERT INTO seguridad.vrol (nombre,descripcion) values
 				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
+		$this->f_Con();
+		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
+		$this->f_Des();
+		return $lb_Hecho;
+	}
+
+	private function f_Asignar(){
+		$lb_Hecho=false;
+		$ls_Sql="INSERT INTO seguridad.vrol_usuario (codigo_rol,codigo_usuario,codigo_empresa) values
+				('".$this->aa_Atributos['codigo_rol']."','".$this->aa_Atributos['codigo_usuario']."','".$_SESSION['Usuario']['Empresa']['codigo']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
@@ -254,5 +300,25 @@ class cls_Rol extends cls_Conexion{
 		$this->f_Des();
 		return $lb_Hecho;
 	}
+
+	private function f_Modificar(){
+    $lb_Hecho=false;
+    $contCampos = 0;
+    $ls_Sql="UPDATE seguridad.vrol SET ";
+
+    //arma la cadena sql en base a los campos pasados en la peticion
+    $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
+    $ls_Sql.="WHERE codigo_rol ='".$this->aa_Atributos['codigo']."'";
+    $this->f_Con();
+    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+    $this->f_Des();
+
+    if($lb_Hecho){
+      $this->f_Buscar();
+      $respuesta['registro'] = $this->aa_Atributos['registro'];
+      $respuesta['success'] = 1;
+    }
+    return $respuesta;
+  }
 }
 ?>

@@ -4,6 +4,7 @@ function construirUI(){
     nuevoRol();
   };
   var lista =  UI.agregarLista({
+    nombre: 'rol',
     titulo: 'rol',
     clases: ['maestro'],
     campo_nombre: 'nombre',
@@ -76,7 +77,64 @@ var editarRol = function(slot){
     construirFormulario('modificar',slot);
     agregarEmpresas(slot.atributos.codigo);
   }
+  //Botones
+  UI.elementos.botonera.gestionarBotones({
+    agregar:[
+      'eliminar',
+      {
+        tipo:'nuevo',
+        click: nuevoRol
+      },{
+        tipo:'modificar',
+        click: modificar
+      }
+    ],
+    quitar:['guardar']
+  });
 };
+function modificar(){
+  var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+  formulario.habilitar();
+  UI.elementos.botonera.gestionarBotones({
+    agregar:[
+      {
+        tipo:'guardar',
+        click:guardarCambios
+      }
+    ],
+    quitar:['modificar']
+  });
+}
+function guardarCambios(){
+    var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+    if(formulario.validar()){
+      var peticion = {
+         modulo: "seguridad",
+         entidad: "rol",
+         operacion: "modificar",
+         codigo: formulario.registroId
+      };
+      peticion = UI.juntarObjetos(peticion,formulario.captarValores());
+      var cuadro = {
+        contenedor: UI.buscarVentana('Formulario').buscarSector('formulario').nodo,
+        cuadro:  {
+          nombre: 'guardarCambios',
+          mensaje: 'GuardandoCambios'
+        }
+      };
+      UI.buscarVentana('Formulario').buscarSector('empresas').nodo.innerHTML = '';
+      torque.manejarOperacion(peticion,cuadro,function(respuesta){
+        UI.quitarVentana('Formulario');
+        if(respuesta.success){
+          var lista = UI.buscarVentana('rol');
+          lista.actualizarSlot(respuesta.registro);
+          lista.buscarSlot(respuesta.registro).activar();
+        }else{
+          UI.crearMensaje(respuesta.mensaje);
+        }
+      });
+    }
+}
 /************************** Nuevo *********************************************/
 function nuevoRol(){
   if(UI.buscarVentana('Formulario')){
@@ -87,6 +145,44 @@ function nuevoRol(){
     UI.buscarVentana('Formulario').buscarSector('empresas').nodo.innerHTML = "";
   }else{
     construirFormulario('nuevo');
+  }
+  //Botones
+  UI.elementos.botonera.gestionarBotones({
+    quitar:['eliminar','nuevo','modificar','guardar'],
+    agregar:[
+      {
+        tipo:'guardar',
+        click:guardar
+      }
+    ]
+  });
+}
+function guardar(){
+  var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+  if(formulario.validar()){
+    var peticion = {
+       modulo: "seguridad",
+       entidad: "rol",
+       operacion: "guardar"
+    };
+    peticion = UI.juntarObjetos(peticion,formulario.captarValores());
+    var cuadro = {
+      contenedor: UI.buscarVentana('Formulario').buscarSector('formulario').nodo,
+      cuadro : {
+        nombre: 'guardar',
+        mensaje: 'guardando Nuevo Registro'
+      }
+    };
+    torque.manejarOperacion(peticion,cuadro,function(respuesta){
+      UI.quitarVentana('Formulario');
+      if(respuesta.success){
+        var lista = UI.buscarVentana('rol');
+        lista.agregarSlot(respuesta.registro);
+        lista.buscarSlot(respuesta.registro).activar();
+      }else{
+        UI.crearMensaje(respuesta.mensaje);
+      }
+    });
   }
 }
 /************************** Empresas ******************************************/
@@ -105,7 +201,7 @@ function agregarEmpresas(codigo){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(respuesta){
-    var empresas = respuesta.registros;
+    var empresas = respuesta.registros || [];
     var html = '<div>Empresas</div><section contenedor id="contenedorPri"><article add="empresa"></article>';
     for (var i = 0; i < empresas.length; i++) {
       html+="<article rol='"+empresas[i].codigo_rol+

@@ -181,6 +181,9 @@ var Arbol = function(atributos){
 		return hoja;
 	};
 	this.verificarHoja = function(rama,hoja){
+		if(this.nodosActivos[0] === null){
+			this.nodosActivos = [];
+		}
 		for(var x = 0; x < this.nodosActivos.length; x++){
 			if(rama.codigo == this.nodosActivos[x].codigo){
 				hoja.peciolo.activar();
