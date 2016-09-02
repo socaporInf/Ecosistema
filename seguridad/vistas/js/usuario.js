@@ -35,11 +35,35 @@ function abrirFormSeg(){
           nombre: 'buscarRolesDisp',
           mensaje: 'Buscando Roles de '+ UI.elementos.maestro.ventanaForm.formulario.buscarCampo('codigo').captarValor()
         }
-      },
-      onclickSlot: function(slot){
-        console.log(slot);
       }
       //respuesta: callback
+    },
+    onclickSlot: function(slot){
+      var mensaje = {
+        titulo: 'Eliminar Asignacion',
+        cuerpo: '¿Desea Remove el Rol '+slot.atributos.nombre+' del usuario '+UI.elementos.maestro.ventanaForm.formulario.registroId+
+                '? teniendo en cuenta que este perdera todos los privilegios que corresponen a este Rol'
+      };
+      UI.crearVerificacion(mensaje,function(){
+        var peticion = {
+           modulo: "seguridad",
+           entidad: "rol",
+           operacion: "eliminarAsignacion",
+           codigo_usuario: UI.elementos.maestro.ventanaForm.formulario.registroId,
+           llave_acceso: slot.atributos.llave_acceso
+        };
+        var cuadro = {
+          contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+          cuadro: {
+            nombre: 'eliminar',
+            mensaje: 'Realizando Operacion'
+          }
+        };
+        torque.manejarOperacion(peticion,cuadro,function(respuesta){
+          UI.buscarVentana('asignados').recargar();
+          UI.elementos.modalWindow.eliminarUltimaCapa();
+        });
+      });
     }
   },formSeg.partes.cuerpo.nodo.querySelector('section[lista]'));
   //doy funcionamiento a los botones
@@ -53,10 +77,10 @@ function abrirFormSeg(){
     reestablecerClave();
   };
   formSeg.partes.cuerpo.nodo.querySelector('button[rol]').onclick = function(){
-    //TODO: funcionamiento asignar rol
     asignarRol();
   };
 }
+/*----------------------------- Asignar --------------------------------------*/
 function asignarRol(){
   var formAsig = UI.crearVentanaModal({
     cabecera:{
@@ -123,4 +147,64 @@ function asignarRol(){
         });
     }
   };
+}
+/*------------------------- Reestablecer clave -------------------------------*/
+function reestablecerClave(){
+  var mensaje = {
+    titulo: 'Reestablecer Clave'
+  };
+  UI.crearVerificacionUsuario(mensaje,function(clave){
+    var peticion = {
+       modulo: "seguridad",
+       entidad: "usuario",
+       operacion: "reactivarClave",
+       codigo: UI.elementos.maestro.ventanaForm.formulario.registroId,
+       contrasena: clave
+    };
+    var cuadro = {
+      contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+      cuadro: {
+        nombre: 'reactivarClave',
+        mensaje: 'Reestableciendo clave de acceso'
+      }
+    };
+    torque.manejarOperacion(peticion,cuadro,function(respuesta){
+      UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+    });
+  });
+}
+function cambiarEstado(){
+  var ventana = UI.crearVentanaModal({
+    tipo:'informacion',
+    cabecera:{
+      html:'Cambio de estado'
+    },
+    cuerpo:{
+      formulario:{
+        campos:[
+          {
+            tipo: 'comboBox',
+            parametros : {
+              nombre: 'estado',
+              titulo: 'Estado',
+              eslabon : 'area',
+              opciones:[
+                {
+                  nombre:'ACTIVO',
+                  valor:'A'
+                },{
+                  nombre:'INACTIVO',
+                  valor:'I'
+                }
+              ]
+            }
+          }
+        ],
+      },
+      tipo:'nuevo'
+    }
+  });
+  UI.agregarBotoneraStandard(ventana,function(){
+    console.log(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario.buscarCampo('estado').captarValor());
+  },'informacion');
 }

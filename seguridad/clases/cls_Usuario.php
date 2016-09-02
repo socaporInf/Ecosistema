@@ -8,7 +8,7 @@ class cls_Usuario extends cls_Conexion{
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
-		$this->setDatosConexion('soca','1234');
+	  $this->setDatosConexion('soca','1234');
 	}
 
 	public function getAtributos(){
@@ -66,9 +66,9 @@ class cls_Usuario extends cls_Conexion{
 			case 'reactivarClave':
 				$respuesta = $this->f_ReactivarClave();
 				if($respuesta['success']==1){
-					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(18);
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(23);
 				}else{
-					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(19);
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(24);
 				}
 				break;
 
@@ -167,7 +167,23 @@ class cls_Usuario extends cls_Conexion{
 		}
 		return $respuesta;
 	}
-
+	private function f_ModificarPass(){
+		$lb_Hecho=false;
+		$contCampos = 0;
+		$ls_Sql="UPDATE seguridad.usuario SET clave = '".$this->aa_Atributos['contrasena']."'";
+		$ls_Sql.="WHERE nombre ='".$this->aa_Atributos['codigo']."'";
+		$this->f_Con();
+		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
+		$this->f_Des();
+		if($lb_Hecho){
+			$this->f_Buscar();
+			$respuesta['registro'] = $this->aa_Atributos['registro'];
+			$respuesta['success'] = 1;
+		}else{
+			$respuesta['success'] = 0;
+		}
+		return $respuesta;
+	}
 	private function f_CambiarEstado(){
 		//en un futuro cuando este la bitacora aqui se guardara primero que fue un cambio de estado
 		//para diferenciarlo de un simple modificar
@@ -190,7 +206,7 @@ class cls_Usuario extends cls_Conexion{
 		if($lb_Enc){
 			$this->aa_Atributos['contrasena'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['codigo']);
 			$this->f_ModificarPassLoginRol();
-			$respuesta = $this->f_Modificar();
+			$respuesta = $this->f_ModificarPass();
 		}else{
 			$respuesta['success'] = 0;
 		}

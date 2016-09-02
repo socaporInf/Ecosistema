@@ -103,6 +103,14 @@ class cls_Rol extends cls_Conexion{
 				}
 				break;
 
+			case 'eliminarAsignacion':
+				$lb_Hecho=$this->eliminarAsignacion();
+				if($lb_Hecho){
+					$respuesta['mensaje'] = 'Eliminacion realizada con exito';
+					$success=1;
+				}
+				break;
+
 			case 'modificar':
 	        $respuesta = $this->f_Modificar();
 					$success = $respuesta['success'];
@@ -142,21 +150,6 @@ class cls_Rol extends cls_Conexion{
 
 		return $lb_Enc;
 	}
-	public function f_consultarRolesAsignados(){
-		$ls_Sql="SELECT * from seguridad.vrol_usuario
-				WHERE codigo_empresa='".$_SESSION['Usuario']['Empresa']['codigo']."' and codigo_usuario ='".$this->aa_Atributos['codigo_usuario']."'";
-		$this->f_Con();
-		$lr_tabla=$this->f_Filtro($ls_Sql);
-		$x=0;
-		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_rol'];
-			$la_respuesta[$x]['nombre']=$la_registros['nombre_rol'];
-			$x++;
-		}
-		$this->f_Cierra($lr_tabla);
-		$this->f_Des();
-		return $la_respuesta;
-	}
 	private function f_BuscarUltimo(){
 		$lb_Enc=false;
 		//Busco El rol
@@ -191,43 +184,6 @@ class cls_Rol extends cls_Conexion{
 			$la_respuesta[$x]['codigo_rol']=$la_registros['codigo_rol'];
 			$la_respuesta[$x]['nombre']=$la_registros['nombre_empresa'];
 			$la_respuesta[$x]['codigoRelacion']=$la_registros['llave_acceso'];
-			$x++;
-		}
-		$this->f_Cierra($lr_tabla);
-		$this->f_Des();
-
-		return $la_respuesta;
-	}
-
-	private function f_Buscar_Disponible(){
-		$ls_Sql="SELECT * from global.vempresa where codigo_empresa not in
-						(select codigo_empresa from seguridad.vroles_por_empresa
-							WHERE codigo_rol='".$this->aa_Atributos['codigo']."')";
-		$this->f_Con();
-		$lr_tabla=$this->f_Filtro($ls_Sql);
-		$x=0;
-		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_empresa'];
-			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
-			$x++;
-		}
-		$this->f_Cierra($lr_tabla);
-		$this->f_Des();
-
-		return $la_respuesta;
-	}
-
-	private function f_Buscar_Disponibles_Usuario(){
-		$ls_Sql="SELECT * from seguridad.vllave_acceso where codigo_rol not in
-						(select codigo_rol from seguridad.vrol_usuario
-							WHERE codigo_usuario='".$this->aa_Atributos['codigo']."' and codigo_empresa = '".$_SESSION['Usuario']['Empresa']['codigo']."')
-							and codigo_empresa = '".$_SESSION['Usuario']['Empresa']['codigo']."'";
-		$this->f_Con();
-		$lr_tabla=$this->f_Filtro($ls_Sql);
-		$x=0;
-		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_rol'];
-			$la_respuesta[$x]['nombre']=$la_registros['nombre_rol'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -320,5 +276,69 @@ class cls_Rol extends cls_Conexion{
     }
     return $respuesta;
   }
+/*----------------------- Seguridad ------------------------------------------*/
+	private function eliminarAsignacion(){
+		$lb_Hecho=false;
+		$ls_Sql='DELETE FROM seguridad.vrol_usuario
+						WHERE llave_acceso = '.$this->aa_Atributos['llave_acceso']."
+						and codigo_usuario='".$this->aa_Atributos['codigo_usuario']."'";
+		$this->f_Con();
+		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
+		$this->f_Des();
+		return $lb_Hecho;
+	}
+	private function f_Buscar_Disponible(){
+		$ls_Sql="SELECT * from global.vempresa where codigo_empresa not in
+						(select codigo_empresa from seguridad.vroles_por_empresa
+							WHERE codigo_rol='".$this->aa_Atributos['codigo']."')";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$x=0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_empresa'];
+			$la_respuesta[$x]['nombre']=$la_registros['nombre'];
+			$x++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+
+		return $la_respuesta;
+	}
+
+	private function f_Buscar_Disponibles_Usuario(){
+		$ls_Sql="SELECT * from seguridad.vllave_acceso where codigo_rol not in
+						(select codigo_rol from seguridad.vrol_usuario
+							WHERE codigo_usuario='".$this->aa_Atributos['codigo']."' and codigo_empresa = '".$_SESSION['Usuario']['Empresa']['codigo']."')
+							and codigo_empresa = '".$_SESSION['Usuario']['Empresa']['codigo']."'";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$x=0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_rol'];
+			$la_respuesta[$x]['nombre']=$la_registros['nombre_rol'];
+			$x++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+
+		return $la_respuesta;
+	}
+
+	public function f_consultarRolesAsignados(){
+		$ls_Sql="SELECT * from seguridad.vrol_usuario
+				WHERE codigo_empresa='".$_SESSION['Usuario']['Empresa']['codigo']."' and codigo_usuario ='".$this->aa_Atributos['codigo_usuario']."'";
+		$this->f_Con();
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		$x=0;
+		while($la_registros=$this->f_Arreglo($lr_tabla)){
+			$la_respuesta[$x]['codigo']=$la_registros['codigo_rol'];
+			$la_respuesta[$x]['nombre']=$la_registros['nombre_rol'];
+			$la_respuesta[$x]['llave_acceso']=$la_registros['llave_acceso'];
+			$x++;
+		}
+		$this->f_Cierra($lr_tabla);
+		$this->f_Des();
+		return $la_respuesta;
+	}
 }
 ?>
