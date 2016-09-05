@@ -1,7 +1,7 @@
 <?php
   class cls_Conexion { 												//Declarar clase Abstracta Modelo
-	protected  $db_host = '192.168.88.14';									//Nombre del Host local
-	//protected  $db_host = '200.35.72.145';									//Nombre del Host Remoto
+	//protected  $db_host = '192.168.88.14';									//Nombre del Host local
+	protected  $db_host = '200.35.72.145';									//Nombre del Host Remoto
 	private $db_usuario = 'soca';									//Nombre del Usuario
 	private  $db_password = '1234';											//Password de la BD.
 	private  $db_num_db	 ='';

@@ -39,10 +39,13 @@ class cls_Permisos extends cls_Conexion{
 		while($la_registro=$this->f_Arreglo($lr_tabla)){
 			$la_Privilegios[$x]['titulo']=$la_registro['titulo'];
 			$la_Privilegios[$x]['URL']=$la_registro['url'];
+			$la_Privilegios[$x]['URLSecundario']=$la_registro['url_secundario'];
 			$la_Privilegios[$x]['codigo']=$la_registro['componente'];
 			$la_Privilegios[$x]['padre']=$la_registro['padre'];
 			$la_Privilegios[$x]['tit_padre']=$la_registro['titulo_padre'];
 			$la_Privilegios[$x]['llave_acceso']=$la_registro['llave_acceso'];
+			//TODO: carga de operaciones
+			//$la_privilegios[$x]['operaciones']=$this->f_ObtenerOperaciones($la_registro['codigo']);
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -77,6 +80,9 @@ class cls_Permisos extends cls_Conexion{
 			}
 		}
 		return $llaves;
+	}
+	public function f_ObtenerOperaciones($codigo_privilegio){
+
 	}
 }
 ?>
