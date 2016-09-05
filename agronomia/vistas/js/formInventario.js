@@ -1,5 +1,5 @@
 construirUI = function(){
-  armarListaProductores(document.querySelector('div[contenedor]'));
+  armarListaOrganizaciones(document.querySelector('div[contenedor]'));
   var btnNuevo = UI.elementos.botonera.buscarBoton('nuevo');
   btnNuevo.nodo.onclick = productorNuevo;
 };
@@ -7,11 +7,11 @@ var productorNuevo = function(){
   var nuevo = UI.crearVentanaModal({
     contenido: 'ancho',
     cabecera:{
-      html: 'Nuevo '+UI.buscarConstructor('productor').formulario.titulo
+      html: 'Nuevo '+UI.buscarConstructor('productor').titulo
     },
     cuerpo:{
-      alto: UI.buscarConstructor('productor').formulario.altura,
-      campos: UI.buscarConstructor('productor').formulario.campos
+      tipo: 'nuevo',
+      formulario:UI.buscarConstructor('productor'),
     },
     pie:{
         html:   '<section modalButtons>'+
@@ -20,10 +20,14 @@ var productorNuevo = function(){
                 '</section>'
     }
   });
+  nuevo.partes.pie.nodo.querySelector("button.icon-cerrar-rojo-32").onclick = function(){
+    UI.elementos.modalWindow.eliminarUltimaCapa();
+  };
+  //TODO: funcionamiento guardado formulario
 };
-armarListaProductores = function(contenedor){
+armarListaOrganizaciones = function(contenedor){
   var lista = UI.agregarLista({
-    titulo: 'Cañicultores',
+    titulo: 'Organizaciones',
     clases: ['ventana'],
     campo_nombre: UI.buscarConstructor('productor').campo_nombre,
     carga: {
@@ -31,7 +35,7 @@ armarListaProductores = function(contenedor){
       peticion:{
          modulo: UI.buscarConstructor('productor').modulo,
          entidad: UI.buscarConstructor('productor').nombre,
-         operacion: "buscar"
+         operacion: "listarProductores"
       },
       espera:{
         cuadro:{
@@ -39,21 +43,64 @@ armarListaProductores = function(contenedor){
           mensaje: 'Cargando registros'
         }
       },
-      respuesta: function prueba(){
+      respuesta: function(lista){
         var slot;
-        var lista = UI.buscarVentana('Cañicultores');
-        for (var i = 0; i < lista.Slots.length; i++) {
-          slot = lista.Slots[i];
+        lista.Slots.forEach(function(slot){
           slot.nodo.setAttribute('codigo',slot.atributos.codigo);
           slot.nodo.setAttribute('nombre_completo',slot.atributos.nombre_completo);
-          slot.nodo.onclick=editarProductor;
-        }
+          slot.nodo.onclick = function(){
+            armarListaProductores(slot.atributos.rif);
+          };
+        });
       }
     },
     paginacion: {
       uso:false
     }
   },contenedor);
+};
+armarListaProductores = function(rif){
+  if(UI.buscarVentana('listadoCanicultores')){
+      var listado = UI.buscarVentana('listadoCanicultores');
+      listado.atributos.carga.peticion.valor = rif;
+      listado.recargar();
+      cerrarFormulario('productor');
+  }else{
+    var lista = UI.agregarLista({
+      titulo: 'Cañicultores',
+      nombre:'listadoCanicultores',
+      clases: ['ventana','not-first'],
+      campo_nombre: UI.buscarConstructor('productor').campo_nombre,
+      tamano:'libre',
+      columnas:3,
+      carga: {
+        uso:true,
+        peticion:{
+           modulo: UI.buscarConstructor('productor').modulo,
+           entidad: UI.buscarConstructor('productor').nombre,
+           operacion: "buscar",
+           valor: rif
+        },
+        espera:{
+          cuadro:{
+            nombre: 'cargandoPro',
+            mensaje: 'Cargando registros'
+          }
+        },
+        respuesta: function(lista){
+          var slot;
+          lista.Slots.forEach(function(slot){
+            slot.nodo.setAttribute('codigo',slot.atributos.codigo);
+            slot.nodo.setAttribute('nombre_completo',slot.atributos.nombre_completo);
+            slot.nodo.onclick=editarProductor;
+          });
+        }
+      },
+      paginacion: {
+        uso:false
+      }
+    },document.body.querySelector('div[contenedor]'));
+  }
 };
 var editarProductor = function(){
   var nodoPro = this;
@@ -62,7 +109,7 @@ var editarProductor = function(){
     formModificar = UI.agregarVentana({
       nombre:'editarProductor',
       tipo: 'formulario',
-      clases: ['not-first'],
+      clases: ['not-first','last'],
       sectores:[
         {
           nombre:'carga',
@@ -73,6 +120,9 @@ var editarProductor = function(){
   }else{
     formModificar = UI.buscarVentana('editarProductor');
     for (var i = formModificar.sectores.length -1 ; i > -1 ; i--){
+      if(UI.buscarVentana('listado de finca')){
+        UI.quitarVentana('listado de finca');
+      }
       formModificar.desvanecerSector(formModificar.sectores[i].atributos.nombre);
     }
     setTimeout(function () {
@@ -83,7 +133,7 @@ var editarProductor = function(){
     }, 600);
   }
 };
-var  formEditarPro = function(nodoPro){
+var formEditarPro = function(nodoPro){
   var peticion = {
      modulo: "agronomia",
      entidad: "productor",
@@ -98,59 +148,26 @@ var  formEditarPro = function(nodoPro){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(respuesta){
-    var  ventanaEditar= UI.buscarVentana('editarProductor');
-    ventanaEditar.quitarSector('carga');
-    ventanaEditar.agregarSector({
-      nombre:'formulario',
-      alto : UI.buscarConstructor('productor').formulario.alto,
-      campos : UI.buscarConstructor('productor').formulario.campos,
-      campo_nombre :  UI.buscarConstructor('productor').campo_nombre
-    });
-    UI.asignarValores(respuesta.registros,ventanaEditar.buscarSector('formulario'));
-    //sector Listado
-    agregarListadoFincas(respuesta.registros.codigo_productor,ventanaEditar);
-    var botonera = crearBotonera(ventanaEditar,'fincas');
+    UI.buscarVentana('editarProductor').desvanecerSector('carga');
+    modificar(respuesta.registros,respuesta.entidad);
   });
 };
-//-----------------------------------Fincas---------------------------
-var agregarListadoFincas = function(codigo_productor,ventana){
-  var contList = ventana.agregarSector({
-    nombre:'listado',
-  });
-  var listaFincas = UI.agregarLista({
-    titulo: 'Listado fincas',
-    clase: 'embebida',
-    campo_nombre: UI.buscarConstructor('finca').campo_nombre,
-    carga: {
-      uso:true,
-      peticion:{
-         modulo: "agronomia",
-         entidad: "finca",
-         operacion: "buscarFincasPorProductor",
-         codigo_productor: codigo_productor
-      },
-      espera:{
-        cuadro:{
-          nombre: 'cargaFincas',
-          mensaje: 'Cargando Fincas'
+function existeCanicultor(campo){
+  var peticion = {
+     modulo: "agronomia",
+     entidad: "productor",
+     operacion: "consultarProductor",
+     codigo: yo.captarValor()
+  };
+  torque.operacion(peticion,function(respuesta){
+    var formulario;
+    if(respuesta.registro){
+        if(UI.elementos.modalWindow.buscarUltimaCapaContenido()){
+          formulario = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
+        }else if(UI.buscarVentana('editarProductor').buscarSector('formproductor')){
+          formulario = UI.buscarVentana('editarProductor').buscarSector('formproductor').formulario;
         }
-      },
-      respuesta: function(){
-        var lista = UI.buscarVentana('Fincas');
-      }
-    },
-    paginacion: {
-      uso:false
+        formulario.asignarValores(respuesta.registro);
     }
-  },contList.nodo);
-};
-//-----------------------------------Generales---------------------------
-crearBotonera = function(contenedor,nombre){
-  var botonera = contenedor.agregarSector({
-    nombre:'botonera '+nombre,
-    html: '<section botonera>'+
-      '<button type="button" class="icon icon-green-add"></button>'+
-      '</section>'
   });
-  return botonera;
-};
+}

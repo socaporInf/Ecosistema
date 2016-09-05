@@ -14,6 +14,20 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+	case 'estado':
+		include_once('../clases/cls_Estado.php');
+		$lobj_Entidad = new cls_Estado;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
+	case 'municipio':
+		include_once('../clases/cls_Municipio.php');
+		$lobj_Entidad = new cls_Municipio;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'noticia':
 		include_once('../clases/cls_Noticia.php');
 		$lobj_Entidad = new cls_Noticia;

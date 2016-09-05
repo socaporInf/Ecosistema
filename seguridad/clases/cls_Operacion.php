@@ -20,9 +20,12 @@ class cls_Operacion extends cls_Conexion{
 			case 'buscar':
 				$registros=$this->f_Listar();
 				if(count($registros)!=0){
-					$success=1;
-					$respuesta['registros']=$registros;
-				}
+	           $success=1;
+	           $respuesta['registros']=$registros;
+	        }else{
+	           $respuesta['success'] = 0;
+	           $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+	        }
 				break;
 
 			case 'buscarRegistro':

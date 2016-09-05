@@ -4,7 +4,7 @@ function construirUI(){
 	var secNot = document.querySelector('div[notificaciones]');
 	//notificaciones
 	var notificaciones = UI.agregarLista({
-		titulo: 'notificaciones',
+		titulo: 'Notificaciones',
 		clases: ['notificaciones'],
 		carga: {
 			uso:true,
@@ -15,7 +15,7 @@ function construirUI(){
 			},
 			espera:{
 				cuadro:{
-					nombre: 'notificaciones',
+					nombre: 'Notificaciones',
 					mensaje: 'Cargando notificaciones'
 				}
 			},

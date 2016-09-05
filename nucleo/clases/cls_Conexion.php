@@ -1,7 +1,7 @@
 <?php
-   class cls_Conexion { 												//Declarar clase Abstracta Modelo
-	protected  $db_host = '192.168.88.14';									//Nombre del Host local
-	//protected  $db_host = '200.35.72.145';									//Nombre del Host Remoto
+  class cls_Conexion { 												//Declarar clase Abstracta Modelo
+	//protected  $db_host = '192.168.88.14';									//Nombre del Host local
+	protected  $db_host = '200.35.72.145';									//Nombre del Host Remoto
 	private $db_usuario = 'soca';									//Nombre del Usuario
 	private  $db_password = '1234';											//Password de la BD.
 	private  $db_num_db	 ='';
@@ -24,7 +24,7 @@
 	}
 
 	protected function setDatosConexion($pcUsuario, $pcPassword){
-		$this->db_usuario=$pcUsuario;
+		$this->db_usuario=strtolower($pcUsuario);
 		$this->db_password=$pcPassword;
 	}
 /*-----------------------------------
@@ -140,8 +140,10 @@
 		$ls_Sql = '';
 		for($x = 0; $x < count($pa_Campos);$x++){
 			if($this->evaluarCampo($pa_Campos[$x],$pa_Peticion)){
-				$ls_Sql = $this->evaluarComa($contCampos,$ls_Sql);
-				$ls_Sql.= $pa_Campos[$x]."='".$pa_Peticion[$pa_Campos[$x]]."' ";
+				if($pa_Peticion[$pa_Campos[$x]]!='null'){
+					$ls_Sql = $this->evaluarComa($contCampos,$ls_Sql);
+					$ls_Sql.= $pa_Campos[$x]."='".$pa_Peticion[$pa_Campos[$x]]."' ";
+				}
 				$contCampos++;
 			}
 		}

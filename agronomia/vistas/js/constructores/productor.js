@@ -2,8 +2,10 @@ productor= {
 	nombre: 'productor',
  	modulo: 'agronomia',
 	campo_nombre: 'nombre_completo',
+	campo_codigo:'codigo_productor',
+	entidad_hijo:'finca',
 	titulo: 'Cañicultor',
-	altura: 220,
+	altura: 150,
 	campos:[
 		{
 			tipo: 'campoIdentificacion',
@@ -29,10 +31,10 @@ productor= {
 		      titulo:'Tipo de Persona',
 		      nombre:'codigo_tipo_persona',
 		      requerido:true,
-						eslabon:'simple',
+					eslabon:'simple',
 		      peticion:{
-			        entidad: 'tablaVirtual',
-			        operacion: 'listarRegistros',
+			        entidad: 'registroVirtual',
+			        operacion: 'listar',
 							nombre_tabla: 'TIPO_PERSONA',
 							modulo: 'seguridad'
 			      },

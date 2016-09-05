@@ -19,15 +19,28 @@ class cls_Productor extends cls_Conexion{
    $lobj_Mensaje = new cls_Mensaje_Sistema;
    switch ($this->aa_Atributos['operacion']) {
      case 'buscar':
-       $registros=$this->f_Listar();
-       if(count($registros)!=0){
+       $lb_Enc=$this->f_Listar();
+       if($lb_Enc){
          $success=1;
-         $respuesta['registros']=$registros;
+         $respuesta['registros']=$this->aa_Atributos['registros'];
+         $respuesta['paginas']=$this->aa_Atributos['paginas'];
        }else{
          $respuesta['success'] = 0;
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
        }
        break;
+
+    case 'listarProductores':
+     $lb_Enc=$this->f_ListarProductores();
+     if($lb_Enc){
+       $success=1;
+       $respuesta['registros']=$this->aa_Atributos['registros'];
+       $respuesta['paginas']=$this->aa_Atributos['paginas'];
+     }else{
+       $respuesta['success'] = 0;
+       $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+     }
+     break;
 
      case 'buscarRegistro':
        $lb_Enc=$this->f_buscar();
@@ -54,6 +67,14 @@ class cls_Productor extends cls_Conexion{
        $respuesta = $this->f_Modificar();
        break;
 
+     case 'consultarProductor':
+       $lb_Enc=$this->f_ConsultarProductor();
+       if($lb_Enc){
+          $respuesta['registros']=$this->aa_Atributos['registro'];
+          $success=1;
+       }
+       break;
+
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
        $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -67,19 +88,83 @@ class cls_Productor extends cls_Conexion{
  }
  private function f_Listar(){
    $x=0;
+   //varibles paginacion
+   $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
+   $paginaActual = $this->aa_Atributos['pagina'] - 1;
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%'";
+   $numero_registros = $this->f_ObtenerNumeroRegistrosProductores($cadenaBusqueda);
+   $paginas = $numero_registros / $registrosPorPagina;
+   $paginas = ceil($paginas) - 1;
+   $offset = $paginaActual * $registrosPorPagina;
+
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vproductor ";
+   $ls_Sql="SELECT * FROM agronomia.vproductor $cadenaBusqueda LIMIT $registrosPorPagina OFFSET $offset";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['codigo_productor'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
+     $la_respuesta[$x]['rif']=$la_registros['rif'];
      $x++;
    }
+
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   return $la_respuesta;
+   $this->aa_Atributos['paginas'] = $paginas;
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return true;
  }
+
+ private function f_ListarProductores(){
+   $x=0;
+   //varibles paginacion
+   $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
+   $paginaActual = $this->aa_Atributos['pagina'] - 1;
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where nombre_completo like '%".$this->aa_Atributos['valor']."%'";
+   $numero_registros = $this->f_ObtenerNumeroRegistrosProductores($cadenaBusqueda);
+   $paginas = $numero_registros / $registrosPorPagina;
+   $paginas = ceil($paginas) - 1;
+   $offset = $paginaActual * $registrosPorPagina;
+
+   $la_respuesta=array();
+   $ls_Sql="SELECT * FROM agronomia.vproductor_organizacion $cadenaBusqueda order by nombre_completo LIMIT $registrosPorPagina OFFSET $offset ";
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['codigo']=$la_registros['codigo_productor'];
+     $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
+     $la_respuesta[$x]['rif']=$la_registros['rif'];
+     $x++;
+   }
+
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   $this->aa_Atributos['paginas'] = $paginas;
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return $lb_Enc;
+ }
+
+   private function f_ObtenerNumeroRegistros($cadenaBusqueda){
+      $ls_Sql="SELECT * FROM agronomia.vproductor $cadenaBusqueda ";
+      $this->f_Con();
+      $lr_tabla=$this->f_Filtro($ls_Sql);
+      $registros = $this->f_Registro($lr_tabla);
+      $this->f_Cierra($lr_tabla);
+      $this->f_Des();
+      return $registros;
+   }
+   private function f_ObtenerNumeroRegistrosProductores($cadenaBusqueda){
+      $ls_Sql="SELECT * FROM agronomia.vproductor_organizacion $cadenaBusqueda ";
+      $this->f_Con();
+      $lr_tabla=$this->f_Filtro($ls_Sql);
+      $registros = $this->f_Registro($lr_tabla);
+      $this->f_Cierra($lr_tabla);
+      $this->f_Des();
+      return $registros;
+   }
+
 
  private function f_Buscar(){
    $lb_Enc=false;
@@ -117,26 +202,39 @@ class cls_Productor extends cls_Conexion{
    $this->f_Des();
    return false;
  }
- private function f_Modificar(){
-   $lb_Hecho=false;
-   $contCampos = 0;
-   $ls_Sql="UPDATE agronomia.vproductor SET ";
+   private function f_Modificar(){
+      $lb_Hecho=false;
+      $contCampos = 0;
+      $ls_Sql="UPDATE agronomia.vproductor SET ";
 
-   //arma la cadena sql en base a los campos pasados en la peticion
-   $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
+      //arma la cadena sql en base a los campos pasados en la peticion
+      $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-   $ls_Sql.="WHERE codigo_productor ='".$this->aa_Atributos['codigo_productor']."'";
-   $this->f_Con();
-   $lb_Hecho=$this->f_Ejecutar($ls_Sql);
-   $this->f_Des();
+      $ls_Sql.="WHERE codigo_productor ='".$this->aa_Atributos['codigo_productor']."'";
+      $this->f_Con();
+      $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+      $this->f_Des();
 
-
-   if($lb_Hecho){
-     $this->f_Buscar();
-     $respuesta['registro'] = $this->aa_Atributos['registro'];
-     $respuesta['success'] = 1;
+      if($lb_Hecho){
+         $this->f_Buscar();
+         $respuesta['registro'] = $this->aa_Atributos['registro'];
+         $respuesta['success'] = 1;
+      }
+      return $respuesta;
    }
-   return $respuesta;
- }
+   private function f_ConsultarProductor(){
+      //incluyo la clase de la organizacion
+      include_once('../../global/clases/cls_Organizacion.php');
+      $lobj_Organizacion = new cls_Organizacion();
+      //busco si existe ese rif como organizacion
+      $la_Peticion = $this->aa_Atributos;
+      $la_Peticion['operacion'] = 'buscar';
+      $lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+      //si lo consigue lo busco como productor
+      if(count($respuesta['registro'])){
+         $this->f_Buscar();
+      }
+   }
 }
 ?>

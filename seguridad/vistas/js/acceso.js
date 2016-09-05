@@ -7,7 +7,7 @@ function accesar(){
 		UI.agregarToasts({
 			texto:'Debe llenar ambos campos antes de poder continuar',
 			tipo: 'web-arriba-derecha-alto'
-		})
+		});
 		return;
 	}
 	conexionAcc=crearXMLHttpRequest();
@@ -15,7 +15,7 @@ function accesar(){
 	conexionAcc.open('POST','seguridad/controladores/cor_validar.php', true);
 	conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	var envio="Operacion="+encodeURIComponent("acceso");
-	envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Pass="+encodeURIComponent(campPass.value);
+	envio+="&Nombre="+encodeURIComponent(campNom.value.toUpperCase())+"&Pass="+encodeURIComponent(campPass.value.toUpperCase());
 	campPass.value='';
 	conexionAcc.send(envio);
 }
@@ -35,7 +35,7 @@ function procesarAcc(){
 
 			//construyo la ventana modal
 			var capaContenido = UI.crearVentanaModal(ventana,true);
-			capaContenido.nodo.style.height='430px';
+			capaContenido.nodo.style.height='300px';
 
 			//obtengo los botones
 			var btnCancelar = document.getElementById("modalButtonCancelar");
@@ -67,15 +67,22 @@ function procesarAcc(){
 	}
 }
 buscarEmpresas = function(callback){
+	var campNom=document.getElementById('nomUsu');
 	var conexionBuscar=crearXMLHttpRequest();
 	conexionBuscar.onreadystatechange = function(){
 		if (conexionBuscar.readyState == 4){
-					callback(JSON.parse(conexionBuscar.responseText));
+			var respuesta = JSON.parse(conexionBuscar.responseText);
+			if(respuesta.success){
+				callback(respuesta);
+			}else{
+				console.log(respuesta.mensaje);
+				UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 			}
+		}
 	};
-	conexionBuscar.open('POST','global/controladores/cor_Motor.php', true);
+	conexionBuscar.open('POST','seguridad/controladores/cor_validar.php', true);
 	conexionBuscar.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-	var envio="operacion="+encodeURIComponent("buscar")+'&entidad='+encodeURIComponent('empresa');
+	var envio="Operacion="+encodeURIComponent("buscarEmpresasDisponibles")+'&Nombre='+encodeURIComponent(campNom.value.toUpperCase());
 	conexionBuscar.send(envio);
 };
 function iniciarSession(nodo){
@@ -90,7 +97,6 @@ function iniciarSession(nodo){
 	        if(respuesta.success==1){
 	        	location.href='global/vistas/vis_Landing.html';
 	        }else{
-	        	console.log(respuesta.mensaje);
 	        	html+="<atricle>"+respuesta.mensaje+"</article>";
 	        	capaContenido.partes.cuerpo.nodo.innerHTML=html;
 	        }
@@ -99,7 +105,7 @@ function iniciarSession(nodo){
 	conexionAcc.open('POST','seguridad/controladores/cor_validar.php', true);
 	conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	var envio="Operacion="+encodeURIComponent("iniciarSession");
-	envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Empresa="+encodeURIComponent(nodo.getAttribute('valor'));
+	envio+="&Nombre="+encodeURIComponent(campNom.value.toUpperCase())+"&Empresa="+encodeURIComponent(nodo.getAttribute('valor'));
 	conexionAcc.send(envio);
 	var capaContenido = UI.elementos.modalWindow.buscarUltimaCapaContenido();
 	var info={
@@ -109,5 +115,4 @@ function iniciarSession(nodo){
 	capaContenido.partes.cuerpo.nodo.innerHTML='';
 	var cuadroDeCarga=UI.crearCuadroDeCarga(info,capaContenido.partes.cuerpo.nodo);
 	cuadroDeCarga.style.marginTop='80px';
-
 }
