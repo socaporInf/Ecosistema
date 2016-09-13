@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Tablon extends cls_Conexion{
 
- private $aa_Atributos = array();
+ protected $aa_Atributos = array();
  private $aa_Campos = array('id_tablon','codigo_tablon','codigo_lote','codigo_clase','codigo_variedad','codigo_tipo_corte','codigo_indicador_cana_diferida','area_cana','area_semilla','fecha_siembra_corte','fecha_ultimo_arrime','toneladas_estimadas_hectarea','toneladas_real','toneladas_azucar');
 
  public function setPeticion($pa_Peticion){
@@ -93,17 +93,11 @@ class cls_Tablon extends cls_Conexion{
  }
  private function f_BuscarTablonesPorLote(){
    $x=0;
-    //varibles paginacion
-   $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
-   $paginaActual = $this->aa_Atributos['pagina'] - 1;
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_tablon like '%".$this->aa_Atributos['valor']."%'";
-   $numero_registros = $this->f_ObtenerNumeroRegistrosTablones($cadenaBusqueda);
-   $paginas = $numero_registros / $registrosPorPagina;
-   $paginas = ceil($paginas);
-   $offset = $paginaActual * $registrosPorPagina;
-
+   $ls_SqlBase="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda ";
+   $orden = ' order by codigo_tablon';
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda order by codigo_tablon LIMIT $registrosPorPagina OFFSET $offset " ;
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -132,20 +126,11 @@ class cls_Tablon extends cls_Conexion{
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   $this->aa_Atributos['paginas'] = $paginas;
    $this->aa_Atributos['registros'] = $la_respuesta;
    $lb_Enc=($x == 0)?false:true;
-   return true;
+   return $lb_Enc;
 }
-private function f_ObtenerNumeroRegistrosTablones($cadenaBusqueda){
-   $ls_Sql="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda" ;
-   $this->f_Con();
-   $lr_tabla=$this->f_Filtro($ls_Sql);
-   $registros = $this->f_Registro($lr_tabla);
-   $this->f_Cierra($lr_tabla);
-   $this->f_Des();
-   return $registros;
-}
+
 private function f_Buscar(){
   $lb_Enc = false;
   $la_respuesta=array();

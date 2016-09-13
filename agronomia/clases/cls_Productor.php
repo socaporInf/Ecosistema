@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Productor extends cls_Conexion{
 
- private $aa_Atributos = array();
+ protected $aa_Atributos = array();
  private $aa_Campos = array('codigo_productor','nombre_completo','rif',codigo_tipo_persona,'tipo_persona');
 
  public function setPeticion($pa_Peticion){
@@ -88,17 +88,11 @@ class cls_Productor extends cls_Conexion{
  }
  private function f_Listar(){
    $x=0;
-   //varibles paginacion
-   $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
-   $paginaActual = $this->aa_Atributos['pagina'] - 1;
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%'";
-   $numero_registros = $this->f_ObtenerNumeroRegistrosProductores($cadenaBusqueda);
-   $paginas = $numero_registros / $registrosPorPagina;
-   $paginas = ceil($paginas) - 1;
-   $offset = $paginaActual * $registrosPorPagina;
-
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vproductor $cadenaBusqueda LIMIT $registrosPorPagina OFFSET $offset";
+   $ls_SqlBase="SELECT * FROM agronomia.vproductor $cadenaBusqueda";
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
+
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -110,7 +104,6 @@ class cls_Productor extends cls_Conexion{
 
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   $this->aa_Atributos['paginas'] = $paginas;
    $this->aa_Atributos['registros'] = $la_respuesta;
    $lb_Enc=($x == 0)?false:true;
    return true;
@@ -119,16 +112,11 @@ class cls_Productor extends cls_Conexion{
  private function f_ListarProductores(){
    $x=0;
    //varibles paginacion
-   $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
-   $paginaActual = $this->aa_Atributos['pagina'] - 1;
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where nombre_completo like '%".$this->aa_Atributos['valor']."%'";
-   $numero_registros = $this->f_ObtenerNumeroRegistrosProductores($cadenaBusqueda);
-   $paginas = $numero_registros / $registrosPorPagina;
-   $paginas = ceil($paginas) - 1;
-   $offset = $paginaActual * $registrosPorPagina;
-
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vproductor_organizacion $cadenaBusqueda order by nombre_completo LIMIT $registrosPorPagina OFFSET $offset ";
+   $ls_SqlBase="SELECT * FROM agronomia.vproductor_organizacion $cadenaBusqueda";
+   $orden = "order by nombre_completo";
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -137,34 +125,12 @@ class cls_Productor extends cls_Conexion{
      $la_respuesta[$x]['rif']=$la_registros['rif'];
      $x++;
    }
-
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   $this->aa_Atributos['paginas'] = $paginas;
    $this->aa_Atributos['registros'] = $la_respuesta;
    $lb_Enc=($x == 0)?false:true;
    return $lb_Enc;
  }
-
-   private function f_ObtenerNumeroRegistros($cadenaBusqueda){
-      $ls_Sql="SELECT * FROM agronomia.vproductor $cadenaBusqueda ";
-      $this->f_Con();
-      $lr_tabla=$this->f_Filtro($ls_Sql);
-      $registros = $this->f_Registro($lr_tabla);
-      $this->f_Cierra($lr_tabla);
-      $this->f_Des();
-      return $registros;
-   }
-   private function f_ObtenerNumeroRegistrosProductores($cadenaBusqueda){
-      $ls_Sql="SELECT * FROM agronomia.vproductor_organizacion $cadenaBusqueda ";
-      $this->f_Con();
-      $lr_tabla=$this->f_Filtro($ls_Sql);
-      $registros = $this->f_Registro($lr_tabla);
-      $this->f_Cierra($lr_tabla);
-      $this->f_Des();
-      return $registros;
-   }
-
 
  private function f_Buscar(){
    $lb_Enc=false;

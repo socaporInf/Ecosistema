@@ -117,7 +117,7 @@ function asignarRol(){
     }
   });
   formAsig.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
-    UI.quitarVentana('asignados');
+    //UI.quitarVentana('asignados');
     UI.elementos.modalWindow.eliminarUltimaCapa();
   };
   formAsig.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32').onclick = function(){

@@ -2,7 +2,7 @@
 include_once('cls_Conexion.php');
 class cls_Mensaje_Sistema extends cls_Conexion{
 	
-	private $aa_Atributos = array();
+	protected $aa_Atributos = array();
 	private $aa_Campos = array('codigo','titulo','cuerpo','tipo','descripcion');
 
 	public function setPeticion($pa_Peticion){

@@ -2,7 +2,7 @@
 include_once('../../nucleo/clases/cls_Conexion.php');
 class cls_Acceso extends cls_Conexion{
 
-	private $aa_Atributos = array();
+	protected $aa_Atributos = array();
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
