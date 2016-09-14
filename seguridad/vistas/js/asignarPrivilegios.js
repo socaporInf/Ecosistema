@@ -1,4 +1,5 @@
 //se usa el objeto arbol del archivo arbolRecursivo.js
+//BUG: no guarda la asignacion de operaciones asignadas sobre privilegio
 var ArbolTemp = function(){
 	this.hojas = [];
 

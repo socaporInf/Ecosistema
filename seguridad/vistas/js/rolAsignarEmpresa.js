@@ -1,4 +1,3 @@
-//TODO: funcionamiento nuevo y modificar para este formulario
 function construirUI(){
   UI.elementos.botonera.buscarBoton('nuevo').nodo.onclick = function(){
     nuevoRol();

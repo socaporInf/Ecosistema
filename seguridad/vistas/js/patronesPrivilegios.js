@@ -53,7 +53,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 	return capaContenido;
 }
 function obtenenrValoresFormulario(contenedor){
-	var campos = contenedor.formulario.campos;
+	var campos = contenedor.campos;
 	var data = [];
 	var validado = false;
 	for (var i = 0; i < campos.length; i++) {

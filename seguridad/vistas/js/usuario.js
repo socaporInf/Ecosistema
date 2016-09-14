@@ -73,7 +73,6 @@ function abrirFormSeg(){
     cambiarEstado();
   };
   formSeg.partes.cuerpo.nodo.querySelector('button[clave]').onclick = function(){
-    //TODO: funcionamiento reestablecer clave
     reestablecerClave();
   };
   formSeg.partes.cuerpo.nodo.querySelector('button[rol]').onclick = function(){
@@ -205,6 +204,7 @@ function cambiarEstado(){
     }
   });
   UI.agregarBotoneraStandard(ventana,function(){
+    //TODO: funcionamiento Cli/Serv de guardado de nuevo estado
     console.log(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario.buscarCampo('estado').captarValor());
   },'informacion');
 }
