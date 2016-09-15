@@ -84,7 +84,7 @@ class cls_Permisos extends cls_Conexion{
 		$x=0;
 		$la_Operaciones=array();
 		$ls_Sql="SELECT * from seguridad.voperacion_privilegio
-				WHERE codigo_privilegio = $codigo_privilegio";
+				WHERE codigo_privilegio = $codigo_privilegio AND estado = 'A'";
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registro=$this->f_Arreglo($lr_tabla)){
 			$la_Operaciones[$x]['codigo_operacion']=$la_registro['codigo_operacion'];

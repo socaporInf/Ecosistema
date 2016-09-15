@@ -65,31 +65,35 @@ function construirFormulario(tipo,slot){
 }
 /************************** Editar ********************************************/
 var editarRol = function(slot){
-  if(UI.buscarVentana('Formulario')){
-    var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
-    UI.buscarVentana('Formulario').titulo.nodo.innerHTML = 'MODIFICAR';
-    formulario.deshabilitar();
-    formulario.asignarValores(slot.atributos);
-    formulario.registroId = slot.atributos.codigo;
-    agregarEmpresas(formulario.registroId);
-  }else{
-    construirFormulario('modificar',slot);
-    agregarEmpresas(slot.atributos.codigo);
-  }
-  //Botones
-  UI.elementos.botonera.gestionarBotones({
-    agregar:[
-      'eliminar',
-      {
+  if(sesion.privilegioActivo.buscarOperacion('consultar')){
+    if(UI.buscarVentana('Formulario')){
+      var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+      UI.buscarVentana('Formulario').titulo.nodo.innerHTML = 'MODIFICAR';
+      formulario.deshabilitar();
+      formulario.asignarValores(slot.atributos);
+      formulario.registroId = slot.atributos.codigo;
+      agregarEmpresas(formulario.registroId);
+    }else{
+      construirFormulario('modificar',slot);
+      agregarEmpresas(slot.atributos.codigo);
+    }
+    //Botones
+    var gestionar = {agregar:['eliminar'],quitar:['guardar']};
+    //verifico permisos
+    if(sesion.privilegioActivo.buscarOperacion('incluir')){
+      gestionar.agregar.push({
         tipo:'nuevo',
         click: nuevoRol
-      },{
+      });
+    }
+    if(sesion.privilegioActivo.buscarOperacion('MODIFICAR')){
+      gestionar.agregar.push({
         tipo:'modificar',
         click: modificar
-      }
-    ],
-    quitar:['guardar']
-  });
+      });
+    }
+    UI.elementos.botonera.gestionarBotones(gestionar);
+  }
 };
 function modificar(){
   var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
@@ -103,6 +107,7 @@ function modificar(){
     ],
     quitar:['modificar']
   });
+
 }
 function guardarCambios(){
     var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;

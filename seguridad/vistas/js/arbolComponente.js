@@ -3,6 +3,9 @@ function construirUI(){
 	llenarArbol(formularioArbol);
 	var btnNuevo = document.querySelector('button[btnnuevo]');
 	btnNuevo.onclick = construirFormulario;
+	if(!sesion.buscarPrivilegio('componente').buscarOperacion('incluir')){
+		UI.elementos.botonera.quitarBoton('nuevo');
+	}
 }
 //----------------------------------- formulario Arbol -------------------------------
 function armarVentanaArbol(){
@@ -43,23 +46,27 @@ function llenarArbol(formularioArbol){
 	};
 
 	torque.manejarOperacion(Peticion,infoCuadroCarga,function cargarArbol(respuesta){
+		var opciones = [
+			{
+				clases: ['icon','icon-operaciones-negro-32'],
+				click: buscarOperaciones
+			},{
+				clases: ['icon','icon-campo-negro-32'],
+				click: buscarCampos
+			}
+		];
+		if(sesion.buscarPrivilegio('componente').buscarOperacion('modificar')){
+			opciones.push({
+				clases: ['icon','icon-editar-negro-32'],
+				click: formularioEditarComponente
+			});
+		}
 		arbol = new Arbol({
 			nodos: respuesta.hojasGenereal,
 			hojaOnClick: function editar(hoja){
 					hoja.peciolo.activar();
 			},
-			hojaOpciones:[
-				{
-					clases: ['icon','icon-operaciones-negro-32'],
-					click: buscarOperaciones
-				},{
-					clases: ['icon','icon-campo-negro-32'],
-					click: buscarCampos
-				},{
-					clases: ['icon','icon-editar-negro-32'],
-					click: formularioEditarComponente
-				}
-			],
+			hojaOpciones:opciones,
 			contenedor: UI.buscarVentana('formularioArbol').buscarSector('arbol').nodo
 		});
 	});

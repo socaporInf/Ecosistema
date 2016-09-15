@@ -27,13 +27,16 @@ function construirUI(){
 function activarAsignacion(lista){
   lista.Slots.forEach(function(slot){
     slot.nodo.onclick = function(){
-      if(UI.buscarVentana('asignados')){
-        cerrarFormulario();
-        setTimeout(function () {
+      //PRIVILEGIO: operacion asignar
+      if(sesion.privilegioActivo.buscarOperacion('asignar')){
+        if(UI.buscarVentana('asignados')){
+          cerrarFormulario();
+          setTimeout(function () {
+            crearFormularioAsignacion(slot);
+          }, 810);
+        }else{
           crearFormularioAsignacion(slot);
-        }, 810);
-      }else{
-        crearFormularioAsignacion(slot);
+        }
       }
     };
   });
@@ -84,11 +87,14 @@ function crearFormularioAsignacion(slot){
           }
         },
         respuesta: function(lista){
-          lista.Slots.forEach(function(slot){
-            slot.nodo.onclick = function(){
-              formularioEliminar(slot);
-            };
-          });
+          //PRIVILEGIO: operacion desasignar
+          if(sesion.privilegioActivo.buscarOperacion('desasignar')){
+            lista.Slots.forEach(function(slot){
+              slot.nodo.onclick = function(){
+                formularioEliminar(slot);
+              };
+            });
+          }
         }
       },
       paginacion: {
