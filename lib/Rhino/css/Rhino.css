@@ -608,7 +608,11 @@ div[mat-window].titulo {
     float: left;
     margin-bottom: 10px;
 }
-
+div[mat-window].ventana {
+    width: calc(90%);
+    float: left;
+    margin-bottom: 10px;
+}
 /*-----------------------------titulo---------------------------------------*/
 
 div[mat-window] section[titulo] {
@@ -653,7 +657,7 @@ div[mat-window] section[botonera]{
     height: calc(100%);
     min-height: calc(100%);
 }
-div[mat-window] section[botonera] button.icon{
+section[botonera] button.icon,section.botonera button.icon{
     transition: all 0.2s ease-in-out;
     border: none;
     width: 40px;
@@ -694,5 +698,21 @@ div[mat-window] section[botonera] button.icon{
     div[mat-window].formulario,div[mat-window].ventana{
         width: 100%;
         margin-left: 0px;
+    }
+}
+/*-----------------------------------Media screen-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    div[mat-window].formulario,div[mat-window].ventana,div[mat-window].titulo{
+        width: 100%;
+        margin-left: 0px;
+    }
+    div[mat-window] section[formulario]{
+        height: auto !important;
+    }
+    .group {
+        width: calc(100% - 10px);
+    }
+    div[formElements] {
+        width: calc(100% - 10px);
     }
 }

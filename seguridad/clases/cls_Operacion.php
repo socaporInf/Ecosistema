@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Operacion extends cls_Conexion{
 
-	private $aa_Atributos = array();
+	protected $aa_Atributos = array();
 	private $aa_Campos = array('codigo_operacion','nombre','descripcion');
 
 	public function setPeticion($pa_Peticion){
@@ -20,9 +20,12 @@ class cls_Operacion extends cls_Conexion{
 			case 'buscar':
 				$registros=$this->f_Listar();
 				if(count($registros)!=0){
-					$success=1;
-					$respuesta['registros']=$registros;
-				}
+	           $success=1;
+	           $respuesta['registros']=$registros;
+	        }else{
+	           $respuesta['success'] = 0;
+	           $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+	        }
 				break;
 
 			case 'buscarRegistro':

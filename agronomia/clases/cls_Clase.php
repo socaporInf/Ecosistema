@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Clase extends cls_Conexion{
 
-	private $aa_Atributos = array();
+	protected $aa_Atributos = array();
 	private $aa_Campos = array('codigo_clase','nombre','descripcion');
 
 	public function setPeticion($pa_Peticion){

@@ -1,4 +1,5 @@
 //se usa el objeto arbol del archivo arbolRecursivo.js
+//BUG: no guarda cambios de desacoplado
 var ArbolTemp = function(){
 	this.hojas = [];
 
@@ -198,6 +199,7 @@ function armarVentanaArbol(){
 	},document.querySelector('div[contenedor]'));
 
 	formularioArbol.nodo.classList.add('not-first');
+	formularioArbol.nodo.classList.add('last');
 	formularioArbol.buscarSector('arbol').nodo.style.overflow='auto';
 	formularioArbol.buscarSector('arbol').nodo.style.minHeight='100px';
 
@@ -273,7 +275,7 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 		var btnGuardar = capaContenido.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
 
 		btnGuardar.onclick = function(){
-			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
+			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario);
 			peticion ={
 				entidad : 'privilegio',
 				modulo : 'seguridad',
@@ -304,4 +306,3 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 		UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
 	}
 }
-

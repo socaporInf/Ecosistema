@@ -110,6 +110,11 @@ i{
     color: white ;
     font-size: 24px;
 }
+.icon-white-add:after {
+    content: 'add';
+    color: #4caf50 ;
+    font-size: 24px;
+}
 /*                Material Icons Google                  */
 /* Rules for sizing the icon. */
 .material-icons.md-18 { font-size: 18px; }

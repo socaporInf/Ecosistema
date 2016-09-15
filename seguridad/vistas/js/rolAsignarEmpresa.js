@@ -1,5 +1,9 @@
 function construirUI(){
+  UI.elementos.botonera.buscarBoton('nuevo').nodo.onclick = function(){
+    nuevoRol();
+  };
   var lista =  UI.agregarLista({
+    nombre: 'rol',
     titulo: 'rol',
     clases: ['maestro'],
     campo_nombre: 'nombre',
@@ -23,36 +27,169 @@ function construirUI(){
     onclickSlot: editarRol
   },document.querySelector('div[contenedor]'));
 }
+function construirFormulario(tipo,slot){
+  var sect;
+  if(tipo === 'modificar'){
+    sect = [
+      {
+        nombre:'formulario',
+        tipo: tipo,
+        formulario:UI.buscarConstructor('rol'),
+        registro : slot.atributos
+      },{
+        nombre:'empresas',
+        html: 'aqui van las empresas'
+      }
+    ];
+  }else if(tipo === 'nuevo'){
+    sect = [
+      {
+        nombre:'formulario',
+        tipo: tipo,
+        formulario:UI.buscarConstructor('rol')
+      },{
+        nombre:'empresas'
+      }
+    ];
+  }
+  var ventForm = UI.agregarVentana({
+    nombre:'Formulario',
+    tipo: 'formulario',
+    clases: ['maestro','aparecer'],
+    titulo: {
+      tipo:'basico',
+      html:tipo.toUpperCase()
+    },
+    sectores:sect
+  },document.querySelector('div[contenedor]'));
+}
+/************************** Editar ********************************************/
 var editarRol = function(slot){
-  if(UI.buscarVentana('editarRol')){
-    var formulario = UI.buscarVentana('editarRol').buscarSector('formulario').formulario;
-    formulario.asignarValores(slot.atributos);
-    formulario.registroId = slot.atributos.codigo;
-    agregarEmpresas(formulario.registroId);
-  }else{
-    var ventForm = UI.agregarVentana({
-      nombre:'editarRol',
-      tipo: 'formulario',
-      clases: ['maestro','aparecer'],
-      titulo: {
-        tipo:'basico',
-        html:'Modificar '+slot.atributos.nombre
-      },
-      sectores:[
-        {
-          nombre:'formulario',
-          tipo: 'modificar',
-          formulario:UI.buscarConstructor('rol'),
-          registro : slot.atributos
-        },{
-          nombre:'empresas',
-          html: 'aqui van las empresas'
-        }
-      ]
-    },document.querySelector('div[contenedor]'));
-    agregarEmpresas(slot.atributos.codigo);
+  if(sesion.privilegioActivo.buscarOperacion('consultar')){
+    if(UI.buscarVentana('Formulario')){
+      var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+      UI.buscarVentana('Formulario').titulo.nodo.innerHTML = 'MODIFICAR';
+      formulario.deshabilitar();
+      formulario.asignarValores(slot.atributos);
+      formulario.registroId = slot.atributos.codigo;
+      agregarEmpresas(formulario.registroId);
+    }else{
+      construirFormulario('modificar',slot);
+      agregarEmpresas(slot.atributos.codigo);
+    }
+    //Botones
+    var gestionar = {agregar:['eliminar'],quitar:['guardar']};
+    //verifico permisos
+    if(sesion.privilegioActivo.buscarOperacion('incluir')){
+      gestionar.agregar.push({
+        tipo:'nuevo',
+        click: nuevoRol
+      });
+    }
+    if(sesion.privilegioActivo.buscarOperacion('MODIFICAR')){
+      gestionar.agregar.push({
+        tipo:'modificar',
+        click: modificar
+      });
+    }
+    UI.elementos.botonera.gestionarBotones(gestionar);
   }
 };
+function modificar(){
+  var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+  formulario.habilitar();
+  UI.elementos.botonera.gestionarBotones({
+    agregar:[
+      {
+        tipo:'guardar',
+        click:guardarCambios
+      }
+    ],
+    quitar:['modificar']
+  });
+
+}
+function guardarCambios(){
+    var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+    if(formulario.validar()){
+      var peticion = {
+         modulo: "seguridad",
+         entidad: "rol",
+         operacion: "modificar",
+         codigo: formulario.registroId
+      };
+      peticion = UI.juntarObjetos(peticion,formulario.captarValores());
+      var cuadro = {
+        contenedor: UI.buscarVentana('Formulario').buscarSector('formulario').nodo,
+        cuadro:  {
+          nombre: 'guardarCambios',
+          mensaje: 'GuardandoCambios'
+        }
+      };
+      UI.buscarVentana('Formulario').buscarSector('empresas').nodo.innerHTML = '';
+      torque.manejarOperacion(peticion,cuadro,function(respuesta){
+        UI.quitarVentana('Formulario');
+        if(respuesta.success){
+          var lista = UI.buscarVentana('rol');
+          lista.actualizarSlot(respuesta.registro);
+          lista.buscarSlot(respuesta.registro).activar();
+        }else{
+          UI.crearMensaje(respuesta.mensaje);
+        }
+      });
+    }
+}
+/************************** Nuevo *********************************************/
+function nuevoRol(){
+  if(UI.buscarVentana('Formulario')){
+    var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+    formulario.limpiar();
+    formulario.habilitar();
+    UI.buscarVentana('Formulario').titulo.nodo.innerHTML = 'NUEVO';
+    UI.buscarVentana('Formulario').buscarSector('empresas').nodo.innerHTML = "";
+  }else{
+    construirFormulario('nuevo');
+  }
+  //Botones
+  UI.elementos.botonera.gestionarBotones({
+    quitar:['eliminar','nuevo','modificar','guardar'],
+    agregar:[
+      {
+        tipo:'guardar',
+        click:guardar
+      }
+    ]
+  });
+}
+function guardar(){
+  var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+  if(formulario.validar()){
+    var peticion = {
+       modulo: "seguridad",
+       entidad: "rol",
+       operacion: "guardar"
+    };
+    peticion = UI.juntarObjetos(peticion,formulario.captarValores());
+    var cuadro = {
+      contenedor: UI.buscarVentana('Formulario').buscarSector('formulario').nodo,
+      cuadro : {
+        nombre: 'guardar',
+        mensaje: 'guardando Nuevo Registro'
+      }
+    };
+    torque.manejarOperacion(peticion,cuadro,function(respuesta){
+      UI.quitarVentana('Formulario');
+      if(respuesta.success){
+        var lista = UI.buscarVentana('rol');
+        lista.agregarSlot(respuesta.registro);
+        lista.buscarSlot(respuesta.registro).activar();
+      }else{
+        UI.crearMensaje(respuesta.mensaje);
+      }
+    });
+  }
+}
+/************************** Empresas ******************************************/
 function agregarEmpresas(codigo){
   var peticion = {
     entidad : 'rol',
@@ -61,14 +198,14 @@ function agregarEmpresas(codigo){
     codigo: codigo
   };
   var cuadro = {
-    contenedor: UI.buscarVentana('editarRol').buscarSector('empresas').nodo,
+    contenedor: UI.buscarVentana('Formulario').buscarSector('empresas').nodo,
     cuadro:{
       nombre: 'Cargado Detalle',
       mensaje: 'Cargando Detalle'
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(respuesta){
-    var empresas = respuesta.registros;
+    var empresas = respuesta.registros || [];
     var html = '<div>Empresas</div><section contenedor id="contenedorPri"><article add="empresa"></article>';
     for (var i = 0; i < empresas.length; i++) {
       html+="<article rol='"+empresas[i].codigo_rol+
@@ -77,7 +214,7 @@ function agregarEmpresas(codigo){
             empresas[i].nombre+"</article>";
     }
     html += '</section>';
-    var sector = UI.buscarVentana('editarRol').buscarSector('empresas').nodo;
+    var sector = UI.buscarVentana('Formulario').buscarSector('empresas').nodo;
     sector.innerHTML = html;
     activarEmpresas();
   });
@@ -91,15 +228,21 @@ function activarEmpresas(){
   }
 }
 function asignarEmpresa(){
-  var constructor = {
+  var cons = {
+    altura:220,
     campos: [
       {
         tipo: 'comboBox',
         parametros : {
-          nombre:'tipoComponente',
-          titulo:'Tipos de Componente',
+          nombre:'empresa',
+          titulo:'Empresa',
           eslabon : 'area',
-          //TODO: carga de base de datos
+          peticion : {
+    			   modulo: "seguridad",
+    			   entidad: "rol",
+    			   operacion: "buscarDisponible",
+             codigo: UI.buscarVentana('rol').obtenerSeleccionado().atributos.codigo
+    			}
         }
       }
     ]
@@ -110,7 +253,7 @@ function asignarEmpresa(){
     },
     cuerpo: {
       tipo: 'asignacion',
-      formulario: constructor
+      formulario: cons
     },
     pie:{
         html: '<section modalButtons>'+
@@ -119,6 +262,36 @@ function asignarEmpresa(){
             '</section>'
       }
   });
+  ventanaAsignar.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){UI.elementos.modalWindow.eliminarUltimaCapa();};
+  var btnGuardar = ventanaAsignar.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
+  btnGuardar.onclick = function(){
+    if(ventanaAsignar.partes.cuerpo.formulario.buscarCampo('empresa').captarValor()){
+      var empresa = ventanaAsignar.partes.cuerpo.formulario.buscarCampo('empresa').captarValor();
+      var peticion = {
+         modulo: "seguridad",
+         entidad: "rol",
+         operacion: "guardarDetalle",
+         codigo: UI.buscarVentana('rol').obtenerSeleccionado().atributos.codigo,
+         codigo_empresa: empresa
+      };
+      var cuadro = {
+        contenedor: ventanaAsignar.partes.cuerpo.nodo,
+        cuadro: {
+          nombre: 'guardarDetalle',
+          mensaje: 'Guardando Cambios'
+        }
+      };
+      torque.manejarOperacion(peticion,cuadro,function(){
+        UI.elementos.modalWindow.eliminarUltimaCapa();
+        agregarEmpresas(UI.buscarVentana('rol').obtenerSeleccionado().atributos.codigo);
+      });
+    }else{
+      UI.agregarToasts({
+        texto: 'Elija una empresa antes de continuar',
+        tipo: 'web-arriba-derecha-alto'
+      });
+    }
+  };
 }
 function abrirEdicionAsignacion(){
   var nodo = this;

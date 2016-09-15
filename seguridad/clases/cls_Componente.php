@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Componente extends cls_Conexion{
 
- private $aa_Atributos = array();
+ protected $aa_Atributos = array();
  private $aa_Campos = array('codigo_componente','titulo','componente_padre','tipo','color','icono','enlace','descripcion');
 
  public function setPeticion($pa_Peticion){
@@ -19,13 +19,14 @@ class cls_Componente extends cls_Conexion{
     $lobj_Mensaje = new cls_Mensaje_Sistema;
    switch ($this->aa_Atributos['operacion']) {
      case 'buscar':
-       $registros=$this->f_Listar();
-       if(count($registros)!=0){
-          $success=1;
-          $respuesta['registros']=$registros;
+       $lb_Enc=$this->f_Listar();
+       if($lb_Enc){
+         $success=1;
+         $respuesta['registros']=$this->aa_Atributos['registros'];
+         $respuesta['paginas']=$this->aa_Atributos['paginas'];
        }else{
-          $respuesta['success'] = 0;
-          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+         $respuesta['success'] = 0;
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
        }
        break;
 
@@ -66,19 +67,30 @@ class cls_Componente extends cls_Conexion{
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM seguridad.vcomponente ";
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where titulo like '%".$this->aa_Atributos['valor']."%'";
+   $ls_SqlBase="SELECT * FROM seguridad.vcomponente $cadenaBusqueda";
+   $orden = " ORDER BY componente_padre ";
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['titulo']=$la_registros['titulo'];
+     $la_respuesta[$x]['color']=$la_registros['color'];
+     $la_respuesta[$x]['Componente Padre']=$la_registros['titulo_padre'];
+     $la_respuesta[$x]['enlace']=$la_registros['enlace'];
+     $la_respuesta[$x]['icono']=$la_registros['icono'];
+     $la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+     $la_respuesta[$x]['padre']=$la_registros['componente_padre'];
      $la_respuesta[$x]['codigo']=$la_registros['codigo_componente'];
      $la_respuesta[$x]['nombre']=$la_registros['titulo'];
-     $la_respuesta[$x]['titulo']=$la_registros['titulo'];
-     $la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+     $la_respuesta[$x]['tipocomponente']=$la_registros['tipo'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   return $la_respuesta;
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return $lb_Enc;
  }
 
  private function f_Buscar(){
@@ -88,15 +100,16 @@ class cls_Componente extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta['codigo']=$la_registros['codigo_componente'];
-     $la_respuesta['nombre']=$la_registros['titulo'];
      $la_respuesta['titulo']=$la_registros['titulo'];
      $la_respuesta['color']=$la_registros['color'];
+     $la_respuesta['tipocomponente']=$la_registros['tipo'];
+     $la_respuesta['descripcion']=$la_registros['descripcion'];
+     $la_respuesta['Componente Padre']=$la_registros['titulo_padre'];
      $la_respuesta['enlace']=$la_registros['enlace'];
      $la_respuesta['icono']=$la_registros['icono'];
      $la_respuesta['padre']=$la_registros['componente_padre'];
-     $la_respuesta['tipocomponente']=$la_registros['tipo'];
-     $la_respuesta['descripcion']=$la_registros['descripcion'];
+     $la_respuesta['codigo']=$la_registros['codigo_componente'];
+     $la_respuesta['nombre']=$la_registros['titulo'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);

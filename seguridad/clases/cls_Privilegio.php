@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Privilegio extends cls_Conexion{
 
-	private $aa_Atributos = array();
+	protected $aa_Atributos = array();
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -37,7 +37,7 @@ class cls_Privilegio extends cls_Conexion{
 					$success=1;
 				}else{
 					$respuesta['success'] = 0;
-					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(21);
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(22);
 				}
 				break;
 
@@ -122,7 +122,7 @@ class cls_Privilegio extends cls_Conexion{
 					$success=1;
 				}else{
 					$respuesta['success'] = 0;
-					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(21);
+					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(20);
 				}
 				break;
 
@@ -162,7 +162,7 @@ class cls_Privilegio extends cls_Conexion{
 	private function f_BuscarArbolPrivilegios(){
 		$x=0;
 		$la_Privilegios=array();
-		$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,codigo from seguridad.varbol_privilegio_usuario where estado_privilegio='A' and llave_acceso='".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,codigo from seguridad.varbol_privilegios where estado_privilegio='A' and llave_acceso='".$this->aa_Atributos['codigo']."'";
 		$ls_Sql.=" group by titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,codigo";
 		$ls_Sql.=" order by padre";
 		$la_Privilegios[0];
@@ -211,7 +211,7 @@ class cls_Privilegio extends cls_Conexion{
 		//si se va a desabilitar alguno entra por este camino
 		if(count($aDesabilitar)!=0){
 			do{
-				$ls_Sql = "	UPDATE seguridad.varbol_privilegio_usuario SET estado_privilegio='I'
+				$ls_Sql = "	UPDATE seguridad.varbol_privilegios SET estado_privilegio='I'
 										WHERE llave_acceso='".$llave_acceso."' AND
 										componente = '".$aDesabilitar[$i]['codigo']."'";
 				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
@@ -226,17 +226,17 @@ class cls_Privilegio extends cls_Conexion{
 		}else{
 			for ($i=0; $i < count($aGuardarValidado) ; $i++) {
 				$lb_Hecho = false;
-				$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,estado_privilegio from seguridad.varbol_privilegio_usuario";
+				$ls_Sql="SELECT titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,estado_privilegio from seguridad.varbol_privilegios";
 				$ls_Sql.=" where llave_acceso='".$this->aa_Atributos['codigo']."' and componente='".$aGuardarValidado[$i]['codigo']."'";
 				$ls_Sql.=" group by titulo,componente,padre,titulo,padre,tipo,llave_acceso,titulo_padre,estado_privilegio";
 				$lr_tabla=$this->f_Filtro($ls_Sql);
 				if($la_registro=$this->f_Arreglo($lr_tabla)){
-					$ls_Sql = "	UPDATE seguridad.varbol_privilegio_usuario SET estado_privilegio='A'
+					$ls_Sql = "	UPDATE seguridad.varbol_privilegios SET estado_privilegio='A'
 											WHERE llave_acceso='".$llave_acceso."'
 											AND componente = '".$aGuardarValidado[$i]['codigo']."'";
 					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				}else{
-					$ls_Sql = "INSERT INTO seguridad.varbol_privilegio_usuario (llave_acceso,componente) values ('".$this->aa_Atributos['codigo']."','".$aGuardarValidado[$i]['codigo']."')";
+					$ls_Sql = "INSERT INTO seguridad.varbol_privilegios (llave_acceso,componente) values ('".$this->aa_Atributos['codigo']."','".$aGuardarValidado[$i]['codigo']."')";
 					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				}
 				$this->f_Cierra($lr_tabla);
@@ -262,15 +262,16 @@ class cls_Privilegio extends cls_Conexion{
 		if($tipo=='componente'){
 			$cadena = $this->aa_Atributos['codigo'];
 		}else if($tipo == 'privilegio' ){
-			$cadena = '('."SELECT componente FROM seguridad.varbol_privilegio_usuario WHERE codigo =".$this->aa_Atributos['codigo'].')';
+			$cadena = '('."SELECT componente FROM seguridad.varbol_privilegios WHERE codigo =".$this->aa_Atributos['codigo'].')';
 		}
 		$ls_Sql="SELECT * from seguridad.vcomponente_operacion WHERE codigo_componente = ".$cadena." AND estado = 'A' ";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['codigo']=$la_registros['codigo'];
 			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre_operacion'];
+			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
 			$i++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -285,7 +286,7 @@ class cls_Privilegio extends cls_Conexion{
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['codigo']=$la_registros['codigo_operacion'];
 			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre'];
 			$i++;
 		}
@@ -301,13 +302,13 @@ class cls_Privilegio extends cls_Conexion{
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$i]['codigo']=$la_registros['codigo'];
 			$la_respuesta[$i]['codigoPrivilegio']=$la_registros['codigo_privilegio'];
 			$la_respuesta[$i]['estadoPrivilegio']=$la_registros['estado_privilegio'];
 			$la_respuesta[$i]['codigoComponente']=$la_registros['codigo_componente'];
 			$la_respuesta[$i]['tituloComponente']=$la_registros['titulo_componente'];
 			$la_respuesta[$i]['tipoComponente']=$la_registros['tipo_componente'];
 			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['codigo']=$la_registros['codigo_operacion_disponible'];
 			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre_operacion'];
 			$i++;
 		}
@@ -322,9 +323,10 @@ class cls_Privilegio extends cls_Conexion{
 		$aGuardar = array();
 		foreach ($data as $llave => $valor) {
 			$valor['codigoOperacion'] = $valor['valor'];
+			$valor['nombreOperacion'] = $valor['nombre'];
 			$aGuardar[$llave] = $valor;
 		}
-		$valores = $this->validarGuardado($aGuardar,$existentes,'codigoOperacion');
+		$valores = $this->validarGuardado($aGuardar,$existentes,'nombreOperacion');
 		$aDesabilitar = $valores['aDesabilitar'];
 		$aGuardarValidado = $valores['aGuardarValidado'];
 		$lb_Hecho = false;
@@ -334,7 +336,7 @@ class cls_Privilegio extends cls_Conexion{
 		if(count($aDesabilitar)!=0){
 			do{
 				$ls_Sql = "	UPDATE seguridad.voperacion_privilegio SET estado='I'
-										WHERE codigo='".$aDesabilitar[$i]['codigo']."'";
+										WHERE codigo_operacion_disponible='".$aDesabilitar[$i]['codigo']."'";
 				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				$i++;
 			}while(($i < count($aDesabilitar)) || ($lb_Hecho == false));
@@ -348,19 +350,16 @@ class cls_Privilegio extends cls_Conexion{
 			for ($i=0; $i < count($aGuardarValidado) ; $i++) {
 				$lb_Hecho = false;
 				$ls_Sql = "SELECT * from seguridad.voperacion_privilegio";
-				$ls_Sql .=" WHERE codigo_privilegio =".$this->aa_Atributos['codigo']."";
-				$ls_Sql .=" AND codigo_operacion =".$aGuardarValidado[$i]['codigoOperacion']."";
+				$ls_Sql .=" WHERE codigo_operacion_disponible =".$aGuardarValidado[$i]['codigoOperacion']."";
 				$lr_tabla=$this->f_Filtro($ls_Sql);
 				if($la_registro=$this->f_Arreglo($lr_tabla)){
 					$ls_Sql = "	UPDATE seguridad.voperacion_privilegio SET estado='A'
-											WHERE codigo_privilegio='".$this->aa_Atributos['codigo']."'
-											AND codigo_operacion = '".$aGuardarValidado[$i]['codigoOperacion']."'";
-					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+											WHERE codigo_operacion_disponible = '".$aGuardarValidado[$i]['codigoOperacion']."'";
 				}else{
-					$ls_Sql = "INSERT INTO seguridad.voperacion_privilegio (codigo_privilegio,codigo_operacion)
+					$ls_Sql = "INSERT INTO seguridad.voperacion_privilegio (codigo_privilegio,codigo_operacion_disponible)
 											values ('".$this->aa_Atributos['codigo']."','".$aGuardarValidado[$i]['codigoOperacion']."')";
-					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				}
+				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				$this->f_Cierra($lr_tabla);
 				if(!$lb_Hecho){
 					$this->f_RollBack();
@@ -384,9 +383,10 @@ class cls_Privilegio extends cls_Conexion{
 		$aGuardar = array();
 		foreach ($data as $llave => $valor) {
 			$valor['codigoOperacion'] = $valor['valor'];
+			$valor['nombreOperacion'] = $valor['nombre'];
 			$aGuardar[$llave] = $valor;
 		}
-		$valores = $this->validarGuardado($aGuardar,$existentes,'codigoOperacion');
+		$valores = $this->validarGuardado($aGuardar,$existentes,'nombreOperacion');
 		$aDesabilitar = $valores['aDesabilitar'];
 		$aGuardarValidado = $valores['aGuardarValidado'];
 		$lb_Hecho = false;
@@ -447,7 +447,7 @@ class cls_Privilegio extends cls_Conexion{
 		if($tipo=='componente'){
 			$cadena = $this->aa_Atributos['codigo'];
 		}else if($tipo == 'privilegio' ){
-			$cadena = '('."SELECT componente FROM seguridad.varbol_privilegio_usuario WHERE codigo =".$this->aa_Atributos['codigo'].')';
+			$cadena = '('."SELECT componente FROM seguridad.varbol_privilegios WHERE codigo =".$this->aa_Atributos['codigo'].')';
 		}
 		$ls_Sql="SELECT * from seguridad.vcomponente_campo WHERE codigo_componente = ".$cadena." AND estado_campo = 'A' ";
 		$this->f_Con();

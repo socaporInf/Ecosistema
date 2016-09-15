@@ -1,11 +1,11 @@
-function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
+function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo,campoAsignacion,campoDisponible){
 	var campos = [];
 	for (var i = 0; i < disponibles.length; i++) {
 		var campo = {
 			tipo: 'checkBox',
 			parametros:{
 				nombre: disponibles[i].nombreOperacion,
-				valor: disponibles[i].codigoOperacion,
+				valor: disponibles[i].codigo,
 				requerido: false,
 				habilitado: true,
 				animacion: 'girar',
@@ -17,14 +17,14 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 		};
 		if(asignadas){
 			for(var x = 0; x < asignadas.length; x++){
-				if(disponibles[i].codigoOperacion === asignadas[x].codigoOperacion){
+				if(disponibles[i].nombreOperacion === asignadas[x].nombreOperacion){
 					campo.parametros.marcado = true;
 				}
 			}
 		}
 		campos.push(campo);
 	}
-	var constructor = {
+	var cons = {
 		campos : campos,
 		altura : (campos.length * 40) + 20
 	};
@@ -34,7 +34,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 		},
 		cuerpo: {
 			tipo: 'nuevo',
-			formulario: constructor
+			formulario: cons
 		},
 		pie: {
 			html: '<section modalButtons>'+
