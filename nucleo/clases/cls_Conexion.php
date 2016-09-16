@@ -173,16 +173,20 @@
 	*-----------------------------------*/
 	protected function f_ArmarPaginacion($ls_SqlBase,$orden){
 			//varibles paginacion
-		 $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
-		 $paginaActual = $this->aa_Atributos['pagina'] - 1;
-		 $numero_registros = $this->f_ObtenerNumeroRegistros($ls_SqlBase);
-		 $paginas = $numero_registros / $registrosPorPagina;
-		 $paginas = ceil($paginas);
-		 $offset = $paginaActual * $registrosPorPagina;
+			if(isset($this->aa_Atributos['registrosporpagina'])){
+				 $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
+				 $paginaActual = $this->aa_Atributos['pagina'] - 1;
+				 $numero_registros = $this->f_ObtenerNumeroRegistros($ls_SqlBase);
+				 $paginas = $numero_registros / $registrosPorPagina;
+				 $paginas = ceil($paginas);
+				 $offset = $paginaActual * $registrosPorPagina;
 
-		 $ls_Sql= $ls_SqlBase.$orden." LIMIT $registrosPorPagina OFFSET $offset " ;
+				 $ls_Sql= $ls_SqlBase.$orden." LIMIT $registrosPorPagina OFFSET $offset " ;
 
-		 $this->aa_Atributos['paginas'] = $paginas;
+				 $this->aa_Atributos['paginas'] = $paginas;
+			}else{
+				$ls_Sql= $ls_SqlBase.$orden;
+			}
 
 		 return $ls_Sql;
 	 }

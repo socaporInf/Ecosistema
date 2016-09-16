@@ -27,23 +27,25 @@ class cls_Registro_Virtual extends cls_Conexion{
 				break;
 
 			case 'listar':
-				$registros=$this->f_Listar();
-				if(count($registros)!=0){
+				$lb_Enc=$this->f_Listar();
+				if($lb_Enc){
 					$success=1;
-					$respuesta['registros']=$registros;
+					$respuesta['registros']=$this->aa_Atributos['registros'];
+					$respuesta['paginas']=$this->aa_Atributos['paginas'];
 				}else{
-					$respuesta['success'] = 0;
+					$respuesta['success'] = 1;
 					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
 				}
 				break;
 
-			case 'buscarRegistrosPorNombreTabla':
-				$registros=$this->f_ListarPorNombreTabla();
-				if(count($registros)!=0){
+			case 'buscarRegistroPorNombreTabla':
+				$lb_Enc=$this->f_Listar();
+				if($lb_Enc){
 					$success=1;
-					$respuesta['registros']=$registros;
+					$respuesta['registros']=$this->aa_Atributos['registros'];
+					$respuesta['paginas']=$this->aa_Atributos['paginas'];
 				}else{
-					$respuesta['success'] = 0;
+					$respuesta['success'] = 1;
 					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
 				}
 				break;
@@ -87,10 +89,14 @@ class cls_Registro_Virtual extends cls_Conexion{
 		$x=0;
 		$la_respuesta=array();
 		if(isset($this->aa_Atributos['nombre_tabla'])){
-			$ls_Sql="SELECT * FROM global.vregistro_virtual WHERE nombre_tabla='".$this->aa_Atributos['nombre_tabla']."'";
+			$ls_SqlBase="SELECT * FROM global.vregistro_virtual WHERE nombre_tabla='".$this->aa_Atributos['nombre_tabla']."' ";
 		}else{
-			$ls_Sql="SELECT * FROM global.vregistro_virtual WHERE codigo_tabla='".$this->aa_Atributos['codigo']."'";
+			$ls_SqlBase="SELECT * FROM global.vregistro_virtual WHERE codigo_tabla='".$this->aa_Atributos['codigo']."' ";
 		}
+		$cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"AND nombre_registro like '%".$this->aa_Atributos['valor']."%'";
+	  $ls_SqlBase.=$cadenaBusqueda;
+	  $orden = " ORDER BY nombre_registro ";
+	  $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -101,25 +107,11 @@ class cls_Registro_Virtual extends cls_Conexion{
 		}
 		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
-		return $la_respuesta;
+		$this->aa_Atributos['registros'] = $la_respuesta;
+	  $lb_Enc=($x == 0)?false:true;
+	  return $lb_Enc;
 	}
 
-	private function f_ListarPorNombreTabla(){
-		$x=0;
-		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM global.vregistro_virtual WHERE nombre_tabla='".$this->aa_Atributos['nombre_tabla']."'";
-		$this->f_Con();
-		$lr_tabla=$this->f_Filtro($ls_Sql);
-		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo_registro'];
-			$la_respuesta[$x]['nombre']=$la_registros['nombre_registro'];
-			$la_respuesta[$x]['descripcion']=$la_registros['descripcion_registro'];
-			$x++;
-		}
-		$this->f_Cierra($lr_tabla);
-		$this->f_Des();
-		return $la_respuesta;
-	}
 	private function f_Buscar(){
 		$lb_Enc=false;
 		//Busco El rol
@@ -143,7 +135,6 @@ class cls_Registro_Virtual extends cls_Conexion{
 		return $lb_Enc;
 	}
 	private function f_Guardar(){
-
 		$lb_Hecho=false;
 		$ls_Sql="INSERT INTO global.vregistro_virtual (nombre_registro,descripcion_registro,codigo_tabla) values
 				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."','".$this->aa_Atributos['codigo_tabla']."')";

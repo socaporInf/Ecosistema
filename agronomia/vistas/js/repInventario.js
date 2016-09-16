@@ -78,11 +78,14 @@ function construirUI(){
   },document.body.querySelector('div[contenedor]'));
   formRep.buscarSector('form').formulario.buscarCampo('finca').deshabilitar();
   var botonera = formRep.buscarSector('operaciones').nodo;
-  botonera.querySelector('button[ejecutar]').onclick= function(){
-    ejecutar();
-  };
+  //PRIVILEGIO: operacion ejecutar
+  if(sesion.privilegioActivo.buscarOperacion('ejecutar')){
+    botonera.querySelector('button[ejecutar]').onclick= function(){
+      ejecutar();
+    };
+  }
   botonera.querySelector('button[limpiar]').onclick= function(){
-     UI.buscarVentana('formRep').buscarSector('form').formulario.limpiar();     
+     UI.buscarVentana('formRep').buscarSector('form').formulario.limpiar();
      formRep.buscarSector('form').formulario.buscarCampo('finca').deshabilitar();
   };
 }

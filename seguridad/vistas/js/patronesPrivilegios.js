@@ -28,6 +28,8 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo,cam
 		campos : campos,
 		altura : (campos.length * 40) + 20
 	};
+	//PRIVLEGIO: operacion; OPERACION: incluir
+	var htmlBotNuevo = (sesion.buscarPrivilegio('operacion').buscarOperacion('incluir'))?'<button type="button" class="icon-nuevo-azul-claro-32"> </button>':'';
 	capaContenido.convertirEnFormulario({
 		cabecera: {
 			html: nodo.getAttribute('titulo')
@@ -40,7 +42,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo,cam
 			html: '<section modalButtons>'+
 						'<button type="button" class="icon-guardar-indigo-32"> </button>'+
 						'<button type="button" class="icon-cerrar-rojo-32"> </button>'+
-						'<button type="button" class="icon-nuevo-azul-claro-32"> </button>'+
+						htmlBotNuevo+
 					'</section>'
 		}
 	});
