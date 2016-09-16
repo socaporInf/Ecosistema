@@ -123,7 +123,6 @@ div[capamenu] section[pie] article[seguridad] i:after{
 }
 div[capamenu] section[pie] article[books] i:after{
     content: 'books';
-    width: 54px
 }
 div[capamenu] section[pie] article:hover i:after{
     color:#7b7b7b;
