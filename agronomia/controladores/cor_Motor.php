@@ -14,6 +14,13 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+	case 'carga_validacion':
+		include_once('../clases/cls_Carga_Validacion.php');
+		$lobj_Entidad = new cls_Carga_Validacion;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'finca':
 		include_once('../clases/cls_Finca.php');
 		$lobj_Entidad = new cls_Finca;
