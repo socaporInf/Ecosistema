@@ -1,3 +1,8 @@
+div[contenedor]{
+    position: absolute !important;
+    height: 100%;
+    background-image:url('../../../nucleo/vistas/img/header.jpg');
+}
 div[capaLog]{
 	position: relative;
 	top:calc(50% - 225px);
@@ -5,15 +10,14 @@ div[capaLog]{
 	margin-top: 80px;
 	z-index: 1;
 	overflow: visible;
-	height: 400px;
+	height: 350px;
 }
 div[loginForm]{
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	margin: 0px auto;
 	position: absolute;
-	width: 400px;
+	width: 350px;
 	height: auto;
-	border-radius: 5px;
 	overflow: hidden;
 	margin-bottom: 200px;
 }
@@ -29,7 +33,7 @@ div[loginForm] div[titulo]{
     color: white;
 }
 div[capaLog] button[type='button']{
-	margin-left: 370px;
+	margin-left: 325px;
     width: 50px;
     height: 50px;
     border-radius: 100px;
@@ -54,7 +58,7 @@ div[loginForm] div[cuerpo] input{
     border-radius: 3px;
     border: 0px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    width: 75%;
+    width: 72%;
     outline: none;
     font-size: 17px;
 }
@@ -105,16 +109,23 @@ div[cont-log-input] i{
     top:30px;
     left:24px;
 }
+div[contenedor] div[cabecera]{
+    background-color:  rgba(27,94,32,0);
+    border-bottom: 1px solid white;
+}
+div[contenedor] div[cabecera] button[menubtn]{
+    border-right: 1px solid white;
+}
 /*-----------------------------------Media screen-------------------------------*/
 @media only screen and (max-device-width: 480px) {
     div[loginForm]{
         width: 90%;
-        margin-left: 9%;
+        margin-left: 16%;
     }
     div[loginForm] div[cuerpo] input{
         width: 70%;
     }
     div[capaLog] button[type='button']{
-        margin-left: 89%;
+        margin-left: 96%;
     }
 }

@@ -162,7 +162,7 @@ div[capa='contenido'] div.ContenedorCarga{
 /*-----------------------------------Media screen-------------------------------*/
 @media only screen and (max-device-width: 480px) {
     div[capa='contenido'] {
-        width: 95%;
+        width: 100%;
         left: 0% !important;
     }
     div[capa='contenido'] section[pie]{

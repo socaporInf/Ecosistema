@@ -691,7 +691,7 @@ section[botonera] button.icon,section.botonera button.icon{
 @media (max-width: 900px) {
     div[mat-window].formulario,div[mat-window].ventana {
         width: 85%;
-        margin-bottom: 10px;
+        margin-bottom: 80px;
         margin-left: 50px;
     }
 }
