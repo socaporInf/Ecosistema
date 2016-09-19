@@ -118,10 +118,25 @@
 			$dia=substr($fecha,8,2);
 			$mes=substr($fecha,5,2);
 			$ano=substr($fecha,0,4);
-			$now=$dia."/".$mes."/".$ano;
+			$now=$dia."-".$mes."-".$ano;
 		}
 		return $now;
 	}
+	/*-----------------------------------
+	* Funcion Fecha Real (Convierte una fecha 'd/m/Y' a formato normal 'Y/m/d')
+	*-----------------------------------*/
+
+		protected function fFechaPHP($fecha){
+			$now="now()";
+			if(strlen($fecha)==10)
+			{
+				$dia=substr($fecha,0,2);
+				$mes=substr($fecha,3,2);
+				$ano=substr($fecha,6,4);
+				$now=$ano."-".$mes."-".$dia;
+			}
+			return $now;
+		}
 	/******************** Funcion Registros   *************************************/
 	/* esta funcion retorna cantidad de filas devueltas en un query			      */
 	/******************************************************************************/

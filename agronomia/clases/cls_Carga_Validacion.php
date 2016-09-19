@@ -19,11 +19,28 @@ class cls_Carga_Validacion extends cls_Conexion{
 		$lobj_Mensaje = new cls_Mensaje_Sistema;
 		switch ($this->aa_Atributos['operacion']) {
 			case 'buscarListaCorreo':
-				//busco todos los correos a la nube
-        $correos = $this->f_BuscarCorreos();
-				//busco el correo con el listado correcto
-				$correo = $this->f_BuscarListado($correos);
-				//TODO: Extraccion del xlsx del correo seleccionado
+				include_once('cls_ManejadorCorreo.php');
+				$lobj_MAC = new cls_ManejadorCorreo();
+				$pet = array(
+					'operacion'=>'buscarArchivoCorreo'
+				);
+				$lobj_MAC->setPeticion($pet);
+				$archivo = $lobj_MAC->gestionar();
+
+				//extraigo los datos del archivo
+				include_once('cls_ManejadorListado.php');
+				$lobj_MAL = new cls_ManejadorListado();
+				$pet = array(
+					'operacion'=>'extraerDatos',
+					'archivo'=>$archivo
+				);
+				$lobj_MAL->setPeticion($pet);
+				$data = $lobj_MAL->gestionar();
+
+				//TODO: procesar los datos y guardarlos en la base de datos
+				$datos['cabeceras'] = $this->obtenerCabeceras($data);
+				$datos['registros'] = $this->obtenerRegistros($data);
+
         break;
 
 			default:
@@ -37,40 +54,15 @@ class cls_Carga_Validacion extends cls_Conexion{
 		}
 		return $respuesta;
 	}
-
-  private function f_BuscarCorreos(){
-		//Armo la peticion
-		$peticion = Array('operacion'=>'buscarParametros','nombre'=>'CARGA AUTOMATICA VALIDACION DIARIA');
-		//incluyo e instancio
-		include_once('../../seguridad/clases/cls_Proceso.php');
-		$lobj_Proceso = new cls_Proceso();
-		//seteo la peticion
-		$lobj_Proceso->setPeticion($peticion);
-		//gestiono y obtengo el resultado
-		$parametros = $lobj_Proceso->gestionar();
-    $imap = eden('mail')->imap($parametros['SERVIDOR DE CORREO'], $parametros['DIRECCION DE CORREO'], $parametros['CLAVE DE CORREO'], 993, true);
-    $mailboxes = $imap->getMailboxes();
-    $imap->setActiveMailbox('INBOX')->getActiveMailbox();
-
-    $emails = $imap->getEmails(0, 3);
-
-    $imap->disconnect();
-    return $emails;
-  }
-	private function f_BuscarListado($correos){
-		$total = count($correos);
-		for($i = 0; $i < $total;$i++){
-			//print($correos[$i]['subject']);
-			$cadena_de_texto = $correos[$i]['subject'];
-			$cadena_buscada = 'listado de validacion';
-			$pos = strpos($cadena_de_texto, $cadena_buscada);
-			if($pos === false){
-				//extaigo la fecha
-				$fecha = explode(' ',$correos[$i]['subject'])[5];
-				//TODO: Validaciones seleccion de correo (fecha zafra vs la variable fecha)
-
-			}
+	private function obtenerCabeceras($data){
+		return $data[1];
+	}
+	private function obtenerRegistros($data){
+		$datos = array();
+		for ($i=2; $i < count($data) ; $i++) {
+			$datos[$i-1] = $data[$i];
 		}
+		return $datos;
 	}
 }
 ?>
