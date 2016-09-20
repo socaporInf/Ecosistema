@@ -42,6 +42,13 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
+	case 'plantillaNotificacion':
+		include_once('../clases/cls_PlantillaNotificacion.php');
+		$lobj_Entidad = new cls_PlantillaNotificacion;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	default:
 		$respuesta['success'] = 0;
 		$respuesta['mensaje']['nombre_tipo'] =  'error';

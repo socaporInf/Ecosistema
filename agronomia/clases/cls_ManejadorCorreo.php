@@ -15,13 +15,14 @@ class cls_ManejadorCorreo extends cls_Conexion{
 	public function getAtributos(){
 		return $this->aa_Atributos;
 	}
-
+	
 	public function gestionar(){
 		$lobj_Mensaje = new cls_Mensaje_Sistema;
 		switch ($this->aa_Atributos['operacion']) {
 			case 'buscarArchivoCorreo':
 				//busco el correo en la nube
 				$correo = $this->f_BuscarCorreo();
+				$this->aa_Atributos['UID'] = $correo['uid'];
 				//extraigo el archivo del correo;
 				$archivoListado = $this->f_ExtraerListado($correo);
 				return $archivoListado;

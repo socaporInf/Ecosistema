@@ -76,7 +76,6 @@ class cls_ManejadorListado extends cls_Conexion{
 	    $return = \PHPExcel_IOFactory::load($file);
 	    fclose($handle);
 	    unlink($file);
-
 	    return $return;
 	}
 }
