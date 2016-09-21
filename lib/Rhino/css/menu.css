@@ -59,6 +59,7 @@ div[SubCapaMenu].anterior{
     opacity: 0 !important;
 }
 div[SubCapaMenu] section{
+    cursor:pointer;
     width: calc(100% - 20px);
     background-color: white;
     height: 30px;

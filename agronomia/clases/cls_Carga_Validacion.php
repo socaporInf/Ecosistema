@@ -38,7 +38,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 				$lobj_MAL->setPeticion($pet);
 				$data = $lobj_MAL->gestionar();
 
-				//TODO: procesar los datos y guardarlos en la base de datos
 				if(count($data) > 0){
 					$cabeceras = $this->obtenerCabeceras($data);
 					$datos = $this->obtenerRegistros($data,$UID,$cabeceras);

@@ -1,11 +1,21 @@
 var plantillaNotificacion= {
 	nombre: 'plantillaNotificacion',
  	modulo: 'global',
-	campo_nombre: 'nombre',
+	campo_nombre: 'nombre_plantilla',
 	titulo: 'Plantilla Notificacion',
 	altura: 420,
 	campos:[
-		{
+    {
+      tipo : 'campoDeTexto',
+      parametros : {
+        requerido:true,
+        nombre:'nombre_plantilla',
+        titulo:'Nombre',
+        tipo:'simple',
+        eslabon:'simple',
+        usaToolTip:true
+      }
+    },{
       tipo : 'campoBusqueda',
       parametros : {
         titulo:'tipo de notificacion',

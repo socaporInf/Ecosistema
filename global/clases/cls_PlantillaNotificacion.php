@@ -4,7 +4,7 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_PlantillaNotificacion extends cls_Conexion{
 
  protected $aa_Atributos = array();
- private $aa_Campos = array('codigo_plantilla','cuerpo','titulo','codigo_prioridad','codigo_tipo_notificacion');
+ private $aa_Campos = array('codigo_plantilla','cuerpo','titulo','nombre_plantilla','codigo_prioridad','codigo_tipo_notificacion');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
@@ -68,12 +68,16 @@ class cls_PlantillaNotificacion extends cls_Conexion{
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM global.vplantilla_notificacion ";
+   if(isset($this->aa_Atributos['codigo_padre'])){
+      $ls_Sql="SELECT * FROM global.vplantilla_notificacion where codigo_tipo_notificacion = ".$this->aa_Atributos['codigo_padre'];
+   }else{
+      $ls_Sql="SELECT * FROM global.vplantilla_notificacion ";
+   }
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['codigo_plantilla'];
-     $la_respuesta[$x]['nombre']=$la_registros['nombre_tipo_notificacion'];
+     $la_respuesta[$x]['nombre_plantilla']=$la_registros['nombre_plantilla'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -89,6 +93,7 @@ class cls_PlantillaNotificacion extends cls_Conexion{
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo']=$la_registros['codigo_plantilla'];
+     $la_respuesta['nombre_plantilla']=$la_registros['nombre_plantilla'];
      $la_respuesta['titulo']=$la_registros['titulo'];
      $la_respuesta['cuerpo']=$la_registros['cuerpo'];
      $la_respuesta['codigo_prioridad']=$la_registros['codigo_prioridad'];
@@ -111,8 +116,8 @@ class cls_PlantillaNotificacion extends cls_Conexion{
  private function f_Guardar(){
 
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO global.vplantilla_notificacion (cuerpo,titulo,codigo_prioridad,codigo_tipo_notificacion) values
-       ('".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['titulo']."',
+   $ls_Sql="INSERT INTO global.vplantilla_notificacion (cuerpo,titulo,nombre,codigo_prioridad,codigo_tipo_notificacion) values
+       ('".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['nombre']."',
        '".$this->aa_Atributos['codigo_prioridad']."','".$this->aa_Atributos['codigo_tipo_notificacion']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
@@ -122,13 +127,16 @@ class cls_PlantillaNotificacion extends cls_Conexion{
 
  private function f_BuscarUltimo(){
    $lb_Enc=false;
-   //Busco El rol
    $ls_Sql="SELECT * from global.vplantilla_notificacion WHERE codigo_plantilla = (SELECT MAX(codigo_plantilla) from global.vplantilla_notificacion) ";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo']=$la_registros['codigo_plantilla'];
-     $la_respuesta['nombre']=$la_registros['texto'];
+     $la_respuesta['nombre']=$la_registros['nombre_plantilla'];
+     $la_respuesta['titulo']=$la_registros['titulo'];
+     $la_respuesta['cuerpo']=$la_registros['cuerpo'];
+     $la_respuesta['codigo_prioridad']=$la_registros['codigo_prioridad'];
+     $la_respuesta['nombre_prioridad']=$la_registros['nombre_prioridad'];
      $la_respuesta['codigo_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
      $la_respuesta['nombre_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
      $lb_Enc=true;
