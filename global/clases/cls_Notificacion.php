@@ -1,10 +1,11 @@
 <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
+include_once('cls_PlantillaNotificacion.php');
 class cls_Notificacion extends cls_Conexion{
 
  protected $aa_Atributos = array();
- private $aa_Campos = array('codigo_notificacion','titulo','cuerpo','usuario','codigo_tipo_notificacion');
+ private $aa_Campos = array('codigo','titulo','cuerpo','codigo_prioridad','codigo_tipo_notificacion');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
@@ -59,6 +60,10 @@ class cls_Notificacion extends cls_Conexion{
        $respuesta = $this->f_Modificar();
        break;
 
+     case 'crearNotificacionPorPlantilla':
+      $respuesta = $this->f_crearNotificacionPorPlantilla();
+      break;
+
      default:
         $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
         $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -77,7 +82,7 @@ class cls_Notificacion extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo'] = $la_registros['codigo_notificacion'];
+     $la_respuesta[$x]['codigo'] = $la_registros['codigo'];
      $la_respuesta[$x]['titulo'] = $la_registros['titulo'];
      $la_respuesta[$x]['cuerpo'] = $la_registros['cuerpo'];
      $la_respuesta[$x]['tipo'] = $la_registros['codigo_tipo_notificacion'];
@@ -93,11 +98,11 @@ class cls_Notificacion extends cls_Conexion{
 
  private function f_Buscar(){
    $lb_Enc=false;
-   $ls_Sql="SELECT * FROM global.vnotificacion where codigo_notificacion='".$this->aa_Atributos['codigo']."'";
+   $ls_Sql="SELECT * FROM global.vnotificacion where codigo='".$this->aa_Atributos['codigo']."'";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo'] = $la_registros['codigo_notificacion'];
+     $la_respuesta[$x]['codigo'] = $la_registros['codigo'];
      $la_respuesta[$x]['titulo'] = $la_registros['titulo'];
      $la_respuesta[$x]['cuerpo'] = $la_registros['cuerpo'];
      $la_respuesta[$x]['tipo'] = $la_registros['codigo_tipo_notificacion'];
@@ -119,8 +124,8 @@ class cls_Notificacion extends cls_Conexion{
 
  private function f_Guardar(){
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO global.vnotificacion (titulo,cuerpo,usuario,codigo_tipo_notificacion) values
-       ('".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['usuario']."',
+   $ls_Sql="INSERT INTO global.vnotificacion (titulo,cuerpo,codigo_prioridad,codigo_tipo_notificacion) values
+       ('".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['codigo_prioridad']."',
        '".$this->aa_Atributos['codigo_tipo_notificacion']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
@@ -128,6 +133,27 @@ class cls_Notificacion extends cls_Conexion{
    return $lb_Hecho;
  }
 
+ private function f_crearNotificacionPorPlantilla(){
+   $plt = $this->f_buscarPlantilla();
+   $lb_Hecho=false;
+   $ls_Sql="INSERT INTO global.vnotificacion (titulo,cuerpo,codigo_prioridad,codigo_tipo_notificacion) values
+       ('".$plt['titulo']."','".$plt['cuerpo']."','".$plt['codigo_prioridad']."','".$plt['codigo_tipo_notificacion']."')";
+   $this->f_Con();
+   $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+   $this->f_Des();
+   return $lb_Hecho;
+ }
+
+ private function f_buscarPlantilla(){
+   $lobj_Plantilla = new cls_PlantillaNotificacion();
+   $pet = array(
+      'operacion' =>  'buscarPorNombre',
+      'nombre' => $this->aa_Atributos['plantilla'];
+   );
+   $lobj_Plantilla->setPeticion($pet);
+   $plantilla = $lobj_Plantilla->gestionar()['registro'];
+   return $planilla;
+ }
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
@@ -136,7 +162,7 @@ class cls_Notificacion extends cls_Conexion{
    //arma la cadena sql en base a los campos pasados en la peticion
    $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-   $ls_Sql.="WHERE codigo_notificacion ='".$this->aa_Atributos['codigo']."'";
+   $ls_Sql.="WHERE codigo ='".$this->aa_Atributos['codigo']."'";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
@@ -154,9 +180,10 @@ class cls_Notificacion extends cls_Conexion{
    $la_respuesta=array();
    $ls_Sql="SELECT * FROM global.vnotificacion_rol WHERE llave_acceso IN (";
    //agrego las llaves a la consulta
-   for ($i = 0; $i < count($_SESSION['Usuario']['llaves_acceso']); $i++) {
-     $ls_Sql.="'".$_SESSION['Usuario']['llaves_acceso'][$i]."'";
-     if ($i != (count($_SESSION['Usuario']['llaves_acceso']) - 1)) {
+   $llaves = $_SESSION['Usuario']['llaves_acceso'];
+   for ($i = 0; $i < count($llaves); $i++) {
+     $ls_Sql.="'".$llaves[$i]."'";
+     if ($i != (count($llaves) - 1)) {
        $ls_Sql.=",";
      }
    }

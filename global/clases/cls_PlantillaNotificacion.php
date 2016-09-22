@@ -30,12 +30,20 @@ class cls_PlantillaNotificacion extends cls_Conexion{
        break;
 
      case 'buscarRegistro':
-       $lb_Enc=$this->f_buscar();
+       $lb_Enc=$this->f_buscar('codigo');
        if($lb_Enc){
          $respuesta['registros']=$this->aa_Atributos['registro'];
          $success=1;
        }
        break;
+
+    case 'buscarPorNombre':
+      $lb_Enc=$this->f_buscar('nombre');
+      if($lb_Enc){
+        $respuesta['registro']=$this->aa_Atributos['registro'];
+        $success=1;
+      }
+      break;
 
      case 'guardar':
        $lb_Hecho=$this->f_Guardar();
@@ -85,10 +93,13 @@ class cls_PlantillaNotificacion extends cls_Conexion{
    return $la_respuesta;
  }
 
- private function f_Buscar(){
+ private function f_Buscar($tipo){
    $lb_Enc=false;
-   //Busco El rol
-   $ls_Sql="SELECT * FROM global.vplantilla_notificacion where codigo_plantilla='".$this->aa_Atributos['codigo']."'";
+   if($tipo == 'nombre'){
+      $ls_Sql="SELECT * FROM global.vplantilla_notificacion where nombre_plantilla='".$this->aa_Atributos['nombre']."'";
+   }else{
+      $ls_Sql="SELECT * FROM global.vplantilla_notificacion where codigo_plantilla='".$this->aa_Atributos['codigo']."'";
+   }
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -112,12 +123,11 @@ class cls_PlantillaNotificacion extends cls_Conexion{
 
    return $lb_Enc;
  }
-
  private function f_Guardar(){
 
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO global.vplantilla_notificacion (cuerpo,titulo,nombre,codigo_prioridad,codigo_tipo_notificacion) values
-       ('".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['nombre']."',
+   $ls_Sql="INSERT INTO global.vplantilla_notificacion (cuerpo,titulo,nombre_plantilla,codigo_prioridad,codigo_tipo_notificacion) values
+       ('".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['nombre_plantilla']."',
        '".$this->aa_Atributos['codigo_prioridad']."','".$this->aa_Atributos['codigo_tipo_notificacion']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);

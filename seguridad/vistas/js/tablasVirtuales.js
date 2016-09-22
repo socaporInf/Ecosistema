@@ -1,5 +1,5 @@
 function abrirFormTabla(){
-  UI.buscarConstructor('registroVirtual').titulo = UI.elementos.maestro.ventanaForm.formulario.registroAct.nombre;
+  UI.buscarConstructor('registroVirtual').titulo = UI.elementos.maestro.forma.formulario.registroAct.nombre;
   //monto venta modal
   var ventTabla = UI.crearVentanaModal({
     contenido: 'ancho',
@@ -26,7 +26,7 @@ function abrirFormTabla(){
       peticion:{
         entidad: 'registroVirtual',
         operacion: 'listar',
-        codigo: UI.elementos.maestro.ventanaForm.formulario.registroId
+        codigo: UI.elementos.maestro.forma.formulario.registroId
       },
       espera:{
         cuadro:{nombre: 'listarRegistros',mensaje: 'Cargando Registros'}
@@ -138,13 +138,13 @@ var guardarRegistro = function(){
   var formulario = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
   if(formulario.validar()){
     var peticion = formulario.captarValores();
-    peticion.codigo_tabla = UI.elementos.maestro.ventanaForm.formulario.registroId;
+    peticion.codigo_tabla = UI.elementos.maestro.forma.formulario.registroId;
     peticion.entidad = 'registroVirtual';
     peticion.operacion = 'guardar';
     var InfoCuadro = {
       contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
       cuadro:{
-        nombre: 'guardando ' + UI.elementos.maestro.ventanaForm.formulario.registroAct.nombre,
+        nombre: 'guardando ' + UI.elementos.maestro.forma.formulario.registroAct.nombre,
         mensaje: 'Guardando Registro'
       }
     };

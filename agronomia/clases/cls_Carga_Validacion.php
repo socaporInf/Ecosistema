@@ -41,6 +41,9 @@ class cls_Carga_Validacion extends cls_Conexion{
 				if(count($data) > 0){
 					$cabeceras = $this->obtenerCabeceras($data);
 					$datos = $this->obtenerRegistros($data,$UID,$cabeceras);
+					//incluyo la clase de notificaciones para poder disparar la correcta sea el caso
+					include_once('../../global/clases/cls_Notificacion.php');
+					$lobj_Notificacion = new cls_Notificacion();
 
 					$fechadia = $datos[1]['fechadia'];
 					$this->validarDia($fechadia,$UID);
@@ -52,14 +55,22 @@ class cls_Carga_Validacion extends cls_Conexion{
 							$lb_hecho = false;
 							$lb_hecho = $this->insertarListado($datos);
 							if($lb_hecho){
-								/*TODO: dispara notificacion de:
-								*				Carga de validacion $fecha dia realizado de forma exitosa
-								*/
+								//dispario notificacion
+								$pet  = array(
+									'operacion' => 'crearNotificacionPorPlantilla',
+									'plantilla' => 'CARGA VALIDACION EXITOSA'
+								);
+								$lobj_Notificacion->setPeticion($pet);
+								$respuesta = $lobj_Notificacion->gestionar();
 								$this->f_Commit();
 							}else{
-								/*TODO: dispara notificacion de:
-								*				Error en insercion de listado de validacion del dia $fechadia
-								*/
+								//dispario notificacion
+								$pet  = array(
+										'operacion' => 'crearNotificacionPorPlantilla',
+										'plantilla' => 'ERROR INSERCION EN BASE DE DATOS'
+									);
+									$lobj_Notificacion->setPeticion($pet);
+									$respuesta = $lobj_Notificacion->gestionar();
 								$this->f_RollBack();
 							}
 						}else {
@@ -67,22 +78,34 @@ class cls_Carga_Validacion extends cls_Conexion{
 							$lb_hecho = false;
 							$lb_hecho = $this->eliminarListado($fechadia);
 							if(!$lb_hecho){
-								/*TODO: dispara notificacion de:
-								*				Error al eliminar registros anteriores del listado de validacion del dia $fechadia
-								*/
+								//dispario notificacion
+								$pet  = array(
+									'operacion' => 'crearNotificacionPorPlantilla',
+									'plantilla' => 'ERROR ELIMINACION ANTERIORES'
+								);
+								$lobj_Notificacion->setPeticion($pet);
+								$respuesta = $lobj_Notificacion->gestionar();
 								$this->f_RollBack();
 							}else {
 								$lb_hecho = false;
 								$lb_hecho = $this->insertarListado($datos);
 								if(!$lb_hecho){
-									/*TODO: dispara notificacion de:
-									*				Error al eliminar registros anteriores del listado de validacion del dia $fechadia
-									*/
+									//dispario notificacion
+									$pet  = array(
+											'operacion' => 'crearNotificacionPorPlantilla',
+											'plantilla' => 'ERROR REEMPLAZO DATOS'
+										);
+									$lobj_Notificacion->setPeticion($pet);
+									$respuesta = $lobj_Notificacion->gestionar();
 									$this->f_RollBack();
 								}else{
-									/*TODO: dispara notificacion de:
-									*				Reemplazo de listado de validacion de fecha $fechadia  realizado de forma exitosa
-									*/
+									//dispario notificacion
+									$pet  = array(
+										'operacion' => 'crearNotificacionPorPlantilla',
+										'plantilla' => 'REEMPLAZO VALIDACION DIA'
+									);
+									$lobj_Notificacion->setPeticion($pet);
+									$respuesta = $lobj_Notificacion->gestionar();
 									$this->f_Commit();
 								}
 							}
