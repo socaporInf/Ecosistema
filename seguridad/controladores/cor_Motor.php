@@ -29,9 +29,9 @@ switch ($la_Peticion['entidad']) {
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
 
-	case 'proceso':
-		include_once('../clases/cls_Proceso.php');
-		$lobj_Entidad = new cls_Proceso;
+	case 'parametroControl':
+		include_once('../clases/cls_ParametroControl.php');
+		$lobj_Entidad = new cls_ParametroControl();
 		$lobj_Entidad->setPeticion($la_Peticion);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;
@@ -39,6 +39,13 @@ switch ($la_Peticion['entidad']) {
 	case 'privilegio':
 		include_once('../clases/cls_Privilegio.php');
 		$lobj_Entidad = new cls_Privilegio;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
+	case 'proceso':
+		include_once('../clases/cls_Proceso.php');
+		$lobj_Entidad = new cls_Proceso;
 		$lobj_Entidad->setPeticion($la_Peticion);
 		$respuesta = $lobj_Entidad->gestionar();
 		break;

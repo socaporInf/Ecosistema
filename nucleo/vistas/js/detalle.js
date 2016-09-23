@@ -1,5 +1,5 @@
-function abrirFormTabla(){
-  UI.buscarConstructor('registroVirtual').titulo = UI.elementos.maestro.forma.formulario.registroAct.nombre;
+function abrirDetalle(entidad){
+  UI.buscarConstructor(entidad).titulo = UI.elementos.maestro.forma.formulario.registroAct.nombre;
   //monto venta modal
   var ventTabla = UI.crearVentanaModal({
     contenido: 'ancho',
@@ -14,17 +14,19 @@ function abrirFormTabla(){
           '</section>'
     }
   });
-  ventTabla.partes.pie.nodo.querySelector('button.icon-nuevo-azul-claro-32').onclick = abrirFormTabNuevo;
+  ventTabla.partes.pie.nodo.querySelector('button.icon-nuevo-azul-claro-32').onclick = function(){
+    abrirDetalleNuevo(entidad);
+  };
   ventTabla.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){UI.elementos.modalWindow.eliminarUltimaCapa();};
   //agrego la lista a la ventanaModal
   var lista = UI.agregarLista({
-    titulo: UI.buscarConstructor('registroVirtual').titulo,
-    nombre: UI.buscarConstructor('registroVirtual').titulo,
+    titulo: UI.buscarConstructor(entidad).titulo,
+    nombre: UI.buscarConstructor(entidad).titulo,
     clase: 'lista',
     carga: {
       uso:true,
       peticion:{
-        entidad: 'registroVirtual',
+        entidad: entidad,
         operacion: 'listar',
         codigo: UI.elementos.maestro.forma.formulario.registroId
       },
@@ -35,12 +37,14 @@ function abrirFormTabla(){
     paginacion: {
       uso:false
     },
-    onclickSlot: editarRegistro
+    onclickSlot: function(slot){
+      editarRegistro(slot,entidad);
+    }
   },ventTabla.partes.cuerpo.nodo);
 }
 
-/*----------------------------------------Edicion Registro Virtual----------------------------------------------*/
-editarRegistro = function(slot){
+/*----------------------------------------Edicion Registro----------------------------------------------*/
+editarRegistro = function(slot,entidad){
   UI.elementos.modalWindow.eliminarUltimaCapa();
   setTimeout(function motarFormularioNuevo(){
     var formTabla = UI.crearVentanaModal({
@@ -50,7 +54,7 @@ editarRegistro = function(slot){
       },
       cuerpo:{
         tipo:'modificar',
-        formulario: UI.buscarConstructor('registroVirtual')
+        formulario: UI.buscarConstructor(entidad)
       },
       pie:{
         html: '<section modalButtons>'+
@@ -65,24 +69,30 @@ editarRegistro = function(slot){
     formulario.deshabilitar();
     formTabla.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
       UI.elementos.modalWindow.eliminarUltimaCapa();
-      setTimeout(abrirFormTabla,1000);
+      setTimeout(function(){
+        abrirDetalle(entidad);
+      },1000);
     };
-    formTabla.partes.pie.nodo.querySelector('button.icon-modificar-verde').onclick = activarEdicion;
+    formTabla.partes.pie.nodo.querySelector('button.icon-modificar-verde').onclick = function(){
+      activarEdicion(entidad,this);
+    };
   },1000);
 };
-var activarEdicion = function(){
+var activarEdicion = function(entidad,obj){
   var formTabla = UI.elementos.modalWindow.buscarUltimaCapaContenido();
   formTabla.partes.cuerpo.formulario.habilitar();
-  this.classList.remove('icon-modificar-verde');
-  this.classList.add('icon-guardar-indigo-32');
-  this.onclick = finalizarEdicion;
+  obj.classList.remove('icon-modificar-verde');
+  obj.classList.add('icon-guardar-indigo-32');
+  obj.onclick = function(){
+    finalizarEdicion(entidad);
+  };
 };
-var finalizarEdicion = function(){
+var finalizarEdicion = function(entidad){
   var formulario = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
   if(formulario.validar()){
     var registro = formulario.captarValores();
     registro.codigo = formulario.registroId;
-    enviarCambios(registro,UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo);
+    enviarCambios(registro,UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,entidad);
   }else{
     UI.agregarToasts({
       texto: 'Debe rellenar el formulario para continuar',
@@ -90,11 +100,11 @@ var finalizarEdicion = function(){
     });
   }
 };
-var enviarCambios = function(cambios,contenedor){
+var enviarCambios = function(cambios,contenedor,entidad){
   //armo la peticion
-  cambios.entidad = 'registroVirtual';
+  cambios.entidad = entidad;
   cambios.operacion = 'modificar';
-  cambios.modulo = 'seguridad';
+  cambios.modulo = UI.buscarConstructor(entidad).modulo;
   //luego el cuadro
   var infoCuadro = {
     contenedor: contenedor,
@@ -106,22 +116,24 @@ var enviarCambios = function(cambios,contenedor){
   torque.manejarOperacion(cambios,infoCuadro,function guardarCambios(respuesta){
     if(respuesta.success){
       UI.elementos.modalWindow.eliminarUltimaCapa();
-      setTimeout(abrirFormTabla,1000);
+      setTimeout(function(){
+        abrirDetalle(entidad);
+      },1000);
     }else{
       UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
     }
   });
 };
-/*----------------------------------------Nuevo Registro Virtual----------------------------------------------*/
-var abrirFormTabNuevo = function(){
+/*----------------------------------------Nuevo Registro ----------------------------------------------*/
+var abrirDetalleNuevo = function(entidad){
   UI.elementos.modalWindow.eliminarUltimaCapa();
   setTimeout(function motarFormularioNuevo(){
     var formTabla = UI.crearVentanaModal({
       contenido: 'ancho',
-      cabecera: 'Nuevo '+UI.buscarConstructor('registroVirtual').titulo,
+      cabecera: 'Nuevo '+UI.buscarConstructor(entidad).titulo,
       cuerpo:{
         tipo: 'nuevo',
-        formulario: UI.buscarConstructor('registroVirtual')
+        formulario: UI.buscarConstructor(entidad)
       },
       pie:{
         html: '<section modalButtons>'+
@@ -131,15 +143,17 @@ var abrirFormTabNuevo = function(){
       }
     });
     formTabla.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){UI.elementos.modalWindow.eliminarUltimaCapa();};
-    formTabla.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32').onclick = guardarRegistro;
+    formTabla.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32').onclick = function(){
+      guardarRegistro(entidad);
+    };
   },1000);
 };
-var guardarRegistro = function(){
+var guardarRegistro = function(entidad){
   var formulario = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
   if(formulario.validar()){
     var peticion = formulario.captarValores();
-    peticion.codigo_tabla = UI.elementos.maestro.forma.formulario.registroId;
-    peticion.entidad = 'registroVirtual';
+    peticion[UI.buscarConstructor(entidad).codigo_padre] = UI.elementos.maestro.forma.formulario.registroId;
+    peticion.entidad = entidad;
     peticion.operacion = 'guardar';
     var InfoCuadro = {
       contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
@@ -151,7 +165,9 @@ var guardarRegistro = function(){
     torque.manejarOperacion(peticion,InfoCuadro,function guardar(respuesta){
       if(respuesta.success){
         UI.elementos.modalWindow.eliminarUltimaCapa();
-        setTimeout(abrirFormTabla,1000);
+        setTimeout(function(){
+          abrirDetalle(entidad);
+        },1000);
       }else{
         UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
       }

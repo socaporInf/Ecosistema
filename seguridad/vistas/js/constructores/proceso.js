@@ -1,8 +1,8 @@
-tablaVirtual = {
-  nombre:'tablaVirtual',
+var proceso = {
+  nombre:'proceso',
   modulo: 'seguridad',
   campo_nombre: 'nombre',
-  titulo: 'Tabla Virtual',
+  titulo: 'Proceso',
   altura: 300,
   campos:[
     {
@@ -10,10 +10,16 @@ tablaVirtual = {
       parametros : {requerido:true,titulo:'Nombre',nombre:'nombre',tipo:'simple',eslabon:'simple',usaToolTip:true}
     },{
       tipo : 'campoDeTexto',
-      parametros : {requerido:true,titulo:'Campo Relacion',nombre:'campo_relacion',tipo:'simple',eslabon:'simple',usaToolTip:false}
+      parametros : {requerido:true,titulo:'Descripcion',nombre:'descripcion',tipo:'area',eslabon:'area',usaToolTip:false}
     },{
-      tipo : 'campoDeTexto',
-      parametros : {requerido:true,titulo:'Funcion',nombre:'funcion',tipo:'area',eslabon:'area',usaToolTip:true}
+      tipo : 'Radio',
+      parametros : {
+        nombre : 'estado',
+        opciones : [
+          {valor:'A',nombre:'Activo'},
+          {valor:'I',nombre:'Inactivo'}
+        ]
+      }
     }
   ],
   botones:{
@@ -25,7 +31,7 @@ tablaVirtual = {
         {
           tipo:'detalle',
           click: function(boton){
-            abrirDetalle('registroVirtual');
+            abrirDetalle('parametroControl');
           }
         }
       ],

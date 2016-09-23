@@ -110,7 +110,7 @@ class cls_PlantillaNotificacion extends cls_Conexion{
      $la_respuesta['codigo_prioridad']=$la_registros['codigo_prioridad'];
      $la_respuesta['nombre_prioridad']=$la_registros['nombre_prioridad'];
      $la_respuesta['codigo_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
-     $la_respuesta['nombre_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
+     $la_respuesta['nombre_tipo_notificacion']=$la_registros['nombre_tipo_notificacion'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);
@@ -148,7 +148,7 @@ class cls_PlantillaNotificacion extends cls_Conexion{
      $la_respuesta['codigo_prioridad']=$la_registros['codigo_prioridad'];
      $la_respuesta['nombre_prioridad']=$la_registros['nombre_prioridad'];
      $la_respuesta['codigo_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
-     $la_respuesta['nombre_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
+     $la_respuesta['nombre_tipo_notificacion']=$la_registros['nombre_tipo_notificacion'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);

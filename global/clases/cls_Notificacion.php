@@ -17,6 +17,7 @@ class cls_Notificacion extends cls_Conexion{
  }
 
  public function gestionar(){
+   $lobj_Mensaje = new cls_Mensaje_Sistema;
    switch ($this->aa_Atributos['operacion']) {
      case 'buscar':
        $registros=$this->f_Listar();
@@ -61,7 +62,10 @@ class cls_Notificacion extends cls_Conexion{
        break;
 
      case 'crearNotificacionPorPlantilla':
-      $respuesta = $this->f_crearNotificacionPorPlantilla();
+      $lb_hecho = $this->f_crearNotificacionPorPlantilla();
+      if($lb_hecho){
+         $success = 1;
+      }
       break;
 
      default:
@@ -148,12 +152,20 @@ class cls_Notificacion extends cls_Conexion{
    $lobj_Plantilla = new cls_PlantillaNotificacion();
    $pet = array(
       'operacion' =>  'buscarPorNombre',
-      'nombre' => $this->aa_Atributos['plantilla'];
+      'nombre' => $this->aa_Atributos['plantilla']
    );
    $lobj_Plantilla->setPeticion($pet);
-   $plantilla = $lobj_Plantilla->gestionar()['registro'];
-   return $planilla;
+   $plantilla = $this->completarNotificacion($lobj_Plantilla->gestionar()['registro'],$this->aa_Atributos['valores']);
+   return $plantilla;
  }
+ public function completarNotificacion($plt,$valores){
+    foreach ($valores as $aCambiar => $nuevo) {
+      $aCambiar = '{'.strtoupper($aCambiar).'}';
+      $plt['titulo'] = str_replace($aCambiar, $nuevo, $plt['titulo']);
+      $plt['cuerpo'] = str_replace($aCambiar, $nuevo, $plt['cuerpo']);
+    }
+    return $plt;
+}
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
@@ -178,27 +190,34 @@ class cls_Notificacion extends cls_Conexion{
  private function f_ConsultarNotificacionesUsu(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM global.vnotificacion_rol WHERE llave_acceso IN (";
+
+   $ls_Sql2="SELECT codigo_rol from seguridad.vllave_acceso where llave_acceso IN (";
    //agrego las llaves a la consulta
    $llaves = $_SESSION['Usuario']['llaves_acceso'];
    for ($i = 0; $i < count($llaves); $i++) {
-     $ls_Sql.="'".$llaves[$i]."'";
+     $ls_Sql2.="'".$llaves[$i]."'";
      if ($i != (count($llaves) - 1)) {
-       $ls_Sql.=",";
+       $ls_Sql2.=",";
      }
    }
-   $ls_Sql.=')';
+   $ls_Sql2.=')';
+   $ls_Sql ="SELECT * FROM global.vnotificacion where codigo_tipo_notificacion in
+            (
+            	SELECT codigo_tipo_notificacion FROM global.vtipo_notificacion_rol WHERE codigo_rol IN (
+            		$ls_Sql2
+            	)
+            )";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo']=$la_registros['codigo_notificacion'];
+     $la_respuesta[$x]['codigo']=$la_registros['codigo'];
      $la_respuesta[$x]['nombre']=$la_registros['titulo'];
      $la_respuesta[$x]['titulo']=$la_registros['titulo'];
      $la_respuesta[$x]['cuerpo']=$la_registros['cuerpo'];
-     $la_respuesta[$x]['codigo_tipo']=$la_registros['codigo_tipo_notificacion'];
-     $la_respuesta[$x]['nombre_tipo']=$la_registros['tipo_notificacion'];
-     $la_respuesta[$x]['codigo_prioridad']=$la_registros['prioridad'];
-     $la_respuesta[$x]['prioridad']=$la_registros['prioridad'];
+     $la_respuesta[$x]['codigo_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
+     $la_respuesta[$x]['nombre_tipo_notificacion']=$la_registros['nombre_tipo_notificacion'];
+     $la_respuesta[$x]['codigo_prioridad']=$la_registros['codigo_prioridad'];
+     $la_respuesta[$x]['nombre_prioridad']=$la_registros['nombre_prioridad'];
      $la_respuesta[$x]['fecha_hora']=$la_registros['fecha_hora'];
      $x++;
    }

@@ -109,13 +109,14 @@ class cls_Proceso extends cls_Conexion{
  private function f_Buscar(){
    $lb_Enc=false;
    //Busco El rol
-   $ls_Sql="SELECT * FROM seguridad.vproceso where codigo_proceso='".$this->aa_Atributos['codigo']."'";
+   $ls_Sql="SELECT * FROM seguridad.vproceso where codigo='".$this->aa_Atributos['codigo']."'";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo']=$la_registros['codigo'];
      $la_respuesta['nombre']=$la_registros['nombre'];
      $la_respuesta['descripcion']=$la_registros['descripcion'];
+     $la_respuesta['estado']=$la_registros['estado'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);

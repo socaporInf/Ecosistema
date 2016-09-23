@@ -60,8 +60,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 									'operacion' => 'crearNotificacionPorPlantilla',
 									'plantilla' => 'CARGA VALIDACION EXITOSA'
 								);
-								$lobj_Notificacion->setPeticion($pet);
-								$respuesta = $lobj_Notificacion->gestionar();
 								$this->f_Commit();
 							}else{
 								//dispario notificacion
@@ -69,8 +67,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 										'operacion' => 'crearNotificacionPorPlantilla',
 										'plantilla' => 'ERROR INSERCION EN BASE DE DATOS'
 									);
-									$lobj_Notificacion->setPeticion($pet);
-									$respuesta = $lobj_Notificacion->gestionar();
 								$this->f_RollBack();
 							}
 						}else {
@@ -83,8 +79,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 									'operacion' => 'crearNotificacionPorPlantilla',
 									'plantilla' => 'ERROR ELIMINACION ANTERIORES'
 								);
-								$lobj_Notificacion->setPeticion($pet);
-								$respuesta = $lobj_Notificacion->gestionar();
 								$this->f_RollBack();
 							}else {
 								$lb_hecho = false;
@@ -95,8 +89,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 											'operacion' => 'crearNotificacionPorPlantilla',
 											'plantilla' => 'ERROR REEMPLAZO DATOS'
 										);
-									$lobj_Notificacion->setPeticion($pet);
-									$respuesta = $lobj_Notificacion->gestionar();
 									$this->f_RollBack();
 								}else{
 									//dispario notificacion
@@ -104,14 +96,27 @@ class cls_Carga_Validacion extends cls_Conexion{
 										'operacion' => 'crearNotificacionPorPlantilla',
 										'plantilla' => 'REEMPLAZO VALIDACION DIA'
 									);
-									$lobj_Notificacion->setPeticion($pet);
-									$respuesta = $lobj_Notificacion->gestionar();
 									$this->f_Commit();
 								}
 							}
 						}
+					}else{
+						$success = 0;
+						$respuesta['mensaje'] = "Correo $UID ya cargado";
 					}
 					$this->f_Des();
+					if($pet['operacion']!='extraerDatos'){
+						$pet['valores'] = array('fechadia'=>$this->fFechaBD($fechadia));
+						$lobj_Notificacion->setPeticion($pet);
+						$notificacion = $lobj_Notificacion->gestionar();
+						if($notificacion['success']==1){
+							$success = 1;
+							$respuesta['mensaje'] = 'Proceso culminada de forma exitosa';
+						}else{
+							$success = 0;
+							$respuesta['mensaje'] = 'error al disparar notificacion';
+						}
+					}
 				}
         break;
 

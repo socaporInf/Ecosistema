@@ -1,4 +1,3 @@
-//TODO: adaptar a tipo notifiacion rol
 function construirUI(){
   var lista = UI.agregarLista({
       titulo: 'Tipos Notificacion',
