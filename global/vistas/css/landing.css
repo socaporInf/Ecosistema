@@ -95,17 +95,23 @@ section[prioridad]:after{
 	top: 10px;
 	right: 15px;
 }
+section[prioridad='BAJA']{
+	color: #3F51B5;
+}
 section[prioridad='BAJA']:after{
 	content: 'info_outline';
-	color: #3F51B5;
+}
+section[prioridad='MEDIA']{
+	color: #FFD54F;
 }
 section[prioridad='MEDIA']:after{
 	content: 'warning';
-	color: #FFD54F;
+}
+section[prioridad='ALTA']{
+	color: #E57373;
 }
 section[prioridad='ALTA']:after{
 	content: 'error';
-	color: #E57373;
 }
 /*---------------------------Media Query-------------------------------------------*/
 @media (max-width: 1000px){
