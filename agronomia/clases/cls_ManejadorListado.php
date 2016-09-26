@@ -51,17 +51,24 @@ class cls_ManejadorListado extends cls_Conexion{
         $highestRow = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
 
+				$indice = 0;
         //Loop through each row of the worksheet in turn
         for ($row = 1; $row <= $highestRow; $row++){
             //  Read a row of data into an array
-            $rowData[$row] = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE)[0];
-						if($row != 1){
-							$cell = $sheet->getCell('B' . $row);
-							$InvDate = $cell->getValue();
-							if(PHPExcel_Shared_Date::isDateTime($cell)) {
-									 $rowData[$row][1] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($InvDate));
+            $rowData[$indice] = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE)[0];
+						//valido las filas vacias
+						if($rowData[$indice][0]!=''){
+							if($indice > 0){
+								$cell = $sheet->getCell('B' . $row);
+								$InvDate = $cell->getValue();
+								if(PHPExcel_Shared_Date::isDateTime($cell)) {
+										 $rowData[$indice][1] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($InvDate));
+								}
 							}
+							$indice++;
 						}
+						//cambio el formato de las celdas de fecha para que se puedan visualizar
+
         }
   	}else{
 			print('vacio');

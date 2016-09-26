@@ -26,97 +26,103 @@ class cls_Carga_Validacion extends cls_Conexion{
 				);
 				$lobj_MAC->setPeticion($pet);
 				$archivo = $lobj_MAC->gestionar();
-				$UID = $lobj_MAC->getAtributos()['UID'];
+				if($archivo!=false){
 
-				//extraigo los datos del archivo
-				include_once('cls_ManejadorListado.php');
-				$lobj_MAL = new cls_ManejadorListado();
-				$pet = array(
-					'operacion'=>'extraerDatos',
-					'archivo'=>$archivo
-				);
-				$lobj_MAL->setPeticion($pet);
-				$data = $lobj_MAL->gestionar();
+					$UID = $lobj_MAC->getAtributos()['UID'];
 
-				if(count($data) > 0){
-					$cabeceras = $this->obtenerCabeceras($data);
-					$datos = $this->obtenerRegistros($data,$UID,$cabeceras);
-					//incluyo la clase de notificaciones para poder disparar la correcta sea el caso
-					include_once('../../global/clases/cls_Notificacion.php');
-					$lobj_Notificacion = new cls_Notificacion();
+					//extraigo los datos del archivo
+					include_once('cls_ManejadorListado.php');
+					$lobj_MAL = new cls_ManejadorListado();
+					$pet = array(
+						'operacion'=>'extraerDatos',
+						'archivo'=>$archivo
+					);
+					$lobj_MAL->setPeticion($pet);
+					$data = $lobj_MAL->gestionar();
 
-					$fechadia = $datos[1]['fechadia'];
-					$this->validarDia($fechadia,$UID);
-					$this->f_Con();
-					$this->f_Begin();
-					if(!$this->aa_Atributos['correoGuardado']){
-						if(!$this->aa_Atributos['fechaRegistrada']){
-							//primera vez
-							$lb_hecho = false;
-							$lb_hecho = $this->insertarListado($datos);
-							if($lb_hecho){
-								//dispario notificacion
-								$pet  = array(
-									'operacion' => 'crearNotificacionPorPlantilla',
-									'plantilla' => 'CARGA VALIDACION EXITOSA'
-								);
-								$this->f_Commit();
-							}else{
-								//dispario notificacion
-								$pet  = array(
-										'operacion' => 'crearNotificacionPorPlantilla',
-										'plantilla' => 'ERROR INSERCION EN BASE DE DATOS'
-									);
-								$this->f_RollBack();
-							}
-						}else {
-							//ya existe data de ese dia
-							$lb_hecho = false;
-							$lb_hecho = $this->eliminarListado($fechadia);
-							if(!$lb_hecho){
-								//dispario notificacion
-								$pet  = array(
-									'operacion' => 'crearNotificacionPorPlantilla',
-									'plantilla' => 'ERROR ELIMINACION ANTERIORES'
-								);
-								$this->f_RollBack();
-							}else {
+					if(count($data) > 0){
+						$cabeceras = $this->obtenerCabeceras($data);
+						$datos = $this->obtenerRegistros($data,$UID,$cabeceras);
+
+						//incluyo la clase de notificaciones para poder disparar la correcta sea el caso
+						include_once('../../global/clases/cls_Notificacion.php');
+						$lobj_Notificacion = new cls_Notificacion();
+						$fechadia = $datos[1]['fechadia'];
+						$this->validarDia($fechadia,$UID);
+						$this->f_Con();
+						$this->f_Begin();
+						if(!$this->aa_Atributos['correoGuardado']){
+							if(!$this->aa_Atributos['fechaRegistrada']){
+								//primera vez
 								$lb_hecho = false;
 								$lb_hecho = $this->insertarListado($datos);
-								if(!$lb_hecho){
+								if($lb_hecho){
 									//dispario notificacion
 									$pet  = array(
-											'operacion' => 'crearNotificacionPorPlantilla',
-											'plantilla' => 'ERROR REEMPLAZO DATOS'
-										);
-									$this->f_RollBack();
+										'operacion' => 'crearNotificacionPorPlantilla',
+										'plantilla' => 'CARGA VALIDACION EXITOSA'
+									);
+									$this->f_Commit();
 								}else{
 									//dispario notificacion
 									$pet  = array(
+											'operacion' => 'crearNotificacionPorPlantilla',
+											'plantilla' => 'ERROR INSERCION EN BASE DE DATOS'
+										);
+									$this->f_RollBack();
+								}
+							}else {
+								//ya existe data de ese dia
+								$lb_hecho = false;
+								$lb_hecho = $this->eliminarListado($fechadia);
+								if(!$lb_hecho){
+									//dispario notificacion
+									$pet  = array(
 										'operacion' => 'crearNotificacionPorPlantilla',
-										'plantilla' => 'REEMPLAZO VALIDACION DIA'
+										'plantilla' => 'ERROR ELIMINACION ANTERIORES'
 									);
-									$this->f_Commit();
+									$this->f_RollBack();
+								}else {
+									$lb_hecho = false;
+									$lb_hecho = $this->insertarListado($datos);
+									if(!$lb_hecho){
+										//dispario notificacion
+										$pet  = array(
+												'operacion' => 'crearNotificacionPorPlantilla',
+												'plantilla' => 'ERROR REEMPLAZO DATOS'
+											);
+										$this->f_RollBack();
+									}else{
+										//dispario notificacion
+										$pet  = array(
+											'operacion' => 'crearNotificacionPorPlantilla',
+											'plantilla' => 'REEMPLAZO VALIDACION DIA'
+										);
+										$this->f_Commit();
+									}
 								}
 							}
-						}
-					}else{
-						$success = 0;
-						$respuesta['mensaje'] = "Correo $UID ya cargado";
-					}
-					$this->f_Des();
-					if($pet['operacion']!='extraerDatos'){
-						$pet['valores'] = array('fechadia'=>$this->fFechaBD($fechadia));
-						$lobj_Notificacion->setPeticion($pet);
-						$notificacion = $lobj_Notificacion->gestionar();
-						if($notificacion['success']==1){
-							$success = 1;
-							$respuesta['mensaje'] = 'Proceso culminada de forma exitosa';
 						}else{
 							$success = 0;
-							$respuesta['mensaje'] = 'error al disparar notificacion';
+							$respuesta['mensaje'] = "Correo $UID ya cargado";
+						}
+						$this->f_Des();
+						if($pet['operacion']!='extraerDatos'){
+							$pet['valores'] = array('fechadia'=>$this->fFechaBD($fechadia));
+							$lobj_Notificacion->setPeticion($pet);
+							$notificacion = $lobj_Notificacion->gestionar();
+							if($notificacion['success']==1){
+								$success = 1;
+								$respuesta['mensaje'] = 'Proceso culminada de forma exitosa';
+							}else{
+								$success = 0;
+								$respuesta['mensaje'] = 'error al disparar notificacion';
+							}
 						}
 					}
+				}else{
+					$respuesta['mensaje'] = $lobj_MAC->getAtributos()['mensaje'];
+					$success = 0;
 				}
         break;
 
@@ -183,8 +189,8 @@ class cls_Carga_Validacion extends cls_Conexion{
 		$lb_hecho = $this->f_Ejecutar($ls_Sql);
 	}
 	private function obtenerCabeceras($data){
-		$data[1][count($data[1])] = 'uid';
-		return $data[1];
+		$data[0][count($data[1])] = 'uid';
+		return $data[0];
 	}
 	private function obtenerRegistros($data,$UID,$cabeceras){
 		$datos = array();
