@@ -186,7 +186,7 @@
 	/*-----------------------------------
 	* Funcion Arma los campos de paginacion y acomodala consulta para dicho proceso
 	*-----------------------------------*/
-	protected function f_ArmarPaginacion($ls_SqlBase,$orden){
+	protected function f_ArmarPaginacion($ls_SqlBase,$orden,$gruop = ''){
 			//varibles paginacion
 			if(isset($this->aa_Atributos['registrosporpagina'])){
 				 $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
@@ -196,11 +196,11 @@
 				 $paginas = ceil($paginas);
 				 $offset = $paginaActual * $registrosPorPagina;
 
-				 $ls_Sql= $ls_SqlBase.$orden." LIMIT $registrosPorPagina OFFSET $offset " ;
+				 $ls_Sql= $ls_SqlBase." ".$gruop." ".$orden." LIMIT $registrosPorPagina OFFSET $offset " ;
 
 				 $this->aa_Atributos['paginas'] = $paginas;
 			}else{
-				$ls_Sql= $ls_SqlBase.$orden;
+				$ls_Sql= $ls_SqlBase." ".$gruop." ".$orden;
 			}
 
 		 return $ls_Sql;

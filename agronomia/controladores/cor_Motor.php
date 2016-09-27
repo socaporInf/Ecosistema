@@ -17,7 +17,7 @@ switch ($la_Peticion['entidad']) {
 		$lobj_Entidad = new cls_Clase;
 		break;
 
-	case 'carga_validacion':
+	case 'cargaValidacion':
 		include_once('../clases/cls_Carga_Validacion.php');
 		$lobj_Entidad = new cls_Carga_Validacion;
 		break;

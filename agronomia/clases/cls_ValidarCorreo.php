@@ -1,7 +1,7 @@
 <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
-class cls_Inventario extends cls_Conexion{
+class cls_ValidarCorreo extends cls_Conexion{
 
    protected $aa_Atributos = array();
 
@@ -17,8 +17,18 @@ class cls_Inventario extends cls_Conexion{
    public function gestionar(){
       $lobj_Mensaje = new cls_Mensaje_Sistema;
       switch ($this->aa_Atributos['operacion']) {
-        case 'mostrarInventario':
-          $lb_Enc=$this->f_MostrarInventario();
+         case 'buscarDia':
+          $lb_Enc=$this->f_MostrarDias();
+          if($lb_Enc){
+            $success=1;
+            $respuesta['registros']=$this->aa_Atributos['registros'];
+          }else{
+            $respuesta['success'] = 0;
+            $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+          }
+          break;
+        case 'mostrarDatos':
+          $lb_Enc=$this->f_MostrarDatos('todos');
           if($lb_Enc){
             $success=1;
             $respuesta['registros']=$this->aa_Atributos['registros'];
@@ -29,8 +39,8 @@ class cls_Inventario extends cls_Conexion{
           }
           break;
 
-       case 'mostrarFincas':
-        $lb_Enc=$this->f_MostrarFincas();
+       case 'mostrarDatosDia':
+        $lb_Enc=$this->f_MostrarDatos('dia');
         if($lb_Enc){
           $success=1;
           $respuesta['registros']=$this->aa_Atributos['registros'];
@@ -52,18 +62,20 @@ class cls_Inventario extends cls_Conexion{
       }
       return $respuesta;
    }
-   private function f_MostrarInventario(){
-      $cadenaBusqueda = $this->f_obtenerCadenaBusqueda('inventario');
-      $ls_SqlBase = "SELECT * FROM agronomia.vinventario_cultivo $cadenaBusqueda";
-      $orden = "order by codigo_zona,codigo_productor,finca_letra,codigo_lote,codigo_tablon";
-      $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
+   private function f_MostrarDias(){
+      $cadenaBusqueda = $this->f_obtenerCadenaBusqueda('dia');
+
+      $ls_SqlBase = "SELECT fechadia, uid FROM agronomia.vvalidacion_correo $cadenaBusqueda";
+      $orden = "order by fechadia";
+      $group = ' Group by fechadia,uid';
+      $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden,$group);
 
       $x=0;
       $la_respuesta=array();
       $this->f_Con();
       $lr_tabla=$this->f_Filtro($ls_Sql);
       while($la_registros=$this->f_Arreglo($lr_tabla)){
-         $la_respuesta[$x] = $this->f_RecolectarInventario($la_registros);
+         $la_respuesta[$x] = $this->f_RecolectarDias($la_registros);
          $x++;
       }
       $this->f_Cierra($lr_tabla);
@@ -72,44 +84,17 @@ class cls_Inventario extends cls_Conexion{
       $lb_Enc=($x == 0)?false:true;
       return true;
    }
-   private function f_RecolectarInventario($la_registros){
-      //organizacion
-         $la_respuesta['Cañicultor']=$la_registros['nombre_productor'];
-      //finca
-         $la_respuesta['Codigo']=$la_registros['finca_letra'];
-         $la_respuesta['Finca']=$la_registros['nombre_finca'];
-      //zona
-         $la_respuesta['Codigo Zona']=$la_registros['codigo_zona'];
-         $la_respuesta['Zona']=$la_registros['nombre_zona'];
-      //lote
-        $la_respuesta['Lote']=$la_registros['nombre_lote'];
-     //tablon
-        $la_respuesta['Tablon']=$la_registros['codigo_tablon'];
-        $la_respuesta['Area Cana']=$la_registros['area_cana'];
-        $la_respuesta['Area Semilla']=$la_registros['area_semilla'];
-        $la_respuesta['Ton Est Hec']=$la_registros['toneladas_estimadas_hectarea'];
-        $la_respuesta['Ton Real']=$la_registros['toneladas_real'];
-        $la_respuesta['Ton Azucar']=$la_registros['toneladas_azucar'];
-     //tipo corte
-        $la_respuesta['Tipo Corte']=$la_registros['nombre_tipo_corte'];
-     //clase
-        $la_respuesta['Clase']=$la_registros['nombre_clase'];
-     //variedad
-        $la_respuesta['Variedad']=$la_registros['nombre_variedad'];
-     return $la_respuesta;
-   }
-   private function f_MostrarFincas(){
-      $cadenaBusqueda = $this->f_obtenerCadenaBusqueda('fincas');
-      $ls_SqlBase = "SELECT * FROM agronomia.vinventario_fincas $cadenaBusqueda";
-      $orden = "order by codigo_zona,id_finca";
+   private function f_MostrarDatos($tipo){
+      $cadenaBusqueda = $this->f_obtenerCadenaBusqueda('datosDia');
+      $ls_SqlBase = "SELECT * FROM agronomia.vvalidacion_correo $cadenaBusqueda";
+      $orden = "order by fechadia,codcanicultor,letrafinca,codigotablon,uid";
       $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
-
       $x=0;
       $la_respuesta=array();
       $this->f_Con();
       $lr_tabla=$this->f_Filtro($ls_Sql);
       while($la_registros=$this->f_Arreglo($lr_tabla)){
-         $la_respuesta[$x] = $this->f_RecolectarFincas($la_registros);
+         $la_respuesta[$x] = $this->f_RecolectarDatos($la_registros);
          $x++;
       }
       $this->f_Cierra($lr_tabla);
@@ -118,44 +103,58 @@ class cls_Inventario extends cls_Conexion{
       $lb_Enc=($x == 0)?false:true;
       return true;
    }
-   private function f_RecolectarFincas($la_registros){
-      //organizacion
-         $la_respuesta['Cañicultor']=$la_registros['nombre_productor'];
-      //finca
-         $la_respuesta['Codigo']=$la_registros['finca_letra'];
-         $la_respuesta['Finca']=$la_registros['nombre_finca'];
-      //zona
-         $la_respuesta['Codigo Zona']=$la_registros['codigo_zona'];
-         $la_respuesta['Zona']=$la_registros['nombre_zona'];
-      //Tablon
-         $la_respuesta['Area Cana']=$la_registros['area_cana'];
-         $la_respuesta['Area Semilla']=$la_registros['area_semilla'];
-         $la_respuesta['Ton Est Hec']=$la_registros['toneladas_estimadas_hectarea'];
+   private function f_RecolectarDatos($la_registros){
+      $la_respuesta['fechadia']=$this->fFechaBD($la_registros['fechadia']);
+      $la_respuesta['canicultor']=$la_registros['codcanicultor'];
+      $la_respuesta['letra']=$la_registros['letrafinca'];
+      $la_respuesta['nombrefinca']=$la_registros['nombrefinca'];
+      $la_respuesta['remesa']=$la_registros['numeroremesa'];
+      $la_respuesta['boletoromana']=$la_registros['boletoromana'];
+      $la_respuesta['alce']=$la_registros['codigonucleoalce'];
+      $la_respuesta['corte']=$la_registros['codigonucleocorte'];
+      $la_respuesta['trans']=$la_registros['codigonucleotrans'];
+      $la_respuesta['tablon']=$la_registros['codigotablon'];
+      $la_respuesta['pesoneto']=$la_registros['pesoneto'];
+      $la_respuesta['boletolaboratorio']=$la_registros['boletolaboratorio'];
+      $la_respuesta['brix']=$la_registros['brix'];
+      $la_respuesta['pol']=$la_registros['pol'];
+      $la_respuesta['torta']=$la_registros['torta'];
+      $la_respuesta['rendimiento']=$la_registros['rendimiento'];
+      $la_respuesta['azucar']=$la_registros['azucarprobable'];
+      $la_respuesta['placacamion']=$la_registros['placacamion'];
+      $la_respuesta['pureza']=$la_registros['pureza'];
+      $la_respuesta['dia']=$la_registros['dia'];
+      $la_respuesta['finca']=$la_registros['finca'];
+      $la_respuesta['distribucion']=$la_registros['distribucion'];
+      $la_respuesta['validarpeso']=$la_registros['validarpeso'];
+      $la_respuesta['codigo']=$la_registros['boletoromana'];
       return $la_respuesta;
    }
 
+   private function f_RecolectarDias($la_registros){
+      //dia
+         $la_respuesta['nombre']=$this->fFechaBD($la_registros['fechadia']);
+         $la_respuesta['codigo']=$la_registros['fechadia'];
+      //UID
+         $la_respuesta['UID']=$la_registros['uid'];
+     return $la_respuesta;
+   }
 
    private function f_obtenerCadenaBusqueda($tipo){
      $cadenaBusqueda = '';
-     if($this->aa_Atributos['valor']!=''){
-        $cadenaBusqueda .= "finca_letra like '%".$this->aa_Atributos['valor']."%'";
-     }else{
-        $cadenaBusqueda .= '';
-     }
-     $zona = "";
-     $finca = "";
-     if($this->aa_Atributos['zona'] != 'null'){
-        if(strlen($cadenaBusqueda) != 0){
-           $zona = 'and';
+     if($tipo != 'dia'){
+        $cadenaBusqueda = "where fechadia = '".$this->aa_Atributos['fechadia']."' ";
+        if($this->aa_Atributos['valor']!=''){
+           $cadenaBusqueda .= " and finca like '%".$this->aa_Atributos['valor']."%'";
+        }else{
+           $cadenaBusqueda .= '';
         }
-        $zona .= ' codigo_zona = '.$this->aa_Atributos['zona'];
-     }
-     if($this->aa_Atributos['finca'] != 'null'){
-        $finca = ' and id_finca = '.$this->aa_Atributos['finca'];
-     }
-     $cadenaBusqueda = $cadenaBusqueda.$zona.$finca;
-     if(strlen($cadenaBusqueda)>1){
-        $cadenaBusqueda = 'where '.$cadenaBusqueda;
+     }else{
+        if($this->aa_Atributos['valor']!=''){
+           $cadenaBusqueda .= "fechadia like '%".$this->aa_Atributos['valor']."%'";
+        }else{
+           $cadenaBusqueda .= '';
+        }
      }
      return $cadenaBusqueda;
    }

@@ -1,3 +1,4 @@
+//TODO: hacer validacion de los datos del dia y aprobarlos para que pasen al sistema
 var form = {
   campos:[
     {
@@ -9,11 +10,16 @@ var form = {
           eslabon:'simple',
           peticion:{
              modulo: "agronomia",
-             entidad: "validacionCorreo",
+             entidad: "validarCorreo",
              operacion: "buscarDia"
           },
           cuadro: {nombre: 'listaDias',mensaje: 'Cargando Dias'}
         }
+    },{
+      tipo : 'campoDeTexto',
+      parametros : {
+        titulo:'Registros por Pagina',nombre:'cantReg',tipo:'simple',eslabon:'simple',max: 3,valor: 40
+      }
     }
   ]
 };
@@ -54,30 +60,32 @@ function ejecutar(){
   var operacion;
   var columnas;
   operacion = "mostrarDatosDia";
-  columnas = '15';
+  columnas = '18';
   if(!UI.buscarVentana('listado')){
     crearListado(operacion,columnas,form);
   }else{
     var listado = UI.buscarVentana('listado');
     listado.atributos.carga.peticion.operacion = operacion;
+    listado.atributos.carga.peticion.fechadia = form.buscarCampo('fechadia').captarValor();
     listado.registrosPorPagina = parseInt(form.buscarCampo('cantReg').captarValor()) || 40;
     listado.recargar();
   }
 }
 function crearListado(operacion,columnas,form){
   var lista = UI.agregarLista({
-    titulo: 'Inventario de Cultivo',
+    titulo: 'Datos Validacion',
     nombre : 'listado',
-    clases: ['ventana','inversa','not-first','last'],
+    selector: 'apagado',
+    clases: ['ventana','inversa','not-first','last','completo'],
     columnas: columnas,
     registrosPorPagina: parseInt(form.buscarCampo('cantReg').captarValor()) || 40,
     carga:{
       uso:true,
       peticion: {
          modulo: "agronomia",
-         entidad: "validacionCorreo",
+         entidad: "validarCorreo",
          operacion: operacion,
-         zona: form.buscarCampo('fechadia').captarValor()
+         fechadia: form.buscarCampo('fechadia').captarValor()
       }
     },
     paginacion: {
