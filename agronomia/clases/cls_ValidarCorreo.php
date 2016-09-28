@@ -51,6 +51,19 @@ class cls_ValidarCorreo extends cls_Conexion{
         }
         break;
 
+       case 'validaDatos':
+          //TODO: inserto en la tabla validacion capca
+
+         //TODO: inserto en la tabla validacion soca
+
+         //TODO: cambio el estado de los datos a validado
+         $lb_Hecho = $this->cambiarEstado();
+         if($lb_Hecho){
+            $success = 1;
+            $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+         }
+         break;
+
         default:
           $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
           $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -65,9 +78,9 @@ class cls_ValidarCorreo extends cls_Conexion{
    private function f_MostrarDias(){
       $cadenaBusqueda = $this->f_obtenerCadenaBusqueda('dia');
 
-      $ls_SqlBase = "SELECT fechadia, uid FROM agronomia.vvalidacion_correo $cadenaBusqueda";
-      $orden = "order by fechadia";
-      $group = ' Group by fechadia,uid';
+      $ls_SqlBase = "SELECT fechadia, uid,estado FROM agronomia.vvalidacion_correo $cadenaBusqueda";
+      $orden = "order by fechadia desc";
+      $group = ' Group by fechadia,uid,estado';
       $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden,$group);
 
       $x=0;
@@ -128,15 +141,19 @@ class cls_ValidarCorreo extends cls_Conexion{
       $la_respuesta['distribucion']=$la_registros['distribucion'];
       $la_respuesta['validarpeso']=$la_registros['validarpeso'];
       $la_respuesta['codigo']=$la_registros['boletoromana'];
+      $la_respuesta['estado']=$la_registros['estado'];
       return $la_respuesta;
    }
 
    private function f_RecolectarDias($la_registros){
       //dia
          $la_respuesta['nombre']=$this->fFechaBD($la_registros['fechadia']);
-         $la_respuesta['codigo']=$la_registros['fechadia'];
       //UID
          $la_respuesta['UID']=$la_registros['uid'];
+      //estado
+         $la_respuesta['estado']=$la_registros['estado'];
+
+         $la_respuesta['codigo']=$la_registros['fechadia'];
      return $la_respuesta;
    }
 

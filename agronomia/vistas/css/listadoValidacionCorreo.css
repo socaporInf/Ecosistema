@@ -1,0 +1,138 @@
+
+/*--------------------------------------Lista Validacion Correo----------------------------------------- */
+div[lista] section[slot] div[celda],div[lista] section[slot] div[cabeceraCelda]{
+  font-size: 10px;
+}
+div[lista] section[slot] div[celda='fechadia'],
+div[lista] section[slot] div[cabeceraCelda='fechadia']{
+  justify-content: center;
+  width: calc(7%);
+}
+div[lista] section[slot] div[celda='canicultor'],
+div[lista] section[slot] div[cabeceraCelda='canicultor']{
+  justify-content: center;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='letra'],
+div[lista] section[slot] div[cabeceraCelda='letra']{
+  justify-content: center;
+  width: calc(3%);
+}
+div[lista] section[slot] div[celda='nombrefinca'],
+div[lista] section[slot] div[cabeceraCelda='nombrefinca']{
+  justify-content: center;
+  width: calc(11%);
+}
+div[lista] section[slot] div[celda='remesa'],
+div[lista] section[slot] div[cabeceraCelda='remesa']{
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='boletoromana'],
+div[lista] section[slot] div[cabeceraCelda='boletoromana']{
+  justify-content: center;
+  width: calc(7%);
+}
+div[lista] section[slot] div[celda='alce'],
+div[lista] section[slot] div[cabeceraCelda='alce']{
+  justify-content: center;
+  width: calc(3%);
+}
+div[lista] section[slot] div[celda='corte'],
+div[lista] section[slot] div[cabeceraCelda='corte']{
+  justify-content: center;
+  width: calc(3%);
+}
+div[lista] section[slot] div[celda='trans'],
+div[lista] section[slot] div[cabeceraCelda='trans']{
+  justify-content: center;
+  width: calc(3%);
+}
+div[lista] section[slot] div[celda='tablon'],
+div[lista] section[slot] div[cabeceraCelda='tablon']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='pesoneto'],
+div[lista] section[slot] div[cabeceraCelda='pesoneto']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='boletolaboratorio'],
+div[lista] section[slot] div[cabeceraCelda='boletolaboratorio']{
+  justify-content: center;
+  width: calc(7%);
+}
+div[lista] section[slot] div[celda='brix'],
+div[lista] section[slot] div[cabeceraCelda='brix']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='pol'],
+div[lista] section[slot] div[cabeceraCelda='pol']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='torta'],
+div[lista] section[slot] div[cabeceraCelda='torta']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='rendimiento'],
+div[lista] section[slot] div[cabeceraCelda='rendimiento']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='azucar'],
+div[lista] section[slot] div[cabeceraCelda='azucar']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='placacamion'],
+div[lista] section[slot] div[cabeceraCelda='placacamion']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='pureza'],
+div[lista] section[slot] div[cabeceraCelda='pureza']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='dia'],
+div[lista] section[slot] div[cabeceraCelda='dia']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='finca'],
+div[lista] section[slot] div[cabeceraCelda='finca']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='distribucion'],
+div[lista] section[slot] div[cabeceraCelda='distribucion']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='validarpeso'],
+div[lista] section[slot] div[cabeceraCelda='validarpeso']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
+div[lista] section[slot] div[celda='uid'],
+div[lista] section[slot] div[cabeceraCelda='uid']{
+  justify-content: center;
+  padding-left: 3px;
+  width: calc(5%);
+}
