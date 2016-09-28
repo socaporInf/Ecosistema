@@ -203,7 +203,7 @@ div.group textarea {
     border: none;
     border-bottom: 1px solid #757575;
     opacity: 1;
-    height: 24px;
+    height: 48px;
     resize: none;
 }
 div.group input:focus {
@@ -326,7 +326,9 @@ input:focus~ .highlight, textarea:focus~ .highlight {
 }
 
 /*------------------------------Radio Box--------------------------------------*/
-
+div.desahbilitado label.radio span.outer{
+    border: 2px solid  #757575;
+}
 .radio {
     display: inline-block;
     font-size: 14px;
@@ -352,7 +354,7 @@ input:focus~ .highlight, textarea:focus~ .highlight {
     opacity: 1;
 }
 .radio input:checked+ .outer {
-    border: 2px solid #f08b3b;
+    border: 2px solid #4CAF50;
 }
 .radio input:focus+ .outer .inner {
     -webkit-transform: scale(1);
@@ -367,7 +369,7 @@ input:focus~ .highlight, textarea:focus~ .highlight {
     display: block;
     float: left;
     margin: 12px -4px 0px 0px;
-    border: 2px solid #0c70b4;
+    border: 2px solid #4CAF50;
     border-radius: 50%;
     background-color: #fff;
 }
@@ -689,7 +691,7 @@ section[botonera] button.icon,section.botonera button.icon{
 @media (max-width: 900px) {
     div[mat-window].formulario,div[mat-window].ventana {
         width: 85%;
-        margin-bottom: 10px;
+        margin-bottom: 80px;
         margin-left: 50px;
     }
 }

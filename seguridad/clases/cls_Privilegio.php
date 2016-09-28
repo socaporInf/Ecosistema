@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Privilegio extends cls_Conexion{
 
-	private $aa_Atributos = array();
+	protected $aa_Atributos = array();
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -209,7 +209,7 @@ class cls_Privilegio extends cls_Conexion{
 		$this->f_Begin();
 		$i = 0;
 		//si se va a desabilitar alguno entra por este camino
-		if(count($aDesabilitar)!=0){
+		if(!empty($aDesabilitar[0])){
 			do{
 				$ls_Sql = "	UPDATE seguridad.varbol_privilegios SET estado_privilegio='I'
 										WHERE llave_acceso='".$llave_acceso."' AND
@@ -234,11 +234,10 @@ class cls_Privilegio extends cls_Conexion{
 					$ls_Sql = "	UPDATE seguridad.varbol_privilegios SET estado_privilegio='A'
 											WHERE llave_acceso='".$llave_acceso."'
 											AND componente = '".$aGuardarValidado[$i]['codigo']."'";
-					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				}else{
 					$ls_Sql = "INSERT INTO seguridad.varbol_privilegios (llave_acceso,componente) values ('".$this->aa_Atributos['codigo']."','".$aGuardarValidado[$i]['codigo']."')";
-					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				}
+				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				$this->f_Cierra($lr_tabla);
 				if(!$lb_Hecho){
 					$this->f_RollBack();
@@ -269,8 +268,9 @@ class cls_Privilegio extends cls_Conexion{
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['codigo']=$la_registros['codigo'];
 			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre_operacion'];
+			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
 			$i++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -285,7 +285,7 @@ class cls_Privilegio extends cls_Conexion{
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['codigo']=$la_registros['codigo_operacion'];
 			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre'];
 			$i++;
 		}
@@ -301,13 +301,13 @@ class cls_Privilegio extends cls_Conexion{
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		$i = 0;
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$i]['codigo']=$la_registros['codigo'];
 			$la_respuesta[$i]['codigoPrivilegio']=$la_registros['codigo_privilegio'];
 			$la_respuesta[$i]['estadoPrivilegio']=$la_registros['estado_privilegio'];
 			$la_respuesta[$i]['codigoComponente']=$la_registros['codigo_componente'];
 			$la_respuesta[$i]['tituloComponente']=$la_registros['titulo_componente'];
 			$la_respuesta[$i]['tipoComponente']=$la_registros['tipo_componente'];
 			$la_respuesta[$i]['codigoOperacion']=$la_registros['codigo_operacion'];
+			$la_respuesta[$i]['codigo']=$la_registros['codigo_operacion_disponible'];
 			$la_respuesta[$i]['nombreOperacion']=$la_registros['nombre_operacion'];
 			$i++;
 		}
@@ -322,9 +322,10 @@ class cls_Privilegio extends cls_Conexion{
 		$aGuardar = array();
 		foreach ($data as $llave => $valor) {
 			$valor['codigoOperacion'] = $valor['valor'];
+			$valor['nombreOperacion'] = $valor['nombre'];
 			$aGuardar[$llave] = $valor;
 		}
-		$valores = $this->validarGuardado($aGuardar,$existentes,'codigoOperacion');
+		$valores = $this->validarGuardado($aGuardar,$existentes,'nombreOperacion');
 		$aDesabilitar = $valores['aDesabilitar'];
 		$aGuardarValidado = $valores['aGuardarValidado'];
 		$lb_Hecho = false;
@@ -334,7 +335,7 @@ class cls_Privilegio extends cls_Conexion{
 		if(count($aDesabilitar)!=0){
 			do{
 				$ls_Sql = "	UPDATE seguridad.voperacion_privilegio SET estado='I'
-										WHERE codigo='".$aDesabilitar[$i]['codigo']."'";
+										WHERE codigo_operacion_disponible='".$aDesabilitar[$i]['codigo']."'";
 				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				$i++;
 			}while(($i < count($aDesabilitar)) || ($lb_Hecho == false));
@@ -348,19 +349,16 @@ class cls_Privilegio extends cls_Conexion{
 			for ($i=0; $i < count($aGuardarValidado) ; $i++) {
 				$lb_Hecho = false;
 				$ls_Sql = "SELECT * from seguridad.voperacion_privilegio";
-				$ls_Sql .=" WHERE codigo_privilegio =".$this->aa_Atributos['codigo']."";
-				$ls_Sql .=" AND codigo_operacion =".$aGuardarValidado[$i]['codigoOperacion']."";
+				$ls_Sql .=" WHERE codigo_operacion_disponible =".$aGuardarValidado[$i]['codigoOperacion']."";
 				$lr_tabla=$this->f_Filtro($ls_Sql);
 				if($la_registro=$this->f_Arreglo($lr_tabla)){
 					$ls_Sql = "	UPDATE seguridad.voperacion_privilegio SET estado='A'
-											WHERE codigo_privilegio='".$this->aa_Atributos['codigo']."'
-											AND codigo_operacion = '".$aGuardarValidado[$i]['codigoOperacion']."'";
-					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
+											WHERE codigo_operacion_disponible = '".$aGuardarValidado[$i]['codigoOperacion']."'";
 				}else{
-					$ls_Sql = "INSERT INTO seguridad.voperacion_privilegio (codigo_privilegio,codigo_operacion)
+					$ls_Sql = "INSERT INTO seguridad.voperacion_privilegio (codigo_privilegio,codigo_operacion_disponible)
 											values ('".$this->aa_Atributos['codigo']."','".$aGuardarValidado[$i]['codigoOperacion']."')";
-					$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				}
+				$lb_Hecho = $this->f_Ejecutar($ls_Sql);
 				$this->f_Cierra($lr_tabla);
 				if(!$lb_Hecho){
 					$this->f_RollBack();
@@ -384,9 +382,10 @@ class cls_Privilegio extends cls_Conexion{
 		$aGuardar = array();
 		foreach ($data as $llave => $valor) {
 			$valor['codigoOperacion'] = $valor['valor'];
+			$valor['nombreOperacion'] = $valor['nombre'];
 			$aGuardar[$llave] = $valor;
 		}
-		$valores = $this->validarGuardado($aGuardar,$existentes,'codigoOperacion');
+		$valores = $this->validarGuardado($aGuardar,$existentes,'nombreOperacion');
 		$aDesabilitar = $valores['aDesabilitar'];
 		$aGuardarValidado = $valores['aGuardarValidado'];
 		$lb_Hecho = false;
@@ -465,7 +464,6 @@ class cls_Privilegio extends cls_Conexion{
 	//------------------------------------------------------------------------- General ------------------------------------------------------------------------------
 
 	private function validarGuardado($aGuardar,$existentes,$campoAComparar){
-		$aDesabilitar = array();
 		$aGuardarValidado = array();
 		for($x = 0;$x < count($aGuardar); $x++){
 			$validado = false;
@@ -492,6 +490,7 @@ class cls_Privilegio extends cls_Conexion{
 		}
 		$valores['aGuardarValidado'] = $aGuardarValidado;
 		$valores['aDesabilitar'] = $aDesabilitar;
+
 		return $valores;
 	}
 }

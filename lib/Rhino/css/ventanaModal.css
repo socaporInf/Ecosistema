@@ -141,9 +141,9 @@ div[capa='contenido'] section[pie] section[modalbuttons] button {
     background-position: 8px;
     float: right;
     overflow: visible;
-    margin-top: 10px;
+    margin-top: 5px;
     background-color: white;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 div[capa='contenido'] section[pie] section[modalbuttons] button:hover {
@@ -162,11 +162,10 @@ div[capa='contenido'] div.ContenedorCarga{
 /*-----------------------------------Media screen-------------------------------*/
 @media only screen and (max-device-width: 480px) {
     div[capa='contenido'] {
-        width: 95%;
+        width: 100%;
         left: 0% !important;
     }
     div[capa='contenido'] section[pie]{
         position:static;
     }
-
 }

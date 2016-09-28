@@ -25,7 +25,7 @@ tablaVirtual = {
         {
           tipo:'detalle',
           click: function(boton){
-            abrirFormTabla();
+            abrirDetalle('registroVirtual');
           }
         }
       ],

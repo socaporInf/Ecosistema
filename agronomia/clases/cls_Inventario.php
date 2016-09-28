@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Inventario extends cls_Conexion{
 
-   private $aa_Atributos = array();
+   protected $aa_Atributos = array();
 
    public function setPeticion($pa_Peticion){
       $this->aa_Atributos=$pa_Peticion;
@@ -134,29 +134,7 @@ class cls_Inventario extends cls_Conexion{
       return $la_respuesta;
    }
 
-   private function f_ArmarPaginacion($ls_SqlBase,$orden){
-      //varibles paginacion
-     $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
-     $paginaActual = $this->aa_Atributos['pagina'] - 1;
-     $numero_registros = $this->f_ObtenerNumeroRegistros($ls_SqlBase);
-     $paginas = $numero_registros / $registrosPorPagina;
-     $paginas = ceil($paginas);
-     $offset = $paginaActual * $registrosPorPagina;
 
-     $ls_Sql= $ls_SqlBase.$orden." LIMIT $registrosPorPagina OFFSET $offset " ;
-
-     $this->aa_Atributos['paginas'] = $paginas;
-
-     return $ls_Sql;
-   }
-   private function f_ObtenerNumeroRegistros($ls_Sql){
-     $this->f_Con();
-     $lr_tabla=$this->f_Filtro($ls_Sql);
-     $registros = $this->f_Registro($lr_tabla);
-     $this->f_Cierra($lr_tabla);
-     $this->f_Des();
-     return $registros;
-   }
    private function f_obtenerCadenaBusqueda($tipo){
      $cadenaBusqueda = '';
      if($this->aa_Atributos['valor']!=''){

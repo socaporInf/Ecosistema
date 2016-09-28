@@ -34,9 +34,8 @@
 	var UI = new Arquitecto();
 	UI.agregarConstructor(mensaje);
 	UI.configure({
-		formulario:{
-			entidad: torque.entidadActiva,
-			usoConstructor: true
+		maestro:{
+			entidad: torque.entidadActiva
 		},
 		botonera:{
 			botones:['buscar','nuevo','abrir']

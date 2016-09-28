@@ -28,12 +28,12 @@ function abrirFormSeg(){
          modulo: "seguridad",
          entidad: "rol",
          operacion: "consultarRolesAsignados",
-         codigo_usuario: UI.elementos.maestro.ventanaForm.formulario.buscarCampo('codigo').captarValor()
+         codigo_usuario: UI.elementos.maestro.forma.formulario.buscarCampo('codigo').captarValor()
       },
       espera:{
         cuadro: {
           nombre: 'buscarRolesDisp',
-          mensaje: 'Buscando Roles de '+ UI.elementos.maestro.ventanaForm.formulario.buscarCampo('codigo').captarValor()
+          mensaje: 'Buscando Roles de '+ UI.elementos.maestro.forma.formulario.buscarCampo('codigo').captarValor()
         }
       }
       //respuesta: callback
@@ -41,7 +41,7 @@ function abrirFormSeg(){
     onclickSlot: function(slot){
       var mensaje = {
         titulo: 'Eliminar Asignacion',
-        cuerpo: '¿Desea Remove el Rol '+slot.atributos.nombre+' del usuario '+UI.elementos.maestro.ventanaForm.formulario.registroId+
+        cuerpo: '¿Desea Remove el Rol '+slot.atributos.nombre+' del usuario '+UI.elementos.maestro.forma.formulario.registroId+
                 '? teniendo en cuenta que este perdera todos los privilegios que corresponen a este Rol'
       };
       UI.crearVerificacion(mensaje,function(){
@@ -49,7 +49,7 @@ function abrirFormSeg(){
            modulo: "seguridad",
            entidad: "rol",
            operacion: "eliminarAsignacion",
-           codigo_usuario: UI.elementos.maestro.ventanaForm.formulario.registroId,
+           codigo_usuario: UI.elementos.maestro.forma.formulario.registroId,
            llave_acceso: slot.atributos.llave_acceso
         };
         var cuadro = {
@@ -73,7 +73,6 @@ function abrirFormSeg(){
     cambiarEstado();
   };
   formSeg.partes.cuerpo.nodo.querySelector('button[clave]').onclick = function(){
-    //TODO: funcionamiento reestablecer clave
     reestablecerClave();
   };
   formSeg.partes.cuerpo.nodo.querySelector('button[rol]').onclick = function(){
@@ -102,7 +101,7 @@ function asignarRol(){
                    modulo: "seguridad",
                    entidad: "rol",
                    operacion: "buscarDisponiblesUsuario",
-                   codigo: UI.elementos.maestro.ventanaForm.formulario.registroId
+                   codigo: UI.elementos.maestro.forma.formulario.registroId
                 },
                 cuadro: {nombre: 'listaRol',mensaje: 'Cargando Registros'}
               }
@@ -117,7 +116,7 @@ function asignarRol(){
     }
   });
   formAsig.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
-    UI.quitarVentana('asignados');
+    //UI.quitarVentana('asignados');
     UI.elementos.modalWindow.eliminarUltimaCapa();
   };
   formAsig.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32').onclick = function(){
@@ -126,7 +125,7 @@ function asignarRol(){
          modulo: "seguridad",
          entidad: "rol",
          operacion: "asignarRol",
-         codigo_usuario: UI.elementos.maestro.ventanaForm.formulario.registroId,
+         codigo_usuario: UI.elementos.maestro.forma.formulario.registroId,
          codigo_rol: formAsig.partes.cuerpo.formulario.buscarCampo('codigo_rol').captarValor()
       };
       var cuadro = {
@@ -158,7 +157,7 @@ function reestablecerClave(){
        modulo: "seguridad",
        entidad: "usuario",
        operacion: "reactivarClave",
-       codigo: UI.elementos.maestro.ventanaForm.formulario.registroId,
+       codigo: UI.elementos.maestro.forma.formulario.registroId,
        contrasena: clave
     };
     var cuadro = {
@@ -205,6 +204,7 @@ function cambiarEstado(){
     }
   });
   UI.agregarBotoneraStandard(ventana,function(){
+    //TODO: funcionamiento Cli/Serv de guardado de nuevo estado
     console.log(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario.buscarCampo('estado').captarValor());
   },'informacion');
 }

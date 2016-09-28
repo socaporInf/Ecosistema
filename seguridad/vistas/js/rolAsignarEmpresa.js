@@ -1,4 +1,3 @@
-//TODO: funcionamiento nuevo y modificar para este formulario
 function construirUI(){
   UI.elementos.botonera.buscarBoton('nuevo').nodo.onclick = function(){
     nuevoRol();
@@ -39,7 +38,7 @@ function construirFormulario(tipo,slot){
         registro : slot.atributos
       },{
         nombre:'empresas',
-        html: 'aqui van las empresas'
+        html: ''
       }
     ];
   }else if(tipo === 'nuevo'){
@@ -66,31 +65,35 @@ function construirFormulario(tipo,slot){
 }
 /************************** Editar ********************************************/
 var editarRol = function(slot){
-  if(UI.buscarVentana('Formulario')){
-    var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
-    UI.buscarVentana('Formulario').titulo.nodo.innerHTML = 'MODIFICAR';
-    formulario.deshabilitar();
-    formulario.asignarValores(slot.atributos);
-    formulario.registroId = slot.atributos.codigo;
-    agregarEmpresas(formulario.registroId);
-  }else{
-    construirFormulario('modificar',slot);
-    agregarEmpresas(slot.atributos.codigo);
-  }
-  //Botones
-  UI.elementos.botonera.gestionarBotones({
-    agregar:[
-      'eliminar',
-      {
+  if(sesion.privilegioActivo.buscarOperacion('consultar')){
+    if(UI.buscarVentana('Formulario')){
+      var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
+      UI.buscarVentana('Formulario').titulo.nodo.innerHTML = 'MODIFICAR';
+      formulario.deshabilitar();
+      formulario.asignarValores(slot.atributos);
+      formulario.registroId = slot.atributos.codigo;
+      agregarEmpresas(formulario.registroId);
+    }else{
+      construirFormulario('modificar',slot);
+      agregarEmpresas(slot.atributos.codigo);
+    }
+    //Botones
+    var gestionar = {agregar:['eliminar'],quitar:['guardar']};
+    //verifico permisos
+    if(sesion.privilegioActivo.buscarOperacion('incluir')){
+      gestionar.agregar.push({
         tipo:'nuevo',
         click: nuevoRol
-      },{
+      });
+    }
+    if(sesion.privilegioActivo.buscarOperacion('MODIFICAR')){
+      gestionar.agregar.push({
         tipo:'modificar',
         click: modificar
-      }
-    ],
-    quitar:['guardar']
-  });
+      });
+    }
+    UI.elementos.botonera.gestionarBotones(gestionar);
+  }
 };
 function modificar(){
   var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
@@ -201,8 +204,11 @@ function agregarEmpresas(codigo){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(respuesta){
+    var html = '<div>Empresas</div><section contenedor id="contenedorPri">';
     var empresas = respuesta.registros || [];
-    var html = '<div>Empresas</div><section contenedor id="contenedorPri"><article add="empresa"></article>';
+    //PRIVILEGIO:operacion asignar
+    var htmlAdd =(sesion.privilegioActivo.buscarOperacion('asignar'))?'<article add="empresa"></article>':'';
+    html += htmlAdd;
     for (var i = 0; i < empresas.length; i++) {
       html+="<article rol='"+empresas[i].codigo_rol+
             "' empresa='"+empresas[i].codigo+
@@ -212,7 +218,10 @@ function agregarEmpresas(codigo){
     html += '</section>';
     var sector = UI.buscarVentana('Formulario').buscarSector('empresas').nodo;
     sector.innerHTML = html;
-    activarEmpresas();
+    //PRIVILEGIO: operacion modificar
+    if(sesion.privilegioActivo.buscarOperacion('modificar')){
+      activarEmpresas();
+    }
   });
 }
 function activarEmpresas(){
@@ -291,6 +300,8 @@ function asignarEmpresa(){
 }
 function abrirEdicionAsignacion(){
   var nodo = this;
+  //PRIVILEGIO: operacion desasignar
+  var htmlDesasignar =(sesion.privilegioActivo.buscarOperacion('desasignar'))?'<button type="button" class="icon icon-eliminar-rojo"> </button>':'';
   var ventanaOperaciones = UI.crearVentanaModal({
     cabecera: {
       html: nodo.textContent
@@ -300,7 +311,7 @@ function abrirEdicionAsignacion(){
     },
     pie:{
         html: '<section modalButtons>'+
-              '<button type="button" class="icon icon-eliminar-rojo"> </button>'+
+              htmlDesasignar+
               '<button type="button" class="icon icon-modificar-verde"> </button>'+
               '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
             '</section>'

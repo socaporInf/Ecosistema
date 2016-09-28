@@ -2,6 +2,7 @@ registroVirtual = {
   nombre:'registroVirtual',
   modulo: 'seguridad',
   campo_nombre: 'nombre',
+  codigo_padre : 'codigo_tabla',
   titulo: '',
   altura: 200,
   campos:[

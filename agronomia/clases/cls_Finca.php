@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Finca extends cls_Conexion{
 
- private $aa_Atributos = array();
+ protected $aa_Atributos = array();
  private $aa_Campos = array('nombre_finca','codigo_zona','kilometros_central','codigo_municipio','codigo_productor','id_finca','letra','codigo_tipo_carretera','codigo_tipo_afiliacion');
 
  public function setPeticion($pa_Peticion){

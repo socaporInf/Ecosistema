@@ -1,11 +1,11 @@
-function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
+function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo,campoAsignacion,campoDisponible){
 	var campos = [];
 	for (var i = 0; i < disponibles.length; i++) {
 		var campo = {
 			tipo: 'checkBox',
 			parametros:{
 				nombre: disponibles[i].nombreOperacion,
-				valor: disponibles[i].codigoOperacion,
+				valor: disponibles[i].codigo,
 				requerido: false,
 				habilitado: true,
 				animacion: 'girar',
@@ -17,7 +17,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 		};
 		if(asignadas){
 			for(var x = 0; x < asignadas.length; x++){
-				if(disponibles[i].codigoOperacion === asignadas[x].codigoOperacion){
+				if(disponibles[i].nombreOperacion === asignadas[x].nombreOperacion){
 					campo.parametros.marcado = true;
 				}
 			}
@@ -28,6 +28,8 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 		campos : campos,
 		altura : (campos.length * 40) + 20
 	};
+	//PRIVLEGIO: operacion; OPERACION: incluir
+	var htmlBotNuevo = (sesion.buscarPrivilegio('operacion').buscarOperacion('incluir'))?'<button type="button" class="icon-nuevo-azul-claro-32"> </button>':'';
 	capaContenido.convertirEnFormulario({
 		cabecera: {
 			html: nodo.getAttribute('titulo')
@@ -40,7 +42,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 			html: '<section modalButtons>'+
 						'<button type="button" class="icon-guardar-indigo-32"> </button>'+
 						'<button type="button" class="icon-cerrar-rojo-32"> </button>'+
-						'<button type="button" class="icon-nuevo-azul-claro-32"> </button>'+
+						htmlBotNuevo+
 					'</section>'
 		}
 	});
@@ -53,7 +55,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo){
 	return capaContenido;
 }
 function obtenenrValoresFormulario(contenedor){
-	var campos = contenedor.formulario.campos;
+	var campos = contenedor.campos;
 	var data = [];
 	var validado = false;
 	for (var i = 0; i < campos.length; i++) {

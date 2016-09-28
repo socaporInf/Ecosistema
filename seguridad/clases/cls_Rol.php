@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Rol extends cls_Conexion{
 
-	private $aa_Atributos = array();
+	protected $aa_Atributos = array();
   private $aa_Campos = array('nombre','descripcion');
 
 	public function setPeticion($pa_Peticion){
@@ -50,6 +50,14 @@ class cls_Rol extends cls_Conexion{
 					$success=1;
 				}
 				break;
+
+				case 'buscarDisponible':
+					$registros=$this->f_Buscar_Disponible();
+					if(count($registros)){
+						$respuesta['registros'] = $registros;
+						$success=1;
+					}
+					break;
 
 			case 'consultarRolesAsignados':
 				$registros=$this->f_consultarRolesAsignados();

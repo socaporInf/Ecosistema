@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Lote extends cls_Conexion{
 
- private $aa_Atributos = array();
+ protected $aa_Atributos = array();
  private $aa_Campos = array('id_lote','nombre_lote','id_finca','codigo_lote','codigo_productor','´letra','fincaletra','nombre_finca');
 
  public function setPeticion($pa_Peticion){

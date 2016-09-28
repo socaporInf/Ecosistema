@@ -1,4 +1,5 @@
 //se usa el objeto arbol del archivo arbolRecursivo.js
+//BUG: no guarda cambios de desacoplado
 var ArbolTemp = function(){
 	this.hojas = [];
 
@@ -274,7 +275,7 @@ function construirFormAsignarOp(capaContenido,operaciones,nodo){
 		var btnGuardar = capaContenido.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32');
 
 		btnGuardar.onclick = function(){
-			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo);
+			var data = obtenenrValoresFormulario(UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario);
 			peticion ={
 				entidad : 'privilegio',
 				modulo : 'seguridad',

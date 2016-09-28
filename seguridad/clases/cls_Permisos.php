@@ -3,7 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Permisos extends cls_Conexion{
 
-	private $aa_Atributos = array();
+	protected $aa_Atributos = array();
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -43,9 +43,8 @@ class cls_Permisos extends cls_Conexion{
 			$la_Privilegios[$x]['codigo']=$la_registro['componente'];
 			$la_Privilegios[$x]['padre']=$la_registro['padre'];
 			$la_Privilegios[$x]['tit_padre']=$la_registro['titulo_padre'];
+			$la_Privilegios[$x]['operacion']=$this->f_ObtenerOperaciones($la_registro['codigo']);
 			$la_Privilegios[$x]['llave_acceso']=$la_registro['llave_acceso'];
-			//TODO: carga de operaciones
-			//$la_privilegios[$x]['operaciones']=$this->f_ObtenerOperaciones($la_registro['codigo']);
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -82,7 +81,19 @@ class cls_Permisos extends cls_Conexion{
 		return $llaves;
 	}
 	public function f_ObtenerOperaciones($codigo_privilegio){
-
+		$x=0;
+		$la_Operaciones=array();
+		$ls_Sql="SELECT * from seguridad.voperacion_privilegio
+				WHERE codigo_privilegio = $codigo_privilegio AND estado = 'A'";
+		$lr_tabla=$this->f_Filtro($ls_Sql);
+		while($la_registro=$this->f_Arreglo($lr_tabla)){
+			$la_Operaciones[$x]['codigo_operacion']=$la_registro['codigo_operacion'];
+			$la_Operaciones[$x]['nombre_operacion']=$la_registro['nombre_operacion'];
+			$la_Operaciones[$x]['codigo']=$la_registro['codigo'];
+			$x++;
+		}
+		$this->f_Cierra($lr_tabla);
+		return $la_Operaciones;
 	}
 }
 ?>

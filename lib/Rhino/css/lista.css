@@ -29,7 +29,7 @@ div[lista] section[busqueda]{
 div[lista].inversa section[busqueda]{
   background-color: white;
 }
-section[busqueda] + section[slot]{
+section[slot].primero{
     margin-top: 51px !important;
 }
 div[lista] section[contenedorCarga]{

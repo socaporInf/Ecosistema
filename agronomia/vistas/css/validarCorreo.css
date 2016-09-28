@@ -1,0 +1,26 @@
+div[mat-window].form-rep div[formelements],div[mat-window].form-rep div.group {
+    margin-bottom: 0px;
+}
+div[mat-window].completo{
+  margin-left: 1px;
+  width: calc(100% - 2px);
+}
+section[estado]:after{
+	font-family: 'Material Icons';
+	font-size: 32px;
+	position:absolute;
+	top: 10px;
+	right: 15px;
+}
+section[estado='V']{
+	color: #3F51B5;
+}
+section[estado='V']:after{
+	content: 'check';
+}
+section[estado='R']{
+	color: #FFD54F;
+}
+section[estado='R']:after{
+	content: 'schedule';
+}
