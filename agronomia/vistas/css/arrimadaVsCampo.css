@@ -1,0 +1,36 @@
+div[mat-window].arrimada{
+  margin-left: 0px;
+  width: calc(100%);
+  margin-top: 50px;
+  margin-bottom: 0px;
+}
+div[mat-window].lat-izq,div[mat-window].lat-der{
+  margin-left: 1px;
+  margin-top: 1px;
+  width: calc(50% - 1px);
+}
+div[mat-window] article[valor],div[mat-window] article[total]{
+  float: left;
+  margin-left: 0px;
+}
+div[mat-window] article[total]{
+  width: 25%;
+}
+div[mat-window] article[valor]{
+    border-left: 1px solid #232323;
+    border-right:  1px solid #232323;
+    width: calc(25% - 22px);
+    height: 20px;
+    padding: 10px;
+}
+div[mat-window] div[opciones]{
+  width: 24px;
+  height: 24px;
+  float: right;
+  font-family: 'Material Icons';
+  font-size: 24px;
+  color: white;
+  margin-right: 10px;
+  margin-top: 4px;
+  cursor:pointer;
+}
