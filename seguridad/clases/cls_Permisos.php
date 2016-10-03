@@ -33,7 +33,8 @@ class cls_Permisos extends cls_Conexion{
 		$x=0;
 		$la_Privilegios=array();
 		$ls_Sql="SELECT * from seguridad.varbol_privilegio_usuario
-				WHERE estado_privilegio='A' AND codigo_usuario='".$this->aa_Atributos['Nombre']."' AND empresa='".$this->aa_Atributos['Empresa']."'";
+				WHERE estado_privilegio='A' AND codigo_usuario='".$this->aa_Atributos['Nombre']."' AND empresa='".$this->aa_Atributos['Empresa']."'
+				order by padre, titulo";
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registro=$this->f_Arreglo($lr_tabla)){

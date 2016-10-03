@@ -1,4 +1,4 @@
-zona = {
+var zona = {
 	nombre: 'zona',
  	modulo: 'agronomia',
 	campo_nombre: 'nombre',

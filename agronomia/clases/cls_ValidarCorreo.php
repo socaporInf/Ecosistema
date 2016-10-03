@@ -81,18 +81,15 @@ class cls_ValidarCorreo extends cls_Conexion{
    }
    private function procesarDatos(){
       $lb_Hecho= false;
-      //TODO: inserto en la tabla validacion capca
       $lb_Hecho = $this->insertarValidacion('capca');
       if(!$lb_Hecho){
          return false;
       }
-      //TODO: inserto en la tabla validacion soca
       $lb_Hecho = false;
       $lb_Hecho = $this->insertarvalidacion('soca');
       if(!$lb_Hecho){
          return false;
       }
-      //TODO: cambio el estado de los datos a validado
       $lb_Hecho = false;
       $lb_Hecho = $this->cambiarEstado();
       return $lb_Hecho;

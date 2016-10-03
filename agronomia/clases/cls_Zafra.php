@@ -29,7 +29,7 @@ class cls_Zafra extends cls_Conexion{
        }
        break;
 
-     case 'buscarRegistro':
+    case 'buscarRegistro':
        $lb_Enc=$this->f_buscar();
        if($lb_Enc){
          $respuesta['registros']=$this->aa_Atributos['registro'];
@@ -37,7 +37,7 @@ class cls_Zafra extends cls_Conexion{
        }
        break;
 
-     case 'buscarActivo':
+    case 'buscarActivo':
       $lb_Enc=$this->f_buscar('activo');
       if($lb_Enc){
         $respuesta['registro']=$this->aa_Atributos['registro'];
@@ -45,7 +45,7 @@ class cls_Zafra extends cls_Conexion{
       }
       break;
 
-     case 'guardar':
+    case 'guardar':
        $lb_Hecho=$this->f_Guardar();
        if($lb_Hecho){
          $this->f_Buscar('ultimo');
@@ -58,9 +58,16 @@ class cls_Zafra extends cls_Conexion{
        }
        break;
 
-     case 'modificar':
+    case 'modificar':
        $respuesta = $this->f_Modificar();
        break;
+
+    case 'estadoDia':
+
+
+
+
+      break;
 
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
@@ -156,6 +163,20 @@ class cls_Zafra extends cls_Conexion{
    }
    return $respuesta;
  }
+ private function f_VerificarDia(){
+   $lb_Enc = false;
+   $ls_Sql = "SELECT fecha_dia FROM agronomia.vzafra WHERE codigo_zafra = ".$this->aa_atributos['zafra'];
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   if($la_registros=$this->f_Arreglo($lr_tabla)){
+     if($this->aa_atributos['fechadia']==$la_registros['fecha_dia']){
+       $lb_Enc=true;
+     }
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
 
+   return $lb_Enc;
+ }
 }
 ?>
