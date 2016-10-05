@@ -10,9 +10,15 @@ $success=0;
 //busco la entidad segun la peticion
 $lobj_Entidad = obtenerEntidad($la_Peticion['entidad']);
 
-if(isset($lobj_Entidad)){
+if($lobj_Entidad != false){
 	$lobj_Entidad->setPeticion($la_Peticion);
 	$respuesta = $lobj_Entidad->gestionar();
+}else{
+	$respuesta['success'] = 0;
+	$respuesta['mensaje']['nombre_tipo'] =  'error';
+	$respuesta['mensaje']['titulo'] = 'Entidad No soportada';
+	$respuesta['mensaje']['cuerpo'] = 'Entidad '.$la_Peticion['entidad'].' no se encuentra entre las disponibles para esta aplicacion';
+	$respuesta['tipo'] = 'error';
 }
 $respuesta['entidad'] = $la_Peticion['entidad'];
 header('Content-type: application/json; charset=utf-8');
@@ -89,11 +95,7 @@ function obtenerEntidad($entidad){
 			break;
 
 		default:
-			$respuesta['success'] = 0;
-			$respuesta['mensaje']['nombre_tipo'] =  'error';
-			$respuesta['mensaje']['titulo'] = 'Entidad No soportada';
-			$respuesta['mensaje']['cuerpo'] = 'Entidad '.$la_Peticion['entidad'].' no se encuentra entre las disponibles para esta aplicacion';
-			$respuesta['tipo'] = 'error';
+			$lobj_Entidad = false;
 			break;
 	}
 	return $lobj_Entidad;
