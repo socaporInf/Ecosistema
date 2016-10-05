@@ -1,6 +1,7 @@
 function construirUI(){
+  var layOut = {};
   //contruir titulo
-  var ventTitulo = UI.agregarVentana({
+  layOut.ventTitulo = UI.agregarVentana({
     tipo: 'titulo',
     nombre: 'tituloGeneral',
     titulo:{
@@ -10,15 +11,23 @@ function construirUI(){
     clases : ['arrimada']
   },document.body.querySelector('div[contenedor]'));
   //contruir ventanas laterales
-  construirLat('izq','Arrimada');
-  construirLat('der','Campo');
-
-  var btn = ventTitulo.nodo.querySelector('div[opciones]');
+  layOut.latIzq = construirLat('izq','Arrimada',{
+     modulo: "agronomia",
+     entidad: "arriamadaVsCampo",
+     operacion: "buscarValidacion"
+  });
+  layOut.latDer = construirLat('der','Campo',{
+     modulo: "agronomia",
+     entidad: "arriamadaVsCampo",
+     operacion: "buscarValidacionRelacionada"
+  });
+  UI.elementos.layOut = layOut;
+  var btn = layOut.ventTitulo.nodo.querySelector('div[opciones]');
   btn.onclick = function(){
 
   };
 }
-function construirLat(lado,titulo){
+function construirLat(lado,titulo,petLista){
   var lateral = UI.agregarVentana({
     nombre:'lat'+lado,
     clases: ['ventana','lat-'+lado],
@@ -40,20 +49,18 @@ function construirLat(lado,titulo){
     titulo: titulo,
     clases: ['embebida'],
     campo_nombre: '',
+    registrosPorPagina: 16,
     carga: {
       uso:true,
-      peticion:{
-         modulo: "seguridad",
-         entidad: "componente",
-         operacion: "buscar"
-      },
+      peticion:petLista,
       espera:{
         cuadro:{
-          nombre: 'buscalista',
+          nombre: 'buscalista'+lado,
           mensaje: 'Buscando ...'
         }
       }
     },
   },UI.buscarVentana('lat'+lado).buscarSector('list'+lado).nodo);
 
+  return lateral;
 }
