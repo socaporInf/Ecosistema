@@ -138,7 +138,7 @@ class cls_Proceso extends cls_Conexion{
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
-   return false;
+   return lb_Hecho;
  }
 
  private function f_BuscarUltimo(){

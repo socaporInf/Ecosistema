@@ -102,6 +102,24 @@ div[botonera] button[btnBuscar]:hover:before{
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
+div[botonera] button[btnApertura]{
+    background-color: #8BC34A;
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+div[botonera] button[btnApertura]:after{
+    content: 'launch';
+}
+div[botonera] button[btnApertura]:hover:before{
+    content: 'Apertura';
+    color:white;
+    background-color: inherit;
+    margin-left:-25px;
+    border-radius:5px;
+    padding:5px;
+}
+/*---------------------------------------------------------------------------*/
 div[botonera] button[btnModificar]{
     background-color: #4CAF50;
     top:0px;

@@ -51,17 +51,21 @@ class cls_ValidarCorreo extends cls_Conexion{
         }
         break;
 
-       case 'validaDatos':
-          //TODO: inserto en la tabla validacion capca
-
-         //TODO: inserto en la tabla validacion soca
-
-         //TODO: cambio el estado de los datos a validado
-         $lb_Hecho = $this->cambiarEstado();
+       case 'validarDatos':
+       $lb_Hecho= false;
+       $this->f_Con();
+       $lb_Hecho = $this->procesarDatos();
          if($lb_Hecho){
+            $this->f_Commit();
             $success = 1;
-            $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+            $valores = array('{FECHADIA}' => $this->fFechaBD($this->aa_Atributos['fechadia']));
+            $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(25,$valores);
+         }else{
+            $this->f_RollBack();
+            $valores = array('{FECHADIA}' => $this->fFechaBD($this->aa_Atributos['fechadia']));
+            $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(26,$valores);
          }
+         $this->f_Des();
          break;
 
         default:
@@ -74,6 +78,87 @@ class cls_ValidarCorreo extends cls_Conexion{
         $respuesta['success']=$success;
       }
       return $respuesta;
+   }
+   private function procesarDatos(){
+      $lb_Hecho= false;
+      $lb_Hecho = $this->insertarValidacion('capca');
+      if(!$lb_Hecho){
+         return false;
+      }
+      $lb_Hecho = false;
+      $lb_Hecho = $this->insertarvalidacion('soca');
+      if(!$lb_Hecho){
+         return false;
+      }
+      $lb_Hecho = false;
+      $lb_Hecho = $this->cambiarEstado();
+      return $lb_Hecho;
+   }
+   private function insertarValidacion($tipo){
+      $lb_Hecho = false;
+      $fechadia = $this->aa_Atributos['fechadia'];
+      $UID = $this->aa_Atributos['uid'];
+      $ls_Sql = "INSERT INTO agronomia.vvalidacion_$tipo
+         (fechadia,
+         ejercicio,
+         codcanicultor,
+         letrafinca,
+         nombrefinca,
+         codigotablon,
+         codigonucleoalce,
+         codigonucleocorte,
+         codigonucleotrans,
+         pesoneto,
+         brix,
+         pol,
+         torta,
+         rendimiento,
+         azucarprobable,
+         placacamion,
+         pureza,
+         dia,
+         finca,
+         distribucion,
+         validarpeso,
+         numeroremesa,
+         boletoromana,
+         boletolaboratorio)
+         SELECT
+             fechadia,
+             ejercicio,
+             codcanicultor,
+             letrafinca,
+             nombrefinca,
+             codigotablon,
+             codigonucleoalce,
+             codigonucleocorte,
+             codigonucleotrans,
+             pesoneto,
+             brix,
+             pol,
+             torta,
+             rendimiento,
+             azucarprobable,
+             placacamion,
+             pureza,
+             dia,
+             finca,
+             distribucion,
+             validarpeso,
+             numeroremesa,
+             boletoromana,
+             boletolaboratorio
+         FROM agronomia.vvalidacion_correo WHERE fechadia = '$fechadia' AND uid = $UID ";
+      $lb_Hecho = $this->f_Ejecutar($ls_Sql);
+      return $lb_Hecho;
+   }
+   private function cambiarEstado(){
+      $lb_Hecho = false;
+      $fechadia = $this->aa_Atributos['fechadia'];
+      $UID = $this->aa_Atributos['uid'];
+      $ls_Sql = "UPDATE agronomia.vvalidacion_correo SET estado ='V' WHERE fechadia = '$fechadia' AND uid = $UID ";
+      $lb_Hecho = $this->f_Ejecutar($ls_Sql);
+      return $lb_Hecho;
    }
    private function f_MostrarDias(){
       $cadenaBusqueda = $this->f_obtenerCadenaBusqueda('dia');

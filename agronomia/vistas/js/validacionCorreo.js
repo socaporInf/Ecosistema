@@ -1,4 +1,3 @@
-//TODO: hacer validacion de los datos del dia y aprobarlos para que pasen al sistema
 var form = {
   altura: 60,
   campos:[
@@ -30,6 +29,7 @@ function construirUI(){
     ]
   },document.body.querySelector('div[contenedor]'));
   var dias = UI.agregarLista({
+    nombre: 'listDias',
     titulo: 'Dias',
     clases: ['embebida'],
     campo_nombre: 'nombre',
@@ -85,6 +85,7 @@ function ejecutar(slot){
   }
   gestionarbotonera(slot.atributos.estado);
 }
+
 function crearListado(operacion,columnas,form,fechadia){
   var lista = UI.agregarLista({
     titulo: 'Datos Validacion',
@@ -107,9 +108,11 @@ function crearListado(operacion,columnas,form,fechadia){
     }
   },document.body.querySelector('div[contenedor]'));
 }
+
 function cerrarListado(){
   UI.quitarVentana('listado');
 }
+
 function gestionarbotonera(estado){
 var informacion ={
   tipo:'validado',
@@ -118,41 +121,24 @@ var informacion ={
         texto: 'Datos ya fueron validados',
         tipo: 'web-arriba-derecha-alto'
       });
-  }
-};
+    }
+  };
   var aceptar ={
     tipo:'aceptar',
     click: function(){
-      var peticion = {
-         modulo: "agronomia",
-         entidad: "validarCorreo",
-         operacion: "validarDatos",
-         fechadia: UI.buscarVentana('Dias').obtenerSeleccionado().atributos.codigo,
-         UID: UI.buscarVentana('Dias').obtenerSeleccionado().atributos.UID
-      };
-      var modal = UI.crearVentanaModal({
-        cuerpo:{
-          html: ''
-        }
-      });
-      var cuadro = {
-        contenedor: modal.partes.cuerpo.nodo,
-        cuadro:{
-          nombre: 'cambios',
-          mensaje: 'Realizando Cambios'
-        }
-      };
-      torque.manejarOperacion(peticion,cuadro,function(respuesta){
-          UI.crearMensaje(respuesta.mensaje);
-          if(respuesta.success){
-            UI.elementos.botonera.gestionarBotones({
-              quitar:['aceptar'],
-              agregar:[informacion]
-            });
-          }
-      });
+      //PRIVILEGIO: autorizar
+      if(sesion.privilegioActivo.buscarOperacion('autorizar')){
+        aprobarValidacion();
+      }else{
+        UI.agregarToasts({
+          texto: 'Ustede no posee privilegios para esta operacion',
+          tipo: 'web-arriba-derecha-alto'
+        });
+      }
     }
   };
+
+
   var agregar;
   var quitar;
   if(estado==='R'){
@@ -173,4 +159,47 @@ var informacion ={
       agregar : agregar
     });
   }
+}
+
+function aprobarValidacion(){
+  var fechadia = UI.buscarVentana('listDias').obtenerSeleccionado().atributos.nombre;
+  var mensaje = {
+    titulo: 'Validar Datos',
+    cuerpo: '¿Realmente desea validar los datos del dia '+fechadia+'?'+
+            '<br>Estos datos seran importados a la base datos y estaran disponibles para su utilizacion'
+  };
+  UI.crearVerificacion(mensaje,function(){
+    var peticion = {
+       modulo: "agronomia",
+       entidad: "validarCorreo",
+       operacion: "validarDatos",
+       fechadia: UI.buscarVentana('listDias').obtenerSeleccionado().atributos.codigo,
+       UID: UI.buscarVentana('listDias').obtenerSeleccionado().atributos.UID
+    };
+    var cuadro = {
+      contenedor: UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+      cuadro:{
+        nombre: 'cambios',
+        mensaje: 'Realizando Cambios'
+      }
+    };
+    torque.manejarOperacion(peticion,cuadro,function(respuesta){
+        UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje(respuesta.mensaje);
+        if(respuesta.success){
+          UI.elementos.botonera.gestionarBotones({
+            quitar:['aceptar'],
+            agregar:[{
+              tipo:'validado',
+            click: function(){
+                UI.agregarToasts({
+                  texto: 'Datos ya fueron validados',
+                  tipo: 'web-arriba-derecha-alto'
+                });
+              }
+            }]
+          });
+          UI.buscarVentana('listDias').recargar();
+        }
+    });
+  });
 }

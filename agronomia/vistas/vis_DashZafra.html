@@ -9,18 +9,19 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<!-- Estilos locales -->
 	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
+	<link rel="stylesheet" type="text/css" href="css/dashZafra.css">
 </head>
 <body>
-	<div contenedor></div>
+	<div contenedor>
+	</div>
 </body>
 <!-- scripts que construyen la interfaz y su funcionamiento -->
 <script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
-<!-- scripts PLUGINS-->
-<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
-<script type="text/javascript" src='../../lib/Rhino/plugins/O_Maestro.js'></script>
-<!-- script con el constructor del formulario-->
-<script type="text/javascript" src='js/constructores/mensajeSistema.js'></script>
+<script type="text/javascript" src='js/dashboard.js'></script>
+<!-- scripts de constructores involucrados -->
+<script type="text/javascript" src='js/constructores/zafra.js'></script>
+
 
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
@@ -28,26 +29,14 @@
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('nucleo','mensajeSistema');
+	var torque = new Motor();
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.agregarConstructor(mensaje);
-	UI.configure({
-		//EJEMPLO: maestro con 2 columnas en la lista
-		maestro:{
-			entidad: torque.entidadActiva,
-			lista:{
-				columnas: 2
-			}
-		},
-		botonera:{
-			botones:['buscar','nuevo','abrir']
-		}
-	});
-
+	UI.agregarConstructor(zafra);
+	UI.configure({});
+	UI.contGeneral = document.body.querySelector('div[contenedor]');
 	sesion.obtenerSesion();
-
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+sesion.verificarArranque(construirUI);
 </script>
-</html>

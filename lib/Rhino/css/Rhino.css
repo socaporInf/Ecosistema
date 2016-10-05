@@ -634,7 +634,13 @@ div[mat-window] section[titulo].inverso {
     background-color: white;
     border-bottom: 1px solid rgba(160, 160, 160, 0.5);
 }
-
+div[mat-window] section[titulo].liso,div[mat-window] section[titulo].liso-centrado {
+    color: #4CAF50;
+    background-color: white;
+}
+div[mat-window] section[titulo].liso-centrado {
+    text-align: center
+}
 /*-------------------------------Sector----------------------------------------*/
 
 div[mat-window] section[sector] {

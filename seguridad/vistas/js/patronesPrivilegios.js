@@ -26,7 +26,7 @@ function construirVentanaAsignacion(disponibles,asignadas,capaContenido,nodo,cam
 	}
 	var cons = {
 		campos : campos,
-		altura : (campos.length * 40) + 20
+		altura : ((campos.length/3) * 40) + 30
 	};
 	//PRIVLEGIO: operacion; OPERACION: incluir
 	var htmlBotNuevo = (sesion.buscarPrivilegio('operacion').buscarOperacion('incluir'))?'<button type="button" class="icon-nuevo-azul-claro-32"> </button>':'';

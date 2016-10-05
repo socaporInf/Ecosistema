@@ -136,3 +136,8 @@ div[lista] section[slot] div[cabeceraCelda='uid']{
   padding-left: 3px;
   width: calc(5%);
 }
+@media (min-width: 1000px) {
+  div[lista] section[slot] div{
+    font-size: 10px !important;
+  }
+}

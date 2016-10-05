@@ -11,6 +11,9 @@ div[mat-window].maestro:not([lista]){
 div[mat-window].maestro.aparecer{
     opacity: 1;
 }
+div[lista] div.dos{
+    width: calc(50%) !important;
+}
 @media (max-width: 1000px) {
     div[lista][mat-window].maestro{
         width: calc(40%);

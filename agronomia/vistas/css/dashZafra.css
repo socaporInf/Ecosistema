@@ -1,0 +1,36 @@
+div[mat-window].completo,div[mat-window].lat-izq,div[mat-window].lat-der{
+  transition: all 0.5s ease-in-out;
+  margin-left: 1px;
+  margin-bottom: 1px;
+}
+div[mat-window].completo{
+  margin-top: 51px;
+  width: calc(100% - 2px);
+}
+div[mat-window].lat-izq{
+  margin-top: 1px;
+  width: calc(60% - 1px);
+}
+/******************************Lateral derecho*********************************/
+div[mat-window].lat-der{
+  margin-top: 1px;
+  width: calc(40% - 1px);
+  height: 250px;
+}
+section[sector].listado-dias,section[sector].formulario-dias{
+  height: 250px;
+  overflow-y: auto;
+}
+  /*--------------------------------efectos cambio----------------------------*/
+  div[mat-window].lat-izq.reducir{
+    width: calc(40% - 1px);
+  }
+  div[mat-window].lat-der.ampliar{
+    width: calc(60% - 1px);
+  }
+  div[mat-window].lat-der section[sector].listado-dias.subir{
+    margin-top: -250px;
+  }
+  section[sector].formulario-dias.comprimir{
+    height: 200px;
+  }

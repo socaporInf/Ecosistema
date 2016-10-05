@@ -24,7 +24,7 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 					$respuesta['paginas']=$this->aa_Atributos['paginas'];
 				}else{
 					$respuesta['success'] = 0;
-					$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+					$respuesta['mensaje'] = $this->buscarMensaje(8);
 				}
 				break;
 
@@ -41,10 +41,10 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 				if($lb_Hecho){
 					$this->f_Buscar();
 					$respuesta['registros'] = $this->aa_Atributos['registro'];
-					$respuesta['mensaje'] = 'Insercion realizada con exito';
+					$respuesta['mensaje'] = $this->buscarMensaje(9);
 					$success = 1;
 				}else{
-					$respuesta['mensaje'] = 'Error al ejecutar la insercion';
+				$respuesta['mensaje'] = $this->buscarMensaje(10);
 					$success = 0;
 				}
 				break;
@@ -82,13 +82,13 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 		$la_respuesta=array();
 		$cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where titulo like '%".$this->aa_Atributos['valor']."%'";
 		$ls_SqlBase="SELECT * FROM global.vmensaje_sistema $cadenaBusqueda";
-		$orden = " ";
+		$orden = " order by codigo";
 		$ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo'];
 			$la_respuesta[$x]['titulo']=$la_registros['titulo'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
