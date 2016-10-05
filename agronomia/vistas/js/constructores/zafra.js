@@ -3,7 +3,7 @@ var zafra = {
  	modulo: 'agronomia',
 	campo_nombre: 'nombre',
 	titulo: 'Zafra',
-	altura: 220,
+	altura: 170,
 	campos:[
 		{
 			tipo: 'campoDeTexto',
@@ -46,15 +46,22 @@ var zafra = {
 		    eslabon:'simple',
 		    usaToolTip:true
 		  }
-		},{
-      tipo : 'Radio',
-      parametros : {
-        nombre : 'estado',
-        opciones : [
-          {valor:'A',nombre:'Activo'},
-          {valor:'I',nombre:'Inactivo'}
-        ]
-      }
+		}
+	],
+  botones:{
+    nuevo:{
+      quitar:['apertura']
+    },
+    modificar: {
+      agregar:[
+        {
+          tipo:'apertura',
+          click: function(boton){
+            aperturar();
+          }
+        }
+      ],
+      quitar:[]
     }
-	]
+  }
 };

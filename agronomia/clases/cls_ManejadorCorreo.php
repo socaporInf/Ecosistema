@@ -90,8 +90,8 @@ class cls_ManejadorCorreo extends cls_Conexion{
 				}
 				$fecha = $this->fFechaPHP($fecha);
 				//incluyo e instacio la calse zafra para obtener la fecha dia disponible
-				include_once('cls_Zafra.php');
-				$lobj_Zafra = new cls_Zafra();
+				include_once('cls_DiaZafra.php');
+				$lobj_Zafra = new cls_DiaZafra();
 				//busco la zafra activa
 				$pet = array('operacion' => 'buscarActivo');
 				$lobj_Zafra->setPeticion($pet);

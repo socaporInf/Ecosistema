@@ -4,7 +4,7 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_ParametroControl extends cls_Conexion{
 
 	protected $aa_Atributos = array();
-	private $aa_Campos = array('codigo','nombre','valor','estado');
+	private $aa_Campos = array('codigo','nombre','valor','estado','descripcion');
 
 	public function setPeticion($pa_Peticion){
 		$this->aa_Atributos=$pa_Peticion;
@@ -100,6 +100,7 @@ class cls_ParametroControl extends cls_Conexion{
 			$la_respuesta['nombre']=$la_registros['nombre_parametro'];
 			$la_respuesta['estado']=$la_registros['estado_parametro'];
 			$la_respuesta['valor']=$la_registros['valor_parametro'];
+			$la_respuesta['descripcion']=$la_registros['descripcion_parametro'];
 			$lb_Enc = true;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -127,6 +128,7 @@ class cls_ParametroControl extends cls_Conexion{
 			$la_respuesta[$x]['nombre']=$la_registros['nombre_parametro'];
 			$la_respuesta[$x]['estado']=$la_registros['estado_parametro'];
 			$la_respuesta[$x]['valor']=$la_registros['valor_parametro'];
+			$la_respuesta[$x]['descripcion']=$la_registros['descripcion_parametro'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
@@ -138,9 +140,10 @@ class cls_ParametroControl extends cls_Conexion{
 
 	private function f_Guardar(){
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO seguridad.vproceso_parametro (nombre_parametro,estado_parametro,valor_parametro,codigo_proceso) values
+		$ls_Sql="INSERT INTO seguridad.vproceso_parametro (nombre_parametro,estado_parametro,valor_parametro,codigo_proceso,descripcion_parametro) values
 				('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['estado']."',
-				'".$this->aa_Atributos['valor']."','".$this->aa_Atributos['codigo_proceso']."')";
+				'".$this->aa_Atributos['valor']."','".$this->aa_Atributos['codigo_proceso']."',
+				'".$this->aa_Atributos['descripcion']."')";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
@@ -152,7 +155,8 @@ class cls_ParametroControl extends cls_Conexion{
 		$ls_Sql="UPDATE seguridad.vproceso_parametro SET ";
 		$ls_Sql.="nombre_parametro ='".$this->aa_Atributos['nombre']."', ";
 		$ls_Sql.="estado_parametro ='".$this->aa_Atributos['estado']."', ";
-		$ls_Sql.="valor_parametro ='".$this->aa_Atributos['valor']."' ";
+		$ls_Sql.="valor_parametro ='".$this->aa_Atributos['valor']."', ";
+		$ls_Sql.="descripcion_parametro ='".$this->aa_Atributos['descripcion']."' ";
 		$ls_Sql.="WHERE codigo_parametro ='".$this->aa_Atributos['codigo']."' ";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);

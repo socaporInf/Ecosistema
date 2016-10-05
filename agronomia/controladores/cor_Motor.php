@@ -38,6 +38,11 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_Carga_Validacion;
 			break;
 
+		case 'diaZafra':
+			include_once('../clases/cls_DiaZafra.php');
+			$lobj_Entidad = new cls_DiaZafra;
+			break;
+
 		case 'finca':
 			include_once('../clases/cls_Finca.php');
 			$lobj_Entidad = new cls_Finca;
