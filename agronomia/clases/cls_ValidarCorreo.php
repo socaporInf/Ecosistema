@@ -1,6 +1,7 @@
 <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
+include_once('cls_DiaZafra.php');
 class cls_ValidarCorreo extends cls_Conexion{
 
    protected $aa_Atributos = array();
@@ -52,20 +53,34 @@ class cls_ValidarCorreo extends cls_Conexion{
         break;
 
        case 'validarDatos':
-       $lb_Hecho= false;
-       $this->f_Con();
-       $lb_Hecho = $this->procesarDatos();
+         $lb_Hecho= false;
+         $this->f_Con();
+         $lb_Hecho = $this->procesarDatos();
+         $lobj_DiaZafra = new cls_DiaZafra;
          if($lb_Hecho){
             $this->f_Commit();
             $success = 1;
             $valores = array('{FECHADIA}' => $this->fFechaBD($this->aa_Atributos['fechadia']));
             $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(25,$valores);
+            //proceso dia "VALIDACION ARRIME VS CAMPO"
+            //estado datos "IMPORTADOS"
+            $lobj_DiaZafra->setPeticion(array(
+               'operacion' => 'cambioAtributos',
+               'codigo_proceso_dia' => 33,
+               'codigo_estado_datos' => 36
+            ));
          }else{
             $this->f_RollBack();
             $valores = array('{FECHADIA}' => $this->fFechaBD($this->aa_Atributos['fechadia']));
             $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(26,$valores);
+            //estado datos "ERROR EN IMPORTACION"
+            $lobj_DiaZafra->setPeticion(array(
+               'operacion' => 'cambioAtributos',
+               'codigo_estado_datos' => 38
+            ));
          }
          $this->f_Des();
+         $lobj_DiaZafra->gestionar();
          break;
 
         default:
@@ -167,7 +182,6 @@ class cls_ValidarCorreo extends cls_Conexion{
       $orden = "order by fechadia desc";
       $group = ' Group by fechadia,uid,estado';
       $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden,$group);
-
       $x=0;
       $la_respuesta=array();
       $this->f_Con();
@@ -253,7 +267,7 @@ class cls_ValidarCorreo extends cls_Conexion{
         }
      }else{
         if($this->aa_Atributos['valor']!=''){
-           $cadenaBusqueda .= "fechadia like '%".$this->aa_Atributos['valor']."%'";
+           $cadenaBusqueda .= "where fechadia::text like '%".$this->fFechaPHP($this->aa_Atributos['valor'])."%' and fechadia between (select fecha_inicio from agronomia.vzafra where estado = 'A') and (select fecha_final from agronomia.vzafra where estado = 'A')";
         }else{
            $cadenaBusqueda .= '';
         }

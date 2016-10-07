@@ -4,7 +4,7 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_DiaZafra extends cls_Conexion{
 
  protected $aa_Atributos = array();
- private $aa_Campos = array('codigo_dia_zafra','numero','estado_dia_zafra','fecha_dia','codigo_tipo_carga','codigo_proceso_dia','codigo_estado_datos');
+ private $aa_Campos = array('numero','estado_dia_zafra','fecha_dia','codigo_tipo_carga','codigo_proceso_dia','codigo_estado_datos');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
@@ -34,8 +34,10 @@ class cls_DiaZafra extends cls_Conexion{
        if($lb_Enc){
          $respuesta['registros']=$this->aa_Atributos['registro'];
          $success=1;
-       }
-       break;
+      }else{
+         $success = 0;
+      }
+      break;
 
     case 'buscarActivo':
       $lb_Enc=$this->f_buscar('activo');
@@ -62,6 +64,38 @@ class cls_DiaZafra extends cls_Conexion{
        $respuesta = $this->f_Modificar();
        break;
 
+    case 'cambioAtributos':
+       $respuesta = $this->f_CambioAtributo('activo');
+       break;
+
+    case 'abrirDia':
+      $this->aa_Atributos['estado_dia_zafra'] = 'A';
+      $respuesta = $this->f_CambioAtributo();
+      break;
+
+   case 'cerrarDia':
+     $lb_Enc = $this->f_Buscar('activo');
+     if($lb_Enc){
+       $lb_Enc = $this->f_Buscar('siguiente');
+       if(!$lb_Enc){
+          $lb_Hecho = $this->CrearDiaSigueinte();
+          if($lb_Hecho){
+            $this->aa_Atributos['estado_dia_zafra'] = 'C';
+            $respuesta = $this->f_CambioAtributo();
+         }else{
+            $respuesta['success'] = 0;
+            $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(29);
+         }
+       }else{
+          //si lo consigue no lo crea
+          $this->aa_Atributos['estado_dia_zafra'] = 'C';
+          $respuesta = $this->f_CambioAtributo();
+       }
+     }else{
+        $respuesta['success'] = 0;
+     }
+     break;
+
     case 'buscarDiasZafraActiva':
        $registros=$this->f_buscarDiasZafraActiva();
        if(count($registros)!=0){
@@ -69,7 +103,7 @@ class cls_DiaZafra extends cls_Conexion{
          $respuesta['registros']=$registros;
        }else{
          $respuesta['success'] = 0;
-         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+         //$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
        }
      break;
 
@@ -114,7 +148,7 @@ class cls_DiaZafra extends cls_Conexion{
  private function f_buscarDiasZafraActiva(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vdia_zafra where codigo_zafra =(SELECT codigo_zafra FROM agronomia.vzafra where estado = 'A')";
+   $ls_Sql="SELECT * FROM agronomia.vdia_zafra where codigo_zafra =(SELECT codigo_zafra FROM agronomia.vzafra where estado = 'A') order by fecha_dia desc";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -145,6 +179,10 @@ class cls_DiaZafra extends cls_Conexion{
       $ls_Sql="SELECT * from agronomia.vdia_zafra WHERE codigo_dia_zafra = (SELECT MAX(codigo_zafra) from agronomia.vdia_Zafra) ";
    }else if($tipo == 'activo'){
       $ls_Sql="SELECT * from agronomia.vdia_zafra WHERE codigo_dia_zafra = (SELECT codigo_dia_zafra from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A') ";
+   }else if($tipo == 'siguiente'){
+      $ls_Sql="SELECT * FROM agronomia.vdia_zafra
+                  where numero=(SELECT numero + 1 from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A')
+                  and codigo_zafra =(SELECT codigo_zafra from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A')";
    }else {
       $ls_Sql="SELECT * FROM agronomia.vdia_zafra where codigo_dia_zafra='".$this->aa_Atributos['codigo']."'";
    }
@@ -205,6 +243,47 @@ class cls_DiaZafra extends cls_Conexion{
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
    return $lb_Hecho;
+ }
+ private function CrearDiaSigueinte(){
+    $fecha = date($this->aa_Atributos['registro']['fecha_dia']);
+    $nuevafecha = strtotime ( '+1 day' , strtotime ( $fecha ) ) ;
+    $nuevafecha = date ( 'Y-m-d' , $nuevafecha );
+    $this->aa_Atributos['fechadia'] = $nuevafecha;
+    $this->aa_Atributos['numero'] = $this->aa_Atributos['registro']['numero'] + 1;
+    $this->aa_Atributos['zafra'] = $this->aa_Atributos['registro']['codigo_zafra'];
+    $lb_Hecho = $this->f_Guardar();
+    return $lb_Hecho;
+ }
+
+ private function f_CambioAtributo($tipo){
+   $lb_Enc = $this->f_Buscar($tipo);
+   if($lb_Enc){
+      //preparo los valore s a cambiar
+      if(!isset($this->aa_Atributos['codigo_estado_datos'])){
+         $this->aa_Atributos['codigo_estado_datos'] =$this->aa_Atributos['registro']['codigo_estado_datos'];
+      }
+      if(!isset($this->aa_Atributos['codigo_proceso_dia'])){
+         $this->aa_Atributos['codigo_proceso_dia'] =$this->aa_Atributos['registro']['codigo_proceso_dia'];
+      }
+      if(!isset($this->aa_Atributos['codigo_tipo_carga'])){
+         $this->aa_Atributos['codigo_tipo_carga'] =$this->aa_Atributos['registro']['codigo_tipo_carga'];
+      }
+      if(!isset($this->aa_Atributos['estado_dia_zafra'])){
+         $this->aa_Atributos['estado_dia_zafra'] =$this->aa_Atributos['registro']['estado'];
+      }
+      $this->aa_Atributos = array(
+         'codigo' => $this->aa_Atributos['registro']['codigo'],
+         'codigo_estado_datos' => $this->aa_Atributos['codigo_estado_datos'],
+         'codigo_proceso_dia' => $this->aa_Atributos['codigo_proceso_dia'],
+         'codigo_tipo_carga' => $this->aa_Atributos['codigo_tipo_carga'],
+         'estado_dia_zafra' => $this->aa_Atributos['estado_dia_zafra'],
+         'fecha_dia' => $this->aa_Atributos['registro']['fecha_dia'],
+         'numero' => $this->aa_Atributos['registro']['numero'],
+      );
+      $respuesta = $this->f_Modificar();
+      $respuesta['mensaje'] = 'atributos cambiados de forma exitosa';
+   }
+   return $respuesta;
  }
 
  private function f_Modificar(){
