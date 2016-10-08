@@ -29,6 +29,17 @@ class cls_AccesoZona extends cls_Conexion{
        }
        break;
 
+     case 'buscarZonas':
+      $registros=$this->f_buscarZonas();
+      if(count($registros)!=0){
+        $success=1;
+        $respuesta['registros']=$registros;
+      }else{
+        $respuesta['success'] = 0;
+        $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+      }
+      break;
+
      case 'asignar':
        $lb_Hecho=$this->f_Asignar();
        if($lb_Hecho){
@@ -63,6 +74,20 @@ class cls_AccesoZona extends cls_Conexion{
      $respuesta['success']=$success;
    }
    return $respuesta;
+ }
+ private function f_buscarZonas(){
+   $x=0;
+   $la_respuesta=array();
+   $ls_Sql="SELECT * FROM agronomia.vacceso_zona WHERE codigo_usuario='".$this->aa_Atributos['codigo_usuario']."'";
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]=$la_registros['codigo_zona'];
+     $x++;
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   return $la_respuesta;
  }
  private function f_buscarResponsables(){
    $x=0;
