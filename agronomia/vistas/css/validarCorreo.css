@@ -9,7 +9,7 @@ section[estado]:after{
 	font-family: 'Material Icons';
 	font-size: 32px;
 	position:absolute;
-	top: 10px;
+	top: 5px;
 	right: 15px;
 }
 section[estado='V']{
