@@ -1,7 +1,6 @@
 // TODO:
   //1: en el display dias mostrar progresBar con el proceso en el cual se encuentra(mostrar diferencia en estado final de proceso)
   //2: navegacion lateral de dias en la parte del display
-
 function construirUI(){
   //inicializo el layOut
   LayOut = {};
