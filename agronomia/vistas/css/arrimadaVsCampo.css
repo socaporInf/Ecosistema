@@ -3,34 +3,61 @@ div[mat-window].arrimada{
   width: calc(100%);
   margin-top: 50px;
   margin-bottom: 0px;
+  position: fixed;
+  z-index: 3;
 }
 div[mat-window].lat-izq,div[mat-window].lat-der{
   margin-left: 1px;
-  margin-top: 1px;
+  margin-top: 102px;
   width: calc(50% - 1px);
+  margin-bottom: 70px;
+}
+div[lista] section[slot][cabecera][fija],
+div[lista] section[busqueda][fija]{
+  position: fixed !important;
+  width: calc(50% - 1px) !important;
+  z-index:3;
+}
+section[slot][cabecera][fija] + section[slot]{
+  margin-top: 105px;
+}
+div[lista].comprimida{
+  max-height: calc(100% - 200px);
+}
+div[lista] section[diferente]{
+  color: #f44336;
 }
 div[mat-window] article[valor],div[mat-window] article[total]{
   float: left;
   margin-left: 0px;
 }
+div[mat-window].pieArrimada section[sector]{
+  width: 50%;
+  float:left;
+}
 div[mat-window] article[total]{
   width: 25%;
+  padding-top: 20px;
+  padding-bottom: : 20px;
 }
 div[mat-window] article[valor]{
     border-left: 1px solid #232323;
     border-right:  1px solid #232323;
     width: calc(25% - 22px);
     height: 20px;
-    padding: 10px;
+    padding-right: 10px;
+    padding-left:  10px;
+    padding-bottom: 20px;
+    padding-top: 20px;
 }
-div[mat-window] div[opciones]{
-  width: 24px;
-  height: 24px;
-  float: right;
-  font-family: 'Material Icons';
-  font-size: 24px;
-  color: white;
-  margin-right: 10px;
-  margin-top: 4px;
-  cursor:pointer;
+div[mat-window] article[diferencia]{
+  float:right;
+}
+div[mat-window].pieArrimada{
+  position: fixed;
+  width: calc(100% - 2px);
+  margin-left: 2px;
+  z-index: 3;
+  bottom: -10px;
+  color: #1b5e20;
 }

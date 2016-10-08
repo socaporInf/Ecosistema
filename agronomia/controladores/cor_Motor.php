@@ -34,6 +34,11 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_AccesoZona;
 			break;
 
+		case 'arrimadaVsCampo':
+			include_once('../clases/cls_ArrimadaVsCampo.php');
+			$lobj_Entidad = new cls_ArrimadaVsCampo;
+			break;
+
 		case 'clase':
 			include_once('../clases/cls_Clase.php');
 			$lobj_Entidad = new cls_Clase;
