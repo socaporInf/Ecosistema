@@ -232,4 +232,8 @@ function funcionamientoBotones(secBot){
     var lat = UI.elementos.LayOut.latDer;
     lat.diaActivo.validarCorreo();
   };
+  var btnValidar = secBot.nodo.querySelector('button[validar]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    lat.diaActivo.validarCampo();
+  };
 }

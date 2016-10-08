@@ -70,6 +70,16 @@ var Dia = function(atributos){
       location.href='../../agronomia/vistas/vis_ValidarDatosCorreo.html?Dia='+this.atributos.codigo;
     }
   };
+  this.validarCampo = function(){
+    if(this.atributos.nombre_estado_datos != 'IMPORTADOS'){
+        UI.agregarToasts({
+          texto: 'Los datos deben ser importados antes de poder validarlos',
+          tipo: 'web-arriba-derecha-alto'
+        });
+    }else{
+      location.href='../../agronomia/vistas/vis_ValidarDatosCorreo.html?Dia='+this.atributos.codigo;
+    }
+  };
   this.ejecutarOperacion = function(op,callback){
     var yo = this;
     var pet = {
