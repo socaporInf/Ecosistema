@@ -95,7 +95,7 @@ class cls_Registro_Virtual extends cls_Conexion{
 		}
 		$cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"AND nombre_registro like '%".$this->aa_Atributos['valor']."%'";
 	  $ls_SqlBase.=$cadenaBusqueda;
-	  $orden = " ORDER BY nombre_registro ";
+	  $orden = " ORDER BY codigo_registro  ";
 	  $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);

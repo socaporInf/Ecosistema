@@ -55,8 +55,35 @@ section[sector].listado-dias,section[sector].formulario-dias{
   	content: 'lock_outline';
   }
   /*------------------------------ estilos Display Dia------------------------*/
+  section[sector].formulario-dias{
+    position:relative;
+  }
+  section[sector].formulario-dias button.chev-izq,section[sector].formulario-dias button.chev-der{
+    position: absolute;
+    top: 80px;
+    background-color: transparent;
+    z-index: 3;
+    border: none;
+    border-radius:100px;
+    width: 50px;
+    height: 50px;
+    padding: 0px;
+  }
+  section[sector].formulario-dias button.chev-izq.invisible,section[sector].formulario-dias button.chev-der.invisible{
+    visibility: hidden;
+  }
+  section[sector].formulario-dias button.chev-der{
+    right: -10px;
+  }
+  section[sector].formulario-dias button.chev-izq{
+    left: -10px;
+  }
   div[formDia]{
-    height: 100%;
+    transition: all 0.5s ease-in-out;
+    height: calc(100% - 2px);
+    width: calc(100% - 2px);
+    position: absolute;
+    border:1px solid rgba(0,0,0,0.23);
   }
   section[cont-datos]{
     text-transform: capitalize;

@@ -4,7 +4,8 @@ var Dia = function(atributos){
 
   this.construirNodo = function(){
     var nodo = document.createElement('div');
-    nodo.setAttribute('formDia','');
+    nodo.setAttribute('formDia',this.atributos.codigo);
+    nodo.classList.add('izquierda');
     this.nodo = nodo;
     this.reconstruirNodo();
   };
@@ -23,6 +24,9 @@ var Dia = function(atributos){
             '</sector>';
     this.nodo.innerHTML = html;
     this.agregarSectorProceso();
+  };
+  this.mover = function(diferencia){
+    this.nodo.style.marginLeft = (diferencia * 100) + '%';
   };
   this.agregarSectorProceso = function(){
     var sec = this.nodo.querySelector('article[proceso]');
@@ -77,7 +81,7 @@ var Dia = function(atributos){
           tipo: 'web-arriba-derecha-alto'
         });
     }else{
-      location.href='../../agronomia/vistas/vis_ValidarDatosCorreo.html?Dia='+this.atributos.codigo;
+      location.href='../../agronomia/vistas/vis_ArrimadaVsCampo.html?Dia='+this.atributos.codigo;
     }
   };
   this.ejecutarOperacion = function(op,callback){

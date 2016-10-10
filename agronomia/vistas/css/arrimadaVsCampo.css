@@ -61,3 +61,57 @@ div[mat-window].pieArrimada{
   bottom: -10px;
   color: #1b5e20;
 }
+/*-----------------------------------------------botones--------------------------------------------------------------*/
+div[botonera] button:hover:before{
+    color:white;
+    background-color: inherit;
+    border-radius:5px;
+    padding:5px;
+    font-size: 9px;
+    position:absolute;
+}
+div[botonera] button.btnDia:hover:before{
+    content: 'Buscar Dia';
+    margin-left:-70px;
+}
+div[botonera] button.btnFinca:hover:before{
+    content: 'Agregar Finca';
+    margin-left:-84px;
+}
+div[botonera] button.btnTablon:hover:before{
+    content: 'Agregar Tablon';
+    margin-left:-91px;
+}
+div[botonera] button.btnProductor:hover:before{
+    content: 'Agregar Productor';
+    margin-left:-104px;
+}
+button.btnNext,button.btnPrev{
+  border: none;
+  background-color: transparent;
+  color: #607D8B !important;
+  font-size: 32px !important;
+  height: 32px !important;
+}
+/*-----------------------------------------------calendario-----------------------------------------------------------*/
+td.fc-day.rh-activo{
+
+}
+td.fc-day-number.rh-activo{
+  color: white;
+}
+
+td div[diaZafra]{
+  font-size: 30px;
+    margin-left: calc(50% - 10px);
+    color: white;
+    width: 20px;
+    height: 40px;
+    margin-top: calc(50% - 30px);
+}
+/*-----------------------------------------------leyenda--------------------------------------------------------------*/
+section[pie] article{
+  margin-left: 0px;
+  float: left;
+  padding: 5px;
+}
