@@ -66,6 +66,9 @@ function construirUI(){
       }
     }
   },formRep.buscarSector('dias').nodo);
+  if(UI.elementos.URL.captarParametroPorNombre('Dia')!== ""){
+    cargarDia(UI.elementos.URL.captarParametroPorNombre('Dia'));
+  }
 }
 function ejecutar(slot){
   var form = UI.buscarVentana('formRep').buscarSector('form').formulario;
@@ -201,5 +204,52 @@ function aprobarValidacion(){
           UI.buscarVentana('listDias').recargar();
         }
     });
+  });
+}
+function cargarDia(codigo){
+  UI.crearMensaje({
+    nombre_tipo:'INFORMACION',
+    titulo: 'Cargando Datos',
+    cuerpo: ''
+  });
+  UI.crearCargaDefinida({
+    contenedor:UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+    nombre: 'carga datos'
+  });
+  var peticion = {
+     modulo: "agronomia",
+     entidad: "diaZafra",
+     operacion: "estadoDia",
+     codigo: codigo
+  };
+  torque.Operacion(peticion,function(res){
+    if(res.registros){
+      if(res.registros.nombre_estado_datos == 'EN ESPERA'){
+          UI.agregarToasts({
+            texto: 'Este dia no Posee datos recibidos',
+            tipo: 'web-arriba-derecha-alto'
+          });
+      }else{
+        UI.buscarVentana('listDias').abrirCampoBusqueda();
+        UI.buscarVentana('listDias').nodo.querySelector('input[campBusq]').value = res.registros.fechadia;
+        UI.buscarVentana('listDias').nodo.querySelector('button[btnBusq]').click();
+        UI.removerCuadroCarga('carga datos');
+        var intervalo = setInterval(function(){
+          if(UI.buscarVentana('listDias').Slots.length){
+            clearInterval(intervalo);
+            UI.buscarVentana('listDias').buscarSlotPorNombre(
+              {nombre:res.registros.fechadia}
+            ).nodo.click();
+            setTimeout(function(){
+              UI.elementos.modalWindow.eliminarUltimaCapa();
+            },1500);
+          }
+        },40);
+      }
+    }else{
+      setTimeout(function(){
+        UI.elementos.modalWindow.eliminarUltimaCapa();
+      },1500);
+    }
   });
 }

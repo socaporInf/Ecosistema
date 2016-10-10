@@ -1,3 +1,6 @@
+// TODO:
+  //1: en el display dias mostrar progresBar con el proceso en el cual se encuentra(mostrar diferencia en estado final de proceso)
+  //2: navegacion lateral de dias en la parte del display
 function construirUI(){
   //inicializo el layOut
   LayOut = {};
@@ -15,7 +18,7 @@ function construirUI(){
       this.latDer.buscarSector('listaDias').nodo.classList.add('subir');
     }
   };
-  LayOut.mostrarLista= function(){
+  LayOut.mostrarLista = function(){
     if(this.latIzq.nodo.classList.contains('reducir')){
       this.latIzq.nodo.classList.remove('reducir');
       this.latDer.nodo.classList.remove('ampliar');
@@ -26,14 +29,17 @@ function construirUI(){
     this.latDer.buscarSector('formDia').nodo.classList.add('comprimir');
   };
   LayOut.construirDia = function(dia){
-    var html = '<section titulo class="liso-centrado">Dia '+dia.numero+'</section>';
-    html += '<section contDatos>'+
-              '<article><label>Fecha:</label>'+dia.fechadia+'</article>'+
-              '<article><label>Proceso:</label>'+dia.nombre_proceso_dia+'</article>'+
-              '<article><label>Datos:</label>'+dia.nombre_estado_datos+'</article>'+
-              '<article><label>Carga:</label>'+dia.nombre_tipo_carga+'</article>'+
-            '</sector>';
-    this.latDer.buscarSector('formDia').nodo.innerHTML = html;
+    var diaZafra;
+    if(!this.latDer.buscarDiaPorFecha(dia.fechadia)){
+      diaZafra = new Dia(dia);
+      this.latDer.dias.push(diaZafra);
+    }else{
+      diaZafra =this.latDer.buscarDiaPorFecha(dia.fechadia);
+      diaZafra.actualizarDatos(dia);
+      diaZafra.reconstruirNodo();
+    }
+    this.latDer.buscarSector('formDia').nodo.appendChild(diaZafra.nodo);
+    this.latDer.diaActivo = diaZafra;
   };
   UI.elementos.LayOut = LayOut;
 }
@@ -76,11 +82,22 @@ function crearLatIzq(){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(resp){
-    lat.buscarSector('formZafra').agregarFormulario({
-      plano: UI.buscarConstructor('zafra'),
-      tipo: 'modificar',
-      registroAct: resp.registro,
-    });
+    if(resp.success){
+      lat.buscarSector('formZafra').agregarFormulario({
+        plano: UI.buscarConstructor('zafra'),
+        tipo: 'modificar',
+        registroAct: resp.registro,
+      });
+    }else{
+      UI.crearMensaje({
+        nombre_tipo:'ERROR',
+        titulo:'No hay una Zafra aperturada',
+        cuerpo:'Para poder utilizar este Componente debe existir una zafra aperturada<br>'
+      });
+      document.body.querySelector('div[capa="exterior"]').onclick = function(){
+        location.href = '../../global/vistas/vis_Landing.html';
+      };
+    }
   });
   return lat;
 }
@@ -98,7 +115,7 @@ function crearLatDer(){
     },{
       nombre:'botonera',
       clases:['botonera'],
-      html: '<button type="button" class="icon material-icons md-24 mat-red500 white" cerradia>lock_outline</button>'+
+      html: '<button type="button" class="icon material-icons md-24 mat-red500 white" cerrardia>lock_outline</button>'+
             '<button type="button" class="icon material-icons md-24 mat-lightgreen500 white" abrirdia>lock_open</button>'+
             '<button type="button" class="icon material-icons md-24 mat-blue500 white" validar>search</button>'+
             '<button type="button" class="icon material-icons md-24 mat-bluegrey500 white" validarcorreo>mail_outline</button>'+
@@ -126,7 +143,12 @@ function crearLatDer(){
           nombre: 'dias',
           mensaje: 'Buscando Dias'
         }
-      }//,respuesta: callback
+      },
+      respuesta: function(lista){
+        lista.Slots.forEach(function(tupla){
+          tupla.nodo.setAttribute('estado',tupla.atributos.estado);
+        });
+      }
     },
     onclickSlot: function(slot){
       //muestro formulario dia
@@ -152,11 +174,66 @@ function crearLatDer(){
     }
   },lat.buscarSector('listaDias').nodo);
 
+  //funcionamiento dias
+  lat.dias = [];
+  lat.diaActivo = null;
+  lat.buscarDiaPorNumero = function(numero){
+    for (var i = 0; i < this.dias.length; i++) {
+      if(this.dias[i].atributos.numero == numero){
+        return this.dias[i];
+      }
+    }
+    return false;
+  };
+  lat.buscarDiaPorFecha = function(fecha){
+    for (var i = 0; i < this.dias.length; i++) {
+      if(this.dias[i].atributos.fechadia == fecha){
+        return this.dias[i];
+      }
+    }
+    return false;
+  };
+  lat.buscarDiaAbierto = function(){
+    for (var i = 0; i < this.dias.length; i++) {
+      if(this.dias[i].atributos.estado === 'A'){
+        return this.dias[i];
+      }
+    }
+    return false;
+  };
   return lat;
 }
 function funcionamientoBotones(secBot){
   //agrego funcionamiento boton por boton
   var btnLista = secBot.nodo.querySelector('button[lista]').onclick= function(){
+    UI.buscarVentana('Dias').recargar();
     UI.elementos.LayOut.mostrarLista();
+  };
+  var btnAbrirDia = secBot.nodo.querySelector('button[abrirdia]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    var diaAbierto = lat.buscarDiaAbierto();
+    if(diaAbierto){
+        UI.crearMensaje({
+          nombre_tipo:'ERROR',
+          titulo: 'Imposible abrir Dia '+lat.diaActivo.atributos.fechadia,
+          cuerpo: 'no se puede abrir un dia de zafra si ya existe otro abierto<br>'+
+                  'Debe cerrar el Dia '+diaAbierto.atributos.numero+' ('+diaAbierto.atributos.fechadia+') '+
+                  'para poder abrir otro dia'
+        });
+    }else{
+        lat.diaActivo.abrirDia();
+    }
+  };
+  var btnCerrarDia = secBot.nodo.querySelector('button[cerrardia]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    lat.diaActivo.cerrarDia();
+  };
+  var btnValidarCorreo = secBot.nodo.querySelector('button[validarcorreo]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    lat.diaActivo.validarCorreo();
+  };
+  var btnValidar = secBot.nodo.querySelector('button[validar]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    lat.diaActivo.validarCampo();
   };
 }

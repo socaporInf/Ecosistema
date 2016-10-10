@@ -64,7 +64,7 @@ class cls_ManejadorCorreo extends cls_Conexion{
 		$mailboxes = $imap->getMailboxes();
 		$imap->setActiveMailbox('INBOX')->getActiveMailbox();
 
-		$correos = $imap->getEmails(0, 3);
+		$correos = $imap->getEmails(0, 20);
 		//busco el correo con el listado correcto
 		$correo = $this->f_BuscarListado($correos);
 		if($correo != false){
