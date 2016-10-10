@@ -223,22 +223,22 @@ function cargarDia(codigo){
      codigo: codigo
   };
   torque.Operacion(peticion,function(res){
-    if(res.registros){
-      if(res.registros.nombre_estado_datos == 'EN ESPERA'){
+    if(res.registro){
+      if(res.registro.nombre_estado_datos == 'EN ESPERA'){
           UI.agregarToasts({
             texto: 'Este dia no Posee datos recibidos',
             tipo: 'web-arriba-derecha-alto'
           });
       }else{
         UI.buscarVentana('listDias').abrirCampoBusqueda();
-        UI.buscarVentana('listDias').nodo.querySelector('input[campBusq]').value = res.registros.fechadia;
+        UI.buscarVentana('listDias').nodo.querySelector('input[campBusq]').value = res.registro.fechadia;
         UI.buscarVentana('listDias').nodo.querySelector('button[btnBusq]').click();
         UI.removerCuadroCarga('carga datos');
         var intervalo = setInterval(function(){
           if(UI.buscarVentana('listDias').Slots.length){
             clearInterval(intervalo);
             UI.buscarVentana('listDias').buscarSlotPorNombre(
-              {nombre:res.registros.fechadia}
+              {nombre:res.registro.fechadia}
             ).nodo.click();
             setTimeout(function(){
               UI.elementos.modalWindow.eliminarUltimaCapa();

@@ -32,7 +32,7 @@ class cls_DiaZafra extends cls_Conexion{
     case 'estadoDia':
        $lb_Enc=$this->f_buscar();
        if($lb_Enc){
-         $respuesta['registros']=$this->aa_Atributos['registro'];
+         $respuesta['registro']=$this->aa_Atributos['registro'];
          $success=1;
       }else{
          $success = 0;
@@ -41,6 +41,14 @@ class cls_DiaZafra extends cls_Conexion{
 
     case 'buscarActivo':
       $lb_Enc=$this->f_buscar('activo');
+      if($lb_Enc){
+        $respuesta['registro']=$this->aa_Atributos['registro'];
+        $success=1;
+      }
+      break;
+
+    case 'buscarUltimoConDatos':
+      $lb_Enc=$this->f_buscar('ultimoConDatos');
       if($lb_Enc){
         $respuesta['registro']=$this->aa_Atributos['registro'];
         $success=1;
@@ -175,8 +183,17 @@ class cls_DiaZafra extends cls_Conexion{
  private function f_Buscar($tipo){
    $lb_Enc=false;
    //Busco
-   if($tipo == 'ultimo'){
-      $ls_Sql="SELECT * from agronomia.vdia_zafra WHERE codigo_dia_zafra = (SELECT MAX(codigo_zafra) from agronomia.vdia_Zafra) ";
+   if($tipo == 'ultimoConDatos'){
+      //VALIDANDO ARRIME VS CAMPO = 33
+      $ls_Sql="SELECT * from agronomia.vdia_zafra WHERE codigo_dia_zafra = (
+                SELECT codigo_dia_zafra from agronomia.vdia_zafra where numero = (
+                  SELECT MAX(numero) from agronomia.vdia_zafra where
+                  codigo_proceso_dia = 33 and
+                  codigo_zafra = (
+                    SELECT codigo_zafra from agronomia.vzafra WHERE estado_zafra = 'A'
+                  )
+                )
+              )";
    }else if($tipo == 'activo'){
       $ls_Sql="SELECT * from agronomia.vdia_zafra WHERE codigo_dia_zafra = (SELECT codigo_dia_zafra from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A') ";
    }else if($tipo == 'siguiente'){

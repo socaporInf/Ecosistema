@@ -21,6 +21,9 @@ div[botonera] button{
     float:left;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
     overflow: visible;
+    position: absolute;
+    top:0px;
+    left:0px;
 }
 div[botonera] button:after{
     font-family: 'Material Icons';
@@ -50,9 +53,6 @@ div[botonera] button:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnNuevo]{
     background-color: #4FC3F7;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnNuevo]:after{
     content: 'insert_drive_file';
@@ -61,16 +61,13 @@ div[botonera] button[btnNuevo]:hover:before{
     content: 'Nuevo';
     color:white;
     background-color: inherit;
-    margin-left:-25px;
+    margin-left:-65px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnSeguridad]{
     background-color: #607D8B;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnSeguridad]:after{
     content: 'security';
@@ -86,9 +83,6 @@ div[botonera] button[btnSeguridad]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnBuscar]{
     background-color: #03A9F4;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnBuscar]:after{
     content: 'search';
@@ -104,9 +98,6 @@ div[botonera] button[btnBuscar]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnApertura]{
     background-color: #8BC34A;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnApertura]:after{
     content: 'launch';
@@ -122,9 +113,6 @@ div[botonera] button[btnApertura]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnModificar]{
     background-color: #4CAF50;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnModificar]:after{
     content: 'mode_edit';
@@ -140,9 +128,6 @@ div[botonera] button[btnModificar]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnEliminar]{
     background-color:#e57373;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnEliminar]:after{
     content: 'delete';
@@ -158,9 +143,6 @@ div[botonera] button[btnEliminar]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnDetalle]{
     background-color: #FF5722;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnDetalle]:after{
     content: 'list';
@@ -176,9 +158,6 @@ div[botonera] button[btnDetalle]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnGuardar]{
     background-color: #3F51B5;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnGuardar]:after{
     content: 'save';
@@ -194,9 +173,6 @@ div[botonera] button[btnGuardar]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnValidado]{
     background-color: #3F51B5;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnValidado]:after{
     content: 'thumb_up';
@@ -212,9 +188,6 @@ div[botonera] button[btnValidado]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnCancelar]{
     background-color: #f44336;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnCancelar]:after{
     content: 'clear';
@@ -230,9 +203,6 @@ div[botonera] button[btnCancelar]:hover:before{
 /*---------------------------------------------------------------------------*/
 div[botonera] button[btnAceptar]{
     background-color:#4CAF50;
-    top:0px;
-    left:0px;
-    position: absolute;
 }
 div[botonera] button[btnAceptar]:after{
     content: 'check';

@@ -6,7 +6,7 @@ tablon = {
   entidad_padre:'lote',
   campo_padre: 'id_lote',
   titulo: 'Tablones',
-  altura: 400,
+  altura: 500,
   campos: [
     {
 	  	tipo : 'campoBusqueda',

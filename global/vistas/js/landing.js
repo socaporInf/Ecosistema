@@ -144,6 +144,7 @@ function cargarCalendario(){
 	var contenedorfechas = document.querySelector('div.fc-day-grid-container,div.fc-scroller');
 	contenedorfechas.classList.remove('fc-scroller');
 	contenedorfechas.style.height='390px';
+	document.body.querySelector('div.fc-center h2').innerHTML = "Cumpleañeros del mes de "+document.body.querySelector('div.fc-center h2').innerHTML;
 }
 
 /*--------------------------- Noticia ----------------------------------*/

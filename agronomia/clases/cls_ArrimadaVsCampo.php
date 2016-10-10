@@ -2,6 +2,8 @@
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 include_once('cls_AccesoZona.php');
+include_once('cls_DiaZafra.php');
+include_once('../../seguridad/clases/cls_Registro_Virtual.php');
 class cls_ArrimadaVsCampo extends cls_Conexion{
 
  protected $aa_Atributos = array();
@@ -17,29 +19,77 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
  }
 
  public function gestionar(){
-   $lobj_Mensaje = new cls_Mensaje_Sistema;
-   switch ($this->aa_Atributos['operacion']) {
-     case 'buscarValidacion':
-       $registros=$this->f_Listar('validacion');
-       if(count($registros)!=0){
-         $success=1;
-         $respuesta['registros']=$registros;
-       }else{
-         $respuesta['success'] = 0;
-         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
-       }
-       break;
+  $lobj_Mensaje = new cls_Mensaje_Sistema;
+  switch ($this->aa_Atributos['operacion']) {
+    case 'buscarValidacion':
+      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra();
+      $registros=$this->f_Listar('validacion');
+      if($this->aa_Atributos['diaZafra']['fecha_dia']==''){
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(30);
+      }else{
+        if(count($registros)!=0){
+          $success=1;
+          $respuesta['registros']=$registros;
+          $respuesta['diaZafra'] = $this->aa_Atributos['diaZafra'];
+        }else{
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+        } 
+      }
+      break;
 
-     case 'buscarValidacionRelacionada':
-       $registros=$this->f_Listar('relacionada');
-       if(count($registros)!=0){
-         $success=1;
-         $respuesta['registros']=$registros;
-       }else{
-         $respuesta['success'] = 0;
-         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
-       }
-       break;
+    case 'buscarValidacionRelacionada':
+      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra();
+      $registros=$this->f_Listar('relacionada');
+      if($this->aa_Atributos['diaZafra']['fecha_dia']==''){
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(30);
+      }else{
+        if(count($registros)!=0){
+          $success=1;
+          $respuesta['registros']=$registros;
+          $respuesta['diaZafra'] = $this->aa_Atributos['diaZafra'];
+        }else{
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+        } 
+      }
+      break;
+
+    case 'buscarDiferencia':
+      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra();
+      $registros=$this->f_BuscarDif();
+      if($this->aa_Atributos['diaZafra']['fecha_dia']==''){
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(30);
+      }else{
+        if(count($registros)!=0){
+          $success=1;
+          $respuesta['diferencia']=$this->aa_Atributos['diferencia'];
+        }else{
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+        } 
+      }
+      break;
+
+    case 'buscarDatosCalendario':
+      //obtengo los dias de zafra
+      $lobj_Dia = new cls_DiaZafra;
+      $lobj_Dia->setPeticion(array('operacion' => 'buscarDiasZafraActiva'));
+      $respuesta['dias'] = $lobj_Dia->gestionar()['registros'];
+
+      //busco los estado de proceso dia para la leyenda
+      $lobj_RV = new cls_Registro_Virtual;
+      $lobj_RV->setPeticion(array(
+        'operacion' => 'listar',
+        'nombre_tabla' => 'PROCESO_DIA_ZAFRA'
+        )
+      );
+      $respuesta['procesos'] = $lobj_RV->gestionar()['registros'];
+      $success = '1';
+      break;
 
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
@@ -80,29 +130,31 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
    return $la_respuesta;
  }
 
- private function f_Buscar(){
-   $lb_Enc=false;
-   //Busco El rol
-   $ls_Sql="SELECT * FROM agronomia.vzona where codigo_zona='".$this->aa_Atributos['codigo']."'";
-   $this->f_Con();
-   $lr_tabla=$this->f_Filtro($ls_Sql);
-   if($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta['codigo']=$la_registros['codigo_zona'];
-     $la_respuesta['nombre']=$la_registros['nombre'];
-     $la_respuesta['descripcion']=$la_registros['descripcion'];
-     $lb_Enc=true;
-   }
-   $this->f_Cierra($lr_tabla);
-   $this->f_Des();
+ private function f_BuscarDif(){
+  $fecha_dia = $this->aa_Atributos['diaZafra']['fecha_dia'];
+  $lb_Enc=false;
+  $ls_Sql="SELECT 
+            (select sum(pesoneto_ton) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') - 
+            (select sum(pesoneto_ton) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia') 
+            as diferencia;";
+  $this->f_Con();
+  $lr_tabla=$this->f_Filtro($ls_Sql);
+  if($la_registros=$this->f_Arreglo($lr_tabla)){
+    $la_respuesta['diferencia']=$la_registros['diferencia'];
+    $lb_Enc=true;
+  }
+  $this->f_Cierra($lr_tabla);
+  $this->f_Des();
 
-   if($lb_Enc){
-     //guardo en atributo de la zona
-     $this->aa_Atributos['registro']=$la_respuesta;
-   }
+  if($lb_Enc){
+    //guardo en atributo de la zona
+    $this->aa_Atributos['diferencia']=$la_respuesta['diferencia'];
+  }
 
-   return $lb_Enc;
+  return $lb_Enc;
  }
  private function armarBusqueda(){
+
    //instancio el objeto de busqueda de zonas asignadas al usuario
    $lobj_AccesoZona = new cls_AccesoZona;
    //creo la peticion
@@ -112,23 +164,55 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
    );
    //guardo los datos en el objeto y gestiono para obtener una respuesta
    $lobj_AccesoZona->setPeticion($pet);
-   $respuesta = $lobj_AccesoZona->gestionar();
+   $zona = $lobj_AccesoZona->gestionar();
 
    $cadenaBusqueda = ' where codigo_zona in(';
-   if($respuesta['success'] == 1){
-     for($x = 0;$x < count($respuesta['registros']) - 1; $x++){
-       $cadenaBusqueda .= $respuesta['registros'][$x].',';
+   if($zona['success'] == 1){
+     for($x = 0;$x < count($zona['registros']) - 1; $x++){
+       $cadenaBusqueda .= $zona['registros'][$x].',';
      }
-     $cadenaBusqueda .= $respuesta['registros'][count($respuesta['registros']) - 1].' ';
+     $cadenaBusqueda .= $zona['registros'][count($zona['registros']) - 1].' ';
    }else{
      $cadenaBusqueda .= '-1';
-     $respuesta['mensaje']='usuario no posee zona asignada';
+     $zona['mensaje']='usuario no posee zona asignada';
    }
-   $cadenaBusqueda .= ') ';
+   $cadenaBusqueda .= ") ";
+   if($this->aa_Atributos['diaZafra']['fecha_dia']!=''){
+    $cadenaBusqueda.= "and fechadia ='".$this->aa_Atributos['diaZafra']['fecha_dia']."' ";
+   }
    if($this->aa_Atributos['valor']!=''){
      $cadenaBusqueda .="and nombrefinca like '%".$this->aa_Atributos['valor']."%'";
    }
    return $cadenaBusqueda;
  }
+
+  private function buscarDiaZafra(){
+    $lobj_Dia = new cls_DiaZafra;
+    if($this->aa_Atributos['dia']!=''){   
+      //si el dia fue enviado como parametro lo busco 
+      //creo la peticion
+      $pet = array(
+        'operacion' => 'estadoDia',
+        'codigo' => $this->aa_Atributos['dia']
+      );
+    }else{
+      //si el dia no fue enviado como parametro busco el dia activo
+      //creo la peticion
+      $pet = array(
+        'operacion' => 'buscarActivo'
+      );
+    }
+    //guardo los datos en el objeto y gestiono para obtener una respuesta
+    $lobj_Dia->setPeticion($pet);
+    $dia = $lobj_Dia->gestionar()['registro'];
+    if($dia['fecha_dia']==""){
+      $pet = array(
+        'operacion' => 'buscarUltimoConDatos'
+      );
+      $lobj_Dia->setPeticion($pet);
+      $dia = $lobj_Dia->gestionar();
+    }
+    return $dia;
+  }
 }
 ?>

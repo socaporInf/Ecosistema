@@ -15,7 +15,7 @@ div[lista] section[slot] div[cabeceraCelda='boleto']{
 div[lista] section[slot] div[celda='finca'],
 div[lista] section[slot] div[cabeceraCelda='finca']{
   justify-content: center;
-  width: calc(25%);
+  width: calc(22%);
   font-size: 8px;
 }
 div[lista] section[slot] div[celda='tablon'],
