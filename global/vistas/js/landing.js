@@ -115,7 +115,7 @@ function cargarNoticias(contenedor){
 	torque.manejarOperacion(peticion,cuadroEspera,function cargarNoticiasBD(respuesta){
 		var noticias = respuesta.registros;
 		for( var x = 0; x < noticias.length; x++){
-			var noticia = new NoticiaUI(noticias[x]);
+			var noticia = new Card(noticias[x]);
 			contenedor.appendChild(noticia.nodo);
 		}
 	});
@@ -146,43 +146,3 @@ function cargarCalendario(){
 	contenedorfechas.style.height='390px';
 	document.body.querySelector('div.fc-center h2').innerHTML = "Cumpleañeros del mes de "+document.body.querySelector('div.fc-center h2').innerHTML;
 }
-
-/*--------------------------- Noticia ----------------------------------*/
-var NoticiaUI = function(noticia){
-	var Titulo = function(titulo){
-		this.texto = titulo;
-		this.nodo = null;
-
-		this.construirNodo = function(){
-			var nodo = document.createElement('div');
-			nodo.setAttribute('not-titulo','');
-
-			nodo.textContent = this.texto;
-
-			this.nodo = nodo;
-		};
-		this.construirNodo();
-	};
-
-	this.atributos = noticia;
-	this.nodo = null;
-	this.titulo = null;
-
-	this.construirNodo = function(){
-		var nodo = document.createElement('div');
-		nodo.setAttribute('mat-card','');
-		nodo.classList.add('cuadrada');
-		nodo.classList.add('viewver');
-		nodo.style.backgroundColor='#'+this.atributos.color;
-
-		this.nodo = nodo;
-
-		this.agregarTitulo();
-	};
-	this.agregarTitulo = function(){
-		var titulo = new Titulo(this.atributos.titulo);
-		this.nodo.appendChild(titulo.nodo);
-		this.titulo = titulo;
-	};
-	this.construirNodo();
-};

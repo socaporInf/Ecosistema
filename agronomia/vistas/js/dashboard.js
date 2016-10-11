@@ -1,6 +1,5 @@
 // TODO:
   //1: en el display dias mostrar progresBar con el proceso en el cual se encuentra(mostrar diferencia en estado final de proceso)
-  //2: navegacion lateral de dias en la parte del display
 function construirUI(){
   //inicializo el layOut
   LayOut = {};
@@ -37,27 +36,30 @@ function construirUI(){
       this.latDer.dias[x].mover(diferencia);
     }
     this.latDer.diaActivo = diaZafra;
-    if(diaZafra.atributos.numero === this.latDer.buscarMayor().atributos.numero){
+    if(this.latDer.dias.length === 1){
+      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.add('invisible');
+      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.add('invisible');
+    }else if(diaZafra.atributos.numero === this.latDer.buscarMayor().atributos.numero){
       UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.add('invisible');
       if(UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.contains('invisible')){
-        UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.remove('invisible');   
+        UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.remove('invisible');
       }
     }else if(parseInt(diaZafra.atributos.numero) === 1){
       UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.add('invisible');
       if(UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.contains('invisible')){
-        UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.remove('invisible');   
+        UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.remove('invisible');
       }
-    }else{
-      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.remove('invisible'); 
-      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.remove('invisible'); 
+    }else {
+      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.remove('invisible');
+      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.remove('invisible');
     }
-  }
+  };
   LayOut.construirDia = function(dia){
     var diaZafra = this.latDer.buscarDiaPorFecha(dia.fechadia);
     if(!diaZafra){
       diaZafra = new Dia(dia);
       this.latDer.dias.push(diaZafra);
-      this.latDer.buscarSector('formDia').nodo.appendChild(diaZafra.nodo); 
+      this.latDer.buscarSector('formDia').nodo.appendChild(diaZafra.nodo);
     }
   };
   UI.elementos.LayOut = LayOut;
@@ -141,6 +143,7 @@ function crearLatDer(){
             '<button type="button" class="icon material-icons md-24 mat-blue500 white" validar>search</button>'+
             '<button type="button" class="icon material-icons md-24 mat-bluegrey500 white" validarcorreo>mail_outline</button>'+
             '<button type="button" class="icon material-icons md-24 mat-indigo500 white" subirvalidacion>file_upload</button>'+
+            '<button type="button" class="icon material-icons md-24 mat-teal500 white" buscarvalidacion>cloud_download</button>'+
             '<button type="button" class="icon material-icons md-24 mat-amber500 white" lista>list</button>'
     }]
   },UI.contGeneral);
@@ -170,19 +173,21 @@ function crearLatDer(){
           tupla.nodo.setAttribute('estado',tupla.atributos.estado);
           UI.elementos.LayOut.construirDia(tupla.atributos);
         });
-        UI.elementos.LayOut.activarDia(lista.Slots[0].atributos);
+        if(UI.elementos.LayOut.latDer.diaActivo){
+            UI.elementos.LayOut.activarDia(UI.elementos.LayOut.latDer.diaActivo.atributos);
+        }else{
+            UI.elementos.LayOut.activarDia(lista.Slots[0].atributos);
+        }
         //funcionamiento de moviemient de dias
         UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').onclick = function(e){
           agregarRippleEvent(this,e);
           var numero = UI.elementos.LayOut.latDer.diaActivo.atributos.numero - 1;
-          var dia = UI.elementos.LayOut.latDer.buscarDiaPorNumero(numero);
-          UI.elementos.LayOut.activarDia(dia.atributos);
+          buscarDatosDia(numero);
         };
         UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').onclick = function(e){
           agregarRippleEvent(this,e);
           var numero = parseInt(UI.elementos.LayOut.latDer.diaActivo.atributos.numero) + 1;
-          var dia = UI.elementos.LayOut.latDer.buscarDiaPorNumero(numero);
-          UI.elementos.LayOut.activarDia(dia.atributos);
+          buscarDatosDia(numero);
         };
       }
     },
@@ -249,6 +254,27 @@ function crearLatDer(){
   };
   return lat;
 }
+function buscarDatosDia(numero){
+  var dia = UI.elementos.LayOut.latDer.buscarDiaPorNumero(numero);
+  var peticion = {
+     modulo: "agronomia",
+     entidad: "diaZafra",
+     operacion: "estadoDia",
+     codigo: dia.atributos.codigo,
+     zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.buscarCampo('codigo').captarValor()
+  };
+  UI.elementos.LayOut.activarDia(dia.atributos);
+  var cuadro = {
+    contenedor : dia.nodo,
+    cuadro: {
+      nombre: 'cargaDia'+dia.codigo,
+      mensaje: 'Buscando Datos del dia'
+    }
+  };
+  torque.manejarOperacion(peticion,cuadro,function(res){
+      UI.elementos.LayOut.activarDia(res.registro);
+  });
+}
 function funcionamientoBotones(secBot){
   //agrego funcionamiento boton por boton
   var btnLista = secBot.nodo.querySelector('button[lista]').onclick= function(){
@@ -282,4 +308,9 @@ function funcionamientoBotones(secBot){
     var lat = UI.elementos.LayOut.latDer;
     lat.diaActivo.validarCampo();
   };
+  var btnBuscar = secBot.nodo.querySelector('button[buscarvalidacion]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    lat.diaActivo.buscarValidacion();
+  };
+
 }

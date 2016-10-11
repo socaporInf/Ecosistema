@@ -117,15 +117,15 @@ function cerrarListado(){
 }
 
 function gestionarbotonera(estado){
-var informacion ={
-  tipo:'validado',
-  click: function(){
-      UI.agregarToasts({
-        texto: 'Datos ya fueron validados',
-        tipo: 'web-arriba-derecha-alto'
-      });
-    }
-  };
+  var informacion ={
+    tipo:'validado',
+    click: function(){
+        UI.agregarToasts({
+          texto: 'Datos ya fueron validados',
+          tipo: 'web-arriba-derecha-alto'
+        });
+      }
+    };
   var aceptar ={
     tipo:'aceptar',
     click: function(){

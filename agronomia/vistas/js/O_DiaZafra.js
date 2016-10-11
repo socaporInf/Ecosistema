@@ -1,4 +1,5 @@
 var Dia = function(atributos){
+  atributos.avance_dia = parseInt(atributos.avance_dia);
   this.atributos = atributos;
   this.nodo = null;
 
@@ -13,14 +14,25 @@ var Dia = function(atributos){
     this.atributos = atributos;
   };
   this.reconstruirNodo = function(){
+    var textoGraf = this.atributos.nombre_proceso_dia.toLowerCase();
+    if(this.atributos.secuencia_proceso_dia === "3"){
+        textoGraf = 'Diferencia: '+this.atributos.diferencia;
+    }
     var estado = (this.atributos.estado==='A')?'Abierto':'Cerrado';
     var html = '<section titulo class="liso-centrado">Dia '+this.atributos.numero+'</section>';
     html += '<section cont-datos>'+
               '<article general>'+
-              '<label>Fecha:</label>'+this.atributos.fechadia+'<label>'+
-              'Estado:</label><span estado="'+this.atributos.estado+'">'+estado+'</span>'+
+                  '<article datos>Fecha:<span style="color:black">'+this.atributos.fechadia+'</article><br>'+
+                  '<article datos>Estado:<span estado="'+this.atributos.estado+'">'+estado+'</span></article>'+
+                  '<article datos>Proceso:<span style="background-color:#'+this.atributos.color_proceso_dia+'">'+this.atributos.nombre_proceso_dia.toLowerCase()+'</span></article>'+
+                  '<article datos>Datos:<span style="background-color:#'+this.atributos.color_proceso_dia+'">'+this.atributos.nombre_estado_datos.toLowerCase()+'</span></article>'+
+                '</article>'+
+              '<article cont-graf>'+
+                '<article wid-graf>'+
+                  '<div id="container'+this.atributos.codigo+'"></div>'+
+                  '<article cont-graf-tex>'+textoGraf+'</article>'+
+                '</article>'+
               '</article>'+
-              '<article proceso><label>Proceso:</label></article>'+
             '</sector>';
     this.nodo.innerHTML = html;
     this.agregarSectorProceso();
@@ -29,8 +41,18 @@ var Dia = function(atributos){
     this.nodo.style.marginLeft = (diferencia * 100) + '%';
   };
   this.agregarSectorProceso = function(){
-    var sec = this.nodo.querySelector('article[proceso]');
-    sec.innerHTML += this.atributos.nombre_proceso_dia.toLowerCase();
+    var container = this.nodo.querySelector('div[id]');
+    var bar = new ProgressBar.SemiCircle(container, {
+       strokeWidth: 4,
+       easing: 'easeInOut',
+       duration: 1400,
+       color: '#'+this.atributos.color_proceso_dia,
+       trailColor: '#eee',
+       trailWidth: 1,
+       svgStyle: null,
+    });
+    var progreso = this.atributos.avance_dia /100;
+    bar.animate(progreso);
   };
   this.abrirDia = function(){
     if(this.atributos.estado === 'A'){
@@ -104,6 +126,46 @@ var Dia = function(atributos){
       yo.reconstruirNodo();
       if(res.success === 1){
         callback();
+      }
+    });
+  };
+  this.buscarValidacion = function(){
+    var yo = this;
+    var pet = {
+      operacion: 'buscarListadoCorreo',
+      modulo:'agronomia',
+      entidad:'diaZafra',
+      codigo: this.atributos.codigo
+    };
+    var cuadro = {
+      contenedor: this.nodo,
+      cuadro : {
+        nombre: 'Dia'+this.atributos.codigo,
+        mensaje: 'Cargando Listado del dia '+this.atributos.fechadia
+      }
+    };
+    torque.manejarOperacion(pet,cuadro,function(res){
+      if(!res.success){
+        if(res.error){
+          UI.crearMensaje({
+            nombre_tipo:'ERROR',
+            titulo:'Error al cargar listado de validacion',
+            cuerpo:'<pre>'+res.contenido+'</pre>'
+          });
+        }else{
+            UI.agregarToasts({
+              texto: res.mensaje,
+              tipo: 'web-arriba-derecha-alto'
+            });
+        }
+        yo.reconstruirNodo();
+      }else{
+          UI.agregarToasts({
+            texto: 'Listado Cargado correctamente',
+            tipo: 'web-arriba-derecha-alto'
+          });
+        yo.atributos = res.registro;
+        yo.reconstruirNodo();
       }
     });
   };

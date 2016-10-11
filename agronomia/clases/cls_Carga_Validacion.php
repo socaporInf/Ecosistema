@@ -21,148 +21,7 @@ class cls_Carga_Validacion extends cls_Conexion{
 		$lobj_Mensaje = new cls_Mensaje_Sistema;
 		switch ($this->aa_Atributos['operacion']) {
 			case 'buscarListaCorreo':
-				include_once('cls_ManejadorCorreo.php');
-				$lobj_MAC = new cls_ManejadorCorreo();
-				$pet = array(
-					'operacion'=>'buscarArchivoCorreo'
-				);
-				$lobj_MAC->setPeticion($pet);
-				$archivo = $lobj_MAC->gestionar();
-				if($archivo!=false){
-
-					$UID = $lobj_MAC->getAtributos()['UID'];
-
-					//extraigo los datos del archivo
-					include_once('cls_ManejadorListado.php');
-					$lobj_MAL = new cls_ManejadorListado();
-					$pet = array(
-						'operacion'=>'extraerDatos',
-						'archivo'=>$archivo
-					);
-					$lobj_MAL->setPeticion($pet);
-					$data = $lobj_MAL->gestionar();
-
-					if(count($data) > 0){
-						$cabeceras = $this->obtenerCabeceras($data);
-						$datos = $this->obtenerRegistros($data,$UID,$cabeceras);
-
-						//instancio los objetos de modo que puedan ser utilizados segun sea necesario
-						//notificacion para disparar las notificaciones
-						$lobj_Notificacion = new cls_Notificacion();
-						//dia zafra para cambia el estado segun sea el caso
-						$lobj_DiaZafra = new cls_DiaZafra();
-
-						$fechadia = $datos[1]['fechadia'];
-						$this->validarDia($fechadia,$UID);
-						$this->f_Con();
-						$this->f_Begin();
-						if(!$this->aa_Atributos['correoGuardado']){
-							if(!$this->aa_Atributos['fechaRegistrada']){
-								//primera vez
-								$lb_hecho = false;
-								$lb_hecho = $this->insertarListado($datos);
-								if($lb_hecho){
-									//dispario notificacion
-									$petNot  = array(
-										'operacion' => 'crearNotificacionPorPlantilla',
-										'plantilla' => 'CARGA VALIDACION EXITOSA'
-									);
-									$petDZ  = array(
-										'operacion' => 'cambioAtributos',
-										'codigo_estado_datos' => 35,
-										'codigo_proceso_dia' => 32,
-									);
-									$this->f_Commit();
-								}else{
-									//dispario notificacion
-									$petNot  = array(
-											'operacion' => 'crearNotificacionPorPlantilla',
-											'plantilla' => 'ERROR INSERCION EN BASE DE DATOS'
-										);
-									$petDZ  = array(
-										'operacion' => 'cambioAtributos',
-										'codigo_estado_datos' => 37
-									);
-									$this->f_RollBack();
-								}
-							}else {
-								//ya existe data de ese dia
-								$lb_hecho = false;
-								$lb_hecho = $this->eliminarListado($fechadia);
-								if(!$lb_hecho){
-									//dispario notificacion
-									$petNot  = array(
-										'operacion' => 'crearNotificacionPorPlantilla',
-										'plantilla' => 'ERROR ELIMINACION ANTERIORES'
-									);
-									$petDZ  = array(
-										'operacion' => 'cambioAtributos',
-										'codigo_estado_datos' => 37
-									);
-									$this->f_RollBack();
-								}else {
-									$lb_hecho = false;
-									$lb_hecho = $this->insertarListado($datos);
-									if(!$lb_hecho){
-										//dispario notificacion
-										$petNot  = array(
-												'operacion' => 'crearNotificacionPorPlantilla',
-												'plantilla' => 'ERROR REEMPLAZO DATOS'
-											);
-											$petDZ  = array(
-												'operacion' => 'cambioAtributos',
-												'codigo_estado_datos' => 37
-											);
-										$this->f_RollBack();
-									}else{
-										//dispario notificacion
-										$petNot  = array(
-											'operacion' => 'crearNotificacionPorPlantilla',
-											'plantilla' => 'REEMPLAZO VALIDACION DIA'
-										);
-										$petDZ  = array(
-											'operacion' => 'cambioAtributos',
-											'codigo_estado_datos' => 35,
-											'codigo_proceso_dia' => 32,
-										);
-										$this->f_Commit();
-									}
-								}
-							}
-						}else{
-							$success = 0;
-							$respuesta['mensaje'] = "Correo $UID ya cargado";
-						}
-						$this->f_Des();
-						if($petNot['operacion']!='extraerDatos'){
-							$petNot['valores'] = array('fechadia'=>$this->fFechaBD($fechadia));
-							//dia de zafra
-							$petDZ['fecha_dia'] = $fechadia;
-							$lobj_DiaZafra->setPeticion($petDZ);
-							$diaZafra = $lobj_DiaZafra->gestionar();
-							if($diaZafra['success']==1){
-								$success = 1;
-								$respuesta['mensaje'] = 'Proceso culminada de forma exitosa';
-							}else{
-								$success = 0;
-								$respuesta['mensaje'] = 'error al actualizar datos dia zafra';
-							}
-							//notificacion
-							$lobj_Notificacion->setPeticion($petNot);
-							$notificacion = $lobj_Notificacion->gestionar();
-							if($notificacion['success']==1){
-								$success = 1;
-								$respuesta['mensaje'] = 'Proceso culminada de forma exitosa';
-							}else{
-								$success = 0;
-								$respuesta['mensaje'] = 'error al disparar notificacion';
-							}
-						}
-					}
-				}else{
-					$respuesta['mensaje'] = $lobj_MAC->getAtributos()['mensaje'];
-					$success = 0;
-				}
+				$respuesta =$this->f_BuscarListadoDia();
         break;
 
 			default:
@@ -240,6 +99,158 @@ class cls_Carga_Validacion extends cls_Conexion{
 			$datos[$i-1]['uid'] = $UID;
 		}
 		return $datos;
+	}
+	private function f_BuscarListadoDia(){
+		include_once('cls_ManejadorCorreo.php');
+		$lobj_MAC = new cls_ManejadorCorreo();
+		$pet = array(
+			'operacion'=>'buscarArchivoCorreo'
+		);
+		if(isset($this->aa_Atributos['dia'])){
+			$pet['dia'] = $this->aa_Atributos['dia'];
+		}
+		$lobj_MAC->setPeticion($pet);
+		$archivo = $lobj_MAC->gestionar();
+		if($archivo!=false){
+
+			$UID = $lobj_MAC->getAtributos()['UID'];
+
+			//extraigo los datos del archivo
+			include_once('cls_ManejadorListado.php');
+			$lobj_MAL = new cls_ManejadorListado();
+			$pet = array(
+				'operacion'=>'extraerDatos',
+				'archivo'=>$archivo
+			);
+			$lobj_MAL->setPeticion($pet);
+			$data = $lobj_MAL->gestionar();
+
+			if(count($data) > 0){
+				$cabeceras = $this->obtenerCabeceras($data);
+				$datos = $this->obtenerRegistros($data,$UID,$cabeceras);
+
+				//instancio los objetos de modo que puedan ser utilizados segun sea necesario
+				//notificacion para disparar las notificaciones
+				$lobj_Notificacion = new cls_Notificacion();
+				//dia zafra para cambia el estado segun sea el caso
+				$lobj_DiaZafra = new cls_DiaZafra();
+
+				$fechadia = $datos[1]['fechadia'];
+				$this->validarDia($fechadia,$UID);
+				$this->f_Con();
+				$this->f_Begin();
+				if(!$this->aa_Atributos['correoGuardado']){
+					if(!$this->aa_Atributos['fechaRegistrada']){
+						//primera vez
+						$lb_hecho = false;
+						$lb_hecho = $this->insertarListado($datos);
+						if($lb_hecho){
+							//dispario notificacion
+							$petNot  = array(
+								'operacion' => 'crearNotificacionPorPlantilla',
+								'plantilla' => 'CARGA VALIDACION EXITOSA'
+							);
+							$petDZ  = array(
+								'operacion' => 'cambioAtributos',
+								'codigo_estado_datos' => 35,
+								'codigo_proceso_dia' => 2,
+							);
+							$this->f_Commit();
+						}else{
+							//dispario notificacion
+							$petNot  = array(
+									'operacion' => 'crearNotificacionPorPlantilla',
+									'plantilla' => 'ERROR INSERCION EN BASE DE DATOS'
+								);
+							$petDZ  = array(
+								'operacion' => 'cambioAtributos',
+								'codigo_estado_datos' => 37
+							);
+							$this->f_RollBack();
+						}
+					}else {
+						//ya existe data de ese dia
+						$lb_hecho = false;
+						$lb_hecho = $this->eliminarListado($fechadia);
+						if(!$lb_hecho){
+							//dispario notificacion
+							$petNot  = array(
+								'operacion' => 'crearNotificacionPorPlantilla',
+								'plantilla' => 'ERROR ELIMINACION ANTERIORES'
+							);
+							$petDZ  = array(
+								'operacion' => 'cambioAtributos',
+								'codigo_estado_datos' => 37
+							);
+							$this->f_RollBack();
+						}else {
+							$lb_hecho = false;
+							$lb_hecho = $this->insertarListado($datos);
+							if(!$lb_hecho){
+								//dispario notificacion
+								$petNot  = array(
+										'operacion' => 'crearNotificacionPorPlantilla',
+										'plantilla' => 'ERROR REEMPLAZO DATOS'
+									);
+									$petDZ  = array(
+										'operacion' => 'cambioAtributos',
+										'codigo_estado_datos' => 37
+									);
+								$this->f_RollBack();
+							}else{
+								//dispario notificacion
+								$petNot  = array(
+									'operacion' => 'crearNotificacionPorPlantilla',
+									'plantilla' => 'REEMPLAZO VALIDACION DIA'
+								);
+								$petDZ  = array(
+									'operacion' => 'cambioAtributos',
+									'codigo_estado_datos' => 35,
+									'codigo_proceso_dia' => 2,
+								);
+								$this->f_Commit();
+							}
+						}
+					}
+				}else{
+					$success = 0;
+					$respuesta['mensaje'] = "Correo $UID ya cargado";
+				}
+				$this->f_Des();
+				if($petNot['operacion']!='extraerDatos'){
+					$petNot['valores'] = array('fechadia'=>$this->fFechaBD($fechadia));
+					//dia de zafra
+					$petDZ['fecha_dia'] = $fechadia;
+					if(isset($this->aa_Atributos['dia'])){
+						$petDZ['codigo'] = $this->aa_Atributos['dia'];
+					}
+					$lobj_DiaZafra->setPeticion($petDZ);
+					$diaZafra = $lobj_DiaZafra->gestionar();
+					if($diaZafra['success']==1){
+						$success = 1;
+						$respuesta['mensaje'] = 'Proceso culminada de forma exitosa';
+					}else{
+						$success = 0;
+						$respuesta['mensaje'] = 'error al actualizar datos dia zafra';
+					}
+					//notificacion
+					$lobj_Notificacion->setPeticion($petNot);
+					$notificacion = $lobj_Notificacion->gestionar();
+					if($notificacion['success']==1){
+						$success = 1;
+						$respuesta['mensaje'] = 'Proceso culminada de forma exitosa';
+					}else{
+						$success = 0;
+						$respuesta['mensaje'] = 'error al disparar notificacion';
+					}
+				}
+			}
+		}else{
+			$respuesta['mensaje'] = $lobj_MAC->getAtributos()['mensaje'];
+			$success = 0;
+		}
+		$respuesta['success'] = $success;
+		return $respuesta;
 	}
 }
 ?>
