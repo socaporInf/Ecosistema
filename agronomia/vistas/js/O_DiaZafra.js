@@ -149,8 +149,9 @@ var Dia = function(atributos){
         if(res.error){
           UI.crearMensaje({
             nombre_tipo:'ERROR',
+            contenido:'ancho',
             titulo:'Error al cargar listado de validacion',
-            cuerpo:'<pre>'+res.contenido+'</pre>'
+            cuerpo:'<pre style="overflow:auto">'+res.contenido+'</pre>'
           });
         }else{
             UI.agregarToasts({

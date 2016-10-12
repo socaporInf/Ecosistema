@@ -117,12 +117,16 @@ function calcularDiferencia(codigo){
   };
   torque.Operacion(peticion,function(res){
     var color;
-    if(parseFloat(res.diferencia)>0){
-      color = '#e57373';
+    if (res.diferencia) {
+      if(parseFloat(res.diferencia)>0){
+        color = '#e57373';
+      }else{
+        color = '#64B5F6';
+      }
+      UI.elementos.layOut.ventTitulo.nodo.querySelector('article[diferencia]').innerHTML = 'Diferencia General: <span style="color:'+color+'">'+res.diferencia+' ton.<span>';
     }else{
-      color = '#64B5F6';
+      UI.elementos.layOut.ventTitulo.nodo.querySelector('article[diferencia]').innerHTML = '';
     }
-    UI.elementos.layOut.ventTitulo.nodo.querySelector('article[diferencia]').innerHTML = 'Diferencia General: <span style="color:'+color+'">'+res.diferencia+' ton.<span>';
   });
 }
 /*-----------------------------------------------Funcionamiento botones---------------------------------------*/
@@ -216,7 +220,8 @@ function buscarFaltantes(){
         var productores = new Card({
           titulo: tit,
           cuerpo: cue,
-          color: '4CAF50'
+          color: '4CAF50',
+          tipo: 'larga'
         });
         UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.appendChild(productores.nodo);
       }
@@ -230,7 +235,8 @@ function buscarFaltantes(){
         var fincas = new Card({
           titulo: tit,
           cuerpo: cue,
-          color: '8BC34A'
+          color: '8BC34A',
+          tipo: 'larga'
         });
         UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.appendChild(fincas.nodo);
       }
@@ -244,7 +250,8 @@ function buscarFaltantes(){
         var tablones = new Card({
           titulo: tit,
           cuerpo: cue,
-          color: '607D8B'
+          color: '607D8B',
+          tipo: 'larga'
         });
         UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo.appendChild(tablones.nodo);
       }

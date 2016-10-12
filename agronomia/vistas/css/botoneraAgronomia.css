@@ -1,0 +1,35 @@
+button.btnDash:hover:before{
+    color:white;
+    background-color: inherit;
+    border-radius:5px;
+    padding:5px;
+    font-size: 9px;
+    position:absolute;
+}
+button.btnDia:hover:before{
+    content: 'Buscar Dia';
+    margin-left:-75px;
+    font-family: "Open Sans";
+}
+button.btnFinca:hover:before{
+    content: 'Agregar Finca';
+    margin-left:-94px;
+}
+button.btnTablon:hover:before{
+    content: 'Agregar Tablon';
+    margin-left:-101px;
+}
+button.btnProductor:hover:before{
+    content: 'Agregar Productor';
+    margin-left:-114px;
+}
+button.btnFaltantes:hover:before{
+    content: 'Elementos Faltantes';
+    margin-left:-114px;
+    font-family: "Open Sans";
+}
+button.btnDash:hover:before{
+    content: 'Tablero de control Zafra';
+    margin-left:-132px;
+    font-family: "Open Sans";
+}

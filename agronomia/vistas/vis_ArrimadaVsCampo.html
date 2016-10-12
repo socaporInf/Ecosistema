@@ -79,6 +79,13 @@
 					clases: ['btnDia','mat-deeppurple500','white','md-24','material-icons'],
 					click: manejarDia,
 					contenido: 'date_range'
+				},{
+					tipo:'dash',
+					clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
+					click: function(){
+						location.href = 'vis_DashZafra.html?Dia='+UI.elementos.URL.captarParametroPorNombre('Dia');
+					},
+					contenido: 'dashboard'
 				}
 			]
 		}

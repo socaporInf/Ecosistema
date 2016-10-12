@@ -25,7 +25,7 @@ div[botonera] button{
     top:0px;
     left:0px;
 }
-div[botonera] button:after{
+div[botonera] button{
     font-family: 'Material Icons';
     color:white;
     font-size: 24px;
@@ -35,13 +35,16 @@ div[botonera] button:not([btnAbrir]):hover{
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
 }
 div[botonera] button:not([btnAbrir]):before{
-  transition:inherit;
-  margin-left: 0px;
-  opacity: 0;
-  content: '';
+  color:white;
+  background-color: inherit;
+  border-radius:5px;
+  padding:5px;
+  font-size: 10px;
+  position:absolute;
 }
 div[botonera] button:not([btnAbrir]):hover:before{
   opacity: 1;
+  font-family: "Open Sans";
 }
 div[botonera] button:not([btnAbrir]):hover:after{
     margin-left: 10px;
@@ -51,117 +54,69 @@ div[botonera] button:hover:before{
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnNuevo]{
-    background-color: #4FC3F7;
-}
-div[botonera] button[btnNuevo]:after{
-    content: 'insert_drive_file';
-}
 div[botonera] button[btnNuevo]:hover:before{
     content: 'Nuevo';
     color:white;
     background-color: inherit;
-    margin-left:-65px;
+    margin-left:-50px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnSeguridad]{
-    background-color: #607D8B;
-}
-div[botonera] button[btnSeguridad]:after{
-    content: 'security';
-}
 div[botonera] button[btnSeguridad]:hover:before{
     content: 'Seguridad';
     color:white;
     background-color: inherit;
-    margin-left:-25px;
+    margin-left:-57px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnBuscar]{
-    background-color: #03A9F4;
-}
-div[botonera] button[btnBuscar]:after{
-    content: 'search';
-}
 div[botonera] button[btnBuscar]:hover:before{
     content: 'Buscar';
     color:white;
     background-color: inherit;
-    margin-left:-25px;
+    margin-left:-50px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnApertura]{
-    background-color: #8BC34A;
-}
-div[botonera] button[btnApertura]:after{
-    content: 'launch';
-}
 div[botonera] button[btnApertura]:hover:before{
     content: 'Apertura';
     color:white;
     background-color: inherit;
-    margin-left:-25px;
+    margin-left:-57px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnModificar]{
-    background-color: #4CAF50;
-}
-div[botonera] button[btnModificar]:after{
-    content: 'mode_edit';
-}
 div[botonera] button[btnModificar]:hover:before{
     content: 'Modificar';
     color:white;
     background-color: inherit;
-    margin-left:-25px;
+    margin-left:-57px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnEliminar]{
-    background-color:#e57373;
-}
-div[botonera] button[btnEliminar]:after{
-    content: 'delete';
-}
 div[botonera] button[btnEliminar]:hover:before{
     content: 'Eliminar';
     color:white;
     background-color: #e57373;
-    margin-left:-25px;
+    margin-left:-57px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnDetalle]{
-    background-color: #FF5722;
-}
-div[botonera] button[btnDetalle]:after{
-    content: 'list';
-}
 div[botonera] button[btnDetalle]:hover:before{
-    content: 'detalle';
+    content: 'Detalle';
     color:white;
     background-color: #FF5722;
-    margin-left:-25px;
+    margin-left:-57px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnGuardar]{
-    background-color: #3F51B5;
-}
-div[botonera] button[btnGuardar]:after{
-    content: 'save';
-}
 div[botonera] button[btnGuardar]:hover:before{
     content: 'Guardar';
     color:white;
@@ -171,47 +126,29 @@ div[botonera] button[btnGuardar]:hover:before{
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnValidado]{
-    background-color: #3F51B5;
-}
-div[botonera] button[btnValidado]:after{
-    content: 'thumb_up';
-}
 div[botonera] button[btnValidado]:hover:before{
     content: 'validado';
     color:white;
     background-color: inherit;
-    margin-left:-25px;
+    margin-left:-57px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnCancelar]{
-    background-color: #f44336;
-}
-div[botonera] button[btnCancelar]:after{
-    content: 'clear';
-}
 div[botonera] button[btnCancelar]:hover:before{
     content: 'Cancelar';
     color:white;
     background-color: #f44336;
-    margin-left:-25px;
+    margin-left:-57px;
     border-radius:5px;
     padding:5px;
 }
 /*---------------------------------------------------------------------------*/
-div[botonera] button[btnAceptar]{
-    background-color:#4CAF50;
-}
-div[botonera] button[btnAceptar]:after{
-    content: 'check';
-}
 div[botonera] button[btnAceptar]:hover:before{
     content: 'Aceptar';
     color:white;
     background-color: #4CAF50;
-    margin-left:-25px;
+    margin-left:-55px;
     border-radius:5px;
     padding:5px;
 }

@@ -16,7 +16,7 @@ function construirUI(){
     clases: ['form-rep'],
     titulo: {
       tipo:'inverso',
-      html:'Parametros'
+      html:'Parametros  <section class="botonera dash"><button type="button" class="material-icons mat-lightblue500 btnDash white icon" dash>dashboard</button></section>'
     },
     sectores:[
       {
@@ -28,6 +28,9 @@ function construirUI(){
 			}
     ]
   },document.body.querySelector('div[contenedor]'));
+  formRep.titulo.nodo.querySelector('button.btnDash').onclick = function(){
+    location.href = 'vis_DashZafra.html?Dia='+UI.elementos.URL.captarParametroPorNombre('Dia');
+  };
   var dias = UI.agregarLista({
     nombre: 'listDias',
     titulo: 'Dias',
@@ -122,7 +125,7 @@ function gestionarbotonera(estado){
     click: function(){
         UI.agregarToasts({
           texto: 'Datos ya fueron validados',
-          tipo: 'web-arriba-derecha-alto'
+          tipo: 'web-arriba-derecha'
         });
       }
     };
@@ -196,7 +199,7 @@ function aprobarValidacion(){
             click: function(){
                 UI.agregarToasts({
                   texto: 'Datos ya fueron validados',
-                  tipo: 'web-arriba-derecha-alto'
+                  tipo: 'web-arriba-derecha'
                 });
               }
             }]

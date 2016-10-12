@@ -22,7 +22,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
   $lobj_Mensaje = new cls_Mensaje_Sistema;
   switch ($this->aa_Atributos['operacion']) {
     case 'buscarValidacion':
-      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra();
+      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra()['registro'];
       $registros=$this->f_Listar('validacion');
       if($this->aa_Atributos['diaZafra']['fecha_dia']==''){
           $respuesta['success'] = 0;
@@ -40,7 +40,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
       break;
 
     case 'buscarValidacionRelacionada':
-      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra();
+      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra()['registro'];
       $registros=$this->f_Listar('relacionada');
       if($this->aa_Atributos['diaZafra']['fecha_dia']==''){
           $respuesta['success'] = 0;
@@ -58,7 +58,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
       break;
 
     case 'buscarDiferencia':
-      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra();
+      $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra()['registro'];
       $registros=$this->f_BuscarDif();
       if($this->aa_Atributos['diaZafra']['fecha_dia']==''){
           $respuesta['success'] = 0;
@@ -180,7 +180,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
   $ls_SqlPro="SELECT codcanicultor from agronomia.vvalidacion_soca where codcanicultor not in(
             	SELECT codigo_productor from agronomia.vproductor
             )
-            group by codcanicultor";
+            group by codcanicultor order by codcanicultor";
 
   //fincas
   $ls_SqlFin="SELECT codcanicultor||letrafinca as finca
@@ -192,7 +192,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
   //tablones
   $ls_SqlTab ="SELECT codcanicultor||letrafinca as finca, codigotablon
                from agronomia.vvalidacion_soca_relacionado
-               where pesoneto = 0 group by codcanicultor,letrafinca, codigotablon";
+               where pesoneto = 0 group by codcanicultor,letrafinca, codigotablon order by codcanicultor,letrafinca, codigotablon ";
 
   $this->f_Con();
   //productores
@@ -275,8 +275,8 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
     }
     //guardo los datos en el objeto y gestiono para obtener una respuesta
     $lobj_Dia->setPeticion($pet);
-    $dia = $lobj_Dia->gestionar()['registro'];
-    if($dia['fecha_dia']==""){
+    $dia = $lobj_Dia->gestionar();
+    if($dia['registro']['fecha_dia']==""){
       $pet = array(
         'operacion' => 'buscarUltimoConDatos'
       );

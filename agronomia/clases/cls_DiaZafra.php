@@ -249,13 +249,15 @@ class cls_DiaZafra extends cls_Conexion{
    }else if($tipo == 'siguiente'){
       $ls_Sql="SELECT * FROM agronomia.vdia_zafra
                   where numero=(SELECT numero + 1 from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A')
-                  and codigo_zafra =(SELECT codigo_zafra from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A')";
+                  and codigo_zafra =(
+                    SELECT codigo_zafra from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A'
+                    and codigo_zafra =(SELECT codigo_zafra from agronomia.vzafra WHERE estado_zafra = 'A')";
    }else if($tipo == 'ultimo'){
       $ls_Sql="SELECT * from agronomia.vdia_zafra WHERE codigo_dia_zafra = (SELECT max(codigo_dia_zafra) from agronomia.vdia_zafra) ";
    }else if($tipo === 'porFecha'){
       $fecha_dia = $this->aa_Atributos['fecha_dia'];
       $ls_Sql="SELECT * FROM agronomia.vdia_zafra where fecha_dia = '$fecha_dia'
-               and codigo_zafra =(SELECT codigo_zafra from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A')";
+               and codigo_zafra =(SELECT codigo_zafra from agronomia.vzafra WHERE estado_zafra = 'A')";
    }else {
       $ls_Sql="SELECT * FROM agronomia.vdia_zafra where codigo_dia_zafra='".$this->aa_Atributos['codigo']."'";
    }

@@ -7,6 +7,7 @@ function construirUI(){
 		titulo: 'Notificaciones',
 		nombre: 'notificaciones',
 		clases: ['notificaciones'],
+		registrosPorPagina: 5,
 		carga: {
 			uso:true,
 			peticion:{
@@ -31,9 +32,6 @@ function construirUI(){
 					slot.nodo.onclick = mostrarNotificacion;
 				}
 			}
-		},
-		paginacion: {
-			uso:false
 		}
 	},secNot);
 	notificaciones.nodo.classList.add('not-margin');
