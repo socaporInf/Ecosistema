@@ -57,7 +57,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
       }
       break;
 
-    case 'buscarDiferencia':
+    case 'buscarDatosDia':
       $this->aa_Atributos['diaZafra'] = $this->buscarDiaZafra()['registro'];
       $registros=$this->f_BuscarDif();
       if($this->aa_Atributos['diaZafra']['fecha_dia']==''){
@@ -67,6 +67,8 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
         if(count($registros)!=0){
           $success=1;
           $respuesta['diferencia']=$this->aa_Atributos['diferencia'];
+          $respuesta['numero']=$this->aa_Atributos['diaZafra']['numero'];
+          $respuesta['fechadia']=$this->aa_Atributos['diaZafra']['fechadia'];
         }else{
           $respuesta['success'] = 0;
           $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);

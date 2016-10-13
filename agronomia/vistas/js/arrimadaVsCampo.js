@@ -5,7 +5,7 @@ function construirUI(){
     tipo: 'titulo',
     nombre: 'tituloGeneral',
     titulo:{
-      html: 'Arrimada vs Campo <article diferencia>Diferencia General en Toneladas:<span></span></article>',
+      html: 'Arrimada vs Campo  <article diferencia><article>',
       tipo: 'liso'// liso o basico
     },
     clases : ['arrimada']
@@ -25,7 +25,7 @@ function construirUI(){
      dia: UI.elementos.URL.captarParametroPorNombre('Dia')
   });
   UI.elementos.layOut = layOut;
-  calcularDiferencia(UI.elementos.URL.captarParametroPorNombre('Dia'));
+  rellenarTitulo(UI.elementos.URL.captarParametroPorNombre('Dia'));
 }
 function construirLat(lado,titulo,selector,petLista){
   var lateral = UI.agregarVentana({
@@ -107,12 +107,12 @@ function construirPie(){
   },document.body.querySelector('div[contenedor]'));
   return pie;
 }
-function calcularDiferencia(codigo){
+function rellenarTitulo(codigo){
   UI.elementos.layOut.ventTitulo.nodo.querySelector('article[diferencia]').innerHTML = 'Calculando Diferencia General';
   var peticion = {
      modulo: "agronomia",
      entidad: "arrimadaVsCampo",
-     operacion: "buscarDiferencia",
+     operacion: "buscarDatosDia",
      dia: codigo
   };
   torque.Operacion(peticion,function(res){
@@ -124,6 +124,7 @@ function calcularDiferencia(codigo){
         color = '#64B5F6';
       }
       UI.elementos.layOut.ventTitulo.nodo.querySelector('article[diferencia]').innerHTML = 'Diferencia General: <span style="color:'+color+'">'+res.diferencia+' ton.<span>';
+      UI.elementos.cabecera.nodo.innerHTML += '<article diaZafra>Dia: '+res.numero+' Fecha: '+res.fechadia+'</article>';
     }else{
       UI.elementos.layOut.ventTitulo.nodo.querySelector('article[diferencia]').innerHTML = '';
     }
@@ -405,7 +406,7 @@ function armarLeyenda(){
 function armarListados(dia){
   var listArr = UI.buscarVentana('arrimada');
   var listCam = UI.buscarVentana('campo');
-  calcularDiferencia(dia.codigo);
+  rellenarTitulo(dia.codigo);
   listArr.atributos.carga.peticion.dia = dia.codigo;
   listArr.recargar();
   listCam.atributos.carga.peticion.dia = dia.codigo;

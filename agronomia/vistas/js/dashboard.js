@@ -10,7 +10,7 @@ function construirUI(){
   //creo el lateral derecho con los datos del dia de zafra
   LayOut.latDer = crearLatDer();
   //creo el sector graficos
-  LayOut.latInf = crearContenedorGraficos();
+  LayOut.pie = crearContenedorGraficos();
   //le asigno las Funciones
   LayOut.abrirdia = function(){
     if(!this.latIzq.nodo.classList.contains('reducir')){
@@ -155,7 +155,7 @@ function crearLatDer(){
       clases:['botonera'],
       html: '<button type="button" class="icon material-icons md-24 mat-red500 white" cerrardia>lock_outline</button>'+
             '<button type="button" class="icon material-icons md-24 mat-lightgreen500 white" abrirdia>lock_open</button>'+
-            '<button type="button" class="icon material-icons md-24 mat-brown500 white" >pie_chart</button>'+
+            '<button type="button" class="icon material-icons md-24 mat-brown500 white" grafico>pie_chart</button>'+
             '<button type="button" class="icon material-icons md-24 mat-blue500 white" validar>youtube_searched_for</button>'+
             '<button type="button" class="icon material-icons md-24 mat-bluegrey500 white" validarcorreo>mail_outline</button>'+
             '<button type="button" class="icon material-icons md-24 mat-indigo500 white" subirvalidacion>file_upload</button>'+
@@ -269,6 +269,7 @@ function crearContenedorGraficos(){
       html:''
     }]
   },document.body.querySelector('div[contenedor]'));
+  return ventana;
 }
 function buscarDatosDia(numero){
   var dia = UI.elementos.LayOut.latDer.buscarDia('numero',numero);
@@ -343,11 +344,8 @@ function funcionamientoBotones(secBot){
     var lat = UI.elementos.LayOut.latDer;
     lat.diaActivo.validarCampo();
   };
-  var btnGraficos = secBot.nodo.querySelector('button[abrirdia]').onclick= function(){
-      UI.agregarToasts({
-        texto: 'mostrar graficos del dia',
-        tipo: 'web-arriba-derecha'
-      });
+  var btnGraficos = secBot.nodo.querySelector('button[grafico]').onclick= function(){
+      construirGraficosDia();
   };
   var btnAbrirDia = secBot.nodo.querySelector('button[abrirdia]').onclick= function(){
     var lat = UI.elementos.LayOut.latDer;
@@ -377,4 +375,23 @@ function cargarDiaUrlArranque(){
     }
     UI.elementos.LayOut.estado = 'construido';
   }
+}
+function construirGraficosDia(){
+  var pie = UI.elementos.LayOut.pie;
+  var peticion = {
+     modulo: "agronomia",
+     entidad: "arrimadaVsCampo",
+     operacion: "buscarValidacionRelacionada",
+     dia: UI.elementos.LayOut.latDer.diaActivo.atributos.codigo
+  };
+  var cuadro ={
+    contenedor: pie.buscarSector('grafDia').nodo,
+    cuadro:{
+      nombre: 'graficosDia',
+      mensaje: 'Buscando Informacion Necesaria'
+    }
+  };
+  torque.manejarOperacion(peticion,cuadro,function(res){
+    console.log(res);
+  });
 }

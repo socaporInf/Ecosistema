@@ -88,7 +88,7 @@ class cls_Notificacion extends cls_Conexion{
    $la_respuesta=array();
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where titulo like '%".$this->aa_Atributos['valor']."%'";
    $ls_SqlBase="SELECT * FROM global.vnotificacion  $cadenaBusqueda";
-   $orden = " ORDER BY fecha_hora DESC ";
+   $orden = " ORDER BY fecha_hora ";
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -216,7 +216,7 @@ class cls_Notificacion extends cls_Conexion{
             		$ls_Sql2
             	)
             ) $cadenaBusqueda";
-   $orden = " ORDER BY fecha_hora ";
+   $orden = " ORDER BY fecha_hora DESC";
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);

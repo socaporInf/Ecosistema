@@ -1,0 +1,15 @@
+div[wid-graf]{
+    background-color: #363637;
+    width: 350px;
+    height: 230px;
+    float: left;
+}
+section[graf-cont]{
+  min-width: 350px;
+  min-height: 200px;
+}
+section[wid-titulo-graf]{
+    text-align: center;
+    color: white;
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+}

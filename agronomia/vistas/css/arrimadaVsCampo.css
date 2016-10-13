@@ -1,5 +1,14 @@
 @import url('../../../nucleo/vistas/css/card.css');
 @import url('botoneraAgronomia.css');
+
+article[diaZafra]{
+  position: absolute;
+  right: 5px;
+  top: 10px;
+  color: white;
+  font-size: 25px;
+}
+
 div[mat-window].arrimada{
   margin-left: 0px;
   width: calc(100%);
