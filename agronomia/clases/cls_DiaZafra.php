@@ -6,7 +6,7 @@ class cls_DiaZafra extends cls_Conexion{
 
  protected $aa_Atributos = array();
  private $aa_Campos = array('numero','estado_dia_zafra','fecha_dia','codigo_tipo_carga','codigo_proceso_dia','codigo_estado_datos');
-
+ private $aa_Reportes = array('toneladasPorZona','AzucarPorZona','TimeLineZafra');
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
    $this->setDatosConexion($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
@@ -136,11 +136,35 @@ class cls_DiaZafra extends cls_Conexion{
       }
       break;
 
-     default:
-       $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
-       $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
-       $success = 0;
-       break;
+    case 'buscarDatosReporte': 
+      if($this->aa_Atributos['tipo'] == 'todos'){
+        //revisar arreglo de reportes disponibles al inicio de la clase
+        for ($i=0; $i < count($this->aa_Reportes) ; $i++) { 
+          $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
+          if(count($datos)!=0){
+            $respuesta['success'] = 1;
+            $respuesta['reportes'][$this->aa_Reportes[$i]]['datos'] = $datos;
+          }else{
+            $respuesta['success'] = 0;
+            $respuesta['reportes'][$this->aa_Reportes[$i]]['mensaje'] = 'Sin Datos';
+          }
+        }
+      }else{
+        $datos = $this->buscarDatosReporte($this->aa_Atributos['tipo']);
+        if(count($datos)!=0){
+          $respuesta['success'] = 1;
+          $respuesta['datos'] = $datos;
+        }else{
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = 'Sin Datos';
+        } 
+      }
+      break;
+    default:
+      $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
+      $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
+      $success = 0;
+      break;
    }
    if(!isset($respuesta['success'])){
      $respuesta['success']=$success;
@@ -402,5 +426,58 @@ class cls_DiaZafra extends cls_Conexion{
 
    return $lb_Enc;
  }
+ private function buscarDatosReporte($tipo){
+  $dia = $this->aa_Atributos['codigo'];
+  if($tipo == 'toneladasPorZona'){
+    $ls_Sql = "SELECT sum(pesoneto_ton) AS peso, vr.codigo_zona, z.nombre,z.color
+                FROM agronomia.vvalidacion_soca_relacionado vr
+                JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
+                WHERE fechadia = (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia) AND  z.codigo_zona IS NOT NULL
+                GROUP BY vr.codigo_zona, z.nombre,z.color
+                ORDER BY vr.codigo_zona ";
+  }else if($tipo == 'AzucarPorZona'){
+     $ls_Sql = "SELECT coalesce(sum(azucarprobable),0) AS azucar, vr.codigo_zona, z.nombre,z.color
+                FROM agronomia.vvalidacion_soca_relacionado vr
+                JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
+                WHERE fechadia = (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia) AND z.codigo_zona IS NOT NULL
+                GROUP BY vr.codigo_zona, z.nombre,z.color
+               ";
+  }else if($tipo == 'TimeLineZafra'){
+    $ls_Sql = "SELECT sum(pesoneto_ton) as peso, max(dz.numero) as numero, vr.fechadia
+              FROM agronomia.vvalidacion_soca_relacionado vr
+              join agronomia.vdia_zafra dz on vr.fechadia = dz.fecha_dia
+              where vr.fechadia <= (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia)
+              group by vr.fechadia
+              order by numero";
+  }
+  $x = 0;
+  $this->f_Con();
+  $lr_tabla=$this->f_Filtro($ls_Sql);
+  while($la_registros=$this->f_Arreglo($lr_tabla)){
+    $datos[$x] = $this->recogerDatos($tipo,$la_registros);
+    $x++;
+  }
+  $this->f_Cierra($lr_tabla);
+  $this->f_Des();
+  return $datos;
+ }
+  private function recogerDatos($ps_tipo,$pa_registros){
+    if($ps_tipo == 'toneladasPorZona'){
+      $datos['nombre'] = $pa_registros['nombre'];
+      $datos['codigo_zona'] = $pa_registros['codigo_zona'];
+      $datos['color'] = $pa_registros['color'];
+      $datos['valor'] = $pa_registros['peso'];
+    }else if($ps_tipo == 'AzucarPorZona'){
+      $datos['nombre'] = $pa_registros['nombre'];
+      $datos['codigo_zona'] = $pa_registros['codigo_zona'];
+      $datos['color'] = $pa_registros['color'];
+      $datos['valor'] = $pa_registros['azucar'];
+    }else if($ps_tipo == 'TimeLineZafra'){
+      $datos['numero'] = $pa_registros['numero'];
+      $datos['valor'] = $pa_registros['peso'];
+      $datos['dia'] = $pa_registros['fechadia'];
+    }
+    return $datos;
+  }
 }
 ?>

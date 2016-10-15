@@ -142,3 +142,30 @@ section[sector].listado-dias,section[sector].formulario-dias{
     position: relative;
     max-width: 320px;
   }
+ /*------------------------------ estilos graficos------------------------*/  
+div[mat-window] section.titulo.liso{
+  color: #212121;
+  background-color: white;
+  position: relative;
+  transition: all 0.5s ease-in-out;
+  padding: 10px 0px 0px 50px;
+  font-size: 21px;
+  min-height: 40px;
+  border-bottom: none !important;
+}
+div[mat-window] section.invisible{
+  min-height: 0px !important;
+  height: 0px;
+}
+section[sector].contenedor-cards{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-around;
+  border-top: none;
+  border-bottom: none !important;
+  text-transform: capitalize;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}

@@ -36,7 +36,6 @@ function construirUI(){
     diaZafra = this.latDer.buscarDia('fechadia',dia.fechadia);
     diaZafra.actualizarDatos(dia);
     diaZafra.reconstruirNodo();
-    //construirGraficosDia(dia);
     for(var x = 0; x < this.latDer.dias.length;x++){
       var diferencia = parseInt(this.latDer.dias[x].atributos.numero)-parseInt(dia.numero);
       this.latDer.dias[x].mover(diferencia);
@@ -108,7 +107,7 @@ function crearLatIzq(){
   var peticion = {
      modulo: "agronomia",
      entidad: "zafra",
-     operacion: "buscarActivo"
+     operacion: "buscarActivoDash"
   };
   cuadro = {
     contenedor: lat.buscarSector('formZafra').nodo,
@@ -124,6 +123,29 @@ function crearLatIzq(){
         tipo: 'modificar',
         registroAct: resp.registro,
       });
+      UI.elementos.LayOut.pie.graficos = [];
+      construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo,resp.reportes);
+      var dataRep = resp.reportes;
+      //ultimo grafico
+      var cardTime= new WidGraf({
+        nombre: 'TimeLineZafra',
+        titulo: 'Toneldas Por dia',
+        tipo:'linea',
+        contenido:'ancho'
+      });
+      UI.elementos.LayOut.pie.graficos.push(cardTime);
+      UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo.appendChild(cardTime.nodo);
+      // ------------------------- creacion de serie ----------------------------------
+      var datos = dataRep.TimeLineZafra.datos;
+      var zonas = resp.zonas.registros;
+      var series =  [];
+      var categorias = [datos[0].numero];
+      //categorias
+      categorias = armarCategorias(datos,categorias);
+      series = armarSerieLineZafra(datos,categorias,zonas);
+      cardTime.atributos.series = series;
+      cardTime.atributos.categorias = categorias;
+      cardTime.construirGrafLinea();
     }else{
       UI.crearMensaje({
         nombre_tipo:'ERROR',
@@ -261,14 +283,26 @@ function crearContenedorGraficos(){
     nombre:'contenedoGraficos',
     tipo:'completo',
     clases:['cont-graf'],
-    sectores:[{
-      nombre:'grafDia',
-      html:''
-    },{
-      nombre:'grafZafra',
-      html:''
-    }]
-  },document.body.querySelector('div[contenedor]'));
+    sectores:[
+      {
+        nombre:'TituloDia',
+        html:'',
+        clases:['liso','titulo','invisible']
+      },{
+        nombre:'grafDia',
+        html:'',
+        clases:['contenedor-cards','invisible']
+      },{
+        nombre:'TituloZafra',
+        html:'Graficos Zafra',
+        clases:['liso','titulo']
+      },{
+        nombre:'grafZafra',
+        html:'',
+        clases:['contenedor-cards']
+      }
+    ]
+  },UI.contGeneral);
   return ventana;
 }
 function buscarDatosDia(numero){
@@ -378,11 +412,13 @@ function cargarDiaUrlArranque(){
 }
 function construirGraficosDia(){
   var pie = UI.elementos.LayOut.pie;
+  pie.graficos = [];
   var peticion = {
      modulo: "agronomia",
-     entidad: "arrimadaVsCampo",
-     operacion: "buscarValidacionRelacionada",
-     dia: UI.elementos.LayOut.latDer.diaActivo.atributos.codigo
+     entidad: "diaZafra",
+     operacion: "buscarDatosReporte",
+     tipo: "todos",
+     codigo: UI.elementos.LayOut.latDer.diaActivo.atributos.codigo
   };
   var cuadro ={
     contenedor: pie.buscarSector('grafDia').nodo,
@@ -392,6 +428,95 @@ function construirGraficosDia(){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(res){
-    console.log(res);
+    UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.classList.remove('invisible');
+    UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.classList.remove('invisible');
+    UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.innerHTML = 'Graficos Dia Zafra';
+    construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafDia').nodo,res.reportes);
+    var dataRep = res.reportes;
+    //ultimo grafico
+    var cardTime= new WidGraf({
+      nombre: 'TimeLineZafra',
+      titulo: 'Toneldas Por dia Hasta',
+      tipo:'linea',
+      contenido:'ancho'
+    });
+    UI.elementos.LayOut.pie.graficos.push(cardTime);
+    UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.appendChild(cardTime.nodo);
+    var categorias = [];
+    var serie = {name:'toneladas',data:[],color:'#4CAF50'}
+    dataRep.TimeLineZafra.datos.forEach(function(each){
+      categorias.push(each.numero);
+      serie.data.push(parseFloat(each.valor));
+    });
+    cardTime.atributos.categorias = categorias;
+    cardTime.atributos.series.push(serie);
+    cardTime.construirGrafLinea();
   });
+}
+function construirGraficos(contenedor,dataRep){
+      var pie = UI.elementos.LayOut.pie;
+      //graficos zafra
+       //toneladas por zona
+        var cardTon = new WidGraf({
+          nombre: 'toneladasPorZona',
+          titulo: 'Toneladas de Caña',
+          tipo:'pie'
+        });
+        pie.graficos.push(cardTon);
+        contenedor.appendChild(cardTon.nodo);
+        cardTon.armarSerieBasicaTorta('toneladas',dataRep.toneladasPorZona.datos);
+        cardTon.construirGrafPie();
+
+        //Azucar Por Zona
+        var cardAzu= new WidGraf({
+          nombre: 'AzucarPorZona',
+          titulo: 'Azucar Probable',
+          tipo:'columna'
+        });
+        pie.graficos.push(cardAzu);
+        contenedor.appendChild(cardAzu.nodo);
+        cardAzu.armarSerieBasicaColumna('Azucar',dataRep.AzucarPorZona.datos);
+        cardAzu.construirGrafColumna();
+}
+function armarCategorias(datos,categorias){
+  var encontrado = false;
+  for (var i = 0; i < datos.length; i++) {
+    encontrado = false;
+    for(var j = 0; j < categorias.length;j++){
+      if(datos[i].numero == categorias[j]){
+        encontrado = true;
+      }
+    }
+    if(!encontrado){
+      categorias.push(datos[i].numero);
+    }
+  }
+  //organizo el arreglo
+  categorias.sort(function(a, b){return a-b});
+  return categorias;
+}
+
+function armarSerieLineZafra(datos,categorias,zonas){
+  var serie;
+  var series = [];
+  for (i = 0; i < zonas.length; i++) {
+    serie = {
+      name:zonas[i].nombre,
+      color:'#'+zonas[i].color,
+      data:[]
+    }
+    //lleno los datos en el espacio correcto
+    for (j = 0; j < datos.length; j++) {
+      if(datos[j].codigo_zona === zonas[i].codigo){
+        serie.data[parseInt(datos[j].numero)] = parseFloat(datos[j].valor);
+      }
+    }
+    for (j = 0;j  < categorias.length; j++) {
+      if(!serie.data[j]){
+        serie.data[j] = 0.00;
+      }
+    }
+    series.push(serie);
+  }
+  return series;
 }
