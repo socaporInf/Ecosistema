@@ -12,47 +12,64 @@ function construirUI(){
   },document.body.querySelector('div[contenedor]'));
   //contruir ventanas laterales
   layOut.pie = construirPie();
-  layOut.latIzq = construirLat('izq','Arrimada','apagado',{
-     modulo: "agronomia",
-     entidad: "arrimadaVsCampo",
-     operacion: "buscarValidacion",
-     dia: UI.elementos.URL.captarParametroPorNombre('Dia')
+  layOut.latIzq = construirLat({
+    lado: 'izq',
+    titulo: 'Arrimada',
+    selector: 'apagado',
+    petLista:{
+      modulo: "agronomia",
+      entidad: "arrimadaVsCampo",
+      operacion: "buscarValidacion",
+      dia: UI.elementos.URL.captarParametroPorNombre('Dia')
+    },
+    editable:false
   });
-  layOut.latDer = construirLat('der','Campo','encendido',{
-     modulo: "agronomia",
-     entidad: "arrimadaVsCampo",
-     operacion: "buscarValidacionRelacionada",
-     dia: UI.elementos.URL.captarParametroPorNombre('Dia')
+  layOut.latDer = construirLat({
+    lado: 'der',
+    titulo: 'Campo',
+    selector: 'encendido',
+    petLista:{
+      modulo: "agronomia",
+      entidad: "arrimadaVsCampo",
+      operacion: "buscarValidacionRelacionada",
+      dia: UI.elementos.URL.captarParametroPorNombre('Dia')
+    },
+    editable:{
+      celdas: [4]
+    }
   });
   UI.elementos.layOut = layOut;
   rellenarTitulo(UI.elementos.URL.captarParametroPorNombre('Dia'));
 }
-function construirLat(lado,titulo,selector,petLista){
+function construirLat(objCons){
   var lateral = UI.agregarVentana({
-    nombre:'lat'+lado,
-    clases: ['ventana','lat-'+lado],
+    nombre:'lat'+objCons.lado,
+    clases: ['ventana','lat-'+objCons.lado],
     sectores:[{
-      nombre:'list'+lado,
+      nombre:'list'+objCons.lado,
       html:''
     }]
   },document.body.querySelector('div[contenedor]'));
 
   var lista =   UI.agregarLista({
-    titulo: titulo,
-    nombre: titulo.toLowerCase(),
+    titulo: objCons.titulo,
+    nombre: objCons.titulo.toLowerCase(),
     clases: ['embebida','comprimida','inversa'],
     registrosPorPagina: 16,
     cabecera:{
       fija:true
     },
-    selector:selector,
+    selector:objCons.selector,
+    onSelect:manejoBoton,
+    onDeselect:manejoBoton,
     columnas: 8,
+    editable:objCons.editable,
     carga: {
       uso:true,
-      peticion:petLista,
+      peticion:objCons.petLista,
       espera:{
         cuadro:{
-          nombre: 'buscalista'+lado,
+          nombre: 'buscalista'+objCons.lado,
           mensaje: 'Buscando ...'
         }
       },
@@ -61,8 +78,8 @@ function construirLat(lado,titulo,selector,petLista){
           if (parseFloat(tupla.atributos['pesoneto/ton']) === 0.00) {
             tupla.nodo.setAttribute('diferente','');
           }
-          var nodoCana = UI.buscarVentana('pie').buscarSector('total'+lado).nodo.querySelector('article[id="cana'+lado+'"]');
-          var nodoAzu = UI.buscarVentana('pie').buscarSector('total'+lado).nodo.querySelector('article[id="azu'+lado+'"]');
+          var nodoCana = UI.buscarVentana('pie').buscarSector('total'+objCons.lado).nodo.querySelector('article[id="cana'+objCons.lado+'"]');
+          var nodoAzu = UI.buscarVentana('pie').buscarSector('total'+objCons.lado).nodo.querySelector('article[id="azu'+objCons.lado+'"]');
 
           var acuCan = 0;
           var acuAzu = 0;
@@ -75,7 +92,7 @@ function construirLat(lado,titulo,selector,petLista){
         });
       }
     },
-  },UI.buscarVentana('lat'+lado).buscarSector('list'+lado).nodo);
+  },UI.buscarVentana('lat'+objCons.lado).buscarSector('list'+objCons.lado).nodo);
 
   return lateral;
 }
@@ -125,6 +142,7 @@ function rellenarTitulo(codigo){
       }
       UI.elementos.layOut.ventTitulo.nodo.querySelector('article[diferencia]').innerHTML = 'Diferencia General: <span style="color:'+color+'">'+res.diferencia+' ton.<span>';
       UI.elementos.cabecera.nodo.innerHTML += '<article diaZafra>Dia: '+res.numero+' Fecha: '+res.fechadia+'</article>';
+      UI.elementos.cabecera.funcionamientoBoton();
     }else{
       UI.elementos.layOut.ventTitulo.nodo.querySelector('article[diferencia]').innerHTML = '';
     }
@@ -412,4 +430,23 @@ function armarListados(dia){
   listCam.atributos.carga.peticion.dia = dia.codigo;
   listCam.recargar();
   UI.elementos.modalWindow.eliminarUltimaCapa();
+}
+/*-----------------------------------------funcionamiento lista---------------------------------------------------*/
+function manejoBoton(slot){
+  var lista = UI.buscarVentana('campo');
+  if(lista.obtenerSeleccionado()){
+    if(!UI.elementos.botonera.buscarBoton('editar')){
+      UI.elementos.botonera.agregarBoton({
+        tipo:'editar',
+        clases: ['btnEditar','material-icons','mat-green500','white','md-18'],
+        click: cambiarGrupal,
+        contenido: 'edit_mode'
+      });
+    }
+  }else{
+     UI.elementos.botonera.quitarBoton('editar');
+  }
+}
+function cambiarGrupal(){
+
 }
