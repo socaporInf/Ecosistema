@@ -1,39 +1,39 @@
 var form = {
   campos:[
     {
-        tipo : 'campoBusqueda',
-        parametros : {
-          titulo:'Zona',
-          nombre: 'zona',
-          requerido:true,
-          eslabon:'simple',
-          peticion:{
-             modulo: "agronomia",
-             entidad: "zona",
-             operacion: "buscar"
-          },
-          onclickSlot:function(campo){
-            var campoDep = UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('finca');
-            campoDep.atributos.peticion.codigo_zona = campo.captarValor();
-            campoDep.habilitar();
-            campoDep.limpiar();
-          },
-          cuadro: {nombre: 'listaZonas',mensaje: 'Cargando Zonas'}
-        }
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'Zona',
+        nombre: 'zona',
+        requerido:true,
+        eslabon:'simple',
+        peticion:{
+           modulo: "agronomia",
+           entidad: "zona",
+           operacion: "buscar"
+        },
+        onclickSlot:function(campo){
+          var campoDep = UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('finca');
+          campoDep.atributos.peticion.codigo_zona = campo.captarValor();
+          campoDep.habilitar();
+          campoDep.limpiar();
+        },
+        cuadro: {nombre: 'listaZonas',mensaje: 'Cargando Zonas'}
+      }
     },
     {
-        tipo : 'campoBusqueda',
-        parametros : {
-          titulo:'Finca',
-          nombre: 'finca',
-          requerido:true,
-          eslabon:'simple',
-          peticion:{
-             modulo: "agronomia",
-             entidad: "finca",
-             operacion: "buscarPorZona"
-          },
-          cuadro: {nombre: 'listafinca',mensaje: 'Cargando fincas'}
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'Finca',
+        nombre: 'finca',
+        requerido:true,
+        eslabon:'simple',
+        peticion:{
+          modulo: "agronomia",
+          entidad: "finca",
+          operacion: "buscarPorZona"
+        },
+        cuadro: {nombre: 'listafinca',mensaje: 'Cargando fincas'}
         }
     },{
       tipo : 'campoDeTexto',

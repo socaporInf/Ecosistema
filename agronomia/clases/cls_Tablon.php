@@ -41,6 +41,18 @@ class cls_Tablon extends cls_Conexion{
      }
      break;
 
+     case 'buscarValidado':
+     $lb_Enc=$this->f_BuscarTablonesPorLoteValidado();
+     if($lb_Enc){
+       $success=1;
+       $respuesta['registros']=$this->aa_Atributos['registros'];
+       $respuesta['paginas']=$this->aa_Atributos['paginas'];
+     }else{
+       $respuesta['success'] = 0;
+       $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+     }
+     break;
+
      case 'buscarRegistro':
        $lb_Enc=$this->f_buscar();
        if($lb_Enc){
@@ -104,6 +116,7 @@ class cls_Tablon extends cls_Conexion{
      $la_respuesta[$x]['codigo']=$la_registros['id_tablon'];
      $la_respuesta[$x]['id_tablon']=$la_registros['id_tablon'];
      $la_respuesta[$x]['codigo_tablon']=$la_registros['codigo_tablon'];
+     $la_respuesta[$x]['nombre']=$la_registros['codigo_tablon'];
      $la_respuesta[$x]['id_lote']=$la_registros['id_lote'];
      $la_respuesta[$x]['codigo_lote']=$la_registros['codigo_lote'];
      $la_respuesta[$x]['nombre_lote']=$la_registros['nombre_lote'];
@@ -122,6 +135,26 @@ class cls_Tablon extends cls_Conexion{
      $la_respuesta[$x]['toneladas_estimadas_hectarea']=$la_registros['toneladas_estimadas_hectarea'];
      $la_respuesta[$x]['toneladas_real']=$la_registros['toneladas_real'];
      $la_respuesta[$x]['toneladas_azucar']=$la_registros['toneladas_azucar'];
+     $x++;
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return $lb_Enc;
+}
+private function f_BuscarTablonesPorLoteValidado(){
+   $x=0;
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_tablon like '%".$this->aa_Atributos['valor']."%'";
+   $ls_SqlBase="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda ";
+   $orden = ' order by codigo_tablon';
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
+   $la_respuesta=array();
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['codigo']=$la_registros['codigo_tablon'];
+     $la_respuesta[$x]['nombre']=$la_registros['codigo_tablon'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);

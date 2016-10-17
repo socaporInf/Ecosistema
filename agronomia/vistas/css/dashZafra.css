@@ -88,18 +88,84 @@ section[sector].listado-dias,section[sector].formulario-dias{
   section[cont-datos]{
     text-transform: capitalize;
     font-size: 12px;
+    height: calc(100% - 50px);
   }
-  section[cont-datos] article[general]{
+  section[cont-datos] article[general],section[cont-datos] article[cont-graf]{
     margin-left: 0px;
-    padding: 10px 10px 10px 0px;
+    padding: 0px;
+    width: 50%;
+    height: calc(100%);
+    float: left;
   }
-  section[cont-datos] label{
+  section[cont-datos] article[datos]{
     font-size: 15px;
-    margin-left: 40px;
+    width: 100%;
+    float: left;
+    margin: 0px;
+    padding-top: 10px;
+    padding-left: 30px;
+    overflow: visible;
+  }
+  section[cont-datos] article[general] span{
+    width: 50%;
+    font-size: 11px;
+    text-transform: capitalize;
+    margin-left: 5px;
+    color:white;
+    border-radius: 5px;
+    padding: 3px;
   }
   section[cont-datos] article[general] span[estado='C']{
-    color:#f44336;
+    background-color:#f44336;
+    color: white;
+    padding: 3px;
+    border-radius: 5px;
   }
   section[cont-datos] article[general] span[estado='A']{
-    color:#8BC34A ;
+    background-color:#8BC34A ;
+    color: white;
+    padding: 3px;
+    border-radius: 5px;
   }
+  section[cont-datos] article[cont-graf] div{
+    width: calc(90%);
+    margin-right: 10%;
+    float: right;
+  }
+  section[cont-datos] article[cont-graf] article[cont-graf-tex]{
+    position: absolute;
+    bottom: 5px;
+    text-transform: capitalize;
+    left:20px;
+  }
+  section[cont-datos] article[cont-graf] article[wid-graf]{
+    position: relative;
+    max-width: 320px;
+  }
+ /*------------------------------ estilos graficos------------------------*/  
+div[mat-window] section.titulo.liso{
+  color: #212121;
+  background-color: white;
+  position: relative;
+  transition: all 0.5s ease-in-out;
+  padding: 10px 0px 0px 50px;
+  font-size: 21px;
+  min-height: 40px;
+  border-bottom: none !important;
+}
+div[mat-window] section.invisible{
+  min-height: 0px !important;
+  height: 0px;
+}
+section[sector].contenedor-cards{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-around;
+  border-top: none;
+  border-bottom: none !important;
+  text-transform: capitalize;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}

@@ -4,7 +4,7 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Zona extends cls_Conexion{
 
  protected $aa_Atributos = array();
- private $aa_Campos = array('codigo_zona','nombre','descripcion');
+ private $aa_Campos = array('codigo_zona','nombre','descripcion','color');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
@@ -74,6 +74,7 @@ class cls_Zona extends cls_Conexion{
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['codigo_zona'];
      $la_respuesta[$x]['nombre']=$la_registros['nombre'];
+     $la_respuesta[$x]['color']=$la_registros['color'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -91,6 +92,7 @@ class cls_Zona extends cls_Conexion{
      $la_respuesta['codigo']=$la_registros['codigo_zona'];
      $la_respuesta['nombre']=$la_registros['nombre'];
      $la_respuesta['descripcion']=$la_registros['descripcion'];
+     $la_respuesta['color']=$la_registros['color'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);
@@ -107,8 +109,8 @@ class cls_Zona extends cls_Conexion{
  private function f_Guardar(){
 
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vzona (nombre,descripcion) values
-       ('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
+   $ls_Sql="INSERT INTO agronomia.vzona (nombre,descripcion,color) values
+       ('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."','".$this->aa_Atributos['color']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();

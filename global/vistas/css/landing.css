@@ -56,24 +56,6 @@ div[contenedorNoticias]{
 	height: 360px;
 	overflow-y: auto;
 }
-
-div[not-titulo]{
-	transition:all 0.5s ease-in-out;
-	width: calc(100% - 2px);
-  text-align: center;
-  font-size: 12px;
-  background-color: rgba(224, 224, 224, 0.51);
-  padding-bottom: 6px;
-  margin-left: 1px;
-  color: #e6e6e6;
-  height: calc(10%);
-}
-div[mat-card].cuadrada:hover div[not-titulo]{
-	padding-top: 24px;
-	height: calc(100% - 31px);
-  font-size: 20px;
-  color: #e6e6e6;
-}
 /*---------------------------- notificaciones -------------------------------------*/
 div[fecha_hora]{
   font-size: 12px;

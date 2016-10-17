@@ -1,15 +1,16 @@
-// TODO:
-  //1: en el display dias mostrar progresBar con el proceso en el cual se encuentra(mostrar diferencia en estado final de proceso)
-  //2: navegacion lateral de dias en la parte del display
 function construirUI(){
   //inicializo el layOut
-  LayOut = {};
+  var LayOut = {
+    estado:'construyendo'
+  };
   //creo el titulo
   LayOut.titulo = crearTitulo();
   //creo la ventana lateral derecha con los datos de la zafra
   LayOut.latIzq = crearLatIzq();
   //creo el lateral derecho con los datos del dia de zafra
   LayOut.latDer = crearLatDer();
+  //creo el sector graficos
+  LayOut.pie = crearContenedorGraficos();
   //le asigno las Funciones
   LayOut.abrirdia = function(){
     if(!this.latIzq.nodo.classList.contains('reducir')){
@@ -18,6 +19,7 @@ function construirUI(){
       this.latDer.buscarSector('listaDias').nodo.classList.add('subir');
     }
   };
+
   LayOut.mostrarLista = function(){
     if(this.latIzq.nodo.classList.contains('reducir')){
       this.latIzq.nodo.classList.remove('reducir');
@@ -25,11 +27,13 @@ function construirUI(){
       this.latDer.buscarSector('listaDias').nodo.classList.remove('subir');
     }
   };
+
   LayOut.mostrarBotonera = function(){
     this.latDer.buscarSector('formDia').nodo.classList.add('comprimir');
   };
+
   LayOut.activarDia = function(dia){
-    diaZafra =this.latDer.buscarDiaPorFecha(dia.fechadia);
+    diaZafra = this.latDer.buscarDia('fechadia',dia.fechadia);
     diaZafra.actualizarDatos(dia);
     diaZafra.reconstruirNodo();
     for(var x = 0; x < this.latDer.dias.length;x++){
@@ -37,31 +41,43 @@ function construirUI(){
       this.latDer.dias[x].mover(diferencia);
     }
     this.latDer.diaActivo = diaZafra;
-    if(diaZafra.atributos.numero === this.latDer.buscarMayor().atributos.numero){
-      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.add('invisible');
-      if(UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.contains('invisible')){
-        UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.remove('invisible');   
+    this.manejarSlider();
+  };
+
+  LayOut.manejarSlider = function(){
+    var botPrev = this.latDer.nodo.querySelector('button.chev-izq');
+    var botNext = this.latDer.nodo.querySelector('button.chev-der');
+    if(this.latDer.dias.length === 1){
+      botPrev.classList.add('invisible');
+      botNext.classList.add('invisible');
+    }else if(diaZafra.atributos.numero === this.latDer.buscarMayor().atributos.numero){
+      botNext.classList.add('invisible');
+      if(botPrev.classList.contains('invisible')){
+        botPrev.classList.remove('invisible');
       }
     }else if(parseInt(diaZafra.atributos.numero) === 1){
-      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.add('invisible');
-      if(UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.contains('invisible')){
-        UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.remove('invisible');   
+      botPrev.classList.add('invisible');
+      if(botNext.classList.contains('invisible')){
+        botNext.classList.remove('invisible');
       }
-    }else{
-      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').classList.remove('invisible'); 
-      UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').classList.remove('invisible'); 
+    }else {
+      botNext.classList.remove('invisible');
+      botPrev.classList.remove('invisible');
     }
-  }
+  };
+
   LayOut.construirDia = function(dia){
-    var diaZafra = this.latDer.buscarDiaPorFecha(dia.fechadia);
+    var diaZafra = this.latDer.buscarDia('fechadia',dia.fechadia);
     if(!diaZafra){
       diaZafra = new Dia(dia);
       this.latDer.dias.push(diaZafra);
-      this.latDer.buscarSector('formDia').nodo.appendChild(diaZafra.nodo); 
+      this.latDer.buscarSector('formDia').nodo.appendChild(diaZafra.nodo);
     }
   };
   UI.elementos.LayOut = LayOut;
 }
+
+/*---------------------------------------------------------- FUNCIONES DE CONSTRUCCION ----------------------------------------------------------*/
 function crearTitulo(){
   var titulo = UI.agregarVentana({
    nombre:'titulo',
@@ -91,7 +107,7 @@ function crearLatIzq(){
   var peticion = {
      modulo: "agronomia",
      entidad: "zafra",
-     operacion: "buscarActivo"
+     operacion: "buscarActivoDash"
   };
   cuadro = {
     contenedor: lat.buscarSector('formZafra').nodo,
@@ -107,6 +123,29 @@ function crearLatIzq(){
         tipo: 'modificar',
         registroAct: resp.registro,
       });
+      UI.elementos.LayOut.pie.graficos = [];
+      construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo,resp.reportes);
+      var dataRep = resp.reportes;
+      //ultimo grafico
+      var cardTime= new WidGraf({
+        nombre: 'TimeLineZafra',
+        titulo: 'Toneldas Por dia',
+        tipo:'linea',
+        contenido:'ancho'
+      });
+      UI.elementos.LayOut.pie.graficos.push(cardTime);
+      UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo.appendChild(cardTime.nodo);
+      // ------------------------- creacion de serie ----------------------------------
+      var datos = dataRep.TimeLineZafra.datos;
+      var zonas = resp.zonas.registros;
+      var series =  [];
+      var categorias = [datos[0].numero];
+      //categorias
+      categorias = armarCategorias(datos,categorias);
+      series = armarSerieLineZafra(datos,categorias,zonas);
+      cardTime.atributos.series = series;
+      cardTime.atributos.categorias = categorias;
+      cardTime.construirGrafLinea();
     }else{
       UI.crearMensaje({
         nombre_tipo:'ERROR',
@@ -138,9 +177,11 @@ function crearLatDer(){
       clases:['botonera'],
       html: '<button type="button" class="icon material-icons md-24 mat-red500 white" cerrardia>lock_outline</button>'+
             '<button type="button" class="icon material-icons md-24 mat-lightgreen500 white" abrirdia>lock_open</button>'+
-            '<button type="button" class="icon material-icons md-24 mat-blue500 white" validar>search</button>'+
+            '<button type="button" class="icon material-icons md-24 mat-brown500 white" grafico>pie_chart</button>'+
+            '<button type="button" class="icon material-icons md-24 mat-blue500 white" validar>youtube_searched_for</button>'+
             '<button type="button" class="icon material-icons md-24 mat-bluegrey500 white" validarcorreo>mail_outline</button>'+
             '<button type="button" class="icon material-icons md-24 mat-indigo500 white" subirvalidacion>file_upload</button>'+
+            '<button type="button" class="icon material-icons md-24 mat-teal500 white" buscarvalidacion>cloud_download</button>'+
             '<button type="button" class="icon material-icons md-24 mat-amber500 white" lista>list</button>'
     }]
   },UI.contGeneral);
@@ -170,20 +211,24 @@ function crearLatDer(){
           tupla.nodo.setAttribute('estado',tupla.atributos.estado);
           UI.elementos.LayOut.construirDia(tupla.atributos);
         });
-        UI.elementos.LayOut.activarDia(lista.Slots[0].atributos);
+        if(UI.elementos.LayOut.latDer.diaActivo){
+            UI.elementos.LayOut.activarDia(UI.elementos.LayOut.latDer.diaActivo.atributos);
+        }else{
+            UI.elementos.LayOut.activarDia(lista.Slots[0].atributos);
+        }
         //funcionamiento de moviemient de dias
         UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-izq').onclick = function(e){
           agregarRippleEvent(this,e);
           var numero = UI.elementos.LayOut.latDer.diaActivo.atributos.numero - 1;
-          var dia = UI.elementos.LayOut.latDer.buscarDiaPorNumero(numero);
-          UI.elementos.LayOut.activarDia(dia.atributos);
+          buscarDatosDia(numero);
         };
         UI.elementos.LayOut.latDer.nodo.querySelector('button.chev-der').onclick = function(e){
           agregarRippleEvent(this,e);
           var numero = parseInt(UI.elementos.LayOut.latDer.diaActivo.atributos.numero) + 1;
-          var dia = UI.elementos.LayOut.latDer.buscarDiaPorNumero(numero);
-          UI.elementos.LayOut.activarDia(dia.atributos);
+          buscarDatosDia(numero);
         };
+        //si se le pasa el dia como parametro
+        cargarDiaUrlArranque();
       }
     },
     onclickSlot: function(slot){
@@ -213,25 +258,9 @@ function crearLatDer(){
   //funcionamiento dias
   lat.dias = [];
   lat.diaActivo = null;
-  lat.buscarDiaPorNumero = function(numero){
+  lat.buscarDia = function(atributo,valor){
     for (var i = 0; i < this.dias.length; i++) {
-      if(this.dias[i].atributos.numero == numero){
-        return this.dias[i];
-      }
-    }
-    return false;
-  };
-  lat.buscarDiaPorFecha = function(fecha){
-    for (var i = 0; i < this.dias.length; i++) {
-      if(this.dias[i].atributos.fechadia == fecha){
-        return this.dias[i];
-      }
-    }
-    return false;
-  };
-  lat.buscarDiaAbierto = function(){
-    for (var i = 0; i < this.dias.length; i++) {
-      if(this.dias[i].atributos.estado === 'A'){
+      if(this.dias[i].atributos[atributo] == valor){
         return this.dias[i];
       }
     }
@@ -244,20 +273,117 @@ function crearLatDer(){
         mayor = this.dias[i].atributos.numero;
       }
     }
-    var dia = this.buscarDiaPorNumero(mayor);
+    var dia = this.buscarDia('numero',mayor);
     return dia;
   };
   return lat;
 }
+function crearContenedorGraficos(){
+  var ventana = UI.agregarVentana({
+    nombre:'contenedoGraficos',
+    tipo:'completo',
+    clases:['cont-graf'],
+    sectores:[
+      {
+        nombre:'TituloDia',
+        html:'',
+        clases:['liso','titulo','invisible']
+      },{
+        nombre:'grafDia',
+        html:'',
+        clases:['contenedor-cards','invisible']
+      },{
+        nombre:'TituloZafra',
+        html:'Graficos Zafra',
+        clases:['liso','titulo']
+      },{
+        nombre:'grafZafra',
+        html:'',
+        clases:['contenedor-cards']
+      }
+    ]
+  },UI.contGeneral);
+  return ventana;
+}
+function buscarDatosDia(numero){
+  var dia = UI.elementos.LayOut.latDer.buscarDia('numero',numero);
+  var peticion = {
+     modulo: "agronomia",
+     entidad: "diaZafra",
+     operacion: "estadoDia",
+     codigo: dia.atributos.codigo,
+     zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.buscarCampo('codigo').captarValor()
+  };
+  UI.elementos.LayOut.activarDia(dia.atributos);
+  var cuadro = {
+    contenedor : dia.nodo,
+    cuadro: {
+      nombre: 'cargaDia'+dia.codigo,
+      mensaje: 'Buscando Datos del dia'
+    }
+  };
+  torque.manejarOperacion(peticion,cuadro,function(res){
+      UI.elementos.LayOut.activarDia(res.registro);
+  });
+}
+/*-----------------------------------------------------------------BOTONES--------------------------------------------------------------*/
 function funcionamientoBotones(secBot){
   //agrego funcionamiento boton por boton
   var btnLista = secBot.nodo.querySelector('button[lista]').onclick= function(){
     UI.buscarVentana('Dias').recargar();
     UI.elementos.LayOut.mostrarLista();
   };
+  var btnBuscar = secBot.nodo.querySelector('button[buscarvalidacion]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    lat.diaActivo.buscarValidacion();
+  };
+  var btnCargarListado = secBot.nodo.querySelector('button[subirvalidacion]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    var ventana = UI.crearVentanaModal({
+      tipo:'INFORMACION',
+      cabecera:{
+        html: 'Cargar listado de validacion de forma manual'
+      },
+      cuerpo:{
+        tipo:'nuevo',
+        formulario: {
+          campos:[
+            {
+              tipo : 'campoDeTexto',
+              parametros : {
+                requerido:true,
+                titulo:'Titulo',
+                nombre:'titulo',
+                tipo:'simple',
+                eslabon:'simple',
+                usaToolTip:true
+              }
+            }
+          ]
+        }
+      },
+      pie:{
+        clases:['botonera'],
+        html:
+            '<button type="button" class="icon material-icons indigo500">file_upload</button>'+
+            '<button type="button" class="icon red500 md-24">close</button>'
+      }
+    });
+  };
+  var btnValidarCorreo = secBot.nodo.querySelector('button[validarcorreo]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    lat.diaActivo.validarCorreo();
+  };
+  var btnValidar = secBot.nodo.querySelector('button[validar]').onclick= function(){
+    var lat = UI.elementos.LayOut.latDer;
+    lat.diaActivo.validarCampo();
+  };
+  var btnGraficos = secBot.nodo.querySelector('button[grafico]').onclick= function(){
+      construirGraficosDia();
+  };
   var btnAbrirDia = secBot.nodo.querySelector('button[abrirdia]').onclick= function(){
     var lat = UI.elementos.LayOut.latDer;
-    var diaAbierto = lat.buscarDiaAbierto();
+    var diaAbierto = lat.buscarDia('estado','A');
     if(diaAbierto){
         UI.crearMensaje({
           nombre_tipo:'ERROR',
@@ -274,12 +400,123 @@ function funcionamientoBotones(secBot){
     var lat = UI.elementos.LayOut.latDer;
     lat.diaActivo.cerrarDia();
   };
-  var btnValidarCorreo = secBot.nodo.querySelector('button[validarcorreo]').onclick= function(){
-    var lat = UI.elementos.LayOut.latDer;
-    lat.diaActivo.validarCorreo();
+}
+function cargarDiaUrlArranque(){
+  //solo se activa si el LayOut se esta construyendo incialmente
+  if(UI.elementos.LayOut.estado === 'construyendo'){
+    if (UI.elementos.URL.captarParametroPorNombre('Dia')){
+      UI.buscarVentana('Dias').buscarSlot({codigo:UI.elementos.URL.captarParametroPorNombre('Dia')}).nodo.click();
+    }
+    UI.elementos.LayOut.estado = 'construido';
+  }
+}
+function construirGraficosDia(){
+  var pie = UI.elementos.LayOut.pie;
+  pie.graficos = [];
+  var peticion = {
+     modulo: "agronomia",
+     entidad: "diaZafra",
+     operacion: "buscarDatosReporte",
+     tipo: "todos",
+     codigo: UI.elementos.LayOut.latDer.diaActivo.atributos.codigo
   };
-  var btnValidar = secBot.nodo.querySelector('button[validar]').onclick= function(){
-    var lat = UI.elementos.LayOut.latDer;
-    lat.diaActivo.validarCampo();
+  var cuadro ={
+    contenedor: pie.buscarSector('grafDia').nodo,
+    cuadro:{
+      nombre: 'graficosDia',
+      mensaje: 'Buscando Informacion Necesaria'
+    }
   };
+  torque.manejarOperacion(peticion,cuadro,function(res){
+    UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.classList.remove('invisible');
+    UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.classList.remove('invisible');
+    UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.innerHTML = 'Graficos Dia Zafra';
+    construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafDia').nodo,res.reportes);
+    var dataRep = res.reportes;
+    //ultimo grafico
+    var cardTime= new WidGraf({
+      nombre: 'TimeLineZafra',
+      titulo: 'Toneldas Por dia Hasta',
+      tipo:'linea',
+      contenido:'ancho'
+    });
+    UI.elementos.LayOut.pie.graficos.push(cardTime);
+    UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.appendChild(cardTime.nodo);
+    var categorias = [];
+    var serie = {name:'toneladas',data:[],color:'#4CAF50'}
+    dataRep.TimeLineZafra.datos.forEach(function(each){
+      categorias.push(each.numero);
+      serie.data.push(parseFloat(each.valor));
+    });
+    cardTime.atributos.categorias = categorias;
+    cardTime.atributos.series.push(serie);
+    cardTime.construirGrafLinea();
+  });
+}
+function construirGraficos(contenedor,dataRep){
+      var pie = UI.elementos.LayOut.pie;
+      //graficos zafra
+       //toneladas por zona
+        var cardTon = new WidGraf({
+          nombre: 'toneladasPorZona',
+          titulo: 'Toneladas de Caña',
+          tipo:'pie'
+        });
+        pie.graficos.push(cardTon);
+        contenedor.appendChild(cardTon.nodo);
+        cardTon.armarSerieBasicaTorta('toneladas',dataRep.toneladasPorZona.datos);
+        cardTon.construirGrafPie();
+
+        //Azucar Por Zona
+        var cardAzu= new WidGraf({
+          nombre: 'AzucarPorZona',
+          titulo: 'Azucar Probable',
+          tipo:'columna'
+        });
+        pie.graficos.push(cardAzu);
+        contenedor.appendChild(cardAzu.nodo);
+        cardAzu.armarSerieBasicaColumna('Azucar',dataRep.AzucarPorZona.datos);
+        cardAzu.construirGrafColumna();
+}
+function armarCategorias(datos,categorias){
+  var encontrado = false;
+  for (var i = 0; i < datos.length; i++) {
+    encontrado = false;
+    for(var j = 0; j < categorias.length;j++){
+      if(datos[i].numero == categorias[j]){
+        encontrado = true;
+      }
+    }
+    if(!encontrado){
+      categorias.push(datos[i].numero);
+    }
+  }
+  //organizo el arreglo
+  categorias.sort(function(a, b){return a-b});
+  return categorias;
+}
+
+function armarSerieLineZafra(datos,categorias,zonas){
+  var serie;
+  var series = [];
+  for (i = 0; i < zonas.length; i++) {
+    serie = {
+      name:zonas[i].nombre,
+      color:'#'+zonas[i].color,
+      data:[]
+    }
+    //lleno los datos en el espacio correcto
+    for (j = 0; j < datos.length; j++) {
+      if(datos[j].codigo_zona === zonas[i].codigo){
+        serie.data[parseInt(datos[j].numero)] = parseFloat(datos[j].valor);
+      }
+    }
+    for (j = 0;j  < categorias.length; j++) {
+      if(!serie.data[j]){
+        serie.data[j] = 0.00;
+      }
+    }
+    series.push(serie);
+  }
+  return series;
 }

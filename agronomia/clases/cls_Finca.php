@@ -1,6 +1,7 @@
 <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
+include_once('cls_AccesoZona.php');
 class cls_Finca extends cls_Conexion{
 
  protected $aa_Atributos = array();
@@ -23,6 +24,18 @@ class cls_Finca extends cls_Conexion{
        if(count($registros)!=0){
          $success=1;
          $respuesta['registros']=$registros;
+       }else{
+         $respuesta['success'] = 0;
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+       }
+       break;
+
+    case 'buscarValidado':
+       $lb_Enc=$this->f_ListarValidado();
+       if($lb_Enc){
+         $success=1;
+         $respuesta['registros']=$this->aa_Atributos['registros'];
+         $respuesta['paginas']=$this->aa_Atributos['paginas'];
        }else{
          $respuesta['success'] = 0;
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
@@ -100,6 +113,45 @@ class cls_Finca extends cls_Conexion{
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
    return $la_respuesta;
+ }
+ private function f_ListarValidado(){
+  //instancio el objeto de busqueda de zonas asignadas al usuario
+   $lobj_AccesoZona = new cls_AccesoZona;
+   //creo la peticion
+   $pet = array(
+     'operacion' => 'buscarZonas',
+     'codigo_usuario' => $_SESSION['Con']['Nombre']
+   );
+   //guardo los datos en el objeto y gestiono para obtener una respuesta
+   $lobj_AccesoZona->setPeticion($pet);
+   $zona = $lobj_AccesoZona->gestionar();
+   $cadenaBusqueda = ' where codigo_zona in(';
+   if($zona['success'] == 1){
+     for($x = 0;$x < count($zona['registros']) - 1; $x++){
+       $cadenaBusqueda .= $zona['registros'][$x].',';
+     }
+     $cadenaBusqueda .= $zona['registros'][count($zona['registros']) - 1].' ';
+   }
+   $cadenaBusqueda .= ") ";
+   $cadenaBusqueda .= ($this->aa_Atributos['valor']=='')?'':"and nombre_finca like '%".$this->aa_Atributos['valor']."%'";
+   $ls_SqlBase="SELECT * FROM agronomia.vfinca $cadenaBusqueda";
+   $orden = ' order by codigo_productor,letra';
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
+   $x=0;
+   $la_respuesta=array();
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+  while($la_registros=$this->f_Arreglo($lr_tabla)){
+    $la_respuesta[$x]['codigo']=$la_registros['codigo_productor'];
+    $la_respuesta[$x]['nombre']=$la_registros['codigo_productor'].'-'.$la_registros['letra'];
+    $la_respuesta[$x]['id_finca']=$la_registros['id_finca'];
+    $x++;
+  }
+  $this->f_Cierra($lr_tabla);
+  $this->f_Des();
+  $this->aa_Atributos['registros'] = $la_respuesta;
+  $lb_Enc=($x == 0)?false:true;
+  return $lb_Enc;
  }
  private function f_BuscarFincasPorProductor(){
    $x=0;

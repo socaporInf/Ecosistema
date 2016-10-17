@@ -204,6 +204,39 @@ div[lista] section[slot] div[celda],div[lista] section[slot] div[cabeceraCelda],
   align-items: center;
    /* alineacion horizontal */
 }
+div[lista] section[slot] div[celda]{
+  overflow: visible;
+  position: relative;
+}
+div[lista] section[slot] div[celda] div[edit]{
+  transition: all 0.3s ease-in-out;
+  position: absolute;
+  background-color:white;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  margin: 2px;
+  opacity: 0;
+}
+div[lista] section[slot] div[celda] div[edit].visible{
+  width: calc(100% + 4px);
+  height: calc(100% - 4px);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  z-index: 3;
+  margin: 0px
+}
+div[lista] section[slot] div[celda] div[edit] input{
+  width: calc(100%);
+  height: calc(100%);
+  position: absolute;
+  margin: 0px;
+  border: 0px;
+  padding: 3px;
+}
+
+div[lista] section[slot] div[celda] span{
+  overflow: hidden;
+}
 div[lista] section[slot] div[celda].pequena,div[lista] section[slot] div[cabeceraCelda].pequena{
   font-size: 8px;
 }

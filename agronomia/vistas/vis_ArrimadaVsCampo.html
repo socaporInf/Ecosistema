@@ -28,6 +28,7 @@
 <!-- scripts PLUGINS-->
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoIdentificacion.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/Plugins/O_Card.js'></script>
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/productor.js'></script>
 <script type="text/javascript" src='js/constructores/finca.js'></script>
@@ -69,10 +70,22 @@
 					click: manejarProductor,
 					contenido: 'P'
 				},{
+					tipo:'faltantes',
+					clases: ['btnFaltantes','mat-red500','white','md-24','material-icons'],
+					click: buscarFaltantes,
+					contenido: 'youtube_searched_for'
+				},{
 					tipo:'dia',
-					clases: ['btnDia','mat-deeppurple500','white','md-18'],
+					clases: ['btnDia','mat-deeppurple500','white','md-24','material-icons'],
 					click: manejarDia,
-					contenido: 'D'
+					contenido: 'date_range'
+				},{
+					tipo:'dash',
+					clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
+					click: function(){
+						location.href = 'vis_DashZafra.html?Dia='+UI.elementos.URL.captarParametroPorNombre('Dia');
+					},
+					contenido: 'dashboard'
 				}
 			]
 		}

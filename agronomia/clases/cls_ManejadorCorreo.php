@@ -27,11 +27,11 @@ class cls_ManejadorCorreo extends cls_Conexion{
 					//extraigo el archivo del correo;
 					$archivoListado = $this->f_ExtraerListado($correo);
 					if($archivoListado == false){
-						$this->aa_Atributos['mensaje'] = 'error en la carga del arrchivo excel del listado';
+						$this->aa_Atributos['mensaje'] = 'error en la carga del archivo excel del listado';
 					}
 					return $archivoListado;
 				}else{
-					$this->aa_Atributos['mensaje'] = 'correo con datos de validacion de la fecha '.$this->aa_Atributos['fecha_dia'].' no ha sido enviado';
+					$this->aa_Atributos['mensaje'] = 'Validacion de la fecha '.$this->aa_Atributos['fecha_dia'].' no ha sido enviado';
 				}
 				return false;
         break;
@@ -93,8 +93,14 @@ class cls_ManejadorCorreo extends cls_Conexion{
 				include_once('cls_DiaZafra.php');
 				$lobj_Zafra = new cls_DiaZafra();
 				//busco la zafra activa
-				$pet = array('operacion' => 'buscarActivo');
-				$lobj_Zafra->setPeticion($pet);
+				if(isset($this->aa_Atributos['dia'])){
+					$lobj_Zafra->setPeticion(array(
+						'operacion' => 'estadoDia',
+						'codigo' => $this->aa_Atributos['dia']
+					));
+				}else{
+					$lobj_Zafra->setPeticion(array('operacion' => 'buscarActivo'));
+				}
 				$zafra = $lobj_Zafra->gestionar()['registro'];
 				$this->aa_Atributos['fecha_dia'] = $zafra['fecha_dia'];
 				if($zafra['fecha_dia'] == $fecha){

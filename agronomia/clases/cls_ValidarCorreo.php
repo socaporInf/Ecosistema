@@ -62,24 +62,26 @@ class cls_ValidarCorreo extends cls_Conexion{
             $success = 1;
             $valores = array('{FECHADIA}' => $this->fFechaBD($this->aa_Atributos['fechadia']));
             $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(25,$valores);
-            //proceso dia "VALIDACION ARRIME VS CAMPO"
+            //proceso dia "ARRIME VS CAMPO"
             //estado datos "IMPORTADOS"
-            $lobj_DiaZafra->setPeticion(array(
+            $pet = array(
                'operacion' => 'cambioAtributos',
-               'codigo_proceso_dia' => 33,
+               'codigo_proceso_dia' => 3,
                'codigo_estado_datos' => 36
-            ));
+            );
          }else{
             $this->f_RollBack();
             $valores = array('{FECHADIA}' => $this->fFechaBD($this->aa_Atributos['fechadia']));
             $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(26,$valores);
             //estado datos "ERROR EN IMPORTACION"
-            $lobj_DiaZafra->setPeticion(array(
+            $pet = array(
                'operacion' => 'cambioAtributos',
                'codigo_estado_datos' => 38
-            ));
+            );
          }
          $this->f_Des();
+         $pet['fecha_dia'] = $this->aa_Atributos['fechadia'];
+         $lobj_DiaZafra->setPeticion($pet);
          $lobj_DiaZafra->gestionar();
          break;
 

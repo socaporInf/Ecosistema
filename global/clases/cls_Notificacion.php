@@ -31,10 +31,14 @@ class cls_Notificacion extends cls_Conexion{
        break;
 
      case 'buscarNotificacionesUsu':
-       $registros=$this->f_ConsultarNotificacionesUsu();
-       if(count($registros)!=0){
+       $lb_Enc=$this->f_ConsultarNotificacionesUsu();
+       if($lb_Enc){
          $success=1;
-         $respuesta['registros']=$registros;
+         $respuesta['registros']=$this->aa_Atributos['registros'];
+         $respuesta['paginas']=$this->aa_Atributos['paginas'];
+       }else{
+         $respuesta['success'] = 0;
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
        }
        break;
 
@@ -82,7 +86,10 @@ class cls_Notificacion extends cls_Conexion{
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM global.vnotificacion ";
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where titulo like '%".$this->aa_Atributos['valor']."%'";
+   $ls_SqlBase="SELECT * FROM global.vnotificacion  $cadenaBusqueda";
+   $orden = " ORDER BY fecha_hora ";
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -97,7 +104,9 @@ class cls_Notificacion extends cls_Conexion{
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   return $la_respuesta;
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return $lb_Enc;
  }
 
  private function f_Buscar(){
@@ -190,7 +199,7 @@ class cls_Notificacion extends cls_Conexion{
  private function f_ConsultarNotificacionesUsu(){
    $x=0;
    $la_respuesta=array();
-
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"And titulo like '%".$this->aa_Atributos['valor']."%'";
    $ls_Sql2="SELECT codigo_rol from seguridad.vllave_acceso where llave_acceso IN (";
    //agrego las llaves a la consulta
    $llaves = $_SESSION['Usuario']['llaves_acceso'];
@@ -201,12 +210,14 @@ class cls_Notificacion extends cls_Conexion{
      }
    }
    $ls_Sql2.=')';
-   $ls_Sql ="SELECT * FROM global.vnotificacion where codigo_tipo_notificacion in
+   $ls_SqlBase ="SELECT * FROM global.vnotificacion where codigo_tipo_notificacion in
             (
             	SELECT codigo_tipo_notificacion FROM global.vtipo_notificacion_rol WHERE codigo_rol IN (
             		$ls_Sql2
             	)
-            )";
+            ) $cadenaBusqueda";
+   $orden = " ORDER BY fecha_hora DESC";
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -223,7 +234,9 @@ class cls_Notificacion extends cls_Conexion{
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   return $la_respuesta;
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return $lb_Enc;
  }
 
 }
