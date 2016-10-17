@@ -448,5 +448,101 @@ function manejoBoton(slot){
   }
 }
 function cambiarGrupal(){
-
+    var ventana = UI.crearVentanaModal({
+      tipo:'INFORMACION',
+      cabecera:{
+        html: 'Elija Tablon A Colocar'
+      },
+      cuerpo:{
+        tipo:'nuevo',
+        formulario: {
+          campos:[
+             {
+              tipo : 'campoBusqueda',
+              parametros : {
+                titulo:'Finca',
+                nombre:'id_finca',
+                requerido:true,
+                eslabon:'simple',
+                peticion:{
+                  entidad: 'finca',
+                  operacion: 'buscarValidado',
+                  modulo: 'agronomia'
+                },
+                onclickSlot: function(campo){
+                  var campoDep = ventana.partes.cuerpo.formulario.buscarCampo('id_lote');
+                  campoDep.atributos.peticion.id_finca = campo.captarValor();
+                  campoDep.habilitar();
+                  campoDep.limpiar();
+                },
+                cuadro: {nombre: 'listaFinca',mensaje: 'Cargando Fincas'}
+              }
+            },{
+              tipo : 'campoBusqueda',
+              parametros : {
+                titulo:'Lote',
+                nombre:'id_lote',
+                requerido:true,
+                eslabon:'simple',
+                peticion:{
+                  entidad: 'lote',
+                  operacion: 'buscarHijos',
+                  modulo: 'agronomia'
+                },
+                onclickSlot: function(campo){
+                  var campoDep = ventana.partes.cuerpo.formulario.buscarCampo('id_tablon');
+                  campoDep.atributos.peticion.id_lote = campo.captarValor();
+                  campoDep.habilitar();
+                  campoDep.limpiar();
+                },
+                cuadro: {nombre: 'listaLote',mensaje: 'Cargando Lotes'}
+              }
+            },{
+              tipo : 'campoBusqueda',
+              parametros : {
+                titulo:'Tablon',
+                nombre:'id_tablon',
+                requerido:true,
+                eslabon:'simple',
+                peticion:{
+                  entidad: 'tablon',
+                  operacion: 'buscarValidado',
+                  modulo: 'agronomia'
+                },
+                cuadro: {nombre: 'listaTablones',mensaje: 'Cargando Tablones'}
+              }
+            }
+          ]
+        }
+      },
+      pie:{
+        clases:['botonera'],
+        html:
+            '<button type="button" class="icon material-icons green500">edit_Mode</button>'+
+            '<button type="button" class="icon red500 md-24">close</button>'
+      }
+    });
+  ventana.partes.cuerpo.formulario.buscarCampo('id_lote').deshabilitar();
+  ventana.partes.cuerpo.formulario.buscarCampo('id_tablon').deshabilitar();
+  ventana.partes.pie.nodo.querySelector('button.red500').onclick=function(){
+    UI.elementos.modalWindow.eliminarUltimaCapa();
+  };
+  ventana.partes.pie.nodo.querySelector('button.green500').onclick=function(){
+    var valor = ventana.partes.cuerpo.formulario.buscarCampo('id_tablon').captarValor();
+    if(!valor){
+      UI.agregarToasts({
+        texto: 'Debe seleccionar un tablon antes de poder continuar',
+        tipo: 'web-arriba-derecha-alto'
+      });
+    }else{
+      var lista = UI.buscarVentana('campo');
+      lista.Slots.forEach(function(slot){
+        if(slot.selector.check.marcado){
+          slot.buscarCelda('tablon').nodo.querySelector('span').textContent = valor;
+          slot.selector.nodo.click();
+        }
+      });
+      UI.elementos.modalWindow.eliminarUltimaCapa();
+    }
+  };
 }

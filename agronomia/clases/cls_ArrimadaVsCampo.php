@@ -128,7 +128,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['boleto'] = $la_registros['boletoromana'];
      $la_respuesta[$x]['remesa'] = $la_registros['numeroremesa'];
-     $la_respuesta[$x]['finca'] = $la_registros['nombrefinca'];
+     $la_respuesta[$x]['finca'] = $la_registros['finca'];
      $la_respuesta[$x]['tablon'] = $la_registros['codigotablon'];
      $la_respuesta[$x]['fechadia'] = $la_registros['fechadia'];
      $la_respuesta[$x]['pesoneto/ton'] = $la_registros['pesoneto_ton'];

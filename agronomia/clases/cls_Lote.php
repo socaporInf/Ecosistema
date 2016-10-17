@@ -105,6 +105,7 @@ class cls_Lote extends cls_Conexion{
      $la_respuesta[$x]['letra']=$la_registros['letra'];
      $la_respuesta[$x]['nombre_finca']=$la_registros['nombre_finca'];
      $la_respuesta[$x]['nombre_lote']=$la_registros['nombre_lote'];
+     $la_respuesta[$x]['nombre']=$la_registros['nombre_lote'];
      $la_respuesta[$x]['codigo_lote']=$la_registros['codigo_lote'];
      $x++;
    }
