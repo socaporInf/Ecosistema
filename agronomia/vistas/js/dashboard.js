@@ -443,7 +443,7 @@ function construirGraficosDia(){
     UI.elementos.LayOut.pie.graficos.push(cardTime);
     UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.appendChild(cardTime.nodo);
     var categorias = [];
-    var serie = {name:'toneladas',data:[],color:'#4CAF50'}
+    var serie = {name:'toneladas',data:[],color:'#4CAF50'};
     dataRep.TimeLineZafra.datos.forEach(function(each){
       categorias.push(each.numero);
       serie.data.push(parseFloat(each.valor));
@@ -492,7 +492,7 @@ function armarCategorias(datos,categorias){
     }
   }
   //organizo el arreglo
-  categorias.sort(function(a, b){return a-b});
+  categorias.sort(function(a, b){return a-b;});
   return categorias;
 }
 
@@ -504,7 +504,7 @@ function armarSerieLineZafra(datos,categorias,zonas){
       name:zonas[i].nombre,
       color:'#'+zonas[i].color,
       data:[]
-    }
+    };
     //lleno los datos en el espacio correcto
     for (j = 0; j < datos.length; j++) {
       if(datos[j].codigo_zona === zonas[i].codigo){

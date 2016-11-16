@@ -99,9 +99,10 @@ class cls_Zafra extends cls_Conexion{
 
     case 'buscarActivoDash':
        $lb_Enc=$this->f_buscar('activo');
+       $success = 0;
        if($lb_Enc){
         $respuesta['registro']=$this->aa_Atributos['registro'];
-        $this->aa_Atributos['codigo'] = $respuesta['registro']['codigo'];        
+        $this->aa_Atributos['codigo'] = $respuesta['registro']['codigo'];
         $lobj_Zona = new cls_Zona;
         $pet = array(
            'operacion' => 'buscar'
@@ -109,7 +110,7 @@ class cls_Zafra extends cls_Conexion{
         $lobj_Zona->setPeticion($pet);
         $respuesta['zonas'] =  $lobj_Zona->gestionar();
         //revisar arreglo de reportes disponibles al inicio de la clase
-        for ($i=0; $i < count($this->aa_Reportes) ; $i++) { 
+        for ($i=0; $i < count($this->aa_Reportes) ; $i++) {
           $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
           if(count($datos)!=0){
             $respuesta['success'] = 1;
@@ -259,8 +260,8 @@ class cls_Zafra extends cls_Conexion{
     $ls_Sql = "SELECT sum(pesoneto_ton) AS peso, vr.codigo_zona, z.nombre,z.color
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
-                WHERE fechadia between 
-                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) 
+                WHERE fechadia between
+                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND
                 (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND  z.codigo_zona IS NOT NULL
@@ -270,8 +271,8 @@ class cls_Zafra extends cls_Conexion{
      $ls_Sql = "SELECT coalesce(sum(azucarprobable),0) AS azucar, vr.codigo_zona, z.nombre,z.color
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
-                WHERE fechadia between 
-                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) 
+                WHERE fechadia between
+                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND
                 (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND  z.codigo_zona IS NOT NULL
@@ -282,8 +283,8 @@ class cls_Zafra extends cls_Conexion{
               FROM agronomia.vvalidacion_soca_relacionado vr
               join agronomia.vdia_zafra dz on vr.fechadia = dz.fecha_dia
               join agronomia.vzona z on vr.codigo_zona = z.codigo_zona
-              WHERE fechadia between 
-              (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) 
+              WHERE fechadia between
+              (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
               AND
               (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
               group by vr.fechadia,vr.codigo_zona
