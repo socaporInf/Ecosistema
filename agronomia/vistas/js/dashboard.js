@@ -124,28 +124,30 @@ function crearLatIzq(){
         registroAct: resp.registro,
       });
       UI.elementos.LayOut.pie.graficos = [];
-      construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo,resp.reportes);
-      var dataRep = resp.reportes;
-      //ultimo grafico
-      var cardTime= new WidGraf({
-        nombre: 'TimeLineZafra',
-        titulo: 'Toneldas Por dia',
-        tipo:'linea',
-        contenido:'ancho'
-      });
-      UI.elementos.LayOut.pie.graficos.push(cardTime);
-      UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo.appendChild(cardTime.nodo);
-      // ------------------------- creacion de serie ----------------------------------
-      var datos = dataRep.TimeLineZafra.datos;
-      var zonas = resp.zonas.registros;
-      var series =  [];
-      var categorias = [datos[0].numero];
-      //categorias
-      categorias = armarCategorias(datos,categorias);
-      series = armarSerieLineZafra(datos,categorias,zonas);
-      cardTime.atributos.series = series;
-      cardTime.atributos.categorias = categorias;
-      cardTime.construirGrafLinea();
+      if(resp.reportes.success){
+        construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo,resp.reportes);
+        var dataRep = resp.reportes;
+        //ultimo grafico
+        var cardTime= new WidGraf({
+          nombre: 'TimeLineZafra',
+          titulo: 'Toneldas Por dia',
+          tipo:'linea',
+          contenido:'ancho'
+        });
+        UI.elementos.LayOut.pie.graficos.push(cardTime);
+        UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo.appendChild(cardTime.nodo);
+        // ------------------------- creacion de serie ----------------------------------
+        var datos = dataRep.TimeLineZafra.datos;
+        var zonas = resp.zonas.registros;
+        var series =  [];
+        var categorias = [datos[0].numero];
+        //categorias
+        categorias = armarCategorias(datos,categorias);
+        series = armarSerieLineZafra(datos,categorias,zonas);
+        cardTime.atributos.series = series;
+        cardTime.atributos.categorias = categorias;
+        cardTime.construirGrafLinea();
+      }
     }else{
       UI.crearMensaje({
         nombre_tipo:'ERROR',
@@ -428,55 +430,62 @@ function construirGraficosDia(){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(res){
-    UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.classList.remove('invisible');
-    UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.classList.remove('invisible');
-    UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.innerHTML = 'Graficos Dia Zafra';
-    construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafDia').nodo,res.reportes);
-    var dataRep = res.reportes;
-    //ultimo grafico
-    var cardTime= new WidGraf({
-      nombre: 'TimeLineZafra',
-      titulo: 'Toneldas Por dia Hasta',
-      tipo:'linea',
-      contenido:'ancho'
-    });
-    UI.elementos.LayOut.pie.graficos.push(cardTime);
-    UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.appendChild(cardTime.nodo);
-    var categorias = [];
-    var serie = {name:'toneladas',data:[],color:'#4CAF50'};
-    dataRep.TimeLineZafra.datos.forEach(function(each){
-      categorias.push(each.numero);
-      serie.data.push(parseFloat(each.valor));
-    });
-    cardTime.atributos.categorias = categorias;
-    cardTime.atributos.series.push(serie);
-    cardTime.construirGrafLinea();
+    if(res.success){
+      UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.classList.remove('invisible');
+      UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.classList.remove('invisible');
+      UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.innerHTML = 'Graficos Dia Zafra';
+      construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafDia').nodo,res.reportes);
+      var dataRep = res.reportes;
+      //ultimo grafico
+      var cardTime= new WidGraf({
+        nombre: 'TimeLineZafra',
+        titulo: 'Toneldas Por dia Hasta',
+        tipo:'linea',
+        contenido:'ancho'
+      });
+      UI.elementos.LayOut.pie.graficos.push(cardTime);
+      UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.appendChild(cardTime.nodo);
+      var categorias = [];
+      var serie = {name:'toneladas',data:[],color:'#4CAF50'};
+      dataRep.TimeLineZafra.datos.forEach(function(each){
+        categorias.push(each.numero);
+        serie.data.push(parseFloat(each.valor));
+      });
+      cardTime.atributos.categorias = categorias;
+      cardTime.atributos.series.push(serie);
+      cardTime.construirGrafLinea();
+    }else{
+      UI.agregarToasts({
+        texto: 'Este dia no posee datos para generar reportes',
+        tipo: 'web-arriba-derecha-alto'
+      }); 
+    }
   });
 }
 function construirGraficos(contenedor,dataRep){
-      var pie = UI.elementos.LayOut.pie;
-      //graficos zafra
-       //toneladas por zona
-        var cardTon = new WidGraf({
-          nombre: 'toneladasPorZona',
-          titulo: 'Toneladas de Caña',
-          tipo:'pie'
-        });
-        pie.graficos.push(cardTon);
-        contenedor.appendChild(cardTon.nodo);
-        cardTon.armarSerieBasicaTorta('toneladas',dataRep.toneladasPorZona.datos);
-        cardTon.construirGrafPie();
+  var pie = UI.elementos.LayOut.pie;
+  //graficos zafra
+   //toneladas por zona
+    var cardTon = new WidGraf({
+      nombre: 'toneladasPorZona',
+      titulo: 'Toneladas de Caña',
+      tipo:'pie'
+    });
+    pie.graficos.push(cardTon);
+    contenedor.appendChild(cardTon.nodo);
+    cardTon.armarSerieBasicaTorta('toneladas',dataRep.toneladasPorZona.datos);
+    cardTon.construirGrafPie();
 
-        //Azucar Por Zona
-        var cardAzu= new WidGraf({
-          nombre: 'AzucarPorZona',
-          titulo: 'Azucar Probable',
-          tipo:'columna'
-        });
-        pie.graficos.push(cardAzu);
-        contenedor.appendChild(cardAzu.nodo);
-        cardAzu.armarSerieBasicaColumna('Azucar',dataRep.AzucarPorZona.datos);
-        cardAzu.construirGrafColumna();
+    //Azucar Por Zona
+    var cardAzu= new WidGraf({
+      nombre: 'AzucarPorZona',
+      titulo: 'Azucar Probable',
+      tipo:'columna'
+    });
+    pie.graficos.push(cardAzu);
+    contenedor.appendChild(cardAzu.nodo);
+    cardAzu.armarSerieBasicaColumna('Azucar',dataRep.AzucarPorZona.datos);
+    cardAzu.construirGrafColumna();
 }
 function armarCategorias(datos,categorias){
   var encontrado = false;

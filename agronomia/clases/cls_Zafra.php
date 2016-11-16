@@ -101,27 +101,27 @@ class cls_Zafra extends cls_Conexion{
        $lb_Enc=$this->f_buscar('activo');
        $success = 0;
        if($lb_Enc){
-        $respuesta['registro']=$this->aa_Atributos['registro'];
-        $this->aa_Atributos['codigo'] = $respuesta['registro']['codigo'];
-        $lobj_Zona = new cls_Zona;
-        $pet = array(
-           'operacion' => 'buscar'
-        );
-        $lobj_Zona->setPeticion($pet);
-        $respuesta['zonas'] =  $lobj_Zona->gestionar();
-        //revisar arreglo de reportes disponibles al inicio de la clase
-        for ($i=0; $i < count($this->aa_Reportes) ; $i++) {
-          $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
-          if(count($datos)!=0){
-            $respuesta['success'] = 1;
-            $respuesta['reportes'][$this->aa_Reportes[$i]]['datos'] = $datos;
-          }else{
-            $respuesta['success'] = 0;
-            $respuesta['reportes'][$this->aa_Reportes[$i]]['mensaje'] = 'Sin Datos';
-          }
-        }
-        $success=1;
+       $success=1;
+       $respuesta['registro']=$this->aa_Atributos['registro'];
+       $this->aa_Atributos['codigo'] = $respuesta['registro']['codigo'];
+       $lobj_Zona = new cls_Zona;
+       $pet = array(
+          'operacion' => 'buscar'
+       );
+       $lobj_Zona->setPeticion($pet);
+       $respuesta['zonas'] =  $lobj_Zona->gestionar();
+       //revisar arreglo de reportes disponibles al inicio de la clase
+       for ($i=0; $i < count($this->aa_Reportes) ; $i++) {
+         $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
+         if(count($datos)!=0){
+           $respuesta['reportes']['success'] = 1;
+           $respuesta['reportes'][$this->aa_Reportes[$i]]['datos'] = $datos;
+         }else{
+           $respuesta['reportes']['success'] = 0;
+           $respuesta['reportes'][$this->aa_Reportes[$i]]['mensaje'] = 'Sin Datos';
+         }
        }
+     }
      break;
 
      default:
