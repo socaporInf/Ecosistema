@@ -143,7 +143,7 @@ function llenarArbol(formularioArbol){
 		entidad: 'privilegio',
 		modulo:'seguridad',
 		operacion: 'buscarArbol',
-		codigo: UI.elementos.URL.captarParametroPorNombre('ruta')
+		codigo: UI.elementos.url.captarParametroPorNombre('ruta')
 	};
 
 	var infoCuadroCarga = {
@@ -210,7 +210,7 @@ function armarVentanaArbol(){
 			entidad: 'privilegio',
 			modulo:'seguridad',
 			operacion: 'guardarArbol',
-			codigo: UI.elementos.URL.captarParametroPorNombre('ruta'),
+			codigo: UI.elementos.url.captarParametroPorNombre('ruta'),
 			data: JSON.stringify(arbolTemp.exportarArreglo())
 		};
 		var espera = {

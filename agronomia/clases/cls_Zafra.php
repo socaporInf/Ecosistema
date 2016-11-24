@@ -7,7 +7,7 @@ class cls_Zafra extends cls_Conexion{
 
  protected $aa_Atributos = array();
  private $aa_Campos = array('codigo_zafra','nombre','estado','fecha_dia','fecha_inicio','fecha_final');
- private $aa_Reportes = array('toneladasPorZona','AzucarPorZona','TimeLineZafra');
+ private $aa_Reportes = array('toneladasPorZona','AzucarPorZona','TimeLineZafra','AreasPorZona','ToneladasEstimadasPorZona');
 
  public function setPeticion($pa_Peticion){
    $la_Peticion['fecha_dia']=$this->fFechaPHP($la_Peticion['fecha_dia']);
@@ -289,7 +289,12 @@ class cls_Zafra extends cls_Conexion{
               (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
               group by vr.fechadia,vr.codigo_zona
               order by vr.codigo_zona,numero";
+  }else if($tipo == 'AreasPorZona'){
+    $ls_Sql = "SELECT * FROM agronomia.vareas_zonas";
+  }else if($tipo == 'ToneladasEstimadasPorZona'){
+    $ls_Sql = "SELECT * FROM agronomia.vtoneladas_estimada_zona";
   }
+
   $x = 0;
   $this->f_Con();
   $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -319,6 +324,16 @@ class cls_Zafra extends cls_Conexion{
       $datos['nombre_zona'] = $pa_registros['nombre_zona'];
       $datos['color'] = $pa_registros['color'];
       $datos['codigo_zona'] = $pa_registros['codigo_zona'];
+    }else if($ps_tipo == 'AreasPorZona'){
+        $datos['codigo_zona'] = $pa_registros['codigo_zona'];
+        $datos['nombre'] = $pa_registros['nombre'];
+        $datos['valor'] = $pa_registros['area'];
+        $datos['color'] = $pa_registros['color'];
+    }else if($ps_tipo == 'ToneladasEstimadasPorZona'){
+      $datos['codigo_zona'] = $pa_registros['codigo_zona'];
+      $datos['nombre'] = $pa_registros['nombre'];
+      $datos['valor'] = $pa_registros['toneladas'];
+      $datos['color'] = $pa_registros['color'];
     }
     return $datos;
   }

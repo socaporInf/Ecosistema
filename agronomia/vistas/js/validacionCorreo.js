@@ -29,7 +29,7 @@ function construirUI(){
     ]
   },document.body.querySelector('div[contenedor]'));
   formRep.titulo.nodo.querySelector('button.btnDash').onclick = function(){
-    location.href = 'vis_DashZafra.html?Dia='+UI.elementos.URL.captarParametroPorNombre('Dia');
+    location.href = 'vis_DashZafra.html?Dia='+UI.elementos.url.captarParametroPorNombre('Dia');
   };
   var dias = UI.agregarLista({
     nombre: 'listDias',
@@ -69,8 +69,8 @@ function construirUI(){
       }
     }
   },formRep.buscarSector('dias').nodo);
-  if(UI.elementos.URL.captarParametroPorNombre('Dia')!== ""){
-    cargarDia(UI.elementos.URL.captarParametroPorNombre('Dia'));
+  if(UI.elementos.url.captarParametroPorNombre('Dia')!== ""){
+    cargarDia(UI.elementos.url.captarParametroPorNombre('Dia'));
   }
 }
 function ejecutar(slot){

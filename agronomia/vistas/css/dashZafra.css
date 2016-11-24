@@ -142,7 +142,7 @@ section[sector].listado-dias,section[sector].formulario-dias{
     position: relative;
     max-width: 320px;
   }
- /*------------------------------ estilos graficos------------------------*/  
+ /*------------------------------ estilos graficos------------------------*/
 div[mat-window] section.titulo.liso{
   color: #212121;
   background-color: white;
@@ -156,6 +156,7 @@ div[mat-window] section.titulo.liso{
 div[mat-window] section.invisible{
   min-height: 0px !important;
   height: 0px;
+  border-bottom: none !important;
 }
 section[sector].contenedor-cards{
   display: flex;
@@ -164,7 +165,6 @@ section[sector].contenedor-cards{
   align-content: center;
   justify-content: space-around;
   border-top: none;
-  border-bottom: none !important;
   text-transform: capitalize;
   padding-top: 1px;
   padding-bottom: 1px;

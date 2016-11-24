@@ -1,7 +1,7 @@
 <?php
 session_start();
 //--------------------------CUERPO CONTROLADOR---------------------------------
-if(isset($_POST['operacion'])){
+if(isset($_POST['modulo'])){
 	$la_Peticion=$_POST;
 } else {
 	$la_Peticion=$_GET;
@@ -72,6 +72,11 @@ function obtenerEntidad($entidad){
 		case 'productor':
 			include_once('../clases/cls_Productor.php');
 			$lobj_Entidad = new cls_Productor;
+			break;
+
+		case 'reportesCosecha':
+			include_once('../clases/cls_ReportesCosecha.php');
+			$lobj_Entidad = new cls_ReportesCosecha;
 			break;
 
 		case 'tablon':
