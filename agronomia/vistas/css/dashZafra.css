@@ -58,6 +58,11 @@ section[sector].listado-dias,section[sector].formulario-dias{
   section[sector].formulario-dias{
     position:relative;
   }
+  div[separador]{
+    float: right;
+    padding-left: 3px;
+    border-left:1px solid rgba(0, 0, 0, 0.25);
+  }
   section[sector].formulario-dias button.chev-izq,section[sector].formulario-dias button.chev-der{
     position: absolute;
     top: 80px;

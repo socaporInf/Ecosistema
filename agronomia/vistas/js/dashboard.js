@@ -191,22 +191,22 @@ function crearLatDer(){
     },{
       nombre:'botonera',
       clases:['botonera'],
-      html: '<span separador>'+
+      html: '<div separador>'+
             '<button type="button" class="icon material-icons md-24 mat-red500 white" cerrardia>lock_outline</button>'+
             '<button type="button" class="icon material-icons md-24 mat-lightgreen500 white" abrirdia>lock_open</button>'+
-            '</span>'+
-            '<span separador>'+
+            '</div>'+
+            '<div separador>'+
             '<button type="button" class="icon material-icons md-24 mat-blue500 white" validar>youtube_searched_for</button>'+
             '<button type="button" class="icon material-icons md-24 mat-bluegrey500 white" validarcorreo>mail_outline</button>'+
-            '</span>'+
-            '<span separador>'+
+            '</div>'+
+            '<div separador>'+
             '<button type="button" class="icon material-icons md-24 mat-indigo500 white" subirvalidacion>file_upload</button>'+
             '<button type="button" class="icon material-icons md-24 mat-teal500 white" buscarvalidacion>cloud_download</button>'+
-            '</span>'+
-            '<span separador>'+
+            '</div>'+
+            '<div separador>'+
             '<button type="button" class="icon material-icons md-24 mat-brown500 white" grafico>pie_chart</button>'+
             '<button type="button" class="icon material-icons md-24 mat-amber500 white" lista>list</button>'+
-            '</span>'
+            '</div>'
     }]
   },UI.contGeneral);
 
@@ -458,7 +458,7 @@ function construirGraficosDia(){
       UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.innerHTML = 'Graficos Dia Zafra';
       construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafDia').nodo,res.reportes);
       var dataRep = res.reportes;
-      
+
     }else{
       UI.agregarToasts({
         texto: 'Este dia no posee datos para generar reportes',
