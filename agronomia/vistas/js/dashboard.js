@@ -337,7 +337,7 @@ function buscarDatosDia(numero){
      entidad: "diaZafra",
      operacion: "estadoDia",
      codigo: dia.atributos.codigo,
-     zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.buscarCampo('codigo').captarValor()
+     zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.registroAct.codigo
   };
   UI.elementos.LayOut.activarDia(dia.atributos);
   var cuadro = {
