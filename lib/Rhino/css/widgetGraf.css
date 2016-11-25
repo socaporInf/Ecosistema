@@ -7,11 +7,9 @@ div[wid-graf]{
     margin: 10px;
 }
 div[wid-graf].ancho{
-    min-width: 800px;
     width: calc(100% - 50px);
 }
 section[graf-cont]{
-  min-width: 400px;
   min-height: 250px;
 }
 section[wid-titulo-graf]{

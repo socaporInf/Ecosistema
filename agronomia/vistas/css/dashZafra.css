@@ -174,3 +174,12 @@ section[sector].contenedor-cards{
   padding-top: 1px;
   padding-bottom: 1px;
 }
+/*------------------------------ media ------------------------*/
+@media only screen and (max-device-width: 480px) {
+  div[mat-window].lat-izq{
+    display: none;
+  }
+  div[mat-window].lat-der{
+    width: calc(100%) !important;
+  }
+}
