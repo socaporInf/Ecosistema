@@ -263,7 +263,7 @@ function crearLatDer(){
          entidad: "diaZafra",
          operacion: "estadoDia",
          codigo: slot.atributos.codigo,
-         zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.buscarCampo('codigo').captarValor()
+         zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.registroAct.codigo
       };
       var cuadro ={
         contenedor: lat.buscarSector('formDia').nodo.querySelector('div[formDia="'+slot.atributos.codigo+'"]'),
@@ -553,7 +553,7 @@ function transformarCampos(campos){
     if(campo.parametros.nombre === 'nombre'){
       campo.parametros.eslabon='area';
     }else{
-        campo.parametros.eslabon='dual';  
+        campo.parametros.eslabon='dual';
     }
   });
   campos.splice(indice,1);
