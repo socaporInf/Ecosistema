@@ -1,0 +1,213 @@
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<style>
+    * {
+        font-size: 12px;
+        color: black;
+        font: 'arial';
+    }
+    
+    div[titulo] {
+        margin-left: 40px;
+        font-size: 25px;
+    }
+    
+    div[cont-zafra] {
+        float: left;
+        font-size: 15px;
+    }
+    
+    div[cont-zafra] span {
+        color: black !important;
+        font-size: 15px;
+        margin: 10px;
+    }
+    
+    table {
+        text-align: center;
+        width: 100%;
+    }
+    
+    tr[superior] td:not([vacio]) {
+        border: 1px solid silver;
+    }
+    
+    tr[zona] td{
+        color:#1B5E20;
+    }
+    tr[finca] td{
+        color:#4CAF50;
+        font-size:11px;
+    }
+    tr:not([superior]) td {
+        border-bottom: 1px dashed silver;
+    }
+    td[zona]{
+        font-size:17px;
+    }
+    td[izq]{
+        text-align:left;
+    }
+    td[der]{
+        text-align:right;
+    }
+    /*TD*/
+    
+    td[td1] {
+        width: 5%;
+    }
+    
+    td[nombre-finca] {
+        width: 10%;
+        font-size: 10px;
+    }
+    
+    td[td3] {
+        width: 3%;
+    }
+    
+    td[td4] {
+        width: 3%;
+    }
+    
+    td[td5] {
+        width: 3%;
+    }
+    
+    td[td6] {
+        width: 5%;
+    }
+    
+    td[td7] {
+        width: 5%;
+    }
+    
+    td[td8] {
+        width: 5%;
+    }
+    
+    td[td9] {
+        width: 3%;
+    }
+    
+    td[td10] {
+        width: 7%;
+    }
+    
+    td[td11] {
+        width: 5%;
+    }
+    
+    td[td12] {
+        width: 5%;
+    }
+    
+    td[td13] {
+        width: 5%;
+    }
+    
+    td[td14] {
+        width: 5%;
+    }
+    
+    td[td15] {
+        width: 5%;
+    }
+    
+    td[td16] {
+        width: 5%;
+    }
+    
+    td[td17] {
+        width: 5%;
+    }
+    
+    td[td18] {
+        width: 5%;
+    }
+    
+    td[td19] {
+        width: 5%;
+    }
+</style>
+
+<table>
+    {{#zonas}}
+        <tr zona>
+            <td zona der>{{codzona}}</td>
+            <td zona izq colspan='6'>{{nomzona}}</td>
+            <td zona colspan='12'></td>
+        </tr>
+        {{#hijos}}
+        <tr finca>
+            <td zona der>{{fincalet}}</td>
+            <td zona izq colspan='6'>{{nomfinca}}</td>
+            <td zona colspan='12'></td>
+        </tr>
+            {{#hijos}}
+                <tr>
+                    <td td1></td>
+                    <td nombre-finca>{{codtablon}}</td>
+                    <td td3>{{tgzarea_sem}}</td>
+                    <td td4>{{tgzareacana}}</td>
+                    <td td5>{{total tgzarea_sem tgzareacana}}</td>
+                    <td td6>{{tgztonestha}}</td>
+                    <td td7>{{tgztotalest}}</td>
+                    <td td8>{{tacortada}}</td>
+                    <td td9>{{taporcortar}}</td>
+                    <td td10>{{ceporcosechar}}</td>
+                    <td td11>{{tcanacosesttotaltn}}</td>
+                    <td td12>{{tcanacosesttotaltnha}}</td>
+                    <td td13>{{tcanacosrealtotaltn}}</td>
+                    <td td14>{{tcanacosrealtotaltnha}}</td>
+                    <td td15>{{porcentajedesv}}</td>
+                    <td td16>{{round edadcorte 2}}</td>
+                    <td td17>{{tartotalton}}</td>
+                    <td td18>{{tartotaltonha}}</td>
+                    <td td19>{{rdto}}</td>
+                </tr>
+            {{/hijos}}
+            <tr finca>
+                <td der td1>{{fincalet}}</td>
+                <td izq nombre-finca>{{nomfinca}}</td>
+                <td td3>{{tgzarea_sem}}</td>
+                <td td4>{{tgzareacana}}</td>
+                <td td5>{{total tgzarea_sem tgzareacana}}</td>
+                <td td6>{{tgztonestha}}</td>
+                <td td7>{{tgztotalest}}</td>
+                <td td8>{{tacortada}}</td>
+                <td td9>{{taporcortar}}</td>
+                <td td10>{{ceporcosechar}}</td>
+                <td td11>{{tcanacosesttotaltn}}</td>
+                <td td12>{{tcanacosesttotaltnha}}</td>
+                <td td13>{{tcanacosrealtotaltn}}</td>
+                <td td14>{{tcanacosrealtotaltnha}}</td>
+                <td td15>{{porcentajedesv}}</td>
+                <td td16></td>
+                <td td17>{{tartotalton}}</td>
+                <td td18>{{tartotaltonha}}</td>
+                <td td19>{{rdto}}</td>
+            </tr>
+        {{/hijos}}
+        <tr zona>
+            <td td1></td>
+            <td zona nombre-finca style="font-size:12px">Totales</td>
+            <td td3>{{tgzarea_sem}}</td>
+            <td td4>{{tgzareacana}}</td>
+            <td td5>{{total tgzarea_sem tgzareacana}}</td>
+            <td td6>{{tgztonestha}}</td>
+            <td td7>{{tgztotalest}}</td>
+            <td td8>{{tacortada}}</td>
+            <td td9>{{taporcortar}}</td>
+            <td td10>{{ceporcosechar}}</td>
+            <td td11>{{tcanacosesttotaltn}}</td>
+            <td td12>{{tcanacosesttotaltnha}}</td>
+            <td td13>{{tcanacosrealtotaltn}}</td>
+            <td td14>{{tcanacosrealtotaltnha}}</td>
+            <td td15></td>
+            <td td16></td>
+            <td td17>{{tartotalton}}</td>
+            <td td18>{{tartotaltonha}}</td>
+            <td td19></td>
+        </tr>
+    {{/zonas}}
+</table>

@@ -19,3 +19,8 @@ section[wid-titulo-graf]{
     color: white;
     border-top: 1px solid rgba(255, 255, 255, 0.13);
 }
+@media only screen and (max-device-width: 480px) {
+    div[wid-graf]{
+      width: calc(100% - 50px);
+    }
+}

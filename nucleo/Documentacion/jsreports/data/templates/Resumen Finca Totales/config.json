@@ -1,0 +1,21 @@
+{
+    "shortid": "r1NEEf7Mg",
+    "modificationDate": {
+        "$$date": 1479930495353
+    },
+    "_id": "znc92XCvWYPvJkfG",
+    "recipe": "phantom-pdf",
+    "phantom": {
+        "orientation": "landscape",
+        "headerHeight": "5cm"
+    },
+    "engine": "handlebars",
+    "data": {
+        "shortid": "ByIindh-g"
+    },
+    "scripts": [
+        {
+            "shortid": "B1Li3d2bx"
+        }
+    ]
+}
