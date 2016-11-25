@@ -175,6 +175,9 @@ div[formElements] {
 div[area] {
     width: calc(100% - 24px);
 }
+div[dual] {
+    width: calc(50% - 12px);
+}
 .group {
     position: relative;
     margin-bottom: 45px;

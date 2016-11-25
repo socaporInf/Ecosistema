@@ -118,6 +118,7 @@ function crearLatIzq(){
   };
   torque.manejarOperacion(peticion,cuadro,function(resp){
     if(resp.success){
+      UI.buscarConstructor('zafra').campos = transformarCampos(UI.buscarConstructor('zafra').campos);
       lat.buscarSector('formZafra').agregarFormulario({
         plano: UI.buscarConstructor('zafra'),
         tipo: 'modificar',
@@ -542,4 +543,19 @@ function armarSerieLineZafra(datos,categorias,zonas){
     series.push(serie);
   }
   return series;
+}
+function transformarCampos(campos){
+  var indice;
+  campos.forEach(function(campo){
+    if(campo.parametros.nombre === 'codigo'){
+      indice = campos.indexOf(campo);
+    }
+    if(campo.parametros.nombre === 'nombre'){
+      campo.parametros.eslabon='area';
+    }else{
+        campo.parametros.eslabon='dual';  
+    }
+  });
+  campos.splice(indice,1);
+  return campos;
 }
