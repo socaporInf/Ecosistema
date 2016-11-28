@@ -117,7 +117,8 @@ class cls_Carga_Validacion extends cls_Conexion{
 			$UID = $lobj_MAC->getAtributos()['UID'];
 
 			//extraigo los datos del archivo
-			$lobj_MAL = new cls_ManejadorListado();
+			print('llego');
+			/*$lobj_MAL = new cls_ManejadorListado();
 			$pet = array(
 				'operacion'=>'extraerDatos',
 				'archivo'=>$archivo
@@ -244,7 +245,7 @@ class cls_Carga_Validacion extends cls_Conexion{
 						$respuesta['mensaje'] = 'error al disparar notificacion';
 					}
 				}
-			}
+			}*/
 		}else{
 			$respuesta['mensaje'] = $lobj_MAC->getAtributos()['mensaje'];
 			$success = 0;

@@ -124,12 +124,12 @@ class cls_DiaZafra extends cls_Conexion{
      break;
 
      case 'buscarListadoCorreo':
-      /*$lobj_Carga = new cls_Carga_Validacion;
+      $lobj_Carga = new cls_Carga_Validacion;
       $lobj_Carga->setPeticion(array(
           'operacion' => 'buscarListaCorreo',
           'dia' => $this->aa_Atributos['codigo']
       ));
-      $respuesta = $lobj_Carga->gestionar();*/
+      $respuesta = $lobj_Carga->gestionar();
       $lb_Enc=$this->f_buscar();
       if($lb_Enc){
          $success = 1;
