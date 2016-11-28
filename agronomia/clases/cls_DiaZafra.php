@@ -2,6 +2,7 @@
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 include_once('cls_Carga_Validacion.php');
+include_once('../../seguridad/clases/cls_Proceso.php');
 class cls_DiaZafra extends cls_Conexion{
 
  protected $aa_Atributos = array();
@@ -136,10 +137,10 @@ class cls_DiaZafra extends cls_Conexion{
       }
       break;
 
-    case 'buscarDatosReporte': 
+    case 'buscarDatosReporte':
       if($this->aa_Atributos['tipo'] == 'todos'){
         //revisar arreglo de reportes disponibles al inicio de la clase
-        for ($i=0; $i < count($this->aa_Reportes) ; $i++) { 
+        for ($i=0; $i < count($this->aa_Reportes) ; $i++) {
           $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
           if(count($datos)!=0){
             $respuesta['success'] = 1;
@@ -157,7 +158,7 @@ class cls_DiaZafra extends cls_Conexion{
         }else{
           $respuesta['success'] = 0;
           $respuesta['mensaje'] = 'Sin Datos';
-        } 
+        }
       }
       break;
     default:
@@ -326,7 +327,6 @@ class cls_DiaZafra extends cls_Conexion{
          'nombre'=>'CREACION DIA ZAFRA'
       );
    //incluyo e instancio
-   include_once('../../seguridad/clases/cls_Proceso.php');
    $lobj_Proceso = new cls_Proceso();
    //seteo la peticion
    $lobj_Proceso->setPeticion($peticion);
