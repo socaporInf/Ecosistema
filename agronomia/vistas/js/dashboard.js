@@ -143,25 +143,27 @@ function crearLatIzq(){
           "contenido":"ancho"
         });
         //ultimo grafico
-        var cardTime= new WidGraf({
-          nombre: 'TimeLineZafra',
-          titulo: 'Toneldas Por dia',
-          tipo:'linea',
-          contenido:'ancho'
-        });
-        UI.elementos.LayOut.pie.graficos.push(cardTime);
-        UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo.appendChild(cardTime.nodo);
-        // ------------------------- creacion de serie ----------------------------------
-        var datos = dataRep.TimeLineZafra.datos;
-        var zonas = resp.zonas.registros;
-        var series =  [];
-        var categorias = [datos[0].numero];
-        //categorias
-        categorias = armarCategorias(datos,categorias);
-        series = armarSerieLineZafra(datos,categorias,zonas);
-        cardTime.atributos.series = series;
-        cardTime.atributos.categorias = categorias;
-        cardTime.construirGrafLinea();
+        if(dataRep.TimeLineZafra.success){
+          var cardTime= new WidGraf({
+            nombre: 'TimeLineZafra',
+            titulo: 'Toneldas Por dia',
+            tipo:'linea',
+            contenido:'ancho'
+          });
+          UI.elementos.LayOut.pie.graficos.push(cardTime);
+          UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo.appendChild(cardTime.nodo);
+          // ------------------------- creacion de serie ----------------------------------
+          var datos = dataRep.TimeLineZafra.datos;
+          var zonas = resp.zonas.registros;
+          var series =  [];
+          var categorias = [datos[0].numero];
+          //categorias
+          categorias = armarCategorias(datos,categorias);
+          series = armarSerieLineZafra(datos,categorias,zonas);
+          cardTime.atributos.series = series;
+          cardTime.atributos.categorias = categorias;
+          cardTime.construirGrafLinea();
+        }
       }
     }else{
       UI.crearMensaje({
@@ -472,13 +474,15 @@ function construirGraficos(contenedor,dataRep){
   var pie = UI.elementos.LayOut.pie;
   //graficos zafra
    //toneladas por zona
-    construirGrafPie({
-      "nombre": 'toneladasPorZona',
-      "titulo": 'Toneladas de Caña',
-      "datos": dataRep.AzucarPorZona.datos,
-      "contenedor": contenedor
-    });
-
+   if(dataRep.AzucarPorZona.success){
+      construirGrafPie({
+        "nombre": 'toneladasPorZona',
+        "titulo": 'Toneladas de Caña',
+        "datos": dataRep.AzucarPorZona.datos,
+        "contenedor": contenedor
+      });
+   }
+  if(dataRep.AzucarPorZona.success){
     //Azucar Por Zona
     var cardAzu= new WidGraf({
       nombre: 'AzucarPorZona',
@@ -489,6 +493,7 @@ function construirGraficos(contenedor,dataRep){
     contenedor.appendChild(cardAzu.nodo);
     cardAzu.armarSerieBasicaColumna('Azucar',dataRep.AzucarPorZona.datos);
     cardAzu.construirGrafColumna();
+  }
 }
 function construirGrafPie(cons){
   var cardTon = new WidGraf({
