@@ -201,7 +201,7 @@ function formularioEliminar(slot){
   btnAceptar.onclick = function(){
     var peticion = {
        modulo: "global",
-       entidad: "accesoZona",
+       entidad: "tipoNotificacionRol",
        operacion: "desincorporar",
        codigo: slot.atributos.codigo
     };
