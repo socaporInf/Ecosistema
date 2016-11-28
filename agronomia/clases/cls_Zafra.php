@@ -115,9 +115,11 @@ class cls_Zafra extends cls_Conexion{
          $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
          if(count($datos)!=0){
            $respuesta['reportes']['success'] = 1;
+           $respuesta['reportes'][$this->aa_Reportes[$i]]['success'] = 1;
            $respuesta['reportes'][$this->aa_Reportes[$i]]['datos'] = $datos;
          }else{
-           $respuesta['reportes']['success'] = 0;
+           $respuesta['reportes']['success'] = 1;
+           $respuesta['reportes'][$this->aa_Reportes[$i]]['success'] = 0;
            $respuesta['reportes'][$this->aa_Reportes[$i]]['mensaje'] = 'Sin Datos';
          }
        }
