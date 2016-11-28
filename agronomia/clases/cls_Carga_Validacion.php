@@ -4,6 +4,8 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 include_once('cls_DiaZafra.php');
 include_once('../../global/clases/cls_Notificacion.php');
+include_once('cls_ManejadorCorreo.php');
+include_once('cls_ManejadorListado.php');
 class cls_Carga_Validacion extends cls_Conexion{
 
 	protected $aa_Atributos = array();
@@ -101,7 +103,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 		return $datos;
 	}
 	private function f_BuscarListadoDia(){
-		include_once('cls_ManejadorCorreo.php');
 		$lobj_MAC = new cls_ManejadorCorreo();
 		$pet = array(
 			'operacion'=>'buscarArchivoCorreo'
@@ -116,7 +117,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 			$UID = $lobj_MAC->getAtributos()['UID'];
 
 			//extraigo los datos del archivo
-			include_once('cls_ManejadorListado.php');
 			$lobj_MAL = new cls_ManejadorListado();
 			$pet = array(
 				'operacion'=>'extraerDatos',

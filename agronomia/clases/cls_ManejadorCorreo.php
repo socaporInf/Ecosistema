@@ -3,6 +3,8 @@ set_time_limit(10000);
 include_once('../../lib/Eden-Php/eden.php');
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
+include_once('cls_DiaZafra.php');
+include_once('../../seguridad/clases/cls_Proceso.php');
 class cls_ManejadorCorreo extends cls_Conexion{
 
 	protected $aa_Atributos = array();
@@ -54,7 +56,6 @@ class cls_ManejadorCorreo extends cls_Conexion{
 				'nombre'=>'CARGA AUTOMATICA VALIDACION DIARIA'
 			);
 		//incluyo e instancio
-		include_once('../../seguridad/clases/cls_Proceso.php');
 		$lobj_Proceso = new cls_Proceso();
 		//seteo la peticion
 		$lobj_Proceso->setPeticion($peticion);
@@ -90,7 +91,6 @@ class cls_ManejadorCorreo extends cls_Conexion{
 				}
 				$fecha = $this->fFechaPHP($fecha);
 				//incluyo e instacio la calse zafra para obtener la fecha dia disponible
-				include_once('cls_DiaZafra.php');
 				$lobj_Zafra = new cls_DiaZafra();
 				//busco la zafra activa
 				if(isset($this->aa_Atributos['dia'])){
