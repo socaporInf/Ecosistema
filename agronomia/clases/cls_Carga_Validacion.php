@@ -103,7 +103,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 		return $datos;
 	}
 	private function f_BuscarListadoDia(){
-		print('llego');
 		$lobj_MAC = new cls_ManejadorCorreo();
 		$pet = array(
 			'operacion'=>'buscarArchivoCorreo'

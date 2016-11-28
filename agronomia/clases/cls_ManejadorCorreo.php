@@ -23,6 +23,7 @@ class cls_ManejadorCorreo extends cls_Conexion{
 		switch ($this->aa_Atributos['operacion']) {
 			case 'buscarArchivoCorreo':
 				//busco el correo en la nube
+				print('llego al manejador correo');
 				$correo = $this->f_BuscarCorreo();
 				if($correo != false){
 					$this->aa_Atributos['UID'] = $correo['uid'];
