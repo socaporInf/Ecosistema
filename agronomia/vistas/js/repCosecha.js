@@ -162,7 +162,6 @@ function ejecutar(){
         nombre_tipo:'ERROR'
       });
     };
-    console.log(JSON.stringify(datosRep));
     torque.pedirReportePDF(reporte,datosRep,done,error);
   });
 }
