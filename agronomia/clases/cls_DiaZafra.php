@@ -144,9 +144,11 @@ class cls_DiaZafra extends cls_Conexion{
           $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
           if(count($datos)!=0){
             $respuesta['success'] = 1;
+            $respuesta['reportes'][$this->aa_Reportes[$i]]['success'] = 1;
             $respuesta['reportes'][$this->aa_Reportes[$i]]['datos'] = $datos;
           }else{
             $respuesta['success'] = 0;
+            $respuesta['reportes'][$this->aa_Reportes[$i]]['success'] = 0;
             $respuesta['reportes'][$this->aa_Reportes[$i]]['mensaje'] = 'Sin Datos';
           }
         }
@@ -276,7 +278,7 @@ class cls_DiaZafra extends cls_Conexion{
                   where numero=(SELECT numero + 1 from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A')
                   and codigo_zafra =(
                     SELECT codigo_zafra from agronomia.vdia_zafra WHERE estado_dia_zafra = 'A'
-                    and codigo_zafra =(SELECT codigo_zafra from agronomia.vzafra WHERE estado_zafra = 'A')";
+                    and codigo_zafra =(SELECT codigo_zafra from agronomia.vzafra WHERE estado_zafra = 'A'))";
    }else if($tipo == 'ultimo'){
       $ls_Sql="SELECT * from agronomia.vdia_zafra WHERE codigo_dia_zafra = (SELECT max(codigo_dia_zafra) from agronomia.vdia_zafra) ";
    }else if($tipo === 'porFecha'){

@@ -3,7 +3,7 @@ include_once('../../lib/Eden-Php/eden.php');
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 /** Include path **/
-set_include_path(get_include_path() . PATH_SEPARATOR . '..'.PATH_SEPARATOR.'..'.PATH_SEPARATOR.'lib'.PATH_SEPARATOR.'PHPExcel');
+set_include_path(get_include_path() . PATH_SEPARATOR . '../../lib/PHPExcel');
 
 /** PHPExcel_IOFactory */
 include 'PHPExcel/IOFactory.php';
