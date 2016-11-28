@@ -103,7 +103,8 @@ class cls_Carga_Validacion extends cls_Conexion{
 		return $datos;
 	}
 	private function f_BuscarListadoDia(){
-		$lobj_MAC = new cls_ManejadorCorreo();
+		print('llego');
+		/*$lobj_MAC = new cls_ManejadorCorreo();
 		$pet = array(
 			'operacion'=>'buscarArchivoCorreo'
 		);
@@ -117,7 +118,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 			$UID = $lobj_MAC->getAtributos()['UID'];
 
 			//extraigo los datos del archivo
-			print('llego');
 			/*$lobj_MAL = new cls_ManejadorListado();
 			$pet = array(
 				'operacion'=>'extraerDatos',
