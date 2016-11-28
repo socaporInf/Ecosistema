@@ -245,11 +245,11 @@ class cls_Carga_Validacion extends cls_Conexion{
 						$respuesta['mensaje'] = 'error al disparar notificacion';
 					}
 				}
-			}*/
+			}
 		}else{
 			$respuesta['mensaje'] = $lobj_MAC->getAtributos()['mensaje'];
 			$success = 0;
-		}
+		}*/
 		$respuesta['success'] = $success;
 		return $respuesta;
 	}
