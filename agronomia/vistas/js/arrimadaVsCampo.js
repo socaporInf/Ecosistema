@@ -20,7 +20,7 @@ function construirUI(){
       modulo: "agronomia",
       entidad: "arrimadaVsCampo",
       operacion: "buscarValidacion",
-      dia: UI.elementos.URL.captarParametroPorNombre('Dia')
+      dia: UI.elementos.url.captarParametroPorNombre('Dia')
     },
     editable:false
   });
@@ -32,14 +32,14 @@ function construirUI(){
       modulo: "agronomia",
       entidad: "arrimadaVsCampo",
       operacion: "buscarValidacionRelacionada",
-      dia: UI.elementos.URL.captarParametroPorNombre('Dia')
+      dia: UI.elementos.url.captarParametroPorNombre('Dia')
     },
     editable:{
       celdas: [4]
     }
   });
   UI.elementos.layOut = layOut;
-  rellenarTitulo(UI.elementos.URL.captarParametroPorNombre('Dia'));
+  rellenarTitulo(UI.elementos.url.captarParametroPorNombre('Dia'));
 }
 function construirLat(objCons){
   var lateral = UI.agregarVentana({

@@ -1,6 +1,7 @@
  <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
+include_once('cls_Acceso.php');
 class cls_Usuario extends cls_Conexion{
 
 	protected $aa_Atributos = array();
@@ -126,7 +127,6 @@ class cls_Usuario extends cls_Conexion{
 
 	private function f_Guardar(){
 		//encripto la contraseña
-		include_once('cls_acceso.php');
 		$lobj_Acceso = new cls_acceso;
 		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['contrasena']);
 

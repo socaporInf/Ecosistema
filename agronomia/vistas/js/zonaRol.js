@@ -143,7 +143,7 @@ function agregarVentanaAsignacion(){
       cuadro: {nombre: 'listaResponsables',mensaje: 'Cargando Posibles Responsables'}
     });
   contenedor.nodo.appendChild(responsables.nodo);
-  contenedor.nodo.style.height = '100px';
+  contenedor.nodo.style.height = '120px';
   contenedor.nodo.style.paddingTop  = '0px';
   ventana.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
     UI.elementos.modalWindow.eliminarUltimaCapa();

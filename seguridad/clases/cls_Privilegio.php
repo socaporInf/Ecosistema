@@ -349,7 +349,7 @@ class cls_Privilegio extends cls_Conexion{
 			for ($i=0; $i < count($aGuardarValidado) ; $i++) {
 				$lb_Hecho = false;
 				$ls_Sql = "SELECT * from seguridad.voperacion_privilegio";
-				$ls_Sql .=" WHERE codigo_operacion_disponible =".$aGuardarValidado[$i]['codigoOperacion']."";
+				$ls_Sql .=" WHERE codigo_operacion_disponible =".$aGuardarValidado[$i]['codigoOperacion']." and codigo_privilegio='".$this->aa_Atributos['codigo']."'";
 				$lr_tabla=$this->f_Filtro($ls_Sql);
 				if($la_registro=$this->f_Arreglo($lr_tabla)){
 					$ls_Sql = "	UPDATE seguridad.voperacion_privilegio SET estado='A'

@@ -118,34 +118,53 @@ function crearLatIzq(){
   };
   torque.manejarOperacion(peticion,cuadro,function(resp){
     if(resp.success){
+      UI.buscarConstructor('zafra').campos = transformarCampos(UI.buscarConstructor('zafra').campos);
       lat.buscarSector('formZafra').agregarFormulario({
         plano: UI.buscarConstructor('zafra'),
         tipo: 'modificar',
         registroAct: resp.registro,
       });
       UI.elementos.LayOut.pie.graficos = [];
-      construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo,resp.reportes);
-      var dataRep = resp.reportes;
-      //ultimo grafico
-      var cardTime= new WidGraf({
-        nombre: 'TimeLineZafra',
-        titulo: 'Toneldas Por dia',
-        tipo:'linea',
-        contenido:'ancho'
-      });
-      UI.elementos.LayOut.pie.graficos.push(cardTime);
-      UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo.appendChild(cardTime.nodo);
-      // ------------------------- creacion de serie ----------------------------------
-      var datos = dataRep.TimeLineZafra.datos;
-      var zonas = resp.zonas.registros;
-      var series =  [];
-      var categorias = [datos[0].numero];
-      //categorias
-      categorias = armarCategorias(datos,categorias);
-      series = armarSerieLineZafra(datos,categorias,zonas);
-      cardTime.atributos.series = series;
-      cardTime.atributos.categorias = categorias;
-      cardTime.construirGrafLinea();
+      if(resp.reportes.success){
+        construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo,resp.reportes);
+        var dataRep = resp.reportes;
+        var cardArea =construirGrafPie({
+          "nombre": 'AreaPorZona',
+          "titulo": 'Area A Cosechar',
+          "datos": dataRep.AreasPorZona.datos,
+          "contenedor": UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo,
+          "contenido":"ancho"
+        });
+        var cardToneladas =construirGrafPie({
+          "nombre": 'ToneladasEstimadasPorZona',
+          "titulo": 'Toneladas Estimadas Totales',
+          "datos": dataRep.ToneladasEstimadasPorZona.datos,
+          "contenedor": UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo,
+          "contenido":"ancho"
+        });
+        //ultimo grafico
+        if(dataRep.TimeLineZafra.success){
+          var cardTime= new WidGraf({
+            nombre: 'TimeLineZafra',
+            titulo: 'Toneldas Por dia',
+            tipo:'linea',
+            contenido:'ancho'
+          });
+          UI.elementos.LayOut.pie.graficos.push(cardTime);
+          UI.elementos.LayOut.pie.buscarSector('grafZafra').nodo.appendChild(cardTime.nodo);
+          // ------------------------- creacion de serie ----------------------------------
+          var datos = dataRep.TimeLineZafra.datos;
+          var zonas = resp.zonas.registros;
+          var series =  [];
+          var categorias = [datos[0].numero];
+          //categorias
+          categorias = armarCategorias(datos,categorias);
+          series = armarSerieLineZafra(datos,categorias,zonas);
+          cardTime.atributos.series = series;
+          cardTime.atributos.categorias = categorias;
+          cardTime.construirGrafLinea();
+        }
+      }
     }else{
       UI.crearMensaje({
         nombre_tipo:'ERROR',
@@ -175,14 +194,22 @@ function crearLatDer(){
     },{
       nombre:'botonera',
       clases:['botonera'],
-      html: '<button type="button" class="icon material-icons md-24 mat-red500 white" cerrardia>lock_outline</button>'+
+      html: '<div separador>'+
+            '<button type="button" class="icon material-icons md-24 mat-red500 white" cerrardia>lock_outline</button>'+
             '<button type="button" class="icon material-icons md-24 mat-lightgreen500 white" abrirdia>lock_open</button>'+
-            '<button type="button" class="icon material-icons md-24 mat-brown500 white" grafico>pie_chart</button>'+
+            '</div>'+
+            '<div separador>'+
             '<button type="button" class="icon material-icons md-24 mat-blue500 white" validar>youtube_searched_for</button>'+
             '<button type="button" class="icon material-icons md-24 mat-bluegrey500 white" validarcorreo>mail_outline</button>'+
+            '</div>'+
+            '<div separador>'+
             '<button type="button" class="icon material-icons md-24 mat-indigo500 white" subirvalidacion>file_upload</button>'+
             '<button type="button" class="icon material-icons md-24 mat-teal500 white" buscarvalidacion>cloud_download</button>'+
-            '<button type="button" class="icon material-icons md-24 mat-amber500 white" lista>list</button>'
+            '</div>'+
+            '<div separador>'+
+            '<button type="button" class="icon material-icons md-24 mat-brown500 white" grafico>pie_chart</button>'+
+            '<button type="button" class="icon material-icons md-24 mat-amber500 white" lista>list</button>'+
+            '</div>'
     }]
   },UI.contGeneral);
 
@@ -238,7 +265,7 @@ function crearLatDer(){
          entidad: "diaZafra",
          operacion: "estadoDia",
          codigo: slot.atributos.codigo,
-         zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.buscarCampo('codigo').captarValor()
+         zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.registroAct.codigo
       };
       var cuadro ={
         contenedor: lat.buscarSector('formDia').nodo.querySelector('div[formDia="'+slot.atributos.codigo+'"]'),
@@ -312,7 +339,7 @@ function buscarDatosDia(numero){
      entidad: "diaZafra",
      operacion: "estadoDia",
      codigo: dia.atributos.codigo,
-     zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.buscarCampo('codigo').captarValor()
+     zafra: UI.elementos.LayOut.latIzq.buscarSector('formZafra').formulario.registroAct.codigo
   };
   UI.elementos.LayOut.activarDia(dia.atributos);
   var cuadro = {
@@ -404,8 +431,8 @@ function funcionamientoBotones(secBot){
 function cargarDiaUrlArranque(){
   //solo se activa si el LayOut se esta construyendo incialmente
   if(UI.elementos.LayOut.estado === 'construyendo'){
-    if (UI.elementos.URL.captarParametroPorNombre('Dia')){
-      UI.buscarVentana('Dias').buscarSlot({codigo:UI.elementos.URL.captarParametroPorNombre('Dia')}).nodo.click();
+    if (UI.elementos.url.captarParametroPorNombre('Dia')){
+      UI.buscarVentana('Dias').buscarSlot({codigo:UI.elementos.url.captarParametroPorNombre('Dia')}).nodo.click();
     }
     UI.elementos.LayOut.estado = 'construido';
   }
@@ -428,55 +455,57 @@ function construirGraficosDia(){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(res){
-    UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.classList.remove('invisible');
-    UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.classList.remove('invisible');
-    UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.innerHTML = 'Graficos Dia Zafra';
-    construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafDia').nodo,res.reportes);
-    var dataRep = res.reportes;
-    //ultimo grafico
-    var cardTime= new WidGraf({
-      nombre: 'TimeLineZafra',
-      titulo: 'Toneldas Por dia Hasta',
-      tipo:'linea',
-      contenido:'ancho'
-    });
-    UI.elementos.LayOut.pie.graficos.push(cardTime);
-    UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.appendChild(cardTime.nodo);
-    var categorias = [];
-    var serie = {name:'toneladas',data:[],color:'#4CAF50'}
-    dataRep.TimeLineZafra.datos.forEach(function(each){
-      categorias.push(each.numero);
-      serie.data.push(parseFloat(each.valor));
-    });
-    cardTime.atributos.categorias = categorias;
-    cardTime.atributos.series.push(serie);
-    cardTime.construirGrafLinea();
+    if(res.success){
+      UI.elementos.LayOut.pie.buscarSector('grafDia').nodo.classList.remove('invisible');
+      UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.classList.remove('invisible');
+      UI.elementos.LayOut.pie.buscarSector('TituloDia').nodo.innerHTML = 'Graficos Dia Zafra';
+      construirGraficos(UI.elementos.LayOut.pie.buscarSector('grafDia').nodo,res.reportes);
+      var dataRep = res.reportes;
+
+    }else{
+      UI.agregarToasts({
+        texto: 'Este dia no posee datos para generar reportes',
+        tipo: 'web-arriba-derecha-alto'
+      });
+    }
   });
 }
 function construirGraficos(contenedor,dataRep){
-      var pie = UI.elementos.LayOut.pie;
-      //graficos zafra
-       //toneladas por zona
-        var cardTon = new WidGraf({
-          nombre: 'toneladasPorZona',
-          titulo: 'Toneladas de Caña',
-          tipo:'pie'
-        });
-        pie.graficos.push(cardTon);
-        contenedor.appendChild(cardTon.nodo);
-        cardTon.armarSerieBasicaTorta('toneladas',dataRep.toneladasPorZona.datos);
-        cardTon.construirGrafPie();
-
-        //Azucar Por Zona
-        var cardAzu= new WidGraf({
-          nombre: 'AzucarPorZona',
-          titulo: 'Azucar Probable',
-          tipo:'columna'
-        });
-        pie.graficos.push(cardAzu);
-        contenedor.appendChild(cardAzu.nodo);
-        cardAzu.armarSerieBasicaColumna('Azucar',dataRep.AzucarPorZona.datos);
-        cardAzu.construirGrafColumna();
+  var pie = UI.elementos.LayOut.pie;
+  //graficos zafra
+   //toneladas por zona
+   if(dataRep.AzucarPorZona.success){
+      construirGrafPie({
+        "nombre": 'toneladasPorZona',
+        "titulo": 'Toneladas de Caña',
+        "datos": dataRep.AzucarPorZona.datos,
+        "contenedor": contenedor
+      });
+   }
+  if(dataRep.AzucarPorZona.success){
+    //Azucar Por Zona
+    var cardAzu= new WidGraf({
+      nombre: 'AzucarPorZona',
+      titulo: 'Azucar Probable',
+      tipo:'columna'
+    });
+    pie.graficos.push(cardAzu);
+    contenedor.appendChild(cardAzu.nodo);
+    cardAzu.armarSerieBasicaColumna('Azucar',dataRep.AzucarPorZona.datos);
+    cardAzu.construirGrafColumna();
+  }
+}
+function construirGrafPie(cons){
+  var cardTon = new WidGraf({
+    nombre: cons.nombre,
+    titulo: cons.titulo,
+    tipo:'pie'
+  });
+  UI.elementos.LayOut.pie.graficos.push(cardTon);
+  cons.contenedor.appendChild(cardTon.nodo);
+  cardTon.armarSerieBasicaTorta('toneladas',cons.datos);
+  cardTon.construirGrafPie();
+  return cardTon;
 }
 function armarCategorias(datos,categorias){
   var encontrado = false;
@@ -492,7 +521,7 @@ function armarCategorias(datos,categorias){
     }
   }
   //organizo el arreglo
-  categorias.sort(function(a, b){return a-b});
+  categorias.sort(function(a, b){return a-b;});
   return categorias;
 }
 
@@ -504,7 +533,7 @@ function armarSerieLineZafra(datos,categorias,zonas){
       name:zonas[i].nombre,
       color:'#'+zonas[i].color,
       data:[]
-    }
+    };
     //lleno los datos en el espacio correcto
     for (j = 0; j < datos.length; j++) {
       if(datos[j].codigo_zona === zonas[i].codigo){
@@ -519,4 +548,19 @@ function armarSerieLineZafra(datos,categorias,zonas){
     series.push(serie);
   }
   return series;
+}
+function transformarCampos(campos){
+  var indice;
+  campos.forEach(function(campo){
+    if(campo.parametros.nombre === 'codigo'){
+      indice = campos.indexOf(campo);
+    }
+    if(campo.parametros.nombre === 'nombre'){
+      campo.parametros.eslabon='area';
+    }else{
+        campo.parametros.eslabon='dual';
+    }
+  });
+  campos.splice(indice,1);
+  return campos;
 }

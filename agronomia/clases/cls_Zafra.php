@@ -7,7 +7,7 @@ class cls_Zafra extends cls_Conexion{
 
  protected $aa_Atributos = array();
  private $aa_Campos = array('codigo_zafra','nombre','estado','fecha_dia','fecha_inicio','fecha_final');
- private $aa_Reportes = array('toneladasPorZona','AzucarPorZona','TimeLineZafra');
+ private $aa_Reportes = array('toneladasPorZona','AzucarPorZona','TimeLineZafra','AreasPorZona','ToneladasEstimadasPorZona');
 
  public function setPeticion($pa_Peticion){
    $la_Peticion['fecha_dia']=$this->fFechaPHP($la_Peticion['fecha_dia']);
@@ -99,28 +99,31 @@ class cls_Zafra extends cls_Conexion{
 
     case 'buscarActivoDash':
        $lb_Enc=$this->f_buscar('activo');
+       $success = 0;
        if($lb_Enc){
-        $respuesta['registro']=$this->aa_Atributos['registro'];
-        $this->aa_Atributos['codigo'] = $respuesta['registro']['codigo'];        
-        $lobj_Zona = new cls_Zona;
-        $pet = array(
-           'operacion' => 'buscar'
-        );
-        $lobj_Zona->setPeticion($pet);
-        $respuesta['zonas'] =  $lobj_Zona->gestionar();
-        //revisar arreglo de reportes disponibles al inicio de la clase
-        for ($i=0; $i < count($this->aa_Reportes) ; $i++) { 
-          $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
-          if(count($datos)!=0){
-            $respuesta['success'] = 1;
-            $respuesta['reportes'][$this->aa_Reportes[$i]]['datos'] = $datos;
-          }else{
-            $respuesta['success'] = 0;
-            $respuesta['reportes'][$this->aa_Reportes[$i]]['mensaje'] = 'Sin Datos';
-          }
-        }
-        $success=1;
+       $success=1;
+       $respuesta['registro']=$this->aa_Atributos['registro'];
+       $this->aa_Atributos['codigo'] = $respuesta['registro']['codigo'];
+       $lobj_Zona = new cls_Zona;
+       $pet = array(
+          'operacion' => 'buscar'
+       );
+       $lobj_Zona->setPeticion($pet);
+       $respuesta['zonas'] =  $lobj_Zona->gestionar();
+       //revisar arreglo de reportes disponibles al inicio de la clase
+       for ($i=0; $i < count($this->aa_Reportes) ; $i++) {
+         $datos = $this->buscarDatosReporte($this->aa_Reportes[$i]);
+         if(count($datos)!=0){
+           $respuesta['reportes']['success'] = 1;
+           $respuesta['reportes'][$this->aa_Reportes[$i]]['success'] = 1;
+           $respuesta['reportes'][$this->aa_Reportes[$i]]['datos'] = $datos;
+         }else{
+           $respuesta['reportes']['success'] = 1;
+           $respuesta['reportes'][$this->aa_Reportes[$i]]['success'] = 0;
+           $respuesta['reportes'][$this->aa_Reportes[$i]]['mensaje'] = 'Sin Datos';
+         }
        }
+     }
      break;
 
      default:
@@ -256,11 +259,11 @@ class cls_Zafra extends cls_Conexion{
  private function buscarDatosReporte($tipo){
   $zafra = $this->aa_Atributos['codigo'];
   if($tipo == 'toneladasPorZona'){
-    $ls_Sql = "SELECT sum(pesoneto_ton) AS peso, vr.codigo_zona, z.nombre,z.color
+    $ls_Sql = "SELECT sum(pesoneto) AS peso, vr.codigo_zona, z.nombre,z.color
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
-                WHERE fechadia between 
-                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) 
+                WHERE fechadia between
+                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND
                 (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND  z.codigo_zona IS NOT NULL
@@ -270,25 +273,30 @@ class cls_Zafra extends cls_Conexion{
      $ls_Sql = "SELECT coalesce(sum(azucarprobable),0) AS azucar, vr.codigo_zona, z.nombre,z.color
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
-                WHERE fechadia between 
-                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) 
+                WHERE fechadia between
+                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND
                 (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND  z.codigo_zona IS NOT NULL
                 GROUP BY vr.codigo_zona, z.nombre,z.color
                ";
   }else if($tipo == 'TimeLineZafra'){
-    $ls_Sql = "SELECT sum(pesoneto_ton) as peso, max(dz.numero) as numero, vr.fechadia, vr.codigo_zona,max(z.nombre) as nombre_zona,max(z.color) as color
+    $ls_Sql = "SELECT sum(pesoneto) as peso, max(dz.numero) as numero, vr.fechadia, vr.codigo_zona,max(z.nombre) as nombre_zona,max(z.color) as color
               FROM agronomia.vvalidacion_soca_relacionado vr
               join agronomia.vdia_zafra dz on vr.fechadia = dz.fecha_dia
               join agronomia.vzona z on vr.codigo_zona = z.codigo_zona
-              WHERE fechadia between 
-              (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) 
+              WHERE fechadia between
+              (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
               AND
               (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
               group by vr.fechadia,vr.codigo_zona
               order by vr.codigo_zona,numero";
+  }else if($tipo == 'AreasPorZona'){
+    $ls_Sql = "SELECT * FROM agronomia.vareas_zonas";
+  }else if($tipo == 'ToneladasEstimadasPorZona'){
+    $ls_Sql = "SELECT * FROM agronomia.vtoneladas_estimada_zona";
   }
+
   $x = 0;
   $this->f_Con();
   $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -318,6 +326,16 @@ class cls_Zafra extends cls_Conexion{
       $datos['nombre_zona'] = $pa_registros['nombre_zona'];
       $datos['color'] = $pa_registros['color'];
       $datos['codigo_zona'] = $pa_registros['codigo_zona'];
+    }else if($ps_tipo == 'AreasPorZona'){
+        $datos['codigo_zona'] = $pa_registros['codigo_zona'];
+        $datos['nombre'] = $pa_registros['nombre'];
+        $datos['valor'] = $pa_registros['area'];
+        $datos['color'] = $pa_registros['color'];
+    }else if($ps_tipo == 'ToneladasEstimadasPorZona'){
+      $datos['codigo_zona'] = $pa_registros['codigo_zona'];
+      $datos['nombre'] = $pa_registros['nombre'];
+      $datos['valor'] = $pa_registros['toneladas'];
+      $datos['color'] = $pa_registros['color'];
     }
     return $datos;
   }

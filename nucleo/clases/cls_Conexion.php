@@ -4,7 +4,7 @@
 	//protected  $db_host = 'localhost';
 	//private  $db_port="5432";
 
-	protected  $db_host = '192.168.88.14';									//Nombre del Host local
+	protected  $db_host = '192.168.88.22';									//Nombre del Host local
 	//protected  $db_host = '200.35.72.145';									//Nombre del Host Remoto
 	private $db_usuario = 'soca';									//Nombre del Usuario
 	private  $db_password = '1234';											//Password de la BD.
