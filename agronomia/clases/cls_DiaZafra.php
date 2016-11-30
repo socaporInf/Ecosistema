@@ -243,8 +243,8 @@ class cls_DiaZafra extends cls_Conexion{
     //proceso_dia_zafra => secuencia > 3, nombre > arrime vs campo
     if($dia['secuencia_proceso_dia'] == 3){
       $ls_Sql="SELECT
-                (SELECT sum(pesoneto_ton) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') -
-                (SELECT sum(pesoneto_ton) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia')
+                (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') -
+                (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia')
                 as diferencia;";
       $this->f_Con();
       $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -431,7 +431,7 @@ class cls_DiaZafra extends cls_Conexion{
  private function buscarDatosReporte($tipo){
   $dia = $this->aa_Atributos['codigo'];
   if($tipo == 'toneladasPorZona'){
-    $ls_Sql = "SELECT sum(pesoneto_ton) AS peso, vr.codigo_zona, z.nombre,z.color
+    $ls_Sql = "SELECT sum(pesoneto) AS peso, vr.codigo_zona, z.nombre,z.color
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
                 WHERE fechadia = (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia) AND  z.codigo_zona IS NOT NULL
@@ -445,7 +445,7 @@ class cls_DiaZafra extends cls_Conexion{
                 GROUP BY vr.codigo_zona, z.nombre,z.color
                ";
   }else if($tipo == 'TimeLineZafra'){
-    $ls_Sql = "SELECT sum(pesoneto_ton) as peso, max(dz.numero) as numero, vr.fechadia
+    $ls_Sql = "SELECT sum(pesoneto) as peso, max(dz.numero) as numero, vr.fechadia
               FROM agronomia.vvalidacion_soca_relacionado vr
               join agronomia.vdia_zafra dz on vr.fechadia = dz.fecha_dia
               where vr.fechadia <= (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia)

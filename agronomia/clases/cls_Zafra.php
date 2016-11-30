@@ -259,7 +259,7 @@ class cls_Zafra extends cls_Conexion{
  private function buscarDatosReporte($tipo){
   $zafra = $this->aa_Atributos['codigo'];
   if($tipo == 'toneladasPorZona'){
-    $ls_Sql = "SELECT sum(pesoneto_ton) AS peso, vr.codigo_zona, z.nombre,z.color
+    $ls_Sql = "SELECT sum(pesoneto) AS peso, vr.codigo_zona, z.nombre,z.color
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
                 WHERE fechadia between
@@ -281,7 +281,7 @@ class cls_Zafra extends cls_Conexion{
                 GROUP BY vr.codigo_zona, z.nombre,z.color
                ";
   }else if($tipo == 'TimeLineZafra'){
-    $ls_Sql = "SELECT sum(pesoneto_ton) as peso, max(dz.numero) as numero, vr.fechadia, vr.codigo_zona,max(z.nombre) as nombre_zona,max(z.color) as color
+    $ls_Sql = "SELECT sum(pesoneto) as peso, max(dz.numero) as numero, vr.fechadia, vr.codigo_zona,max(z.nombre) as nombre_zona,max(z.color) as color
               FROM agronomia.vvalidacion_soca_relacionado vr
               join agronomia.vdia_zafra dz on vr.fechadia = dz.fecha_dia
               join agronomia.vzona z on vr.codigo_zona = z.codigo_zona

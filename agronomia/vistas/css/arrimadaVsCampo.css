@@ -48,8 +48,6 @@ div[mat-window].pieArrimada section[sector]{
 }
 div[mat-window] article[total]{
   width: 25%;
-  padding-top: 20px;
-  padding-bottom: : 20px;
 }
 div[mat-window] article[valor]{
     border-left: 1px solid #232323;
@@ -144,4 +142,9 @@ table[faltantes]{
   position: absolute;
   top: 0px;
   color:white;
+}
+@media only screen and (max-device-width: 480px) {
+  div[selector]{
+    display:none !important;
+  }
 }

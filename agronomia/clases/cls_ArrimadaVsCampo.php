@@ -131,7 +131,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
      $la_respuesta[$x]['finca'] = $la_registros['finca'];
      $la_respuesta[$x]['tablon'] = $la_registros['codigotablon'];
      $la_respuesta[$x]['fechadia'] = $la_registros['fechadia'];
-     $la_respuesta[$x]['pesoneto/ton'] = $la_registros['pesoneto_ton'];
+     $la_respuesta[$x]['pesoneto/ton'] = $la_registros['pesoneto'];
      $la_respuesta[$x]['azucar'] = $la_registros['azucarprobable'];
      $la_respuesta[$x]['rendimiento'] = $la_registros['rendimiento'];
      $la_respuesta[$x]['pesoneto'] = $la_registros['pesoneto'];
@@ -146,8 +146,8 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
   $fecha_dia = $this->aa_Atributos['diaZafra']['fecha_dia'];
   $lb_Enc=false;
   $ls_Sql="SELECT
-            (SELECT sum(pesoneto_ton) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') -
-            (SELECT sum(pesoneto_ton) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia')
+            (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') -
+            (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia')
             as diferencia;";
   $this->f_Con();
   $lr_tabla=$this->f_Filtro($ls_Sql);
