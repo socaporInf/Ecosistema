@@ -216,7 +216,6 @@ function ejecutar(){
         break;
     }
 
-
     torque.pedirReportePDF(reporte,datosRep,done,error);
   });
 }
