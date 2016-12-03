@@ -35,7 +35,23 @@ var form = {
         },
         cuadro: {nombre: 'listafinca',mensaje: 'Cargando fincas'}
         }
-    },{
+    },
+    {
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'Municipio',
+        nombre: 'municipio',
+        requerido:true,
+        eslabon:'simple',
+        peticion:{
+           modulo: "global",
+           entidad: "municipio",
+           operacion: "buscar"
+        },
+        cuadro: {nombre: 'listaMunicipio',mensaje: 'Cargando Municipios'}
+      }
+    },
+    {
       tipo: 'radio',
       parametros : {
         nombre: 'agrupacion',
@@ -186,7 +202,8 @@ function ejecutar(){
      reporte: "resumenFinca",
      zona: form.buscarCampo("zona").captarValor(),
      finca: form.buscarCampo('finca').captarValor(),
-     tipo: form.buscarCampo('agrupacion').captarValor()
+     tipo: form.buscarCampo('agrupacion').captarValor(),
+     municipio: form.buscarCampo('municipio').captarValor()
   };
   var cuadro={
     contenedor: ventanaCarga.partes.cuerpo.nodo,
