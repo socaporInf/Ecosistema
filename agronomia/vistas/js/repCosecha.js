@@ -64,6 +64,19 @@ var form = {
           {nombre:'Detallado(Tablon)',valor:'D'}
         ]
       }
+    },
+    {
+      tipo: 'radio',
+      parametros : {
+        nombre: 'presentacion',
+        titulo: 'Presentación',
+        eslabon : 'doble',
+        valor: 'P',
+        opciones:[
+          {nombre:'PDF',valor:'P'},
+          {nombre:'Excel',valor:'E'}
+        ]
+      }
     }
   ]
 };
@@ -184,7 +197,7 @@ function ejecutarMinisterio(){
        "estados" :organizarDatosMinisterio(respuesta.registros),
        "zafra": respuesta.zafra
     };
-    torque.pedirReportePDF(reporte,datosRep,done,error);
+    torque.pedirReporte(reporte,datosRep,done,error);
   });
 
 }
@@ -203,7 +216,8 @@ function ejecutar(){
      zona: form.buscarCampo("zona").captarValor(),
      finca: form.buscarCampo('finca').captarValor(),
      tipo: form.buscarCampo('agrupacion').captarValor(),
-     municipio: form.buscarCampo('municipio').captarValor()
+     municipio: form.buscarCampo('municipio').captarValor(),
+     presentacion: form.buscarCampo('presentacion').captarValor()
   };
   var cuadro={
     contenedor: ventanaCarga.partes.cuerpo.nodo,
@@ -216,24 +230,35 @@ function ejecutar(){
     generearCuadroSecundario();
     var datosRep;
     var reporte;
-    switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('agrupacion').captarValor()){
-      case 'T':
-        reporte = {"shortid":"r1NEEf7Mg"};
-        datosRep = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
+    switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('presentacion').captarValor()) {
+      case 'P':
+        switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('agrupacion').captarValor()){
+          case 'T':
+            reporte = {"shortid":"r1NEEf7Mg"};
+            datosRep = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
+            break;
+          case 'R':
+            //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+            reporte = {"shortid":"BkUi3un-g"};
+            datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+            break;
+          case 'D':
+            //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+            reporte = {"shortid":"BJUZmtQzg"};
+            datosRep = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
+            break;
+        }
+        torque.pedirReporte(reporte,datosRep,done,error);
         break;
-      case 'R':
-        //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-        reporte = {"shortid":"BkUi3un-g"};
-        datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
-        break;
-      case 'D':
-        //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-        reporte = {"shortid":"BJUZmtQzg"};
-        datosRep = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
-        break;
+        case 'E':
+          reporte = {"shortid":"HJmzQumMx"};
+          datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+          torque.pedirReporte(reporte,datosRep,done,error,'E');
+          break;
     }
 
-    torque.pedirReportePDF(reporte,datosRep,done,error);
+
+
   });
 }
 function generearCuadroSecundario(){
@@ -247,21 +272,28 @@ function generearCuadroSecundario(){
     cuadroDeCarga.style.marginTop = '80px';
   //-----------------------------------------------------------
 }
-var done = function(pdf){
-  //cierro cuadro carga secundario
-  UI.buscarCuadroCarga('cargandoPDF1').terminarCarga();
-  //incrustar pdf en aplicacion
-  var iframe = document.createElement('iframe');
-  iframe.type = 'application/pdf';
-  var enlace = window.URL.createObjectURL(pdf);
-  iframe.src = enlace;
-  var capa = UI.elementos.modalWindow.buscarUltimaCapaContenido();
-  capa.nodo.classList.add('iframe');
-  capa.nodo.classList.add('top');
-  capa.nodo.classList.add("completo");
-  capa.partes.cuerpo.nodo.appendChild(iframe);
-  //agregar boton de cierre
-  capa.partes.cabecera.agregarBotonCerrar();
+var done = function(file){
+  if(file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
+    var vinculo = document.createElement('a');
+    vinculo.href = window.URL.createObjectURL(file);
+    vinculo.click();
+    UI.elementos.modalWindow.eliminarUltimaCapa();
+  }else if(file.type === 'aplication/pdf'){
+    //cierro cuadro carga secundario
+    UI.buscarCuadroCarga('cargandoPDF1').terminarCarga();
+    //incrustar pdf en aplicacion
+    var iframe = document.createElement('iframe');
+    iframe.type = 'application/pdf';
+    var enlace = window.URL.createObjectURL(file);
+    iframe.src = enlace;
+    var capa = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+    capa.nodo.classList.add('iframe');
+    capa.nodo.classList.add('top');
+    capa.nodo.classList.add("completo");
+    capa.partes.cuerpo.nodo.appendChild(iframe);
+    //agregar boton de cierre
+    capa.partes.cabecera.agregarBotonCerrar();
+  }
 };
 //callback si existe algun error
 var error = function(){

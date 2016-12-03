@@ -35,7 +35,7 @@ class cls_ReportesCosecha extends cls_Conexion{
          $success=1;
          $respuesta['registros']=$registros['registros'];
          $respuesta['zafra'] = $registros['zafra'];
-       }else{
+      }else{
          $respuesta['success'] = 0;
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
        }
