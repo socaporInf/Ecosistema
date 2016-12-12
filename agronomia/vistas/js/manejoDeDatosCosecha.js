@@ -65,10 +65,9 @@ function organizarDatosResumenFinca(tipo,datos){
                     'tcanacosesttotaltn','tcanacosesttotaltnha','tcanacosrealtotaltn','tcanacosrealtotaltnha','tartotalton',
                     'tartotaltonha'];
   //guardo las fincas dentro de las zonas
-  if(tipo === 'R'){
+  if(tipo !== 'D'){
     zonas = agregarHijos(zonas,datos,'codzona',sumatorias);
-  }
-  if(tipo === 'D'){
+  }else if(tipo === 'D'){
     fincas = agregarHijos(fincas,datos,'id_finca',sumatorias);
     zonas = agregarHijos(zonas,fincas,'codzona',sumatorias);
     zonas.forEach(function(zona){

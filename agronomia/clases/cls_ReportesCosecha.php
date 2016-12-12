@@ -35,7 +35,7 @@ class cls_ReportesCosecha extends cls_Conexion{
          $success=1;
          $respuesta['registros']=$registros['registros'];
          $respuesta['zafra'] = $registros['zafra'];
-       }else{
+      }else{
          $respuesta['success'] = 0;
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
        }
@@ -65,9 +65,10 @@ class cls_ReportesCosecha extends cls_Conexion{
  function mostrarResumenFinca(){
    $x=0;
    //Busco El rol
+   $this->aa_Atributos['municipio']=($this->aa_Atributos['municipio']=='null')?'':$this->aa_Atributos['municipio'];
    $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
    $this->aa_Atributos['zona']=($this->aa_Atributos['zona']=='null')?'':$this->aa_Atributos['zona'];
-   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFinca('".$this->aa_Atributos['zafra']."','','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','')";
+   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFinca('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -87,9 +88,10 @@ class cls_ReportesCosecha extends cls_Conexion{
  function mostrarResumenFincaPorTablon(){
    $x=0;
    //Busco El rol
+   $this->aa_Atributos['municipio']=($this->aa_Atributos['municipio']=='null')?'':$this->aa_Atributos['municipio'];
    $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
    $this->aa_Atributos['zona']=($this->aa_Atributos['zona']=='null')?'':$this->aa_Atributos['zona'];
-   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFincaPorTablon('".$this->aa_Atributos['zafra']."','','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','')";
+   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFincaPorTablon('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){

@@ -35,7 +35,23 @@ var form = {
         },
         cuadro: {nombre: 'listafinca',mensaje: 'Cargando fincas'}
         }
-    },{
+    },
+    {
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'Municipio',
+        nombre: 'municipio',
+        requerido:true,
+        eslabon:'simple',
+        peticion:{
+           modulo: "global",
+           entidad: "municipio",
+           operacion: "buscar"
+        },
+        cuadro: {nombre: 'listaMunicipio',mensaje: 'Cargando Municipios'}
+      }
+    },
+    {
       tipo: 'radio',
       parametros : {
         nombre: 'agrupacion',
@@ -46,6 +62,19 @@ var form = {
           {nombre:'Resumido Total(Zona)',valor:'T'},
           {nombre:'Resumido(Finca)',valor:'R'},
           {nombre:'Detallado(Tablon)',valor:'D'}
+        ]
+      }
+    },
+    {
+      tipo: 'radio',
+      parametros : {
+        nombre: 'presentacion',
+        titulo: 'Presentación',
+        eslabon : 'doble',
+        valor: 'P',
+        opciones:[
+          {nombre:'PDF',valor:'P'},
+          {nombre:'Excel',valor:'E'}
         ]
       }
     }
@@ -76,7 +105,7 @@ function construirUI(){
      entidad: "zafra",
      operacion: "buscarActivo"
   };
-  torque.Operacion(peticion,function(res){
+  torque.Operacion(peticion).then(function(res){
     var cabecera = UI.elementos.cabecera.nodo;
     cabecera.innerHTML+='<article Zafra codigo="'+res.registro.codigo+'">Zafra: '+res.registro.nombre+'</article>';
   });
@@ -159,18 +188,21 @@ function ejecutarMinisterio(){
       mensaje: 'Cargando Datos'
     }
   };
-  torque.manejarOperacion(peticion,cuadro,function(respuesta){
-    generearCuadroSecundario();
-    //console.log(JSON.stringify(datos));
-    //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-    reporte = {"shortid":"rkP2anaMe"};
-    datosRep = {
-       "estados" :organizarDatosMinisterio(respuesta.registros),
-       "zafra": respuesta.zafra
-    };
-    torque.pedirReportePDF(reporte,datosRep,done,error);
-  });
-
+  torque.manejarOperacion(peticion,cuadro)
+    .then(function(respuesta){
+      generearCuadroSecundario();
+      //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+      var datos = {
+        reporte: {"shortid":"rkP2anaMe"},
+        datosRep: {
+         "estados" :organizarDatosMinisterio(respuesta.registros),
+         "zafra": respuesta.zafra
+        }
+      };
+      return datos;
+    })
+    .then(torque.pedirReporte)
+    .then(done,error);
 }
 function ejecutar(){
   var ventanaCarga = UI.crearVentanaModal({
@@ -186,7 +218,9 @@ function ejecutar(){
      reporte: "resumenFinca",
      zona: form.buscarCampo("zona").captarValor(),
      finca: form.buscarCampo('finca').captarValor(),
-     tipo: form.buscarCampo('agrupacion').captarValor()
+     tipo: form.buscarCampo('agrupacion').captarValor(),
+     municipio: form.buscarCampo('municipio').captarValor(),
+     presentacion: form.buscarCampo('presentacion').captarValor()
   };
   var cuadro={
     contenedor: ventanaCarga.partes.cuerpo.nodo,
@@ -195,32 +229,41 @@ function ejecutar(){
       mensaje: 'Cargando Datos'
     }
   };
-  torque.manejarOperacion(peticion,cuadro,function(respuesta){
-    generearCuadroSecundario();
-    var datosRep;
-    var reporte;
-    switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('agrupacion').captarValor()){
-      case 'T':
-        reporte = {"shortid":"r1NEEf7Mg"};
-        datosRep = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
-        break;
-      case 'R':
-        //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-        reporte = {"shortid":"BkUi3un-g"};
-        datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
-        break;
-      case 'D':
-        //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-        reporte = {"shortid":"BJUZmtQzg"};
-        datosRep = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
-        break;
-    }
-
-
-    torque.pedirReportePDF(reporte,datosRep,done,error);
-  });
+  torque.manejarOperacion(peticion,cuadro)
+    .then(generearCuadroSecundario)
+    .then(function(respuesta){
+      var datos = {};
+      switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('presentacion').captarValor()) {
+        case 'P':
+          switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('agrupacion').captarValor()){
+            case 'T':
+              datos.reporte = {"shortid":"r1NEEf7Mg"};
+              datos.datosRep = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
+              break;
+            case 'R':
+              //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+              datos.reporte = {"shortid":"BkUi3un-g"};
+              datos.datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+              break;
+            case 'D':
+              //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+              datos.reporte = {"shortid":"BJUZmtQzg"};
+              datos.datosRep = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
+              break;
+          }
+          break;
+          case 'E':
+            datos.reporte = {"shortid":"HJmzQumMx"};
+            datos.datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+            datos.presentacion = 'E';
+            break;
+      }
+      return datos;
+    })
+    .then(torque.pedirReporte)
+    .then(done,error);
 }
-function generearCuadroSecundario(){
+function generearCuadroSecundario(respuesta){
   var contenedor = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo;
   //------------Cuadro Carga-------------------------------
     cuadroCarga.contenedor.innerHTML='';
@@ -230,25 +273,34 @@ function generearCuadroSecundario(){
     },contenedor);
     cuadroDeCarga.style.marginTop = '80px';
   //-----------------------------------------------------------
+  return respuesta;
 }
-var done = function(pdf){
-  //cierro cuadro carga secundario
-  UI.buscarCuadroCarga('cargandoPDF1').terminarCarga();
-  //incrustar pdf en aplicacion
-  var iframe = document.createElement('iframe');
-  iframe.type = 'application/pdf';
-  var enlace = window.URL.createObjectURL(pdf);
-  iframe.src = enlace;
-  var capa = UI.elementos.modalWindow.buscarUltimaCapaContenido();
-  capa.nodo.classList.add('iframe');
-  capa.nodo.classList.add('top');
-  capa.nodo.classList.add("completo");
-  capa.partes.cuerpo.nodo.appendChild(iframe);
-  //agregar boton de cierre
-  capa.partes.cabecera.agregarBotonCerrar();
+var done = function(file){
+  if(file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
+    var vinculo = document.createElement('a');
+    vinculo.href = window.URL.createObjectURL(file);
+    vinculo.click();
+    UI.elementos.modalWindow.eliminarUltimaCapa();
+  }else if(file.type === 'application/pdf'){
+    //cierro cuadro carga secundario
+    UI.buscarCuadroCarga('cargandoPDF1').terminarCarga();
+    //incrustar pdf en aplicacion
+    var iframe = document.createElement('iframe');
+    iframe.type = 'application/pdf';
+    var enlace = window.URL.createObjectURL(file);
+    iframe.src = enlace;
+    var capa = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+    capa.nodo.classList.add('iframe');
+    capa.nodo.classList.add('top');
+    capa.nodo.classList.add("completo");
+    capa.partes.cuerpo.nodo.appendChild(iframe);
+    //agregar boton de cierre
+    capa.partes.cabecera.agregarBotonCerrar();
+  }
 };
 //callback si existe algun error
-var error = function(){
+var error = function(error){
+  console.log(error);
   var capa = UI.elementos.modalWindow.buscarUltimaCapaContenido();
   capa.convertirEnMensaje({
     titulo: 'Error en Carga de Reporte',
