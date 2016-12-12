@@ -34,6 +34,8 @@ class cls_Organizacion extends cls_Conexion{
        if($lb_Enc){
          $respuesta['registros']=$this->aa_Atributos['registro'];
          $success=1;
+       }else{
+         $success=0;
        }
        break;
 
@@ -68,7 +70,7 @@ class cls_Organizacion extends cls_Conexion{
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vorganizacion ";
+   $ls_Sql="SELECT * FROM global.vorganizacion ";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){

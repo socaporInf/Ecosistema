@@ -69,6 +69,11 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_Lote;
 			break;
 
+		case 'nucleo':
+			include_once('../clases/cls_Nucleo.php');
+			$lobj_Entidad = new cls_Nucleo;
+			break;
+
 		case 'productor':
 			include_once('../clases/cls_Productor.php');
 			$lobj_Entidad = new cls_Productor;

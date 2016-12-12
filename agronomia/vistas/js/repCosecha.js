@@ -106,8 +106,7 @@ function construirUI(){
      operacion: "buscarActivo"
   };
   torque.Operacion(peticion).then(function(res){
-    var cabecera = UI.elementos.cabecera.nodo;
-    cabecera.innerHTML+='<article Zafra codigo="'+res.registro.codigo+'">Zafra: '+res.registro.nombre+'</article>';
+    UI.elementos.cabecera.agregarHTML('<article Zafra codigo="'+res.registro.codigo+'">Zafra: '+res.registro.nombre+'</article>');
   });
   var formRep = UI.agregarVentana({
     nombre:'formRep',
