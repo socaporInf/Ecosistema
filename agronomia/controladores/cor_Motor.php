@@ -89,6 +89,11 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_Tablon;
 			break;
 
+		case 'tipoLiquidacion':
+			include_once('../clases/cls_TipoLiquidacion.php');
+			$lobj_Entidad = new cls_TipoLiquidacion;
+			break;
+
 		case 'variedad':
 			include_once('../clases/cls_Variedad.php');
 			$lobj_Entidad = new cls_Variedad;
