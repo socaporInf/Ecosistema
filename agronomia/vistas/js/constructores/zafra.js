@@ -52,7 +52,7 @@ var zafra = {
     nuevo:{
       quitar:['apertura']
     },
-    modificar: {
+    consulta: {
       agregar:[
         {
           tipo:'apertura',

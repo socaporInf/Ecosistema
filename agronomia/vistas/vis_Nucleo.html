@@ -23,8 +23,6 @@
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoIdentificacion.js'></script>
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/nucleo.js'></script>
-<!-- script extra-->
-<script type="text/javascript" src='js/nucleo.js'></script>
 
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
@@ -45,7 +43,12 @@
 				click:function(){validarRif();}
 			},{
 				tipo:'modificar',
-				click:function(){modificar();}
+				click:function(){
+						var maestro = UI.elementos.maestro;
+						maestro.modificar();
+						maestro.forma.formulario.deshabilitar();
+						maestro.forma.formulario.buscarCampo('codigo').habilitar();
+				}
 			}]
 		},
 		botonera:{
@@ -100,6 +103,7 @@ validarRif =function (){
 				formulario = UI.elementos.maestro.forma.formulario;
 				if(respuesta.success){
 					formulario.asignarValores(respuesta.registros);
+					formulario.buscarCampo('codigo').limpiar();
 					formulario.buscarCampo('rif').deshabilitar();
 					formulario.buscarCampo('nombre_completo').deshabilitar();
 					formulario.buscarCampo('codigo_tipo_persona').deshabilitar();
@@ -117,12 +121,5 @@ validarRif =function (){
 		}
 	};
 }
-modificar = function(){
-	var maestro = UI.elementos.maestro;
-	maestro.modificar();
-	maestro.forma.formulario.deshabilitar();
-	maestro.forma.formulario.buscarCampo('codigo').habilitar();
-}
-
 </script>
 </html>
