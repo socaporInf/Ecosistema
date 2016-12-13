@@ -54,7 +54,7 @@ class cls_Nucleo extends cls_Conexion{
      case 'guardar':
        $lb_Hecho=$this->f_Guardar();
        if($lb_Hecho){
-         $this->f_BuscarUltimo();
+         $this->f_Buscar();
          $respuesta['registros'] = $this->aa_Atributos['registro'];
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(9);
          $success = 1;
@@ -159,16 +159,18 @@ class cls_Nucleo extends cls_Conexion{
  }
 
  private function f_Guardar(){
+   $lb_Enc= false;
    $lobj_Entidad = new cls_Organizacion();
    //busco si existe ese rif como organizacion
-   $la_Peticion = $this->aa_Atributos;
+   $la_Peticion = array('codigo' => $this->aa_Atributos['rif']);
    $la_Peticion['operacion'] = 'buscarRegistro';
    $lobj_Entidad->setPeticion($la_Peticion);
-   $lb_Hecho = $lobj_Entidad->gestionar();
-   if(!$lb_Hecho){
+   $lb_Enc = $lobj_Entidad->gestionar()['success'];
+   if(!$lb_Enc){
      $lb_Hecho=false;
      $la_Peticion = $this->aa_Atributos;
      $la_Peticion['operacion'] = 'guardar';
+     $la_Peticion['codigo'] = $this->aa_Atributos['rif'];
      $lobj_Entidad->setPeticion($la_Peticion);
      $lb_Hecho = $lobj_Entidad->gestionar();
    }

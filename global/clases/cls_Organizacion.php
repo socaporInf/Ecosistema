@@ -110,7 +110,7 @@ class cls_Organizacion extends cls_Conexion{
 
  private function f_Guardar(){
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vorganizacion (rif,nombre_completo,codigo_tipo_persona) values
+   $ls_Sql="INSERT INTO global.vorganizacion (rif,nombre_completo,codigo_tipo_persona) values
        ('".$this->aa_Atributos['rif']."','".$this->aa_Atributos['nombre_completo']."',
        '".$this->aa_Atributos['codigo_tipo_persona']."')";
    $this->f_Con();
@@ -122,7 +122,7 @@ class cls_Organizacion extends cls_Conexion{
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
-   $ls_Sql="UPDATE agronomia.vorganizacion SET ";
+   $ls_Sql="UPDATE global.vorganizacion SET ";
 
    //arma la cadena sql en base a los campos pasados en la peticion
    $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
