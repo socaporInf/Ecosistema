@@ -8,17 +8,6 @@ var zafra = {
 		{
 			tipo: 'campoDeTexto',
 			parametros:{
-				nombre: 'codigo',
-				requerido:true,
-				titulo: 'Codigo',
-				tipo:'simple',
-				eslabon: 'simple',
-				usaToolTip: true
-			}
-		},
-		{
-			tipo: 'campoDeTexto',
-			parametros:{
 				nombre: 'nombre',
 				requerido:false,
 				titulo: 'Nombre',

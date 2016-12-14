@@ -54,6 +54,16 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_DetDeduccionLiquidacion;
 			break;
 
+			case 'detTabuladorLabor':
+				include_once('../clases/cls_DetTabuladorLabor.php');
+				$lobj_Entidad = new cls_DetTabuladorLabor;
+				break;
+
+			case 'detTabuladorTransp':
+				include_once('../clases/cls_DetTabuladorTransp.php');
+				$lobj_Entidad = new cls_DetTabuladorTransp;
+				break;
+
 		case 'diaZafra':
 			include_once('../clases/cls_DiaZafra.php');
 			$lobj_Entidad = new cls_DiaZafra;
@@ -92,6 +102,16 @@ function obtenerEntidad($entidad){
 		case 'tablon':
 			include_once('../clases/cls_Tablon.php');
 			$lobj_Entidad = new cls_Tablon;
+			break;
+
+		case 'tabuladorLabor':
+			include_once('../clases/cls_TabuladorLabor.php');
+			$lobj_Entidad = new cls_TabuladorLabor;
+			break;
+
+		case 'tabuladorTransp':
+			include_once('../clases/cls_TabuladorTransp.php');
+			$lobj_Entidad = new cls_TabuladorTransp;
 			break;
 
 		case 'tipoLiquidacion':

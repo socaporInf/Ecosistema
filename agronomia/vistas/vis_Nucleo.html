@@ -23,6 +23,8 @@
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoIdentificacion.js'></script>
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/nucleo.js'></script>
+<!-- script con el funcionamiento de este formulario -->
+<script type="text/javascript" src='js/nucleo.js'></script>
 
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
@@ -40,7 +42,7 @@
 			entidad: torque.entidadActiva,
 			botones: [{
 				tipo:'nuevo',
-				click:function(){validarRif();}
+				click:validarRif
 			},{
 				tipo:'modificar',
 				click:function(){
@@ -62,64 +64,6 @@ UI.elementos.botonera.buscarBoton('nuevo').nodo.onclick = function(){
 	validarRif();
 };
 
-validarRif =function (){
-	UI.elementos.maestro.quitarformulario();
-	var modal = UI.crearVentanaModal({
-	  contenido: 'ancho',
-	  cabecera:{
-	    html: 'Verificacion de Rif',
-			clases:['verificacion']
-	  },
-	  cuerpo:{
-	    tipo:'nuevo',
-	    formulario: {
-				campos:[UI.buscarConstructor('nucleo').campos[0]]
-			},
-	  },
-	  pie:{
-	      html:'<button type="button" class="mat-text-but">Verificar</button>',
-				clases:['operaciones']
-	  }
-	});
 
-	modal.nodo.querySelector('button.mat-text-but').onclick = function(){
-		var rif =  modal.partes.cuerpo.formulario.buscarCampo('rif').captarValor();
-		if(rif){
-			var peticion = {
-			   modulo: "global",
-			   entidad: "organizacion",
-			   operacion: "buscarRegistro",
-			   codigo: rif
-			};
-			var cuadro = {
-				contenedor: modal.partes.cuerpo.nodo,
-				cuadro:{
-				  nombre: 'verificacionRif',
-				  mensaje: 'Verificando Rif en la Base de Datos'
-				}
-			};
-			torque.manejarOperacion(peticion,cuadro).then(function(respuesta){
-				UI.elementos.maestro.agregarFormulario({tipo:'nuevo'});
-				formulario = UI.elementos.maestro.forma.formulario;
-				if(respuesta.success){
-					formulario.asignarValores(respuesta.registros);
-					formulario.buscarCampo('codigo').limpiar();
-					formulario.buscarCampo('rif').deshabilitar();
-					formulario.buscarCampo('nombre_completo').deshabilitar();
-					formulario.buscarCampo('codigo_tipo_persona').deshabilitar();
-				}else{
-					formulario.buscarCampo('rif').asignarValor(rif);
-					formulario.buscarCampo('rif').deshabilitar();
-				}
-				UI.elementos.modalWindow.eliminarUltimaCapa();
-			});
-		}else{
-			  UI.agregarToasts({
-			    texto: 'Rellene el campo para poder verificar',
-			    tipo: 'web-arriba-derecha-alto'
-			  });
-		}
-	};
-}
 </script>
 </html>
