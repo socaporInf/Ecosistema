@@ -1,6 +1,8 @@
 div[lista][mat-window].maestro{
   width: calc(40%);
   float: left;
+}
+div[lista][mat-window].maestro.padre,div[lista][mat-window].maestro.hija{
   margin-left: calc(20% / 3);
 }
 div[mat-window].maestro:not([lista]){
