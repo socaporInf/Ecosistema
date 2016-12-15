@@ -1,11 +1,11 @@
 <?php
-include_once('../../nucleo/clases/cls_Conexion.php');
-include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
+include_once('../../banco/clases/cls_Conexion.php');
+include_once('../../banco/clases/cls_Mensaje_Sistema.php');
 include_once('../../global/clases/cls_Organizacion.php');
-class cls_Nucleo extends cls_Conexion{
+class cls_Banco extends cls_Conexion{
 
  protected $aa_Atributos = array();
- private $aa_Campos = array('codigo_nucleo','nombre_completo','rif','codigo_tipo_persona','tipo_persona');
+ private $aa_Campos = array('codigo_banco','nombre_completo','rif','codigo_tipo_persona','tipo_persona');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
@@ -31,8 +31,8 @@ class cls_Nucleo extends cls_Conexion{
        }
        break;
 
-    case 'listarNucleos':
-     $lb_Enc=$this->f_ListarNucleos();
+    case 'listarbancos':
+     $lb_Enc=$this->f_Listarbancos();
      if($lb_Enc){
        $success=1;
        $respuesta['registros']=$this->aa_Atributos['registros'];
@@ -91,14 +91,15 @@ class cls_Nucleo extends cls_Conexion{
    $x=0;
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%'";
    $la_respuesta=array();
-   $ls_SqlBase="SELECT * FROM agronomia.vnucleo $cadenaBusqueda";
+   $ls_SqlBase="SELECT * FROM global.vbanco $cadenaBusqueda";
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
 
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo']=$la_registros['codigo_nucleo'];
+     $la_respuesta[$x]['codigo']=$la_registros['codigo_banco'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
+     $la_respuesta[$x]['nombre']=$la_registros['nombre_completo'];
      $la_respuesta[$x]['rif']=$la_registros['rif'];
      $x++;
    }
@@ -110,18 +111,18 @@ class cls_Nucleo extends cls_Conexion{
    return $lb_Enc;
  }
 
- private function f_ListarNucleos(){
+ private function f_Listarbancos(){
    $x=0;
    //varibles paginacion
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where nombre_completo like '%".$this->aa_Atributos['valor']."%'";
    $la_respuesta=array();
-   $ls_SqlBase="SELECT * FROM agronomia.vnucleo_organizacion $cadenaBusqueda";
+   $ls_SqlBase="SELECT * FROM global.vbanco_organizacion $cadenaBusqueda";
    $orden = "order by nombre_completo";
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo']=$la_registros['codigo_nucleo'];
+     $la_respuesta[$x]['codigo']=$la_registros['codigo_banco'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
      $la_respuesta[$x]['rif']=$la_registros['rif'];
      $x++;
@@ -136,11 +137,11 @@ class cls_Nucleo extends cls_Conexion{
  private function f_Buscar(){
    $lb_Enc=false;
    //Busco El rol
-   $ls_Sql="SELECT * FROM agronomia.vnucleo where codigo_nucleo='".$this->aa_Atributos['codigo']."'";
+   $ls_Sql="SELECT * FROM global.vbanco where codigo_banco='".$this->aa_Atributos['codigo']."'";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta['codigo']=$la_registros['codigo_nucleo'];
+     $la_respuesta['codigo']=$la_registros['codigo_banco'];
      $la_respuesta['nombre_completo']=$la_registros['nombre_completo'];
      $la_respuesta['rif']=$la_registros['rif'];
      $la_respuesta['codigo_tipo_persona']=$la_registros['codigo_tipo_persona'];
@@ -174,11 +175,11 @@ class cls_Nucleo extends cls_Conexion{
      $lobj_Entidad->setPeticion($la_Peticion);
      $lb_Hecho = $lobj_Entidad->gestionar();
    }else{
-     $lb_Hecho=true;
+     $lb_Hecho = true;
    }
    if($lb_Hecho){
      $lb_Hecho=false;
-     $ls_Sql="INSERT INTO agronomia.vnucleo (rif,codigo_nucleo) values
+     $ls_Sql="INSERT INTO global.vbanco (rif,codigo_banco) values
         ('".$this->aa_Atributos['rif']."','".$this->aa_Atributos['codigo']."')";
      $this->f_Con();
      $lb_Hecho=$this->f_Ejecutar($ls_Sql);
@@ -189,12 +190,12 @@ class cls_Nucleo extends cls_Conexion{
    private function f_Modificar(){
       $lb_Hecho=false;
       $contCampos = 0;
-      $ls_Sql="UPDATE agronomia.vproductor SET ";
+      $ls_Sql="UPDATE global.vproductor SET ";
 
       //arma la cadena sql en base a los campos pasados en la peticion
       $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
-      $ls_Sql.="WHERE codigo_nucleo ='".$this->aa_Atributos['codigo']."'";
+      $ls_Sql.="WHERE codigo_banco ='".$this->aa_Atributos['codigo']."'";
       $this->f_Con();
       $lb_Hecho=$this->f_Ejecutar($ls_Sql);
       $this->f_Des();

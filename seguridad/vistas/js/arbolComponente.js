@@ -373,8 +373,7 @@ var finalizarEdicion = function(){
   var formComp = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
   var nuevoRegistro = formComp.captarValores();
   nuevoRegistro.codigo = formComp.registroId;
-	console.log(nuevoRegistro);
-	enviarCambios(nuevoRegistro,formComp.partes.cuerpo.nodo);
+	enviarCambios(nuevoRegistro,UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo);
 };
 
 function enviarCambios(peticion,contenedor){

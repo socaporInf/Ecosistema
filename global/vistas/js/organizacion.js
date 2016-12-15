@@ -9,7 +9,7 @@ validarRif =function (){
 	  cuerpo:{
 	    tipo:'nuevo',
 	    formulario: {
-				campos:[UI.buscarConstructor('nucleo').campos[0]]
+				campos:[UI.buscarConstructor(UI.elementos.maestro.entidadActiva).campos[0]]
 			},
 	  },
 	  pie:{
@@ -56,4 +56,24 @@ validarRif =function (){
 			  });
 		}
 	};
+};
+ctasBancarias = function(){
+	UI.elementos.maestro.quitarformulario();
+	var modal = UI.crearVentanaModal({
+	  contenido: 'ancho',
+	  cabecera:{
+	    html: 'Cuentas Bancarias',
+			clases:['verificacion']
+	  },
+	  cuerpo:{
+	    tipo:'nuevo',
+	    formulario: {
+				campos:UI.buscarConstructor('cuentasBancarias').campos
+			},
+	  },
+	  pie:{
+	      html:'<button type="button" class="mat-text-but">Verificar</button>',
+				clases:['operaciones']
+	  }
+	});
 };

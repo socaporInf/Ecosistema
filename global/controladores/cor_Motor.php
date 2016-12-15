@@ -7,6 +7,13 @@ if(isset($_POST['operacion'])){
 }
 $success=0;
 switch ($la_Peticion['entidad']) {
+	case 'banco':
+		include_once('../clases/cls_Banco.php');
+		$lobj_Entidad = new cls_Banco;
+		$lobj_Entidad->setPeticion($la_Peticion);
+		$respuesta = $lobj_Entidad->gestionar();
+		break;
+
 	case 'empresa':
 		include_once('../clases/cls_Empresa.php');
 		$lobj_Entidad = new cls_Empresa;
