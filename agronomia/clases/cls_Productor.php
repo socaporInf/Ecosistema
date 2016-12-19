@@ -4,7 +4,7 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 class cls_Productor extends cls_Conexion{
 
  protected $aa_Atributos = array();
- private $aa_Campos = array('codigo_productor','nombre_completo','rif',codigo_tipo_persona,'tipo_persona');
+ private $aa_Campos = array('codigo_productor','nombre_completo','rif','codigo_tipo_persona','tipo_persona');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;

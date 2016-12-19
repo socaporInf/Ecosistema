@@ -26,7 +26,7 @@ var proceso = {
     nuevo:{
       quitar:['detalle']
     },
-    modificar: {
+    consulta: {
       agregar:[
         {
           tipo:'detalle',
