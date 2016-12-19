@@ -89,6 +89,7 @@ class cls_ManejadorCorreo extends cls_Conexion{
 				}else {
 					$fecha = $subject[5];
 				}
+
 				$fecha = $this->fFechaPHP($fecha);
 				//incluyo e instacio la calse zafra para obtener la fecha dia disponible
 				$lobj_Zafra = new cls_DiaZafra();
@@ -102,6 +103,7 @@ class cls_ManejadorCorreo extends cls_Conexion{
 					$lobj_Zafra->setPeticion(array('operacion' => 'buscarActivo'));
 				}
 				$zafra = $lobj_Zafra->gestionar()['registro'];
+
 				$this->aa_Atributos['fecha_dia'] = $zafra['fecha_dia'];
 				if($zafra['fecha_dia'] == $fecha){
 					return $correos[$i];
@@ -113,8 +115,9 @@ class cls_ManejadorCorreo extends cls_Conexion{
 
 	private function f_ExtraerListado($correo){
 		foreach ($correo['attachment'] as $key => $value) {
-			$extension = explode('.',$key);
-			if($extension[count($extension)-1] == 'xlsx'){
+			$extension = '.xlsx';
+			$pos = strpos($key, $extension);
+			if($pos !== false){
 				return array($key,$value);
 			}
 		}

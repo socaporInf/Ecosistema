@@ -93,7 +93,7 @@ class cls_Lote extends cls_Conexion{
  private function f_BuscarLotesPorFinca(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vlote  WHERE id_finca = ".$this->aa_Atributos['id_finca'];
+   $ls_Sql="SELECT * FROM agronomia.vlote  WHERE id_finca = ".$this->aa_Atributos['id_finca'].' order by codigo_lote';
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){

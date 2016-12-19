@@ -19,7 +19,8 @@ function aperturar(){
            modulo: "agronomia",
            entidad: "zafra",
            operacion: "aperturar",
-           estado: 'A'
+           estado: 'A',
+           codigo:formulario.registroId
         },formulario.captarValores());
 
         var cuadro = {
