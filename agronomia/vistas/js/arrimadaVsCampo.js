@@ -149,55 +149,6 @@ function rellenarTitulo(codigo){
   });
 }
 /*-----------------------------------------------Funcionamiento botones---------------------------------------*/
-function manejarTablon(){
-  var ventana = UI.crearVentanaModal({
-        cabecera:{
-            html: 'Registrar de Tablon'
-        },
-        cuerpo:{
-            formulario: UI.buscarConstructor('tablon'), //objeto constructor
-            tipo: 'nuevo', //operacion a realizar,
-        },
-        pie:{
-            clases:['botonera'],
-            html: '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
-                  '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'
-        }
-    });
-}
-function manejarFinca(){
-  var ventana = UI.crearVentanaModal({
-        cabecera:{
-            html: 'Registrar de Finca'
-        },
-        cuerpo:{
-            formulario: UI.buscarConstructor('finca'), //objeto constructor
-            tipo: 'nuevo', //operacion a realizar,
-        },
-        pie:{
-            clases:['botonera'],
-            html: '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
-                  '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'
-        }
-    });
-}
-function manejarProductor(){
-  var ventana = UI.crearVentanaModal({
-        cabecera:{
-            html: 'Registrar de Cañicultor'
-        },
-        cuerpo:{
-            formulario: UI.buscarConstructor('productor'), //objeto constructor
-            tipo: 'nuevo', //operacion a realizar,
-        },
-        pie:{
-            clases:['botonera'],
-            html: '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
-                  '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'
-        }
-    });
-}
-
 function buscarFaltantes(){
   var ventana = UI.crearVentanaModal({
     cabecera:{
@@ -263,7 +214,7 @@ function buscarFaltantes(){
         tit ="Tablones";
         cue ="<table faltantes><tr><td>Finca</td><td>Tablon</td</tr>";
         for (var t = 0; t < falt.tablones.length; t++) {
-          cue +="<tr><td>" + falt.tablones[t].finca + "</td><td>" + falt.tablones[t].codigo + "</td></tr>";
+          cue +="<tr onclick='manejarTablon(this)'><td>" + falt.tablones[t].finca + "</td><td tablon>" + falt.tablones[t].codigo + "</td></tr>";
         }
         cue +="</table>";
         var tablones = new Card({

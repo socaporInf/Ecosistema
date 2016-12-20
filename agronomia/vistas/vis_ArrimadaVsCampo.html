@@ -11,6 +11,8 @@
 	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
 	<link rel="stylesheet" type="text/css" href="css/arrimadaVsCampo.css">
 	<link rel="stylesheet" type="text/css" href="css/listadoArrimadaVsCampo.css">
+	<link rel="stylesheet" type="text/css" href="css/nucleo.css">
+	<link rel="stylesheet" type="text/css" href="../../global/vistas/css/organizacion.css">
 	<!-- Calendario -->
 	<link href='../../lib/fullcalendar/fullcalendar.css' rel='stylesheet' />
 	<link href='../../lib/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -32,9 +34,14 @@
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/productor.js'></script>
 <script type="text/javascript" src='js/constructores/finca.js'></script>
+<script type="text/javascript" src='js/constructores/lote.js'></script>
 <script type="text/javascript" src='js/constructores/tablon.js'></script>
 <!-- script con el funcionamiento de este formulario -->
 <script type="text/javascript" src='js/arrimadaVsCampo.js'></script>
+<script type="text/javascript" src='js/productor.js'></script>
+<script type="text/javascript" src='js/finca.js'></script>
+<script type="text/javascript" src='js/lote.js'></script>
+<script type="text/javascript" src='js/tablon.js'></script>
 
 
 <script type="text/javascript">
@@ -49,6 +56,7 @@
 	var UI = new Arquitecto();
 	UI.agregarConstructor(productor);
 	UI.agregarConstructor(finca);
+	UI.agregarConstructor(lote);
 	UI.agregarConstructor(tablon);
 	UI.configure({
 		botonera:{
@@ -59,6 +67,11 @@
 					clases: ['btnTablon','mat-bluegrey500','white','md-18'],
 					click: manejarTablon,
 					contenido: 'T'
+				},{
+					tipo:'Lote',
+					clases: ['btnLote','mat-teal500','white','md-18'],
+					click: manejarLote,
+					contenido: 'L'
 				},{
 					tipo:'finca',
 					clases: ['btnFinca','mat-lightgreen500','white','md-18'],
@@ -79,6 +92,11 @@
 					clases: ['btnDia','mat-deeppurple500','white','md-24','material-icons'],
 					click: manejarDia,
 					contenido: 'date_range'
+				},{
+					tipo:'sync',
+					clases: ['btnSync','mat-amber500','white','md-24','material-icons'],
+					click: actualizarTablones,
+					contenido: 'sync'
 				},{
 					tipo:'dash',
 					clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
