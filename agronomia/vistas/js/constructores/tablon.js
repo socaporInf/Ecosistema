@@ -164,27 +164,6 @@ tablon = {
           eslabon: 'simple',
           usaToolTip: true
       }
-    },
-		{
-      tipo: 'campoDeTexto',
-      parametros:{
-          nombre: 'fecha_ultimo_arrime',
-          requerido:false,
-          titulo: 'Fecha Ultimo Arrime',
-          tipo:'simple',
-          eslabon: 'simple',
-          usaToolTip: true
-      }
-    },{
-      tipo: 'campoDeTexto',
-      parametros:{
-          nombre: 'fecha_siembra_corte',
-          requerido:false,
-          titulo: 'Fecha Siembra/Corte',
-          tipo:'simple',
-          eslabon: 'simple',
-          usaToolTip: true
-      }
     }
   ]
 };
