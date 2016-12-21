@@ -103,6 +103,17 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
       $success = '1';
       break;
 
+    case 'guardarCambios':
+      $datos = $this->ValidarCambios($this->aa_Atributos['registros']);
+      if(true){
+        $respuesta['success']=1;
+        $respuesta['datos']=$datos;
+      }else{
+        $respuesta['success']=0;
+        $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(15);
+      }
+      break;
+
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
        $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -135,6 +146,8 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
      $la_respuesta[$x]['azucar'] = $la_registros['azucarprobable'];
      $la_respuesta[$x]['rendimiento'] = $la_registros['rendimiento'];
      $la_respuesta[$x]['pesoneto'] = $la_registros['pesoneto'];
+     $la_respuesta[$x]['codcanicultor'] = $la_registros['codcanicultor'];
+     $la_respuesta[$x]['letrafinca'] = $la_registros['letrafinca'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -254,7 +267,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
     $cadenaBusqueda.= "and fechadia ='".$this->aa_Atributos['diaZafra']['fecha_dia']."' ";
    }
    if($this->aa_Atributos['valor']!=''){
-     $cadenaBusqueda .="and nombrefinca like '%".$this->aa_Atributos['valor']."%'";
+     $cadenaBusqueda .="and finca like '%".$this->aa_Atributos['valor']."%'";
    }
    return $cadenaBusqueda;
  }
@@ -287,5 +300,39 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
     }
     return $dia;
   }
+  private function ValidarCambios($datos){
+    $datos = json_decode($datos);
+    $resultado = array();
+    $this->f_Con();
+    $this->f_Begin();
+    for($x = 0; $x<count($datos);$x++){
+      $lb_Hecho = false;
+      $ls_Sql = "SELECT * from agronomia.vtablon_rep where codigo_tablon = '".$datos[$x]->tablon."'
+                  and codigo_productor='".$datos[$x]->codigo_productor."'
+                  and letra_finca='".$datos[$x]->letra."'";
+      $lr_tabla=$this->f_Filtro($ls_Sql);
+      if($la_registros=$this->f_Arreglo($lr_tabla)){
+        $ls_Sql = "update agronomia.vvalidacion_soca set codigotablon ='".$datos[$x]->tablon."' where boletoromana='".$datos[$x]->boleto."'";
+        $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+        $resultado[$x]['mensaje']='boleto '.$datos[$x]->boleto.': modificado satisfactoriamente<br>';
+        $resultado[$x]['validado']=true;
+        $resultado[$x]['boleto']=$datos[$x]->boleto;
+      }else{
+        $lb_Hecho = true;
+        $resultado[$x]['mensaje']='boleto '.$datos[$x]->boleto.': no existe el tablon '.$datos[$x]->tablon.' en finca '.$datos[$x]->codigo_productor.$datos[$x]->letra.'<br>';
+        $resultado[$x]['validado']=false;
+        $resultado[$x]['boleto']=$datos[$x]->boleto;
+      }
+      $this->f_Cierra($lr_tabla);
+    }
+    if($lb_Hecho){
+      $this->f_Commit();
+    }else{
+      $this->f_RollBack();
+    }
+    $this->f_Des();
+    return $resultado;
+  }
+
 }
 ?>

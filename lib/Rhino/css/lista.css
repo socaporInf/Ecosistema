@@ -209,7 +209,7 @@ div[lista] section[slot] div[celda]{
   position: relative;
 }
 div[lista] section[slot] div[celda] div[edit]{
-  transition: all 0.3s ease-in-out;
+  transition: all 0.1s ease-in-out;
   position: absolute;
   background-color:white;
   width: calc(100% - 4px);

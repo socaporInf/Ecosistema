@@ -38,10 +38,6 @@
 <script type="text/javascript" src='js/constructores/tablon.js'></script>
 <!-- script con el funcionamiento de este formulario -->
 <script type="text/javascript" src='js/arrimadaVsCampo.js'></script>
-<script type="text/javascript" src='js/productor.js'></script>
-<script type="text/javascript" src='js/finca.js'></script>
-<script type="text/javascript" src='js/lote.js'></script>
-<script type="text/javascript" src='js/tablon.js'></script>
 
 
 <script type="text/javascript">
@@ -65,17 +61,23 @@
 				{
 					tipo:'tablon',
 					clases: ['btnTablon','mat-bluegrey500','white','md-18'],
-					click: manejarTablon,
+					click:function(){
+						manejar('tablon');
+					},
 					contenido: 'T'
 				},{
 					tipo:'Lote',
 					clases: ['btnLote','mat-teal500','white','md-18'],
-					click: manejarLote,
+					click:function(){
+						manejar('lote');
+					},
 					contenido: 'L'
 				},{
 					tipo:'finca',
 					clases: ['btnFinca','mat-lightgreen500','white','md-18'],
-					click: manejarFinca,
+					click:function(){
+						manejar('finca');
+					},
 					contenido: 'F'
 				},{
 					tipo:'productor',
@@ -93,10 +95,10 @@
 					click: manejarDia,
 					contenido: 'date_range'
 				},{
-					tipo:'sync',
-					clases: ['btnSync','mat-amber500','white','md-24','material-icons'],
-					click: actualizarTablones,
-					contenido: 'sync'
+					tipo:'guardar',
+					click: function(){
+						guardarCambios();
+					}
 				},{
 					tipo:'dash',
 					clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
