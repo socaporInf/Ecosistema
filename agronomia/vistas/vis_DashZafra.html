@@ -11,6 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
 	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/widgetGraf.css">
 	<link rel="stylesheet" type="text/css" href="css/dashZafra.css">
+	<link rel="stylesheet" type="text/css" href="css/botoneraAgronomia.css">
 </head>
 <body>
 	<div contenedor>
@@ -32,6 +33,7 @@
 <!-- scripts propios del front -->
 <script type="text/javascript" src='js/O_DiaZafra.js'></script>
 <script type="text/javascript" src='js/dashboard.js'></script>
+<script type="text/javascript" src='js/tablon.js'></script>
 <!-- scripts de constructores involucrados -->
 <script type="text/javascript" src='js/constructores/zafra.js'></script>
 
@@ -47,9 +49,18 @@
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
 	UI.agregarConstructor(zafra);
-	UI.configure({});
+	UI.configure({
+		botonera:{
+			botones:[{
+				tipo:'sync',
+				clases:['btnSync','mat-amber500','white','material-icons'],
+				contenido:'sync',
+				click:actualizarTablones
+			},'abrir']
+		}
+	});
 	UI.contGeneral = document.body.querySelector('div[contenedor]');
-	sesion.obtenerSesion();
+	sesion.obtenerSesion().then(construirUI);
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
-sesion.verificarArranque(construirUI);
+
 </script>

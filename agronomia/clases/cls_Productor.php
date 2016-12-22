@@ -100,15 +100,15 @@ class cls_Productor extends cls_Conexion{
  }
  private function f_Listar(){
    $x=0;
-   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%'";
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%'OR codigo_productor::text like '%".$this->aa_Atributos['valor']."%' OR nombre_completo like '%".$this->aa_Atributos['valor']."%'";
    $la_respuesta=array();
    $ls_SqlBase="SELECT * FROM agronomia.vproductor $cadenaBusqueda";
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
-
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['codigo_productor'];
+     $la_respuesta[$x]['nombre']=$la_registros['codigo_productor'].' '.$la_registros['nombre_completo'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
      $la_respuesta[$x]['rif']=$la_registros['rif'];
      $x++;

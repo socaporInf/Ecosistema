@@ -106,7 +106,7 @@ function construirPie(){
       {
         nombre:'totalizq',
         html:'<section totales>'+
-                '<article total >Total Ton. Caña</article>'+
+                '<article total der>Total Ton. Caña</article>'+
                 '<article valor id="canaizq"></article>'+
                 '<article total >Total Ton. Azucar</article>'+
                 '<article valor id="azuizq"></article>'+
@@ -496,4 +496,252 @@ function cambiarGrupal(){
       UI.elementos.modalWindow.eliminarUltimaCapa();
     }
   };
+}
+
+function manejarProductor(){
+  var modal = UI.crearVentanaModal({
+    contenido: 'ancho',
+    cabecera:{
+      html: 'Verificacion de Rif',
+      clases:['verificacion']
+    },
+    cuerpo:{
+      tipo:'nuevo',
+      formulario: {
+        campos:[UI.buscarConstructor('productor').campos[0]]
+      },
+    },
+    pie:{
+        html:'<button type="button" class="mat-text-but" ver>Verificar</button>'+
+            '<button type="button" class="mat-text-but" reg>Registrar sin Rif</button>',
+        clases:['operaciones']
+    }
+  });
+  modal.nodo.querySelector('button[reg]').onclick = function(){
+    registrar();
+  };
+  modal.nodo.querySelector('button[ver]').onclick = function(){
+    verificar();
+  };
+}
+function verificar() {
+  var modal = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+  var rif =  modal.partes.cuerpo.formulario.buscarCampo('rif').captarValor();
+  if(rif){
+    var peticion = {
+       modulo: "global",
+       entidad: "organizacion",
+       operacion: "buscarRegistro",
+       codigo: rif
+    };
+    var cuadro = {
+      contenedor: modal.partes.cuerpo.nodo,
+      cuadro:{
+        nombre: 'verificacionRif',
+        mensaje: 'Verificando Rif en la Base de Datos'
+      }
+    };
+    torque.manejarOperacion(peticion,cuadro).then(function(respuesta){
+      cambiarFormularioProductor({
+        tipo:'modificar',
+        formulario:UI.buscarConstructor('productor')
+      });
+      var formulario = modal.partes.cuerpo.formulario;
+      if(respuesta.success){
+        formulario.asignarValores(respuesta.registros);
+        formulario.deshabilitar();
+        formulario.buscarCampo('codigo_productor').habilitar();
+      }else{
+        formulario.buscarCampo('rif').asignarValor(rif);
+        formulario.buscarCampo('rif').deshabilitar();
+      }
+
+      modal.nodo.querySelector('button.icon-guardar-indigo-32').onclick = function(){
+        if(modal.partes.cuerpo.formulario.validar()){
+          var peticion = UI.juntarObjetos({
+             modulo: "agronomia",
+             entidad: "productor",
+             operacion: "guardar"
+          },formulario.captarValores());
+          var cuadro={
+            contenedor:modal.partes.cuerpo.nodo,
+            cuadro:{
+              nombre: 'guardarProductor',
+              mensaje: 'Guardando Productor'
+            }
+          };
+          torque.manejarOperacion(peticion,cuadro).then(function(respuesta){
+            modal.convertirEnMensaje(respuesta.mensaje);
+          });
+        }else{
+          UI.agregarToasts({
+            texto: 'Rellene el campo para continuar',
+            tipo: 'web-arriba-derecha'
+          });
+        }
+      };
+    });
+  }else{
+      UI.agregarToasts({
+        texto: 'Rellene el campo para poder verificar',
+        tipo: 'web-arriba-derecha-alto'
+      });
+  }
+}
+function registrar(){
+    var modal = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+
+    cambiarFormularioProductor({
+      tipo:'nuevo',
+      formulario:{
+        campos: [UI.buscarConstructor('productor').campos[1]]
+      }
+    });
+    modal.nodo.querySelector('button.icon-guardar-indigo-32').onclick = function(){
+      if(modal.partes.cuerpo.formulario.validar()){
+        var peticion = {
+           modulo: "agronomia",
+           entidad: "productor",
+           operacion: "guardarSinRif",
+           codigo_productor: modal.partes.cuerpo.formulario.buscarCampo('codigo_productor').captarValor()
+        };
+        var cuadro={
+          contenedor:modal.partes.cuerpo.nodo,
+          cuadro:{
+            nombre: 'guardarProductor',
+            mensaje: 'Guardando Productor'
+          }
+        };
+        torque.manejarOperacion(peticion,cuadro).then(function(respuesta){
+          modal.convertirEnMensaje(respuesta.mensaje);
+        });
+      }else{
+        UI.agregarToasts({
+          texto: 'Rellene el campo para continuar',
+          tipo: 'web-arriba-derecha'
+        });
+      }
+    };
+}
+function cambiarFormularioProductor(cuerpo){
+  var modal = UI.elementos.modalWindow.buscarUltimaCapaContenido();
+  //cambios cabecera
+  modal.partes.cabecera.nodo.classList.remove('verificacion');
+  modal.partes.cabecera.nodo.innerHTML='Registrar Productor';
+
+  //cambios cuerpo
+  modal.partes.cuerpo.nodo.innerHTML="";
+  modal.partes.cuerpo.agregarFormulario(cuerpo);
+
+  //cambio pie
+  modal.partes.pie.nodo.classList.remove('operaciones');
+  modal.partes.pie.nodo.classList.add('botonera');
+  modal.partes.pie.nodo.innerHTML='<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
+        '<button type="button" class="icon icon-cerrar-rojo-32"> </button>';
+
+  //funcionamiento botones
+  modal.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
+    UI.elementos.modalWindow.eliminarUltimaCapa();
+  };
+}
+function manejar(modelo,nodo){
+  var ventana = UI.crearVentanaModal({
+        cabecera:{
+            html: 'Registrar de Lote'
+        },
+        cuerpo:{
+            formulario: UI.buscarConstructor(modelo), //objeto constructor
+            tipo: 'nuevo', //operacion a realizar,
+        },
+        pie:{
+            clases:['botonera'],
+            html: '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
+                  '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'
+        }
+    });
+    ventana.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick=function(){
+      UI.elementos.modalWindow.eliminarUltimaCapa();
+    };
+    if(nodo){
+      ventana.partes.cuerpo.formulario.buscarCampo('codigo_tablon').asignarValor(nodo.querySelector('td['+modelo+']').textContent.trim());
+    }
+    ventana.partes.pie.nodo.querySelector('button.icon-guardar-indigo-32').onclick=function(){
+      var formulario = ventana.partes.cuerpo.formulario;
+      if(formulario.validar()){
+        var peticion = UI.juntarObjetos({
+           modulo: "agronomia",
+           entidad: modelo,
+           operacion: "guardar",
+        },formulario.captarValores());
+        var cuadro = {
+          contenedor:ventana.partes.cuerpo.nodo,
+          cuadro:{
+            nombre: modelo,
+            mensaje: 'Guardando Datos de '+modelo
+          }
+        };
+        torque.manejarOperacion(peticion,cuadro).then(function(respuesta){
+          ventana.convertirEnMensaje(respuesta.mensaje);
+        });
+      }else{
+          UI.agregarToasts({
+            texto: 'Rellene todos los campos para continuar',
+            tipo: 'web-arriba-derecha-alto'
+          });
+      }
+    };
+}
+function guardarCambios(){
+  var campo = UI.buscarVentana('campo');
+  var cambios = [];
+  campo.Slots.forEach(function(slot){
+    if(slot.buscarCelda('tablon').captarValor()!==slot.buscarCelda('tablon').atributos.valor.trim()){
+      cambios.push({
+        tablon:slot.buscarCelda('tablon').captarValor(),
+        boleto:slot.buscarCelda('boleto').captarValor(),
+        codigo_productor:slot.atributos.codcanicultor,
+        letra:slot.atributos.letrafinca
+      });
+    }
+  });
+  if(cambios.length){
+
+    var mensaje = UI.crearMensaje({
+      nombre_tipo:'INFORMACION',
+      titulo: 'Guardando',
+      cuerpo:''
+    });
+
+    var peticion = {
+       modulo: "agronomia",
+       entidad: "arrimadaVsCampo",
+       operacion: "guardarCambios",
+       registros: JSON.stringify(cambios)
+    };
+
+    var cuadro = {
+      contenedor: mensaje.partes.cuerpo.nodo,
+      cuadro:{
+        nombre: 'guardandoCampo',
+        mensaje: 'Validando y Guardando cambios'
+      }
+    };
+    torque.manejarOperacion(peticion,cuadro)
+      .then(function(respuesta){
+        if(respuesta.success){
+          UI.buscarVentana('arrimada').recargar();
+          UI.buscarVentana('campo').recargar();
+          UI.agregarToasts({
+            texto: 'Operacion Exitosa',
+            tipo: 'web-arriba-derecha'
+          });
+          var html = '';
+          console.log(respuesta);
+          respuesta.datos.forEach(function(each){
+            html+=each.mensaje;
+          });
+          mensaje.partes.cuerpo.nodo.innerHTML=html;
+        }
+      });
+  }
 }
