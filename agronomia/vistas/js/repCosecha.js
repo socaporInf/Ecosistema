@@ -193,7 +193,7 @@ function ejecutarMinisterio(){
       //id de la plantilla del reporte dentro jsreport(servidor de reportes)
       var datos = {
         reporte: {"shortid":"rkP2anaMe"},
-        datosRep: {
+        data: {
          "estados" :organizarDatosMinisterio(respuesta.registros),
          "zafra": respuesta.zafra
         }
@@ -237,23 +237,23 @@ function ejecutar(){
           switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('agrupacion').captarValor()){
             case 'T':
               datos.reporte = {"shortid":"r1NEEf7Mg"};
-              datos.datosRep = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
+              datos.data = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
               break;
             case 'R':
               //id de la plantilla del reporte dentro jsreport(servidor de reportes)
               datos.reporte = {"shortid":"BkUi3un-g"};
-              datos.datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+              datos.data = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
               break;
             case 'D':
               //id de la plantilla del reporte dentro jsreport(servidor de reportes)
               datos.reporte = {"shortid":"BJUZmtQzg"};
-              datos.datosRep = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
+              datos.data = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
               break;
           }
           break;
           case 'E':
             datos.reporte = {"shortid":"HJmzQumMx"};
-            datos.datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+            datos.data = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
             datos.presentacion = 'E';
             break;
       }
