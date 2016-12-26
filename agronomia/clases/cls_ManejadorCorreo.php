@@ -84,7 +84,6 @@ class cls_ManejadorCorreo extends cls_Conexion{
 			if($pos !== false){
 				//extaigo la fecha
 				$subject = explode(' ',$correos[$i]['subject']);
-				print_r($subject);
 				if(($subject[0] == 'RV:')||(trim($subject[0]) == '')){
 					$fecha = $subject[6];
 				}else {
