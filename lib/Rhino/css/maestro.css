@@ -1,6 +1,9 @@
 div[lista][mat-window].maestro{
-    width: calc( 40% - 50px);
-    float:left;
+  width: calc(40%);
+  float: left;
+}
+div[lista][mat-window].maestro.padre,div[lista][mat-window].maestro.hija{
+  margin-left: calc(20% / 3);
 }
 div[mat-window].maestro:not([lista]){
     transition: all 0.3s ease-in-out;
@@ -14,6 +17,18 @@ div[mat-window].maestro.aparecer{
 div[lista] div.dos{
     width: calc(50%) !important;
 }
+div[lista][mat-window].maestro.hija{
+    margin-top: 70px;
+    margin-bottom: 10px
+}
+div[lista][mat-window].maestro.padre{
+    margin-bottom: 10px
+}
+div[mat-window].maestro:not([lista]).dependiente{
+  margin-top: 10px;
+  width: calc(80% + 20% /3);
+  margin-left: calc(20% / 3);
+}
 @media (max-width: 1000px) {
     div[lista][mat-window].maestro{
         width: calc(40%);
@@ -21,9 +36,10 @@ div[lista] div.dos{
         margin-left: 0px;
     }
     div[lista][mat-window].maestro.hija{
-        margin-top: 70px;
-        margin-bottom: 10px;
         width: calc(60% - 1px);
+    }
+    div[lista][mat-window].maestro.padre{
+        margin-bottom: 10px;
     }
     div[mat-window].maestro:not([lista]){
         width: calc(60% - 1px);
@@ -32,7 +48,8 @@ div[lista] div.dos{
     }
     div[mat-window].maestro:not([lista]).dependiente{
         margin-top: 10px;
-        margin-left: 1px;
+        margin-left: 0px;
+        width: calc(100%);
     }
 }
 @media (max-width: 800px) {

@@ -77,6 +77,17 @@ class cls_Tablon extends cls_Conexion{
        $respuesta = $this->f_Modificar();
        break;
 
+     case "actualizarTablones":
+       $lb_Hecho=$this->f_ActualizarTablones();
+       if($lb_Hecho){
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(30);
+         $success = 1;
+       }else{
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(31);
+         $success = 0;
+       }
+       break;
+
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
        $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -247,6 +258,14 @@ private function f_Buscar(){
      $respuesta['success'] = 1;
    }
    return $respuesta;
+ }
+ private function f_ActualizarTablones(){
+   $lb_Hecho=false;
+   $ls_Sql="select agronomia.spcalc_actualizamaestrotablon()";
+   $this->f_Con();
+   $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+   $this->f_Des();
+   return $lb_Hecho;
  }
 }
 ?>

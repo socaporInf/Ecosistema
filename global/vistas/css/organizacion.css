@@ -1,0 +1,18 @@
+button.btnCta:hover:before,button.btnEmpr:hover:before,button.btnContacto:hover:before{
+  color: white;
+  background-color: inherit;
+  border-radius: 5px;
+  padding: 5px;
+}
+button.btnCta:hover:before{
+  content: 'Cuentas Bancarias';
+  margin-left: -106px;
+}
+button.btnEmpr:hover:before{
+  content: 'Relacion Empresarial';
+  margin-left: -117px;
+}
+button.btnContacto:hover:before{
+  content: 'Datos de Contacto';
+  margin-left: -105px;
+}

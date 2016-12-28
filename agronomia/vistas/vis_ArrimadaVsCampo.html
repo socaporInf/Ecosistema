@@ -11,6 +11,8 @@
 	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
 	<link rel="stylesheet" type="text/css" href="css/arrimadaVsCampo.css">
 	<link rel="stylesheet" type="text/css" href="css/listadoArrimadaVsCampo.css">
+	<link rel="stylesheet" type="text/css" href="css/nucleo.css">
+	<link rel="stylesheet" type="text/css" href="../../global/vistas/css/organizacion.css">
 	<!-- Calendario -->
 	<link href='../../lib/fullcalendar/fullcalendar.css' rel='stylesheet' />
 	<link href='../../lib/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -28,10 +30,11 @@
 <!-- scripts PLUGINS-->
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoIdentificacion.js'></script>
-<script type="text/javascript" src='../../lib/Rhino/Plugins/O_Card.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_Card.js'></script>
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/productor.js'></script>
 <script type="text/javascript" src='js/constructores/finca.js'></script>
+<script type="text/javascript" src='js/constructores/lote.js'></script>
 <script type="text/javascript" src='js/constructores/tablon.js'></script>
 <!-- script con el funcionamiento de este formulario -->
 <script type="text/javascript" src='js/arrimadaVsCampo.js'></script>
@@ -49,6 +52,7 @@
 	var UI = new Arquitecto();
 	UI.agregarConstructor(productor);
 	UI.agregarConstructor(finca);
+	UI.agregarConstructor(lote);
 	UI.agregarConstructor(tablon);
 	UI.configure({
 		botonera:{
@@ -57,12 +61,23 @@
 				{
 					tipo:'tablon',
 					clases: ['btnTablon','mat-bluegrey500','white','md-18'],
-					click: manejarTablon,
+					click:function(){
+						manejar('tablon');
+					},
 					contenido: 'T'
+				},{
+					tipo:'Lote',
+					clases: ['btnLote','mat-teal500','white','md-18'],
+					click:function(){
+						manejar('lote');
+					},
+					contenido: 'L'
 				},{
 					tipo:'finca',
 					clases: ['btnFinca','mat-lightgreen500','white','md-18'],
-					click: manejarFinca,
+					click:function(){
+						manejar('finca');
+					},
 					contenido: 'F'
 				},{
 					tipo:'productor',
@@ -80,6 +95,11 @@
 					click: manejarDia,
 					contenido: 'date_range'
 				},{
+					tipo:'guardar',
+					click: function(){
+						guardarCambios();
+					}
+				},{
 					tipo:'dash',
 					clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
 					click: function(){
@@ -91,11 +111,8 @@
 		}
 	});
 
-	sesion.obtenerSesion();
+	sesion.obtenerSesion().then(construirUI);;
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
-
-//ejecuta la funcion una vez que la sesion haya sido recuperada del servidor y construirda del lado del cliente
-sesion.verificarArranque(construirUI);
 </script>
 </html>

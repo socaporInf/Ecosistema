@@ -1,10 +1,11 @@
 <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
+include_once('../../global/clases/cls_Organizacion.php');
 class cls_Productor extends cls_Conexion{
 
  protected $aa_Atributos = array();
- private $aa_Campos = array('codigo_productor','nombre_completo','rif',codigo_tipo_persona,'tipo_persona');
+ private $aa_Campos = array('codigo_productor','nombre_completo','rif','codigo_tipo_persona','tipo_persona');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
@@ -53,6 +54,17 @@ class cls_Productor extends cls_Conexion{
      case 'guardar':
        $lb_Hecho=$this->f_Guardar();
        if($lb_Hecho){
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(9);
+         $success = 1;
+       }else{
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(10);
+         $success = 0;
+       }
+       break;
+
+     case 'guardarSinRif':
+       $lb_Hecho=$this->f_GuardarSinRif();
+       if($lb_Hecho){
          $this->f_BuscarUltimo();
          $respuesta['registros'] = $this->aa_Atributos['registro'];
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(9);
@@ -88,15 +100,15 @@ class cls_Productor extends cls_Conexion{
  }
  private function f_Listar(){
    $x=0;
-   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%'";
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%'OR codigo_productor::text like '%".$this->aa_Atributos['valor']."%' OR nombre_completo like '%".$this->aa_Atributos['valor']."%'";
    $la_respuesta=array();
    $ls_SqlBase="SELECT * FROM agronomia.vproductor $cadenaBusqueda";
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
-
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['codigo_productor'];
+     $la_respuesta[$x]['nombre']=$la_registros['codigo_productor'].' '.$la_registros['nombre_completo'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
      $la_respuesta[$x]['rif']=$la_registros['rif'];
      $x++;
@@ -106,7 +118,7 @@ class cls_Productor extends cls_Conexion{
    $this->f_Des();
    $this->aa_Atributos['registros'] = $la_respuesta;
    $lb_Enc=($x == 0)?false:true;
-   return true;
+   return $lb_Enc;
  }
 
  private function f_ListarProductores(){
@@ -156,17 +168,44 @@ class cls_Productor extends cls_Conexion{
 
    return $lb_Enc;
  }
-
  private function f_Guardar(){
+   $lb_Enc= false;
+   $lobj_Entidad = new cls_Organizacion();
+   //busco si existe ese rif como organizacion
+   $la_Peticion = array('codigo' => $this->aa_Atributos['rif']);
+   $la_Peticion['operacion'] = 'buscarRegistro';
+   $lobj_Entidad->setPeticion($la_Peticion);
+   $lb_Enc = $lobj_Entidad->gestionar()['success'];
+   if(!$lb_Enc){
+     $lb_Hecho=false;
+     $la_Peticion = $this->aa_Atributos;
+     $la_Peticion['operacion'] = 'guardar';
+     $la_Peticion['codigo'] = $this->aa_Atributos['rif'];
+     $lobj_Entidad->setPeticion($la_Peticion);
+     $lb_Hecho = $lobj_Entidad->gestionar();
+   }else{
+     $lb_Hecho=true;
+   }
+   if($lb_Hecho){
+     $lb_Hecho=false;
+     $ls_Sql="INSERT INTO agronomia.vproductor(rif,codigo_productor) values
+        ('".$this->aa_Atributos['rif']."','".$this->aa_Atributos['codigo_productor']."')";
+     $this->f_Con();
+     $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+     $this->f_Des();
+   }
+   return $lb_Hecho;
+ }
+
+ private function f_GuardarSinRif(){
 
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vproductor (codigo_productor,nombre_completo,rif,codigo_tipo_persona) values
-      ('".$this->aa_Atributos['codigo_productor']."','".$this->aa_Atributos['nombre_completo']."',
-       '".$this->aa_Atributos['rif']."','".$this->aa_Atributos['codigo_tipo_persona']."')";
+   $ls_Sql="INSERT INTO agronomia.vproductor_sin_rif (codigo_productor) values
+      ('".$this->aa_Atributos['codigo_productor']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
-   return false;
+   return $lb_Hecho;
  }
    private function f_Modificar(){
       $lb_Hecho=false;

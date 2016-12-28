@@ -47,7 +47,10 @@ div[mat-window].pieArrimada section[sector]{
   float:left;
 }
 div[mat-window] article[total]{
-  width: 25%;
+  width: calc(25% - 50px);
+}
+div[mat-window] article[der]{
+  margin-left:100px;
 }
 div[mat-window] article[valor]{
     border-left: 1px solid #232323;
@@ -88,12 +91,13 @@ td.fc-day-number.rh-activo{
 }
 
 td div[diaZafra]{
-  font-size: 30px;
-    margin-left: calc(50% - 10px);
-    color: white;
-    width: 20px;
-    height: 40px;
-    margin-top: calc(50% - 30px);
+  font-size: 28px;
+  margin-left: calc(50% - 22.5px);
+  color: white;
+  width: 45px;
+  height: 40px;
+  margin-top: calc(50% - 30px);
+  text-align: center;
 }
 section[cuerpo]{
   padding: 0px !important;
@@ -143,7 +147,7 @@ table[faltantes]{
   top: 0px;
   color:white;
 }
-@media only screen and (max-device-width: 480px) {
+@media only screen and (max-device-width: 780px) {
   div[selector]{
     display:none !important;
   }

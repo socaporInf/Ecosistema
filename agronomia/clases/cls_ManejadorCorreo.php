@@ -84,7 +84,7 @@ class cls_ManejadorCorreo extends cls_Conexion{
 			if($pos !== false){
 				//extaigo la fecha
 				$subject = explode(' ',$correos[$i]['subject']);
-				if($subject[0] == 'RV:'){
+				if(($subject[0] == 'RV:')||(trim($subject[0]) == '')){
 					$fecha = $subject[6];
 				}else {
 					$fecha = $subject[5];
@@ -102,6 +102,7 @@ class cls_ManejadorCorreo extends cls_Conexion{
 					$lobj_Zafra->setPeticion(array('operacion' => 'buscarActivo'));
 				}
 				$zafra = $lobj_Zafra->gestionar()['registro'];
+
 				$this->aa_Atributos['fecha_dia'] = $zafra['fecha_dia'];
 				if($zafra['fecha_dia'] == $fecha){
 					return $correos[$i];
@@ -113,8 +114,9 @@ class cls_ManejadorCorreo extends cls_Conexion{
 
 	private function f_ExtraerListado($correo){
 		foreach ($correo['attachment'] as $key => $value) {
-			$extension = explode('.',$key);
-			if($extension[count($extension)-1] == 'xlsx'){
+			$extension = '.xlsx';
+			$pos = strpos($key, $extension);
+			if($pos !== false){
 				return array($key,$value);
 			}
 		}

@@ -105,9 +105,8 @@ function construirUI(){
      entidad: "zafra",
      operacion: "buscarActivo"
   };
-  torque.Operacion(peticion,function(res){
-    var cabecera = UI.elementos.cabecera.nodo;
-    cabecera.innerHTML+='<article Zafra codigo="'+res.registro.codigo+'">Zafra: '+res.registro.nombre+'</article>';
+  torque.Operacion(peticion).then(function(res){
+    UI.elementos.cabecera.agregarHTML('<article Zafra codigo="'+res.registro.codigo+'">Zafra: '+res.registro.nombre+'</article>');
   });
   var formRep = UI.agregarVentana({
     nombre:'formRep',
@@ -188,18 +187,21 @@ function ejecutarMinisterio(){
       mensaje: 'Cargando Datos'
     }
   };
-  torque.manejarOperacion(peticion,cuadro,function(respuesta){
-    generearCuadroSecundario();
-    //console.log(JSON.stringify(datos));
-    //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-    reporte = {"shortid":"rkP2anaMe"};
-    datosRep = {
-       "estados" :organizarDatosMinisterio(respuesta.registros),
-       "zafra": respuesta.zafra
-    };
-    torque.pedirReporte(reporte,datosRep,done,error);
-  });
-
+  torque.manejarOperacion(peticion,cuadro)
+    .then(function(respuesta){
+      generearCuadroSecundario();
+      //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+      var datos = {
+        reporte: {"shortid":"rkP2anaMe"},
+        data: {
+         "estados" :organizarDatosMinisterio(respuesta.registros),
+         "zafra": respuesta.zafra
+        }
+      };
+      return datos;
+    })
+    .then(torque.pedirReporte)
+    .then(done,error);
 }
 function ejecutar(){
   var ventanaCarga = UI.crearVentanaModal({
@@ -226,42 +228,41 @@ function ejecutar(){
       mensaje: 'Cargando Datos'
     }
   };
-  torque.manejarOperacion(peticion,cuadro,function(respuesta){
-    generearCuadroSecundario();
-    var datosRep;
-    var reporte;
-    switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('presentacion').captarValor()) {
-      case 'P':
-        switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('agrupacion').captarValor()){
-          case 'T':
-            reporte = {"shortid":"r1NEEf7Mg"};
-            datosRep = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
-            break;
-          case 'R':
-            //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-            reporte = {"shortid":"BkUi3un-g"};
-            datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
-            break;
-          case 'D':
-            //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-            reporte = {"shortid":"BJUZmtQzg"};
-            datosRep = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
-            break;
-        }
-        torque.pedirReporte(reporte,datosRep,done,error);
-        break;
-        case 'E':
-          reporte = {"shortid":"HJmzQumMx"};
-          datosRep = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
-          torque.pedirReporte(reporte,datosRep,done,error,'E');
+  torque.manejarOperacion(peticion,cuadro)
+    .then(generearCuadroSecundario)
+    .then(function(respuesta){
+      var datos = {};
+      switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('presentacion').captarValor()) {
+        case 'P':
+          switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('agrupacion').captarValor()){
+            case 'T':
+              datos.reporte = {"shortid":"r1NEEf7Mg"};
+              datos.data = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
+              break;
+            case 'R':
+              //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+              datos.reporte = {"shortid":"BkUi3un-g"};
+              datos.data = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+              break;
+            case 'D':
+              //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+              datos.reporte = {"shortid":"BJUZmtQzg"};
+              datos.data = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
+              break;
+          }
           break;
-    }
-
-
-
-  });
+          case 'E':
+            datos.reporte = {"shortid":"HJmzQumMx"};
+            datos.data = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+            datos.presentacion = 'E';
+            break;
+      }
+      return datos;
+    })
+    .then(torque.pedirReporte)
+    .then(done,error);
 }
-function generearCuadroSecundario(){
+function generearCuadroSecundario(respuesta){
   var contenedor = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo;
   //------------Cuadro Carga-------------------------------
     cuadroCarga.contenedor.innerHTML='';
@@ -271,6 +272,7 @@ function generearCuadroSecundario(){
     },contenedor);
     cuadroDeCarga.style.marginTop = '80px';
   //-----------------------------------------------------------
+  return respuesta;
 }
 var done = function(file){
   if(file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
@@ -278,7 +280,7 @@ var done = function(file){
     vinculo.href = window.URL.createObjectURL(file);
     vinculo.click();
     UI.elementos.modalWindow.eliminarUltimaCapa();
-  }else if(file.type === 'aplication/pdf'){
+  }else if(file.type === 'application/pdf'){
     //cierro cuadro carga secundario
     UI.buscarCuadroCarga('cargandoPDF1').terminarCarga();
     //incrustar pdf en aplicacion
@@ -296,7 +298,8 @@ var done = function(file){
   }
 };
 //callback si existe algun error
-var error = function(){
+var error = function(error){
+  console.log(error);
   var capa = UI.elementos.modalWindow.buscarUltimaCapaContenido();
   capa.convertirEnMensaje({
     titulo: 'Error en Carga de Reporte',
