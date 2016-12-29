@@ -61,6 +61,7 @@ class cls_ManejadorListado extends cls_Conexion{
 							if($indice > 0){
 								$cell = $sheet->getCell('B' . $row);
 								$InvDate = $cell->getValue();
+								date_default_timezone_set('Europe/London');
 								if(PHPExcel_Shared_Date::isDateTime($cell)) {
 										 $rowData[$indice][1] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($InvDate));
 								}

@@ -64,7 +64,6 @@ class cls_ManejadorCorreo extends cls_Conexion{
 		$imap = eden('mail')->imap($parametros['SERVIDOR DE CORREO'], $parametros['DIRECCION DE CORREO'], $parametros['CLAVE DE CORREO'], 993, true);
 		$mailboxes = $imap->getMailboxes();
 		$imap->setActiveMailbox('INBOX')->getActiveMailbox();
-
 		$correos = $imap->getEmails(0, 20);
 		//busco el correo con el listado correcto
 		$correo = $this->f_BuscarListado($correos);
@@ -83,7 +82,7 @@ class cls_ManejadorCorreo extends cls_Conexion{
 			$pos = strpos($cadena_de_texto, $cadena_buscada);
 			if($pos !== false){
 				//extaigo la fecha
-				$subject = explode(' ',$correos[$i]['subject']);
+				$subject = explode(' ',trim($correos[$i]['subject']));
 				if(($subject[0] == 'RV:')||(trim($subject[0]) == '')){
 					$fecha = $subject[6];
 				}else {

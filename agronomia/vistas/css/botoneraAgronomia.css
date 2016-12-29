@@ -43,3 +43,8 @@ button.btnSync:hover:before{
     margin-left:-114px;
     font-family: "Open Sans";
 }
+button.btnReport:hover:before{
+    content: 'Ver Reportes Cosecha';
+    margin-left:-122px;
+    font-family: "Open Sans";
+}

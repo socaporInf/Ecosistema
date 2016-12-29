@@ -112,10 +112,10 @@ class cls_Carga_Validacion extends cls_Conexion{
 		}
 		$lobj_MAC->setPeticion($pet);
 		$archivo = $lobj_MAC->gestionar();
+
 		if($archivo!=false){
 
 			$UID = $lobj_MAC->getAtributos()['UID'];
-
 			//extraigo los datos del archivo
 			$lobj_MAL = new cls_ManejadorListado();
 			$pet = array(
@@ -124,7 +124,8 @@ class cls_Carga_Validacion extends cls_Conexion{
 			);
 			$lobj_MAL->setPeticion($pet);
 			$data = $lobj_MAL->gestionar();
-
+			//print('<pre>');
+			//print_r($data);
 			if(count($data) > 0){
 				$cabeceras = $this->obtenerCabeceras($data);
 				$datos = $this->obtenerRegistros($data,$UID,$cabeceras);
@@ -166,6 +167,7 @@ class cls_Carga_Validacion extends cls_Conexion{
 								'operacion' => 'cambioAtributos',
 								'codigo_estado_datos' => 37
 							);
+							$success=0;
 							$this->f_RollBack();
 						}
 					}else {
@@ -182,6 +184,7 @@ class cls_Carga_Validacion extends cls_Conexion{
 								'operacion' => 'cambioAtributos',
 								'codigo_estado_datos' => 37
 							);
+							$success=0;
 							$this->f_RollBack();
 						}else {
 							$lb_hecho = false;
@@ -196,6 +199,7 @@ class cls_Carga_Validacion extends cls_Conexion{
 										'operacion' => 'cambioAtributos',
 										'codigo_estado_datos' => 37
 									);
+									$success=0;
 								$this->f_RollBack();
 							}else{
 								//dispario notificacion
