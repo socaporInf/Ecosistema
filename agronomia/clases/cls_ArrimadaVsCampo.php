@@ -4,6 +4,7 @@ include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 include_once('cls_AccesoZona.php');
 include_once('cls_DiaZafra.php');
 include_once('cls_ProcesoDiaZafra.php');
+include_once('cls_Tablon.php');
 class cls_ArrimadaVsCampo extends cls_Conexion{
 
  protected $aa_Atributos = array();
@@ -326,6 +327,9 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
       $this->f_Cierra($lr_tabla);
     }
     if($lb_Hecho){
+      var $tablon = new cls_Tablon();
+      $tablon->setPeticion(array('operacion' => 'actualizarTablones' ));
+      $tablon->gestionar();
       $this->f_Commit();
     }else{
       $this->f_RollBack();

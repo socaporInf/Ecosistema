@@ -296,7 +296,7 @@ function crearLatDer(){
   lat.buscarMayor = function(){
     var mayor = 0;
     for (var i = 0; i < this.dias.length; i++) {
-      if(this.dias[i].atributos.numero > mayor){
+      if(parseInt(this.dias[i].atributos.numero) > parseInt(mayor)){
         mayor = this.dias[i].atributos.numero;
       }
     }
@@ -478,7 +478,7 @@ function construirGraficos(contenedor,dataRep){
       construirGrafPie({
         "nombre": 'toneladasPorZona',
         "titulo": 'Toneladas de Caña',
-        "datos": dataRep.AzucarPorZona.datos,
+        "datos": dataRep.toneladasPorZona.datos,
         "contenedor": contenedor
       });
    }
@@ -537,9 +537,9 @@ function armarSerieLineZafra(datos,categorias,zonas){
     //lleno los datos en el espacio correcto
     for (j = 0; j < datos.length; j++) {
       if(datos[j].codigo_zona === zonas[i].codigo){
-        serie.data[parseInt(datos[j].numero)] = parseFloat(datos[j].valor);
+        serie.data[parseInt(datos[j].numero)-1] = parseFloat(datos[j].valor);
       }
-    }
+    }    
     for (j = 0;j  < categorias.length; j++) {
       if(!serie.data[j]){
         serie.data[j] = 0.00;
