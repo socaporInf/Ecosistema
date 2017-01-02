@@ -14,15 +14,14 @@ div[mat-window] section[sector] aside{
 	height: 50px;
 	float: left;
 }
-aside.clave-grande{
-	background-repeat: no-repeat;
-	background-position: 4px;
-	background-image:url(../imagenes/clave_grande.png);
+div[mat-window] section[sector] section[texto]{
+	float:right;
+	width: calc(100% - 50px);
+	margin-left: 2px;
 }
-aside.interrogacion-grande{	
-	background-repeat: no-repeat;
-	background-position: 4px;
-	background-image:url(../imagenes/help.png);
+div[mat-window].cambio-clave section[titulo]{
+	background-color:#607D8B;
+
 }
 /*-----------------------------Division Operaciones--------------------------------*/
 div[division-operaciones]{
