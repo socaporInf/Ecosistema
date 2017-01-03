@@ -143,9 +143,9 @@ function ejecutar(){
       .then(generearCuadroSecundario)
       .then(function(respuesta){
         var datos = {};
-        switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('presentacion').captarValor()) {
+        switch (UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('presentacion').captarValor()) {
           case 'P':
-            switch (UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('agrupacion').captarValor()){
+            switch (UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('agrupacion').captarValor()){
               case 'T':
                 datos.reporte = {"shortid":"r1NEEf7Mg"};
                 datos.data = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
