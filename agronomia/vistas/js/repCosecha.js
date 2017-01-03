@@ -1,104 +1,3 @@
-var form = {
-  campos:[
-    {
-      tipo : 'campoBusqueda',
-      parametros : {
-        titulo:'Zona',
-        nombre: 'zona',
-        requerido:true,
-        eslabon:'simple',
-        peticion:{
-           modulo: "agronomia",
-           entidad: "zona",
-           operacion: "buscar"
-        },
-        onclickSlot:function(campo){
-          var campoDep = UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('finca');
-          campoDep.atributos.peticion.codigo_zona = campo.captarValor();
-          campoDep.habilitar();
-          campoDep.limpiar();
-        },
-        cuadro: {nombre: 'listaZonas',mensaje: 'Cargando Zonas'}
-      }
-    },
-    {
-      tipo : 'campoBusqueda',
-      parametros : {
-        titulo:'Finca',
-        nombre: 'finca',
-        requerido:true,
-        eslabon:'simple',
-        peticion:{
-          modulo: "agronomia",
-          entidad: "finca",
-          operacion: "buscarPorZona"
-        },
-        cuadro: {nombre: 'listafinca',mensaje: 'Cargando fincas'}
-        }
-    },
-    {
-      tipo : 'campoBusqueda',
-      parametros : {
-        titulo:'Municipio',
-        nombre: 'municipio',
-        requerido:true,
-        eslabon:'simple',
-        peticion:{
-           modulo: "global",
-           entidad: "municipio",
-           operacion: "buscar"
-        },
-        cuadro: {nombre: 'listaMunicipio',mensaje: 'Cargando Municipios'}
-      }
-    },
-    {
-      tipo: 'radio',
-      parametros : {
-        nombre: 'agrupacion',
-        titulo: 'Nivel de Detalle',
-        eslabon : 'area',
-        valor: 'T',
-        opciones:[
-          {nombre:'Resumido Total(Zona)',valor:'T'},
-          {nombre:'Resumido(Finca)',valor:'R'},
-          {nombre:'Detallado(Tablon)',valor:'D'}
-        ]
-      }
-    },
-    {
-      tipo: 'radio',
-      parametros : {
-        nombre: 'presentacion',
-        titulo: 'Presentación',
-        eslabon : 'doble',
-        valor: 'P',
-        opciones:[
-          {nombre:'PDF',valor:'P'},
-          {nombre:'Excel',valor:'E'}
-        ]
-      }
-    }
-  ]
-};
-var Ministerio = {
-  campos:[
-    {
-      tipo : 'campoBusqueda',
-      parametros : {
-        titulo:'Municipio',
-        nombre: 'municipio',
-        requerido:true,
-        eslabon:'simple',
-        peticion:{
-           modulo: "global",
-           entidad: "municipio",
-           operacion: "buscar"
-        },
-        cuadro: {nombre: 'listaMunicipio',mensaje: 'Cargando Municipios'}
-      }
-    }
-  ]
-};
 function construirUI(){
   var peticion = {
      modulo: "agronomia",
@@ -108,51 +7,27 @@ function construirUI(){
   torque.Operacion(peticion).then(function(res){
     UI.elementos.cabecera.agregarHTML('<article Zafra codigo="'+res.registro.codigo+'">Zafra: '+res.registro.nombre+'</article>');
   });
-  var formRep = UI.agregarVentana({
-    nombre:'formRep',
+  //form resumen finca
+  agregarForm(form,'ResumenFinca','Resumen Finca',ejecutar);
+  //form Ministerio
+  agregarForm(Ministerio,'Ministerio','Resumen Ministerio',ejecutarMinisterio);
+  //form transporte
+  //agregarForm(Transporte,'Transporte','Transporte Caña',ejecutarTrans);
+}
+function agregarForm(formulario,nombre,titulo,ejecutarReporte){
+  var form = UI.agregarVentana({
+    nombre:'form'+nombre,
     tipo: 'ventana',
     clases: ['form-rep'],
     titulo: {
       tipo:'inverso',
-      html:'Resumen Finca Estimado vs Real'
+      html:titulo
     },
     sectores:[
       {
-        nombre:'form',
+        nombre:'form'+nombre,
         tipo: 'nuevo',
-        formulario: form
-      },{
-				nombre:'operaciones',
-				html: '<button class="mat-text-but" ejecutar>Generar Reporte</button>'+
-							'<button class="mat-text-but" limpiar>Limpiar</button>'
-			}
-    ]
-  },document.body.querySelector('div[contenedor]'));
-  formRep.buscarSector('form').formulario.buscarCampo('finca').deshabilitar();
-  var botonera = formRep.buscarSector('operaciones').nodo;
-  //PRIVILEGIO: operacion ejecutar
-  if(sesion.privilegioActivo.buscarOperacion('ejecutar')){
-    botonera.querySelector('button[ejecutar]').onclick= function(){
-      ejecutar();
-    };
-  }
-  botonera.querySelector('button[limpiar]').onclick= function(){
-     UI.buscarVentana('formRep').buscarSector('form').formulario.limpiar();
-     formRep.buscarSector('form').formulario.buscarCampo('finca').deshabilitar();
-  };
-  var formMinisterio = UI.agregarVentana({
-    nombre:'formMinisterio',
-    tipo: 'ventana',
-    clases: ['form-rep'],
-    titulo: {
-      tipo:'inverso',
-      html:'Resumen Ministerio'
-    },
-    sectores:[
-      {
-        nombre:'formMinisterio',
-        tipo: 'nuevo',
-        formulario: Ministerio
+        formulario: formulario
       },{
         nombre:'operaciones',
         html: '<button class="mat-text-but" ejecutar>Generar Reporte</button>'+
@@ -161,10 +36,40 @@ function construirUI(){
     ]
   },document.body.querySelector('div[contenedor]'));
   if(sesion.privilegioActivo.buscarOperacion('ejecutar')){
-    formMinisterio.buscarSector('operaciones').nodo.querySelector('button[ejecutar]').onclick= function(){
-      ejecutarMinisterio();
+    form.buscarSector('operaciones').nodo.querySelector('button[ejecutar]').onclick= function(){
+      ejecutarReporte();
     };
   }
+}
+function ejecutarTrans(){
+  var ventanaCarga = UI.crearVentanaModal({
+    cabecera:{
+      html: 'Transporte Caña'
+    },
+    cuerpo:{html:''}
+  });
+  var peticion = {
+     modulo: "agronomia",
+     entidad: "reportesCosecha",
+     reporte: "trasporte",
+     nucleo: UI.buscarVentana('formTransporte').buscarSector('formTransporte').formulario.buscarCampo('nucleo').captarValor(),
+     zafra: UI.elementos.cabecera.nodo.querySelector('article').getAttribute('codigo')
+  };
+  var cuadro = {
+    contenedor: ventanaCarga.partes.cuerpo.nodo,
+    cuadro: {
+      nombre: 'cargarReporteTransporte',
+      mensaje: 'Cargando Datos'
+    }
+  };
+  torque.manejarOperacion(peticion,cuadro)
+    .then(function(respuesta){
+      generearCuadroSecundario();
+      //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+      console.log(respuesta);
+    });
+    //.then(torque.pedirReporte)
+    //.then(done,error);
 }
 function ejecutarMinisterio(){
   var ventanaCarga = UI.crearVentanaModal({
@@ -204,7 +109,7 @@ function ejecutarMinisterio(){
     .then(done,error);
 }
 function ejecutar(){
-  var form = UI.buscarVentana('formRep').buscarSector('form').formulario;
+  var form = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario;
   if(form.buscarCampo('presentacion').captarValor()==='E'){
     UI.crearMensaje({
       titulo:'Presentacion no disponible',

@@ -327,14 +327,15 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
       $this->f_Cierra($lr_tabla);
     }
     if($lb_Hecho){
-      $tablon = new cls_Tablon();
-      $tablon->setPeticion(array('operacion' => 'actualizarTablones' ));
-      $tablon->gestionar();
       $this->f_Commit();
     }else{
+      print('rollback<br>');
       $this->f_RollBack();
     }
     $this->f_Des();
+    $tablon = new cls_Tablon();
+    $tablon->setPeticion(array('operacion' => 'actualizarTablones' ));
+    $tablon->gestionar();
     return $resultado;
   }
 
