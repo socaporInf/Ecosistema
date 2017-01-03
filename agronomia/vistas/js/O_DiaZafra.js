@@ -161,7 +161,7 @@ var Dia = function(atributos){
         }
         yo.reconstruirNodo();
       }else{
-        UI.elementos.modalWindow.eliminarUltimaCapa();
+        
           UI.agregarToasts({
             texto: 'Listado Cargado correctamente',
             tipo: 'web-arriba-derecha-alto'
