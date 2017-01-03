@@ -54,7 +54,7 @@ class cls_Carga_Validacion extends cls_Conexion{
 	}
 	private function insertarListado($listado){
 		$ls_SqlBase = 'INSERT INTO agronomia.vvalidacion_correo ';
-		$x = 1;
+		$x = 0;
 		do {
 			$lb_hecho = false;
 			//armar Sql
@@ -79,7 +79,7 @@ class cls_Carga_Validacion extends cls_Conexion{
 			//empieza la insercion
 			$lb_hecho = $this->f_Ejecutar($ls_Sql);
 			$x++;
-		} while (($x <= count($listado))&&($lb_hecho));
+		} while (($x < count($listado))&&($lb_hecho));
 
 		return $lb_hecho;
 	}
@@ -94,7 +94,7 @@ class cls_Carga_Validacion extends cls_Conexion{
 	}
 	private function obtenerRegistros($data,$UID,$cabeceras){
 		$datos = array();
-		for ($i=2; $i < count($data) ; $i++) {
+		for ($i=1; $i < count($data) ; $i++) {
 			for ($x=0; $x < count($cabeceras); $x++) {
 				$datos[$i-1][$cabeceras[$x]] = $data[$i][$x];
 			}
