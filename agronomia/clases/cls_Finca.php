@@ -21,14 +21,14 @@ class cls_Finca extends cls_Conexion{
    switch ($this->aa_Atributos['operacion']) {
      case 'buscar':
        $lb_Enc=$this->f_Listar();
-       if($lb_Enc){
-         $success=1;
-         $respuesta['registros']=$this->aa_Atributos['registros'];
-         $respuesta['paginas']=$this->aa_Atributos['paginas'];
-       }else{
-         $respuesta['success'] = 0;
-         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
-       }
+           if($lb_Enc){
+             $success=1;
+             $respuesta['registros']=$this->aa_Atributos['registros'];
+             $respuesta['paginas']=$this->aa_Atributos['paginas'];
+           }else{
+             $respuesta['success'] = 0;
+             $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+           }
        break;
 
 
@@ -56,14 +56,15 @@ class cls_Finca extends cls_Conexion{
      break;
 
      case 'buscarPorZona':
-      $registros=$this->f_BuscarFincasPorZona();
-      if(count($registros)!=0){
-        $success=1;
-        $respuesta['registros']=$registros;
-      }else{
-        $respuesta['success'] = 0;
-        $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
-      }
+      $lb_Enc=$this->f_BuscarFincasPorZona();
+      if($lb_Enc){
+         $success=1;
+         $respuesta['registros']=$this->aa_Atributos['registros'];
+         $respuesta['paginas']=$this->aa_Atributos['paginas'];
+        }else{
+         $respuesta['success'] = 0;
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+        }
       break;
 
      case 'buscarRegistro':
@@ -167,7 +168,7 @@ class cls_Finca extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['nombre_finca_completo']=$la_registros['codigo_productor'].'-'.$la_registros['letra'];
+     $la_respuesta[$x]['nombre_finca_completo']=$la_registros['codigo_productor'].'-'.$la_registros['letra'].' '.$la_registros['nombre_finca'];
      $la_respuesta[$x]['nombre_finca']=$la_registros['nombre_finca'];
      $la_respuesta[$x]['codigo_tipo_afiliacion']=$la_registros['codigo_tipo_afiliacion'];
      $la_respuesta[$x]['codigo_productor']=$la_registros['codigo_productor'];
@@ -190,13 +191,16 @@ class cls_Finca extends cls_Conexion{
    return $la_respuesta;
 }
 private function f_BuscarFincasPorZona(){
-  $x=0;
+   $x=0;
   $la_respuesta=array();
-  $ls_Sql="SELECT * FROM agronomia.vfinca  WHERE codigo_zona = ".$this->aa_Atributos['codigo_zona']." order by codigo_productor,letra";
+  $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_productor||'-'||letra like '%".$this->aa_Atributos['valor']."%'";
+  $ls_SqlBase="SELECT * FROM agronomia.vfinca  WHERE codigo_zona = ".$this->aa_Atributos['codigo_zona']."  $cadenaBusqueda";
+  $orden = " order by codigo_productor,letra ";
+  $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
   $this->f_Con();
   $lr_tabla=$this->f_Filtro($ls_Sql);
   while($la_registros=$this->f_Arreglo($lr_tabla)){
-    $la_respuesta[$x]['nombre']=$la_registros['codigo_productor'].'-'.$la_registros['letra'];
+    $la_respuesta[$x]['nombre']=$la_registros['codigo_productor'].'-'.$la_registros['letra'].' '.$la_registros['nombre_finca'];
     $la_respuesta[$x]['nombre_finca']=$la_registros['nombre_finca'];
     $la_respuesta[$x]['codigo_tipo_afiliacion']=$la_registros['codigo_tipo_afiliacion'];
     $la_respuesta[$x]['codigo_productor']=$la_registros['codigo_productor'];
@@ -214,9 +218,11 @@ private function f_BuscarFincasPorZona(){
     $la_respuesta[$x]['id_finca']=$la_registros['id_finca'];
     $x++;
   }
-  $this->f_Cierra($lr_tabla);
-  $this->f_Des();
-  return $la_respuesta;
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return $lb_Enc;
 }
 private function f_Buscar(){
   $lb_Enc = false;

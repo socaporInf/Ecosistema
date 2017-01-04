@@ -13,7 +13,7 @@ var form = {
            operacion: "buscar"
         },
         onclickSlot:function(campo){
-          var campoDep = UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('finca');
+          var campoDep = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('finca');
           campoDep.atributos.peticion.codigo_zona = campo.captarValor();
           campoDep.habilitar();
           campoDep.limpiar();
