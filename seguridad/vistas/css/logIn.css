@@ -1,7 +1,11 @@
 div[contenedor]{
+      background: url('../../../nucleo/vistas/img/header.jpg') no-repeat center center fixed;
+     -webkit-background-size: cover;
+     -moz-background-size: cover;
+     -o-background-size: cover;
+     background-size: cover;
     position: absolute !important;
     height: 100%;
-    background-image:url('../../../nucleo/vistas/img/header.jpg');
 }
 div[capaLog]{
 	position: relative;
