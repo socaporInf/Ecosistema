@@ -146,7 +146,7 @@ class cls_ValidarCorreo extends cls_Conexion{
              codcanicultor,
              letrafinca,
              nombrefinca,
-             codigotablon,
+             trim(codigotablon),
              codigonucleoalce,
              codigonucleocorte,
              codigonucleotrans,
