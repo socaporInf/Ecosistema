@@ -67,7 +67,7 @@ function ejecutarTrans(){
       //id de la plantilla del reporte dentro jsreport(servidor de reportes)
       var datos = {
         reporte:{"shortid":"H1KwwmTSl"},
-        "data":organizarDatosTransporte(respuesta.registros)
+        "data":{"dias":organizarDatosTransporte(respuesta.registros)}
       };
       return datos;
     })
