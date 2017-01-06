@@ -99,6 +99,7 @@ class cls_Nucleo extends cls_Conexion{
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['codigo_nucleo'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
+     $la_respuesta[$x]['nombre']=$la_registros['codigo_nucleo'].' '.$la_registros['nombre_completo'];
      $la_respuesta[$x]['rif']=$la_registros['rif'];
      $x++;
    }

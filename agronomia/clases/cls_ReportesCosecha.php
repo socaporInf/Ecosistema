@@ -51,6 +51,17 @@ class cls_ReportesCosecha extends cls_Conexion{
       }
       break;
 
+    case 'transporte':
+      $registros = $this->mostrarTransporte();
+      if(count($registros['registros'])>0){
+        $respuesta['success'] = 1;
+        $respuesta['registros'] = $registros['registros'];
+        $respuesta['zafra'] = $registros['zafra'];
+      }else{
+          $respuesta['success'] = 0;
+      }
+      break;
+
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
        $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -165,6 +176,31 @@ class cls_ReportesCosecha extends cls_Conexion{
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
    $respuesta["zafra"] = $la_zafra;
+   $respuesta['registros'] = $la_respuesta;
+   return $respuesta;
+ }
+ private function mostrarTransporte(){
+   $x=0;
+   $this->aa_Atributos['nucleo']=($this->aa_Atributos['nucleo']=='null')?'':$this->aa_Atributos['nucleo'];
+   $this->aa_Atributos['desde']=($this->aa_Atributos['desde']=='null')?'':$this->fFechaPHP($this->aa_Atributos['desde']);
+   $this->aa_Atributos['hasta']=($this->aa_Atributos['hasta']=='null')?'':$this->fFechaPHP($this->aa_Atributos['hasta']);
+   $ls_Sql="SELECT * FROM  agronomia.spcon_Transporte('".$this->aa_Atributos['nucleo']."','".$this->aa_Atributos['desde']."','".$this->aa_Atributos['hasta']."')";
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['fechadia'] =$la_registros['fechadia'];
+     $la_respuesta[$x]['codigo_nucleo'] =$la_registros['codigo_nucleo'];
+     $la_respuesta[$x]['nombre_completo'] =$la_registros['nombre_completo'];
+     $la_respuesta[$x]['camion'] =$la_registros['camion'];
+     $la_respuesta[$x]['chuto'] =$la_registros['chuto'];
+     $la_respuesta[$x]['batea'] =$la_registros['batea'];
+     $la_respuesta[$x]['remolque'] =$la_registros['remolque'];
+     $la_respuesta[$x]['sin_identificar'] =$la_registros['sin_identificar'];
+     $la_respuesta[$x]['toneladas'] =$la_registros['toneladas'];
+     $x++;
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
    $respuesta['registros'] = $la_respuesta;
    return $respuesta;
  }

@@ -109,11 +109,31 @@ var Transporte = {
         requerido:true,
         eslabon:'simple',
         peticion:{
-           modulo: "agronmia",
+           modulo: "agronomia",
            entidad: "nucleo",
            operacion: "buscar"
         },
         cuadro: {nombre: 'listaNucleos',mensaje: 'Cargando Nucleos'}
+      }
+    },{
+      tipo : 'campoDeTexto',
+      parametros : {
+        requerido:false,
+        titulo:'Desde',
+        nombre:'desde',
+        tipo:'simple',
+        eslabon:'simple',
+        usaToolTip:true
+      }
+    },{
+      tipo : 'campoDeTexto',
+      parametros : {
+        requerido:false,
+        titulo:'Hasta',
+        nombre:'hasta',
+        tipo:'simple',
+        eslabon:'simple',
+        usaToolTip:true
       }
     }
   ]

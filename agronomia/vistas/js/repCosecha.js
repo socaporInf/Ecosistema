@@ -12,7 +12,7 @@ function construirUI(){
   //form Ministerio
   agregarForm(Ministerio,'Ministerio','Resumen Ministerio',ejecutarMinisterio);
   //form transporte
-  //agregarForm(Transporte,'Transporte','Transporte Caña',ejecutarTrans);
+  agregarForm(Transporte,'Transporte','Transporte Caña',ejecutarTrans);
 }
 function agregarForm(formulario,nombre,titulo,ejecutarReporte){
   var form = UI.agregarVentana({
@@ -48,28 +48,31 @@ function ejecutarTrans(){
     },
     cuerpo:{html:''}
   });
-  var peticion = {
+  var peticion = UI.juntarObjetos({
      modulo: "agronomia",
      entidad: "reportesCosecha",
-     reporte: "trasporte",
-     nucleo: UI.buscarVentana('formTransporte').buscarSector('formTransporte').formulario.buscarCampo('nucleo').captarValor(),
+     reporte: "transporte",
      zafra: UI.elementos.cabecera.nodo.querySelector('article').getAttribute('codigo')
-  };
+  },UI.buscarVentana('formTransporte').buscarSector('formTransporte').formulario.captarValores());
   var cuadro = {
     contenedor: ventanaCarga.partes.cuerpo.nodo,
     cuadro: {
       nombre: 'cargarReporteTransporte',
-      mensaje: 'Cargando Datos'
+      mensaje: 'Cargando Datos',
     }
   };
   torque.manejarOperacion(peticion,cuadro)
     .then(function(respuesta){
       generearCuadroSecundario();
       //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-      console.log(respuesta);
-    });
-    //.then(torque.pedirReporte)
-    //.then(done,error);
+      var datos = {
+        reporte:{"shortid":"H1KwwmTSl"},
+        "data":organizarDatosTransporte(respuesta.registros)
+      };
+      return datos;
+    })
+    .then(torque.pedirReporte)
+    .then(done,error);
 }
 function ejecutarMinisterio(){
   var ventanaCarga = UI.crearVentanaModal({

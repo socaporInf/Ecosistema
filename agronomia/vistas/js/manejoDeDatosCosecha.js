@@ -58,6 +58,31 @@ function extraerEstados(datos){
   });
   return estados;
 }
+function extraerDias(datos){
+  var dias = [];
+  datos.forEach(function(registro){
+    var validado = false;
+    dias.forEach(function(dia){
+      if(registro.fechadia === dia.fechadia){
+        validado = true;
+        return;
+      }
+    });
+    if(!validado){
+      dias.push({
+        fechadia: registro.fechadia
+      });
+    }
+  });
+  return dias;
+}
+function organizarDatosTransporte(datos){
+  var dias = extraerDias(datos);
+  var sumatorias = ['camion','chuto','batea','remolque','sin_identificar','toneladas'];
+  dias = agregarHijos(dias,datos,'fechadia',sumatorias);
+  return dias;
+}
+/*------------------------------------------------------------------------------------------------------------------*/
 function organizarDatosResumenFinca(tipo,datos){
   var fincas = extraerFincas(datos);
   var zonas = extraerZonas(datos);
