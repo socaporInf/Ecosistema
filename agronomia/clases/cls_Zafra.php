@@ -126,6 +126,15 @@ class cls_Zafra extends cls_Conexion{
      }
      break;
 
+     case "actualizarFechaDia":
+      $lb_Hecho = $this->actualizarFechaDia();
+      if($lb_Hecho){
+        $success = 1;
+      }else{
+        $success=0;
+      }
+      break;
+
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
        $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -338,6 +347,14 @@ class cls_Zafra extends cls_Conexion{
       $datos['color'] = $pa_registros['color'];
     }
     return $datos;
+  }
+  private function actualizarFechaDia(){
+    $lb_Hecho = false;
+    $ls_Sql = "update agronomia.vzafra set fecha_dia ='".$this->aa_Atributos["fecha_dia"]."'";
+    $this->f_Con();
+    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+    $this->f_Des();
+    return $lb_Hecho;
   }
 }
 ?>
