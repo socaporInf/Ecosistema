@@ -3,6 +3,7 @@ include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
 include_once('cls_Carga_Validacion.php');
 include_once('../../seguridad/clases/cls_Proceso.php');
+include_once('cls_Zafra.php');
 class cls_DiaZafra extends cls_Conexion{
 
  protected $aa_Atributos = array();
@@ -87,6 +88,14 @@ class cls_DiaZafra extends cls_Conexion{
     case 'abrirDia':
       $this->aa_Atributos['estado_dia_zafra'] = 'A';
       $respuesta = $this->f_CambioAtributo();
+      $zafra = new cls_Zafra;
+      $zafra->setPeticion(
+        array(
+          'fecha_dia' => $this->aa_Atributos['fecha_dia'],
+          'operacion'=> 'actualizarFechaDia'
+        )
+      );
+      $zafra->gestionar();
       break;
 
    case 'cerrarDia':

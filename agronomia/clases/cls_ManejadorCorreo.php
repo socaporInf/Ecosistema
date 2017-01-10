@@ -114,6 +114,7 @@ class cls_ManejadorCorreo extends cls_Conexion{
 	private function f_ExtraerListado($correo){
 		foreach ($correo['attachment'] as $key => $value) {
 			$extension = '.xlsx';
+			print($key);
 			$pos = strpos($key, $extension);
 			if($pos !== false){
 				return array($key,$value);
