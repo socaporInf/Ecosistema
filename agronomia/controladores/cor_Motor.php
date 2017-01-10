@@ -49,11 +49,6 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_Carga_Validacion;
 			break;
 
-		case 'detDeduccionLiquidacion':
-			include_once('../clases/cls_DetDeduccionLiquidacion.php');
-			$lobj_Entidad = new cls_DetDeduccionLiquidacion;
-			break;
-
 			case 'detTabuladorLabor':
 				include_once('../clases/cls_DetTabuladorLabor.php');
 				$lobj_Entidad = new cls_DetTabuladorLabor;
