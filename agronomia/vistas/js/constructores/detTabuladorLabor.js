@@ -11,7 +11,7 @@ var detTabuladorLabor= {
         titulo:'Tabulador',
         nombre:'codigo_tabulador',
         requerido:true,
-        eslabon:'area',
+        eslabon:'simple',
         peticion: {
   			   modulo: "agronomia",
   			   entidad: "tabuladorLabor",
@@ -25,7 +25,7 @@ var detTabuladorLabor= {
         titulo:'Labor',
         nombre:'codigo_labor',
         requerido:true,
-        eslabon:'area',
+        eslabon:'simple',
         peticion: {
   			   modulo: "seguridad",
   			   entidad: "registroVirtual",
@@ -33,6 +33,20 @@ var detTabuladorLabor= {
   			   nombre_tabla: "LABOR"
 				 },
         cuadro: {nombre: 'listaComponentes',mensaje: 'Cargando Labores'}
+      }
+    },{
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'Concepto',
+        nombre:'codigo_concepto',
+        requerido:true,
+        eslabon:'simple',
+        peticion: {
+  			   modulo: "agronomia",
+  			   entidad: "concepto",
+  			   operacion: "buscar"
+				 },
+        cuadro: {nombre: 'listaConcepto',mensaje: 'Cargando concepto'}
       }
     },{
 			tipo: 'campoDeTexto',

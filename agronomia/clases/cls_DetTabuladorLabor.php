@@ -91,6 +91,7 @@ class cls_DetTabuladorLabor extends cls_Conexion{
      $la_respuesta[$x]['nombre_labor']=$la_registros['nombre_labor'];
      $la_respuesta[$x]['codigo_labor']=$la_registros['codigo_labor'];
      $la_respuesta[$x]['codigo_tabulador']=$la_registros['codigo_tabulador'];
+     $la_respuesta[$x]['codigo_concepto']=$la_registros['codigo_concepto'];
      $la_respuesta[$x]['fecha_desde']=$this->fFechaBD($la_registros['fecha_desde']);
      $la_respuesta[$x]['fecha_hasta']=$this->fFechaBD($la_registros['fecha_hasta']);
      $x++;
@@ -112,6 +113,7 @@ class cls_DetTabuladorLabor extends cls_Conexion{
      $la_respuesta['codigo']=$la_registros['codigo'];
      $la_respuesta['codigo_labor']=$la_registros['codigo_labor'];
      $la_respuesta['codigo_tabulador']=$la_registros['codigo_tabulador'];
+     $la_respuesta['codigo_concepto']=$la_registros['codigo_concepto'];
      $la_respuesta['fecha_desde']=$this->fFechaBD($la_registros['fecha_desde']);
      $la_respuesta['fecha_hasta']=$this->fFechaBD($la_registros['fecha_hasta']);
      $lb_Enc=true;
@@ -151,6 +153,7 @@ class cls_DetTabuladorLabor extends cls_Conexion{
      $la_respuesta['codigo_labor']=$la_registros['codigo_labor'];
      $la_respuesta['codigo_concepto']=$la_registros['codigo_concepto'];
      $la_respuesta['codigo_tabulador']=$la_registros['codigo_tabulador'];
+     $la_respuesta['codigo_concepto']=$la_registros['codigo_concepto'];
      $la_respuesta['fecha_desde']=$this->fFechaBD($la_registros['fecha_desde']);
      $la_respuesta['fecha_hasta']=$this->fFechaBD($la_registros['fecha_hasta']);
      $lb_Enc=true;

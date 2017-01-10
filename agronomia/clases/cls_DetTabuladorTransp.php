@@ -78,10 +78,10 @@ class cls_DetTabuladorTransp extends cls_Conexion{
    $x=0;
    $la_respuesta=array();
    if(isset($this->aa_Atributos['codigo_padre'])){
-      $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and kilometors::text like '%".$this->aa_Atributos['valor']."%'";
+      $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and cast(kilometros as text) like '%".$this->aa_Atributos['valor']."%'";
       $ls_SqlBase="SELECT * FROM agronomia.vdet_tabulador_transp where codigo_tabulador = ".$this->aa_Atributos['codigo_padre']." $cadenaBusqueda";
    }else{
-      $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where kilometors::text like '%".$this->aa_Atributos['valor']."%'";
+      $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where cast(kilometros as text) like '%".$this->aa_Atributos['valor']."%'";
       $ls_SqlBase="SELECT * FROM agronomia.vdet_tabulador_transp $cadenaBusqueda";
    }
    $orden = " ORDER BY codigo_tipo_carretera";
