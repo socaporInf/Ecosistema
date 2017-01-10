@@ -160,6 +160,7 @@ function crearLatIzq(){
           //categorias
           categorias = armarCategorias(datos,categorias);
           series = armarSerieLineZafra(datos,categorias,zonas);
+          categorias = ajustarCategorias(series[0]);
           cardTime.atributos.series = series;
           cardTime.atributos.categorias = categorias;
           cardTime.construirGrafLinea();
@@ -517,7 +518,7 @@ function armarCategorias(datos,categorias){
       }
     }
     if(!encontrado){
-      categorias.push(datos[i].numero);
+      categorias.push(parseInt(datos[i].numero));
     }
   }
   //organizo el arreglo
@@ -539,7 +540,7 @@ function armarSerieLineZafra(datos,categorias,zonas){
       if(datos[j].codigo_zona === zonas[i].codigo){
         serie.data[parseInt(datos[j].numero)-1] = parseFloat(datos[j].valor);
       }
-    }    
+    }
     for (j = 0;j  < categorias.length; j++) {
       if(!serie.data[j]){
         serie.data[j] = 0.00;
@@ -563,4 +564,13 @@ function transformarCampos(campos){
   });
   campos.splice(indice,1);
   return campos;
+}
+function ajustarCategorias(serie){
+  var categorias=[];
+  var c=0;
+  serie.data.forEach(function(each){
+      c++;
+      categorias.push(c);
+  });
+  return categorias;
 }

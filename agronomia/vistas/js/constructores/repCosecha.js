@@ -83,18 +83,24 @@ var form = {
 var Ministerio = {
   campos:[
     {
-      tipo : 'campoBusqueda',
+      tipo : 'campoDeTexto',
       parametros : {
-        titulo:'Municipio',
-        nombre: 'municipio',
-        requerido:true,
+        requerido:false,
+        titulo:'Desde',
+        nombre:'fecha_desde',
+        tipo:'simple',
         eslabon:'simple',
-        peticion:{
-           modulo: "global",
-           entidad: "municipio",
-           operacion: "buscar"
-        },
-        cuadro: {nombre: 'listaMunicipio',mensaje: 'Cargando Municipios'}
+        usaToolTip:true
+      }
+    },{
+      tipo : 'campoDeTexto',
+      parametros : {
+        requerido:false,
+        titulo:'Hasta',
+        nombre:'fecha_hasta',
+        tipo:'simple',
+        eslabon:'simple',
+        usaToolTip:true
       }
     }
   ]

@@ -160,24 +160,40 @@ class cls_ReportesCosecha extends cls_Conexion{
  }
  private function mostrarMinisterio(){
    $x=0;
-   $this->aa_Atributos['municipio']=($this->aa_Atributos['municipio']=='null')?'':$this->aa_Atributos['municipio'];
-   $this->aa_Atributos['zafra']=($this->aa_Atributos['zafra']=='null')?'':$this->aa_Atributos['zafra'];
-   $ls_Sql="SELECT * FROM  agronomia.spcon_resumenFinca('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','','','')";
+   $this->aa_Atributos['fecha_desde']=($this->aa_Atributos['fecha_desde']=='null')?'':$this->fFechaPHP($this->aa_Atributos['fecha_desde']);
+   $this->aa_Atributos['fecha_hasta']=($this->aa_Atributos['fecha_hasta']=='null')?'':$this->fFechaPHP($this->aa_Atributos['fecha_hasta']);
+   $ls_Sql="SELECT * from agronomia.spcon_ministerio_rango('".$this->aa_Atributos['fecha_desde']."','".$this->aa_Atributos['fecha_hasta']."')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_zafra['fechainicio'] = $this->fFechaBD($la_registros['fechainicio']);
-     $la_zafra['fechafinal'] = $this->fFechaBD($la_registros['fechafinal']);
-     $la_zafra['feczafra'] = $this->fFechaBD($la_registros['feczafra']);
-     $la_zafra['nombrezafra'] = $la_registros['nombrezafra'];
-     $la_respuesta[$x] = $this->recolectarDatos('ministerio',$la_registros);
+     $la_respuesta[$x]['municipio'] =$la_registros['municipio'];
+     $la_respuesta[$x]['nomestado'] =$la_registros['estado'];
+     $la_respuesta[$x]['codestado'] =$la_registros['codigo_estado'];
+     $la_respuesta[$x]['cod_mun'] =$la_registros['cod_mun'];
+     $la_respuesta[$x]['peso'] =$la_registros['peso'];
+     $la_respuesta[$x]['azucar'] =$la_registros['azucar'];
+     $la_respuesta[$x]['area'] =$la_registros['area'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   $respuesta["zafra"] = $la_zafra;
-   $respuesta['registros'] = $la_respuesta;
-   return $respuesta;
+
+   $ls_Sql = "SELECT * from agronomia.vzafra where estado = 'A'";
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   if($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_zafra['fechainicio'] = $this->fFechaBD($la_registros['fecha_inicio']);
+     $la_zafra['fechafinal'] = $this->fFechaBD($la_registros['fecha_final']);
+     $la_zafra['feczafra'] = $this->fFechaBD($la_registros['fecha_dia']);
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   $la_zafra['desde'] = $this->fFechaBD($this->aa_Atributos['fecha_desde']);
+   $la_zafra['hasta'] = $this->fFechaBD($this->aa_Atributos['fecha_hasta']);
+
+   $la_data["zafra"] = $la_zafra;
+   $la_data['registros'] = $la_respuesta;
+   return $la_data;
  }
  private function mostrarTransporte(){
    $x=0;
@@ -188,7 +204,7 @@ class cls_ReportesCosecha extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['fechadia'] =$la_registros['fechadia'];
+     $la_respuesta[$x]['fechadia'] =$this->fFechaBD($la_registros['fechadia']);
      $la_respuesta[$x]['codigo_nucleo'] =$la_registros['codigo_nucleo'];
      $la_respuesta[$x]['nombre_completo'] =$la_registros['nombre_completo'];
      $la_respuesta[$x]['camion'] =$la_registros['camion'];

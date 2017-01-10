@@ -1,43 +1,17 @@
-function organizarDatosMinisterio(fincas){
-  var municipios = extraerMunicipios(fincas);
+function organizarDatosMinisterio(municipios){
   var estados = extraerEstados(municipios);
-  var calcularTotales = ['tacortada','tgzarea','tcanacosrealtotaltn','tartotalton'];
-  municipios = agregarHijos(municipios,fincas,'codmunicipio',calcularTotales);
+  var calcularTotales = ['area','peso','azucar'];
   estados = agregarHijos(estados,municipios,'codestado',calcularTotales);
   municipios.forEach(function(municipio){
-    municipio.rdto = round((municipio.tartotalton * 100 / municipio.tcanacosrealtotaltn),2);
-    municipio.tch = round((municipio.tcanacosrealtotaltn / municipio.tacortada),2);
+    municipio.rdto = round((municipio.azucar * 100 / municipio.peso),2);
+    municipio.tch = round((municipio.peso / municipio.area),2);
   });
   estados.forEach(function(estado){
-    estado.rdto = round((estado.tartotalton * 100 / estado.tcanacosrealtotaltn),2);
-    estado.tch = round((estado.tcanacosrealtotaltn / estado.tacortada),2);
+    estado.rdto = round((estado.azucar * 100 / estado.peso),2);
+    estado.tch = round((estado.peso / estado.area),2);
   });
 
   return estados;
-}
-
-function extraerMunicipios(datos){
-  var municipios = [];
-  datos.forEach(function(registro){
-    var validado = false;
-    municipios.forEach(function(municipio){
-      if(registro.codmunicipio === municipio.codmunicipio){
-        validado = true;
-        return;
-      }
-    });
-
-
-    if(!validado){
-      municipios.push({
-        codmunicipio: registro.codmunicipio,
-        nommunicipio: registro.nommunicipio,
-        codestado: registro.codestado,
-        nomestado: registro.nomestado
-      });
-    }
-  });
-  return municipios;
 }
 function extraerEstados(datos){
   var estados = [];

@@ -81,13 +81,11 @@ function ejecutarMinisterio(){
     },
     cuerpo:{html:''}
   });
-  var peticion = {
+  var peticion = UI.juntarObjetos({
      modulo: "agronomia",
      entidad: "reportesCosecha",
-     reporte: 'ministerio',
-     municipio: UI.buscarVentana('formMinisterio').buscarSector('formMinisterio').formulario.buscarCampo('municipio').captarValor(),
-     zafra: UI.elementos.cabecera.nodo.querySelector('article').getAttribute('codigo')
-  };
+     reporte: 'ministerio'
+  },UI.buscarVentana('formMinisterio').buscarSector('formMinisterio').formulario.captarValores());
   var cuadro = {
     contenedor: ventanaCarga.partes.cuerpo.nodo,
     cuadro: {
@@ -106,6 +104,7 @@ function ejecutarMinisterio(){
          "zafra": respuesta.zafra
         }
       };
+      console.log(JSON.stringify(datos.data));
       return datos;
     })
     .then(torque.pedirReporte)
