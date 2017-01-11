@@ -188,8 +188,8 @@ class cls_ReportesCosecha extends cls_Conexion{
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   $la_zafra['desde']=($this->aa_Atributos['fecha_desde']=='')?$la_zafra['fechainicio']:$this->fFechaPHP($this->aa_Atributos['fecha_desde']);
-   $la_zafra['hasta']=($this->aa_Atributos['fecha_hasta']=='')?$la_zafra['feczafra']:$this->fFechaPHP($this->aa_Atributos['fecha_hasta']);
+   $la_zafra['desde']=($this->aa_Atributos['fecha_desde']=='')?$la_zafra['fechainicio']:$this->fFechaBD($this->aa_Atributos['fecha_desde']);
+   $la_zafra['hasta']=($this->aa_Atributos['fecha_hasta']=='')?$la_zafra['feczafra']:$this->fFechaBD($this->aa_Atributos['fecha_hasta']);
 
    $la_data["zafra"] = $la_zafra;
    $la_data['registros'] = $la_respuesta;
