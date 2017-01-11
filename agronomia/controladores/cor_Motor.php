@@ -27,7 +27,7 @@ exit();
 //------------------------------FIN CUERPO-------------------------------------
 
 //funciones auxiliares
-function obtenerEntidad($entidad){
+function obtenerEntidad($entidad){ 
 	switch ($entidad) {
 		case 'accesoZona':
 			include_once('../clases/cls_AccesoZona.php');
