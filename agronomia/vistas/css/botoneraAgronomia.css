@@ -48,3 +48,18 @@ button.btnReport:hover:before{
     margin-left:-122px;
     font-family: "Open Sans";
 }
+button.btnAperturar:hover:before{
+    content: 'Abrir Calculo';
+    margin-left:-88px;
+    font-family: "Open Sans";
+}
+button.btnCerrar:hover:before{
+    content: 'Cerrar Calculo';
+    margin-left:-88px;
+    font-family: "Open Sans";
+}
+button.btnGenerar:hover:before{
+    content: 'Generar Liquidaciones';
+    margin-left:-122px;
+    font-family: "Open Sans";
+}

@@ -27,7 +27,7 @@ exit();
 //------------------------------FIN CUERPO-------------------------------------
 
 //funciones auxiliares
-function obtenerEntidad($entidad){ 
+function obtenerEntidad($entidad){
 	switch ($entidad) {
 		case 'accesoZona':
 			include_once('../clases/cls_AccesoZona.php');
@@ -37,6 +37,11 @@ function obtenerEntidad($entidad){
 		case 'arrimadaVsCampo':
 			include_once('../clases/cls_ArrimadaVsCampo.php');
 			$lobj_Entidad = new cls_ArrimadaVsCampo;
+			break;
+
+		case 'calculoLiquidacion':
+			include_once('../clases/cls_CalculoLiquidacion.php');
+			$lobj_Entidad = new cls_CalculoLiquidacion;
 			break;
 
 		case 'clase':
@@ -54,15 +59,15 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_Concepto;
 			break;
 
-			case 'detTabuladorLabor':
-				include_once('../clases/cls_DetTabuladorLabor.php');
-				$lobj_Entidad = new cls_DetTabuladorLabor;
-				break;
+		case 'detTabuladorLabor':
+			include_once('../clases/cls_DetTabuladorLabor.php');
+			$lobj_Entidad = new cls_DetTabuladorLabor;
+			break;
 
-			case 'detTabuladorTransp':
-				include_once('../clases/cls_DetTabuladorTransp.php');
-				$lobj_Entidad = new cls_DetTabuladorTransp;
-				break;
+		case 'detTabuladorTransp':
+			include_once('../clases/cls_DetTabuladorTransp.php');
+			$lobj_Entidad = new cls_DetTabuladorTransp;
+			break;
 
 		case 'diaZafra':
 			include_once('../clases/cls_DiaZafra.php');
@@ -97,6 +102,11 @@ function obtenerEntidad($entidad){
 		case 'reportesCosecha':
 			include_once('../clases/cls_ReportesCosecha.php');
 			$lobj_Entidad = new cls_ReportesCosecha;
+			break;
+
+		case 'reportesPagos':
+			include_once('../clases/cls_ReportesPagos.php');
+			$lobj_Entidad = new cls_ReportesPagos;
 			break;
 
 		case 'tablon':
