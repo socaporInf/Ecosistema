@@ -164,7 +164,7 @@ function organizarLiquidaciones(datos){
         }else if(concepto.comportamiento==='D'){
           liquidacion.deducciones.push(concepto);
           liquidacion.total += parseFloat(concepto.tot_con_iva);
-          liquidacion.subtotal += parseFloat(concepto.subtotal);
+          liquidacion.subtotal += parseFloat(concepto.tot_con_iva);
         }
       }
     });
