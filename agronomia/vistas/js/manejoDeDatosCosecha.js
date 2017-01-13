@@ -147,3 +147,61 @@ function agregarHijos(padres,hijos,campoCoparacion,propiedades){
 round = function(number,places) {
   return +(Math.round(number + "e+" + places)  + "e-" + places);
 };
+/*----------------------------------------------------------- Reporte Luidaciones-------------------------------------------------------------------*/
+function organizarLiquidaciones(datos){
+  var liquidaciones = datos.liquidaciones;
+  var detalle = datos.detalle;
+  liquidaciones.forEach(function(liquidacion){
+    liquidacion.deducciones=[];
+    liquidacion.asignaciones=[];
+    liquidacion.total=0;
+    liquidacion.subtotal=0;
+    detalle.forEach(function(concepto){
+      if(concepto.codigo_liquidacion===liquidacion.codigo_liquidacion){
+        if(concepto.comportamiento==='A'){
+          liquidacion.asignaciones.push(concepto);
+          liquidacion.total -= parseFloat(concepto.tot_con_iva);
+        }else if(concepto.comportamiento==='D'){
+          liquidacion.deducciones.push(concepto);
+          liquidacion.total += parseFloat(concepto.tot_con_iva);
+          liquidacion.subtotal += parseFloat(concepto.subtotal);
+        }
+      }
+    });
+  });
+  liquidaciones = liquidaciones.map(organizarLiquidacion);
+  return liquidaciones;
+}
+function extraerDetalle(detalle){
+  var nucleos=extraerNucleos(detalle);
+  var sumatorias=["subtotal","tot_con_iva"];
+  nucleos = agregarHijos(nucleos,detalle,'codigo_nucleo',sumatorias);
+  return nucleos;
+}
+function organizarLiquidacion(liquidacion){
+  var nucleos = extraerDetalle(liquidacion.deducciones);
+  liquidacion.deducciones=nucleos;
+  return liquidacion;
+}
+function extraerNucleos(detalle){
+  var nucleos = [];
+  detalle.forEach(function(each){
+    var validado = false;
+    nucleos.forEach(function(nucleo){
+      if(each.codigo_nucleo === nucleo.codigo_nucleo){
+        validado = true;
+      }
+    });
+    if(!validado){
+      nucleos.push({
+        codigo_nucleo: each.codigo_nucleo,
+        nombre_nucleo: each.nombre_nucleo,
+        comportamiento: each.comportamiento
+      });
+    }
+  });
+  nucleos.sort(function(a,b){
+    return parseInt(a.codigo_nucleo) - parseInt(b.codigo_nucleo);
+  });
+  return nucleos;
+}

@@ -18,10 +18,10 @@ class cls_ReportesPagos extends cls_Conexion{
    switch ($this->aa_Atributos['reporte']) {
     case 'liquidacionNucleo':
       $registros = $this->mostrarLiquidacion();
-      if(count($registros['registros'])>0){
+      if(count($registros['liquidaciones'])>0){
         $respuesta['success'] = 1;
-        $respuesta['registros'] = $registros['registros'];
-        $respuesta['zafra'] = $registros['zafra'];
+        $respuesta['detalle'] = $registros['detalle'];
+        $respuesta['liquidaciones'] = $registros['liquidaciones'];
       }else{
           $respuesta['success'] = 0;
       }
@@ -41,39 +41,50 @@ class cls_ReportesPagos extends cls_Conexion{
 
  private function mostrarLiquidacion(){
    $x=0;
-   $this->aa_Atributos['fecha_desde']=($this->aa_Atributos['fecha_desde']=='null')?'':$this->fFechaPHP($this->aa_Atributos['fecha_desde']);
-   $this->aa_Atributos['fecha_hasta']=($this->aa_Atributos['fecha_hasta']=='null')?'':$this->fFechaPHP($this->aa_Atributos['fecha_hasta']);
-   $ls_Sql="SELECT * from agronomia.spcon_ministerio_rango('".$this->aa_Atributos['fecha_desde']."','".$this->aa_Atributos['fecha_hasta']."')";
+   $this->aa_Atributos['codigo_calculo']=($this->aa_Atributos['codigo_calculo']=='null')?'':$this->aa_Atributos['codigo_calculo'];
+   $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
+   $ls_Sql="SELECT * from agronomia.spcon_liquidacion_cabecera('".$this->aa_Atributos['finca']."','".$this->aa_Atributos['codigo_calculo']."') order by id_liq_nuc";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['municipio'] =$la_registros['municipio'];
-     $la_respuesta[$x]['nomestado'] =$la_registros['estado'];
-     $la_respuesta[$x]['codestado'] =$la_registros['codigo_estado'];
-     $la_respuesta[$x]['cod_mun'] =$la_registros['cod_mun'];
-     $la_respuesta[$x]['peso'] =$la_registros['peso'];
-     $la_respuesta[$x]['azucar'] =$la_registros['azucar'];
-     $la_respuesta[$x]['area'] =$la_registros['area'];
+     $la_liquidaciones[$x]['codigo_liquidacion'] =$la_registros['id_liq_nuc'];
+     $la_liquidaciones[$x]['id_finca'] =$la_registros['id_finca'];
+     $la_liquidaciones[$x]['codigo_productor'] =$la_registros['codigo_productor'];
+     $la_liquidaciones[$x]['finca_letra'] =$la_registros['finca_letra'];
+     $la_liquidaciones[$x]['fecha_calculo'] =$this->fFechaBD($la_registros['fecha_calculo']);
+     $la_liquidaciones[$x]['fecha_inicio'] =$this->fFechaBD($la_registros['fecha_inicio_calculo']);
+     $la_liquidaciones[$x]['fecha_final'] =$this->fFechaBD($la_registros['fecha_final_calculo']);
+     $la_liquidaciones[$x]['codigo_calculo'] =$la_registros['id_calculo'];
+     $la_liquidaciones[$x]['numero'] =$la_registros['numero'];
+     $la_liquidaciones[$x]['zafra'] =$la_registros['zafra'];
+     $la_liquidaciones[$x]['nombre_finca'] =$la_registros['nombre_finca'];
+     $la_liquidaciones[$x]['nombre_productor'] =$la_registros['nombre_productor'];
+     $x++;
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   $ls_Sql="SELECT * from agronomia.spcon_liquidacion_detalle('".$this->aa_Atributos['finca']."','".$this->aa_Atributos['codigo_calculo']."') order by id_liq_nuc,codigo_nucleo";
+   $this->f_Con();
+   $x=0;
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['codigo_liquidacion'] =$la_registros['id_liq_nuc'];
+     $la_respuesta[$x]['tarifa'] =$la_registros['tar'];
+     $la_respuesta[$x]['toneladas'] =$la_registros['ton'];
+     $la_respuesta[$x]['por_iva'] =$la_registros['por_iva'];
+     $la_respuesta[$x]['tot_con_iva'] =$la_registros['tot_con_iva'];
+     $la_respuesta[$x]['subtotal'] =$la_registros['monto'];
+     $la_respuesta[$x]['concepto'] =$la_registros['concepto'];
+     $la_respuesta[$x]['comportamiento'] =$la_registros['comportamiento'];
+     $la_respuesta[$x]['nombre_nucleo'] =$la_registros['nombre_nucleo'];
+     $la_respuesta[$x]['codigo_nucleo'] =$la_registros['codigo_nucleo'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
 
-   $ls_Sql = "SELECT * from agronomia.vzafra where estado = 'A'";
-   $this->f_Con();
-   $lr_tabla=$this->f_Filtro($ls_Sql);
-   if($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_zafra['fechainicio'] = $this->fFechaBD($la_registros['fecha_inicio']);
-     $la_zafra['fechafinal'] = $this->fFechaBD($la_registros['fecha_final']);
-     $la_zafra['feczafra'] = $this->fFechaBD($la_registros['fecha_dia']);
-   }
-   $this->f_Cierra($lr_tabla);
-   $this->f_Des();
-   $la_zafra['desde']=($this->aa_Atributos['fecha_desde']=='')?$la_zafra['fechainicio']:$this->fFechaBD($this->aa_Atributos['fecha_desde']);
-   $la_zafra['hasta']=($this->aa_Atributos['fecha_hasta']=='')?$la_zafra['feczafra']:$this->fFechaBD($this->aa_Atributos['fecha_hasta']);
-
-   $la_data["zafra"] = $la_zafra;
-   $la_data['registros'] = $la_respuesta;
+   $la_data["liquidaciones"] = $la_liquidaciones;
+   $la_data['detalle'] = $la_respuesta;
    return $la_data;
  }
 
