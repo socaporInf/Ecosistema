@@ -105,7 +105,9 @@ function ejecutar(){
        finca: form.buscarCampo('finca').captarValor(),
        tipo: form.buscarCampo('agrupacion').captarValor(),
        municipio: form.buscarCampo('municipio').captarValor(),
-       presentacion: form.buscarCampo('presentacion').captarValor()
+       presentacion: form.buscarCampo('presentacion').captarValor(),
+       codigo_indicador_cana_diferida: form.buscarCampo('codigo_indicador_cana_diferida').captarValor(),
+       zafra: UI.elementos.cabecera.nodo.querySelector('article').getAttribute('codigo')
     };
     var cuadro={
       contenedor: ventanaCarga.partes.cuerpo.nodo,
@@ -123,17 +125,26 @@ function ejecutar(){
             switch (UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('agrupacion').captarValor()){
               case 'T':
                 datos.reporte = {"shortid":"r1NEEf7Mg"};
-                datos.data = { "zonas" :organizarDatosResumenFinca('T',respuesta.registros)};
+                datos.data = {
+                  "zonas" :organizarDatosResumenFinca('T',respuesta.registros),
+                  "zafra": respuesta.zafra
+                };
                 break;
               case 'R':
                 //id de la plantilla del reporte dentro jsreport(servidor de reportes)
                 datos.reporte = {"shortid":"BkUi3un-g"};
-                datos.data = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+                datos.data = {
+                  "zonas" :organizarDatosResumenFinca('R',respuesta.registros),
+                  "zafra": respuesta.zafra
+                };
                 break;
               case 'D':
                 //id de la plantilla del reporte dentro jsreport(servidor de reportes)
                 datos.reporte = {"shortid":"BJUZmtQzg"};
-                datos.data = { "zonas" :organizarDatosResumenFinca('D',respuesta.registros)};
+                datos.data = {
+                  "zonas" :organizarDatosResumenFinca('D',respuesta.registros),
+                  "zafra": respuesta.zafra
+                };
                 break;
             }
             break;
@@ -144,6 +155,7 @@ function ejecutar(){
               datos.presentacion = 'E';
               break;
         }
+        console.log(JSON.stringify(datos.data));
         return datos;
       })
       .then(torque.pedirReporte)

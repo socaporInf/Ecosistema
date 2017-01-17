@@ -70,11 +70,24 @@ var form = {
       parametros : {
         nombre: 'presentacion',
         titulo: 'Presentación',
-        eslabon : 'doble',
+        eslabon : 'dual',
         valor: 'P',
         opciones:[
           {nombre:'PDF',valor:'P'},
           {nombre:'Excel',valor:'E'}
+        ]
+      }
+    },
+    {
+      tipo: 'radio',
+      parametros : {
+        nombre: 'codigo_indicador_cana_diferida',
+        titulo: 'Indicador Diferidas',
+        eslabon : 'dual',
+        valor: '',
+        opciones:[
+          {nombre:'Diferida',valor:'18'},
+          {nombre:'No Diferida',valor:'19'},
         ]
       }
     }

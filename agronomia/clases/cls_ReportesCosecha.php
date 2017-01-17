@@ -78,13 +78,29 @@ class cls_ReportesCosecha extends cls_Conexion{
    $this->aa_Atributos['municipio']=($this->aa_Atributos['municipio']=='null')?'':$this->aa_Atributos['municipio'];
    $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
    $this->aa_Atributos['zona']=($this->aa_Atributos['zona']=='null')?'':$this->aa_Atributos['zona'];
-   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFinca('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','')";
+   $this->aa_Atributos['codigo_indicador_cana_diferida']=($this->aa_Atributos['codigo_indicador_cana_diferida']=='null')?'':$this->aa_Atributos['codigo_indicador_cana_diferida'];
+
+   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFinca('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','','".$this->aa_Atributos['codigo_indicador_cana_diferida']."')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_zafra['fechainicio'] = $la_registros['fechainicio'];
-     $la_zafra['fechafinal'] = $la_registros['fechafinal'];
-     $la_zafra['feczafra'] = $la_registros['feczafra'];
+     $la_zafra['fechainicio'] = $this->fFechaBD($la_registros['fechainicio']);
+     $la_zafra['fechafinal'] = $this->fFechaBD($la_registros['fechafinal']);
+     $la_zafra['feczafra'] = $this->fFechaBD($la_registros['feczafra']);
+     $la_zafra['nombrezafra'] = $la_registros['nombrezafra'];
+     switch ($this->aa_Atributos['codigo_indicador_cana_diferida']) {
+        case '18':
+           $la_zafra['diferida'] =  '(Diferidas)';
+          break;
+
+          case '19':
+             $la_zafra['diferida'] =  '(No Diferidas)';
+            break;
+
+        default:
+            $la_zafra['diferida'] =  '';
+          break;
+      }
      $la_respuesta[$x] = $this->recolectarDatos('finca',$la_registros);
      $x++;
    }
@@ -101,13 +117,29 @@ class cls_ReportesCosecha extends cls_Conexion{
    $this->aa_Atributos['municipio']=($this->aa_Atributos['municipio']=='null')?'':$this->aa_Atributos['municipio'];
    $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
    $this->aa_Atributos['zona']=($this->aa_Atributos['zona']=='null')?'':$this->aa_Atributos['zona'];
-   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFincaPorTablon('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','')";
+   $this->aa_Atributos['codigo_indicador_cana_diferida']=($this->aa_Atributos['codigo_indicador_cana_diferida']=='null')?'':$this->aa_Atributos['codigo_indicador_cana_diferida'];
+   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFincaPorTablon('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','','".$this->aa_Atributos['codigo_indicador_cana_diferida']."')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_zafra['fechainicio'] = $la_registros['fechainicio'];
-     $la_zafra['fechafinal'] = $la_registros['fechafinal'];
-     $la_zafra['feczafra'] = $la_registros['feczafra'];
+     $la_zafra['fechainicio'] = $this->fFechaBD($la_registros['fechainicio']);
+     $la_zafra['fechafinal'] = $this->fFechaBD($la_registros['fechafinal']);
+     $la_zafra['feczafra'] = $this->fFechaBD($la_registros['feczafra']);
+     $la_zafra['nombrezafra'] = $la_registros['nombrezafra'];
+     switch ($this->aa_Atributos['codigo_indicador_cana_diferida']) {
+       case '18':
+          $la_zafra['diferida'] =  '(Diferidas)';
+         break;
+
+         case '19':
+            $la_zafra['diferida'] =  '(No Diferidas)';
+           break;
+
+       default:
+           $la_zafra['diferida'] =  '';
+         break;
+     }
+
      $la_respuesta[$x] = $this->recolectarDatos('tablon',$la_registros);
      $x++;
    }
