@@ -83,9 +83,11 @@ class cls_LiquidacionManual extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['id_liq_nuc']=$la_registros['id_liq_nuc'];
-     $la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+     $la_respuesta[$x]['Liquidacion Numero']=$la_registros['numero'];
+     $la_respuesta[$x]['concepto']=$la_registros['descripcion'];
+     $la_respuesta[$x]['Total']=$la_registros['tot_con_iva'];
      $la_respuesta[$x]['tot_con_iva']=$la_registros['tot_con_iva'];
+     $la_respuesta[$x]['id_liq_nuc']=$la_registros['id_liq_nuc'];
      $la_respuesta[$x]['id_con']=$la_registros['id_con'];
      $la_respuesta[$x]['tar']=$la_registros['tar'];
      $la_respuesta[$x]['ton']=$la_registros['ton'];
