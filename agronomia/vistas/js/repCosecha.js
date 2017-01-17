@@ -124,7 +124,7 @@ function ejecutar(){
           case 'P':
             switch (UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('agrupacion').captarValor()){
               case 'T':
-                datos.reporte = {"shortid":"r1NEEf7Mg"};
+                datos.reporte = {"shortid":"HyP9xM2Ie"};
                 datos.data = {
                   "zonas" :organizarDatosResumenFinca('T',respuesta.registros),
                   "zafra": respuesta.zafra
@@ -155,7 +155,6 @@ function ejecutar(){
               datos.presentacion = 'E';
               break;
         }
-        console.log(JSON.stringify(datos.data));
         return datos;
       })
       .then(torque.pedirReporte)
