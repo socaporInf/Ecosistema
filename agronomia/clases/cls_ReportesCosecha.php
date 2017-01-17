@@ -75,7 +75,6 @@ class cls_ReportesCosecha extends cls_Conexion{
  }
  function mostrarResumenFinca(){
    $x=0;
-   //Busco El rol
    $this->aa_Atributos['municipio']=($this->aa_Atributos['municipio']=='null')?'':$this->aa_Atributos['municipio'];
    $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
    $this->aa_Atributos['zona']=($this->aa_Atributos['zona']=='null')?'':$this->aa_Atributos['zona'];
