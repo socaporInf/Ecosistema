@@ -2,7 +2,7 @@ productor= {
 	nombre: 'productor',
  	modulo: 'agronomia',
 	campo_nombre: 'nombre_completo',
-	campo_codigo:'codigo_productor',
+	campo_codigo:'codigo',
 	entidad_hijo:'finca',
 	titulo: 'Cañicultor',
 	altura: 150,

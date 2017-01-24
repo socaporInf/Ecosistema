@@ -647,7 +647,7 @@ function cambiarFormularioProductor(cuerpo){
 function manejar(modelo,nodo){
   var ventana = UI.crearVentanaModal({
         cabecera:{
-            html: 'Registrar de Lote'
+            html: 'Registro de '+UI.buscarConstructor(modelo).titulo
         },
         cuerpo:{
             formulario: UI.buscarConstructor(modelo), //objeto constructor

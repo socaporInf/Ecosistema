@@ -147,7 +147,7 @@ class cls_Productor extends cls_Conexion{
  private function f_Buscar(){
    $lb_Enc=false;
    //Busco El rol
-   $ls_Sql="SELECT * FROM agronomia.vproductor where codigo_productor='".$this->aa_Atributos['codigo_productor']."'";
+   $ls_Sql="SELECT * FROM agronomia.vproductor where codigo_productor='".$this->aa_Atributos['codigo']."'";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){

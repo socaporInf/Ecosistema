@@ -71,13 +71,13 @@ class cls_Municipio extends cls_Conexion{
    $la_respuesta=array();
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where nombre like '%".$this->aa_Atributos['valor']."%'";
    $ls_SqlBase="SELECT * FROM global.vmunicipio ".$cadenaBusqueda;
-   $orden = " ORDER BY nombre ";
+   $orden = " ORDER BY codigo_estado, nombre ";
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['codigo_municipio'];
-     $la_respuesta[$x]['nombre']=$la_registros['nombre'];
+     $la_respuesta[$x]['nombre']=$la_registros['nombre_estado'].' - '.$la_registros['nombre'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);

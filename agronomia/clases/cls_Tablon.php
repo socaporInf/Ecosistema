@@ -224,14 +224,13 @@ private function f_Buscar(){
     $ls_Sql="INSERT INTO agronomia.vtablon
         (codigo_tablon,id_lote,codigo_clase,codigo_variedad,codigo_tipo_corte
        ,codigo_indicador_cana_diferida,area_cana,area_semilla,fecha_siembra_corte,fecha_ultimo_arrime,
-       toneladas_estimadas_hectarea,toneladas_real,toneladas_azucar) values
+       toneladas_estimadas_hectarea) values
        ('".$this->aa_Atributos['codigo_tablon']."','".$this->aa_Atributos['id_lote']."',
        '".$this->aa_Atributos['codigo_clase']."','".$this->aa_Atributos['codigo_variedad']."',
        '".$this->aa_Atributos['codigo_tipo_corte']."','".$this->aa_Atributos['codigo_indicador_cana_diferida']."',
        '".$this->aa_Atributos['area_cana']."','".$this->aa_Atributos['area_semilla']."',
        '".$this->aa_Atributos['fecha_siembra_corte']."','".$this->aa_Atributos['fecha_ultimo_arrime']."',
-       ".$this->aa_Atributos['toneladas_estimadas_hectarea'].",".$this->aa_Atributos['toneladas_real'].",
-       ".$this->aa_Atributos['toneladas_azucar'].")";
+       ".$this->aa_Atributos['toneladas_estimadas_hectarea'].")";
     $this->f_Con();
     $lb_Hecho=$this->f_Ejecutar($ls_Sql);
     $this->f_Des();
