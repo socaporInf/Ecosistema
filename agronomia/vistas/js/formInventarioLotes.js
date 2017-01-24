@@ -1,5 +1,4 @@
 var agregarListado = function(ventana,peticion){
-  console.log(peticion);
   var contList = ventana.agregarSector({
     nombre:'listado de ' + peticion.entidad,
   });
