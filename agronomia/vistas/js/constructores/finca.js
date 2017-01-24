@@ -4,7 +4,7 @@ finca = {
 	campo_nombre: 'nombre_finca_completo',
 	campo_codigo:'id_finca',
 	entidad_padre:'productor',
-	campo_padre:'codigo',
+	campo_padre:'codigo_productor',
 	entidad_hijo:'lote',
 	titulo: 'finca',
 	altura: 220,

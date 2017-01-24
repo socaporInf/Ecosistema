@@ -153,6 +153,7 @@ class cls_Productor extends cls_Conexion{
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo_productor']=$la_registros['codigo_productor'];
      $la_respuesta['nombre_completo']=$la_registros['nombre_completo'];
+     $la_respuesta['nombre']=$la_registros['codigo_productor'].' '.$la_registros['nombre_completo'];
      $la_respuesta['rif']=$la_registros['rif'];
      $la_respuesta['codigo_tipo_persona']=$la_registros['codigo_tipo_persona'];
      $la_respuesta['tipo_persona']=$la_registros['tipo_persona'];

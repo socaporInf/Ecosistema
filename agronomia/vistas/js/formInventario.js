@@ -145,7 +145,7 @@ var formEditarPro = function(nodoPro){
      modulo: "agronomia",
      entidad: "productor",
      operacion: "buscarRegistro",
-     codigo_productor: nodoPro.getAttribute('codigo')
+     codigo: nodoPro.getAttribute('codigo')
   };
   var cuadro = {
     contenedor: UI.buscarVentana('editarProductor').buscarSector('carga').nodo,
