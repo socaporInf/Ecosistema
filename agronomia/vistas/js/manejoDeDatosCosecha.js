@@ -73,7 +73,10 @@ function organizarDatosResumenFinca(tipo,datos){
       zona.hijos.sort(function(a,b){return parseInt(a.codfinca) - parseInt(b.codfinca);});
     });
   }
-  return zonas;
+  var total={};
+  total = sumatoriaGeneral(total,zonas,sumatorias);
+  total.zonas = zonas;
+  return total;
 }
 //extrae las fincas del crudo de data para agrupacioens
 function extraerFincas(datos){
@@ -132,9 +135,7 @@ function agregarHijos(padres,hijos,campoCoparacion,propiedades){
           padre.hijos = [];
         }
         padre.hijos.push(hijo);
-        propiedades.forEach(function(propiedad){
-          padre[propiedad]=(!padre.hasOwnProperty(propiedad))?parseFloat(hijo[propiedad]):parseFloat(padre[propiedad]) + parseFloat(hijo[propiedad]);
-        });
+        padre = sumatoria(padre,hijo,propiedades);
       }
     });
     propiedades.forEach(function(propiedad){
@@ -142,6 +143,18 @@ function agregarHijos(padres,hijos,campoCoparacion,propiedades){
     });
   });
   return padres;
+}
+function sumatoriaGeneral(padre,hijos,propiedades){
+  hijos.forEach(function(hijo){
+    padre = sumatoria(padre,hijo,propiedades);
+  });
+  return padre;
+}
+function sumatoria(padre,hijo,propiedades){
+  propiedades.forEach(function(propiedad){
+    padre[propiedad]=(!padre.hasOwnProperty(propiedad))?parseFloat(hijo[propiedad]):round(parseFloat(padre[propiedad]) + parseFloat(hijo[propiedad]),2);
+  });
+  return padre;
 }
 //extraido de mozilla
 round = function(number,places) {

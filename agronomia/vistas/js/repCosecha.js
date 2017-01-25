@@ -77,7 +77,6 @@ function ejecutarMinisterio(){
          "zafra": respuesta.zafra
         }
       };
-      console.log(JSON.stringify(datos.data));
       return datos;
     })
     .then(torque.pedirReporte)
@@ -126,7 +125,7 @@ function ejecutar(){
               case 'T':
                 datos.reporte = {"shortid":"HyP9xM2Ie"};
                 datos.data = {
-                  "zonas" :organizarDatosResumenFinca('T',respuesta.registros),
+                  "total" :organizarDatosResumenFinca('T',respuesta.registros),
                   "zafra": respuesta.zafra
                 };
                 break;
@@ -134,7 +133,7 @@ function ejecutar(){
                 //id de la plantilla del reporte dentro jsreport(servidor de reportes)
                 datos.reporte = {"shortid":"BkUi3un-g"};
                 datos.data = {
-                  "zonas" :organizarDatosResumenFinca('R',respuesta.registros),
+                  "total" :organizarDatosResumenFinca('R',respuesta.registros),
                   "zafra": respuesta.zafra
                 };
                 break;
@@ -142,7 +141,7 @@ function ejecutar(){
                 //id de la plantilla del reporte dentro jsreport(servidor de reportes)
                 datos.reporte = {"shortid":"BJUZmtQzg"};
                 datos.data = {
-                  "zonas" :organizarDatosResumenFinca('D',respuesta.registros),
+                  "total" :organizarDatosResumenFinca('D',respuesta.registros),
                   "zafra": respuesta.zafra
                 };
                 break;
@@ -155,6 +154,7 @@ function ejecutar(){
               datos.presentacion = 'E';
               break;
         }
+        console.log(JSON.stringify(datos));
         return datos;
       })
       .then(torque.pedirReporte)
