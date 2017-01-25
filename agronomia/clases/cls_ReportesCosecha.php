@@ -191,8 +191,8 @@ class cls_ReportesCosecha extends cls_Conexion{
  }
  private function mostrarMinisterio(){
    $x=0;
-   $this->aa_Atributos['fecha_desde']=($this->aa_Atributos['fecha_desde']=='null')?'':$this->fFechaPHP($this->aa_Atributos['fecha_desde']);
-   $this->aa_Atributos['fecha_hasta']=($this->aa_Atributos['fecha_hasta']=='null')?'':$this->fFechaPHP($this->aa_Atributos['fecha_hasta']);
+   $this->aa_Atributos['fecha_desde']=($this->aa_Atributos['fecha_desde']==null)?'':$this->fFechaPHP($this->aa_Atributos['fecha_desde']);
+   $this->aa_Atributos['fecha_hasta']=($this->aa_Atributos['fecha_hasta']==null)?'':$this->fFechaPHP($this->aa_Atributos['fecha_hasta']);
    $ls_Sql="SELECT * from agronomia.spcon_ministerio_rango('".$this->aa_Atributos['fecha_desde']."','".$this->aa_Atributos['fecha_hasta']."')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -229,8 +229,8 @@ class cls_ReportesCosecha extends cls_Conexion{
  private function mostrarTransporte(){
    $x=0;
    $this->aa_Atributos['nucleo']=($this->aa_Atributos['nucleo']=='null')?'':$this->aa_Atributos['nucleo'];
-   $this->aa_Atributos['desde']=($this->aa_Atributos['desde']=='null')?'':$this->fFechaPHP($this->aa_Atributos['desde']);
-   $this->aa_Atributos['hasta']=($this->aa_Atributos['hasta']=='null')?'':$this->fFechaPHP($this->aa_Atributos['hasta']);
+   $this->aa_Atributos['desde']=($this->aa_Atributos['desde']==null)?'':$this->fFechaPHP($this->aa_Atributos['desde']);
+   $this->aa_Atributos['hasta']=($this->aa_Atributos['hasta']==null)?'':$this->fFechaPHP($this->aa_Atributos['hasta']);
    $ls_Sql="SELECT * FROM  agronomia.spcon_Transporte('".$this->aa_Atributos['nucleo']."','".$this->aa_Atributos['desde']."','".$this->aa_Atributos['hasta']."')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
