@@ -131,9 +131,9 @@ class cls_DetTabuladorLabor extends cls_Conexion{
  private function f_Guardar(){
 
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vdet_tabulador_labor (codigo_labor,codigo_tabulador,tarifa) values
+   $ls_Sql="INSERT INTO agronomia.vdet_tabulador_labor (codigo_labor,codigo_tabulador,tarifa,id_concepto) values
        ('".$this->aa_Atributos['codigo_labor']."','".$this->aa_Atributos['codigo_tabulador']."',
-       '".$this->aa_Atributos['tarifa']."')";
+       '".$this->aa_Atributos['tarifa']."','".$this->aa_Atributos['codigo_concepto']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();

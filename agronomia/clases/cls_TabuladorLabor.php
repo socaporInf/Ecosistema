@@ -115,9 +115,8 @@ class cls_TabuladorLabor extends cls_Conexion{
 
    $lb_Hecho=false;
    $this->aa_Atributos['fecha_hasta'] = ($this->aa_Atributos['fecha_hasta']!='null')?"'".$this->aa_Atributos['fecha_hasta']."'":$this->aa_Atributos['fecha_hasta'];
-   $ls_Sql="INSERT INTO agronomia.vtabulador_labor (nombre,fecha_desde,fecha_hasta,codigo_zafra) values
-       ('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['fecha_desde']."',
-       ".$this->aa_Atributos['fecha_hasta'].",'".$this->aa_Atributos['codigo_zafra']."')";
+   $ls_Sql="INSERT INTO agronomia.vtabulador_labor (nombre,fecha_desde,codigo_zafra) values
+       ('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['fecha_desde']."','".$this->aa_Atributos['codigo_zafra']."')";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
