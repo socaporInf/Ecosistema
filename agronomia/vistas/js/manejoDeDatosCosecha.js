@@ -173,11 +173,11 @@ function organizarLiquidaciones(datos){
       if(concepto.codigo_liquidacion===liquidacion.codigo_liquidacion){
         if(concepto.comportamiento==='A'){
           liquidacion.asignaciones.push(concepto);
-          liquidacion.total -= parseFloat(concepto.tot_con_iva);
+          liquidacion.total += parseFloat(concepto.tot_con_iva);
         }else if(concepto.comportamiento==='D'){
           liquidacion.deducciones.push(concepto);
-          liquidacion.total += parseFloat(concepto.tot_con_iva);
-          liquidacion.subtotal += parseFloat(concepto.tot_con_iva);
+          liquidacion.total -= parseFloat(concepto.tot_con_iva);
+          liquidacion.subtotal -= parseFloat(concepto.tot_con_iva);
         }
       }
     });
