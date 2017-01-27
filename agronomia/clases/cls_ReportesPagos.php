@@ -43,7 +43,7 @@ class cls_ReportesPagos extends cls_Conexion{
    $x=0;
    $this->aa_Atributos['codigo_calculo']=($this->aa_Atributos['codigo_calculo']=='null')?'':$this->aa_Atributos['codigo_calculo'];
    $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
-   $ls_Sql="SELECT * from agronomia.spcon_liquidacion_cabecera('".$this->aa_Atributos['finca']."','".$this->aa_Atributos['codigo_calculo']."') order by id_liq_nuc";
+   $ls_Sql="SELECT * from agronomia.spcon_liquidacion_cabecera('".$this->aa_Atributos['finca']."','".$this->aa_Atributos['codigo_calculo']."') order by codigo_productor,finca_letra";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){

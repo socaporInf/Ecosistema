@@ -232,6 +232,7 @@ class cls_CalculoLiquidacion extends cls_Conexion{
    $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
 
    $ls_Sql.="WHERE codigo_calculo ='".$this->aa_Atributos['codigo']."'";
+   print($ls_Sql);
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
