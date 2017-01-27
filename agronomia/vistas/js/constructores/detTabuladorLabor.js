@@ -24,7 +24,7 @@ var detTabuladorLabor= {
       parametros : {
         titulo:'Labor',
         nombre:'codigo_labor',
-        requerido:true,
+        requerido:false,
         eslabon:'simple',
         peticion: {
   			   modulo: "seguridad",
