@@ -106,6 +106,7 @@ function ejecutar(){
        municipio: form.buscarCampo('municipio').captarValor(),
        presentacion: form.buscarCampo('presentacion').captarValor(),
        codigo_indicador_cana_diferida: form.buscarCampo('codigo_indicador_cana_diferida').captarValor(),
+       cortadas: form.buscarCampo('cortadas').captarValor(),
        zafra: UI.elementos.cabecera.nodo.querySelector('article').getAttribute('codigo')
     };
     var cuadro={
@@ -154,7 +155,6 @@ function ejecutar(){
               datos.presentacion = 'E';
               break;
         }
-        console.log(JSON.stringify(datos));
         return datos;
       })
       .then(torque.pedirReporte)

@@ -90,6 +90,19 @@ var form = {
           {nombre:'No Diferida',valor:'19'},
         ]
       }
+    },
+    {
+      tipo: 'radio',
+      parametros : {
+        nombre: 'cortadas',
+        titulo: 'Tipo Reporte',
+        eslabon : 'dual',
+        valor: '1',
+        opciones:[
+          {nombre:'Cortadas',valor:'1'},
+          {nombre:'Todas',valor:'2'},
+        ]
+      }
     }
   ]
 };

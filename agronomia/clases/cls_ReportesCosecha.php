@@ -79,8 +79,9 @@ class cls_ReportesCosecha extends cls_Conexion{
    $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
    $this->aa_Atributos['zona']=($this->aa_Atributos['zona']=='null')?'':$this->aa_Atributos['zona'];
    $this->aa_Atributos['codigo_indicador_cana_diferida']=($this->aa_Atributos['codigo_indicador_cana_diferida']=='null')?'':$this->aa_Atributos['codigo_indicador_cana_diferida'];
+   $this->aa_Atributos['cortadas']=($this->aa_Atributos['cortadas']=='null')?'':$this->aa_Atributos['cortadas'];
 
-   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFinca('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','','".$this->aa_Atributos['codigo_indicador_cana_diferida']."')";
+   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFinca('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','".$this->aa_Atributos['cortadas']."','".$this->aa_Atributos['codigo_indicador_cana_diferida']."')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -117,8 +118,9 @@ class cls_ReportesCosecha extends cls_Conexion{
    $this->aa_Atributos['municipio']=($this->aa_Atributos['municipio']=='null')?'':$this->aa_Atributos['municipio'];
    $this->aa_Atributos['finca']=($this->aa_Atributos['finca']=='null')?'':$this->aa_Atributos['finca'];
    $this->aa_Atributos['zona']=($this->aa_Atributos['zona']=='null')?'':$this->aa_Atributos['zona'];
+   $this->aa_Atributos['zona']=($this->aa_Atributos['cortadas']=='null')?'':$this->aa_Atributos['cortadas'];
    $this->aa_Atributos['codigo_indicador_cana_diferida']=($this->aa_Atributos['codigo_indicador_cana_diferida']=='null')?'':$this->aa_Atributos['codigo_indicador_cana_diferida'];
-   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFincaPorTablon('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','','".$this->aa_Atributos['codigo_indicador_cana_diferida']."')";
+   $ls_Sql="SELECT * FROM agronomia.spcon_resumenFincaPorTablon('".$this->aa_Atributos['zafra']."','".$this->aa_Atributos['municipio']."','".$this->aa_Atributos['finca']."','".$this->aa_Atributos['zona']."','".$this->aa_Atributos['cortadas']."','".$this->aa_Atributos['codigo_indicador_cana_diferida']."')";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
