@@ -46,18 +46,25 @@
 	var UI = new Arquitecto();
 	UI.configure({
 		botonera:{
-			botones:[{
-				tipo:'dash',
-				clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
-				click: function(){
-					location.href = '../../agronomia/vistas/vis_DashZafra.html?Dia='+UI.elementos.url.captarParametroPorNombre('Dia');
-				},
-				contenido: 'dashboard'
-			}]
+			botones:[]
 		}
 	});
 
-	sesion.obtenerSesion();
+	sesion.obtenerSesion()
+		.then(function(){
+			if(sesion.buscarPrivilegio('TABLERO DE CONTROL ZAFRA')){
+					var boton =
+					{
+						tipo:'dash',
+						clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
+						click: function(){
+							location.href = '../../agronomia/vistas/vis_DashZafra.html?Dia='+UI.elementos.url.captarParametroPorNombre('Dia');
+						},
+						contenido: 'dashboard'
+					};
+					UI.elementos.botonera.agregarBoton(boton);
+			}
+		});
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 construirUI();
 </script>
