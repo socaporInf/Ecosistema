@@ -74,8 +74,8 @@ class cls_TabuladorLabor extends cls_Conexion{
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['codigo'];
      $la_respuesta[$x]['nombre']=$la_registros['nombre'];
-     $la_respuesta[$x]['fecha_desde']=$la_registros['fecha_desde'];
-     $la_respuesta[$x]['fecha_hasta']=$la_registros['fecha_hasta'];
+     $la_respuesta[$x]['fecha_desde']=$this->fFechaBD($la_registros['fecha_desde']);
+     $la_respuesta[$x]['fecha_hasta']=$this->fFechaBD($la_registros['fecha_hasta']);
      $la_respuesta[$x]['codigo_zafra']=$la_registros['codigo_zafra'];
      $la_respuesta[$x]['nombre_zafra']=$la_registros['nombre_zafra'];
      $x++;
@@ -94,8 +94,8 @@ class cls_TabuladorLabor extends cls_Conexion{
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo']=$la_registros['codigo'];
      $la_respuesta['nombre']=$la_registros['nombre'];
-     $la_respuesta['fecha_desde']=$la_registros['fecha_desde'];
-     $la_respuesta['fecha_hasta']=$la_registros['fecha_hasta'];
+     $la_respuesta['fecha_desde']=$this->fFechaBD($la_registros['fecha_desde']);
+     $la_respuesta['fecha_hasta']=$this->fFechaBD($la_registros['fecha_hasta']);
      $la_respuesta['codigo_zafra']=$la_registros['codigo_zafra'];
      $la_respuesta['nombre_zafra']=$la_registros['nombre_zafra'];
      $lb_Enc=true;
