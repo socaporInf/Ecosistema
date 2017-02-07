@@ -68,7 +68,7 @@ class cls_TabuladorTransp extends cls_Conexion{
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vtabulador_transp order by fecha_desde,fecha_hasta";
+   $ls_Sql="SELECT * FROM agronomia.vtabulador_transp order by DESC fecha_desde,fecha_hasta";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){

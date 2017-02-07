@@ -57,9 +57,11 @@
 							}
 					}
 					if(codigo){
-						maestro.nuevo();
-						maestro.forma.formulario.buscarCampo('codigo_tabulador').asignarValor(codigo);
-						maestro.forma.formulario.buscarCampo('codigo_tabulador').deshabilitar();
+						maestro.nuevo()
+							.then(function(){
+								maestro.forma.formulario.buscarCampo('codigo_tabulador').asignarValor(codigo);
+								maestro.forma.formulario.buscarCampo('codigo_tabulador').deshabilitar();
+							});						
 					}else{
 						  UI.agregarToasts({
 						    texto: 'Elija un tabulador antes de continuar',
