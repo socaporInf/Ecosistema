@@ -39,10 +39,12 @@ validarRif =function (){
 				formulario = UI.elementos.maestro.forma.formulario;
 				if(respuesta.success){
 					formulario.asignarValores(respuesta.registros);
-					formulario.buscarCampo('codigo').limpiar();
-					formulario.buscarCampo('rif').deshabilitar();
-					formulario.buscarCampo('nombre_completo').deshabilitar();
-					formulario.buscarCampo('codigo_tipo_persona').deshabilitar();
+					if(respuesta.registros.rif){
+						formulario.buscarCampo('codigo').limpiar();
+						formulario.buscarCampo('rif').deshabilitar();
+						formulario.buscarCampo('nombre_completo').deshabilitar();
+						formulario.buscarCampo('codigo_tipo_persona').deshabilitar();
+					}
 				}else{
 					formulario.buscarCampo('rif').asignarValor(rif);
 					formulario.buscarCampo('rif').deshabilitar();

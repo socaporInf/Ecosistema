@@ -40,6 +40,9 @@
 	UI.configure({
 		maestro:{
 			entidad: torque.entidadActiva,
+			lista:{
+				columnas:2
+			},
 			botones: [{
 				tipo:'nuevo',
 				click:validarRif
@@ -48,8 +51,12 @@
 				click:function(){
 						var maestro = UI.elementos.maestro;
 						maestro.modificar();
-						maestro.forma.formulario.deshabilitar();
-						maestro.forma.formulario.buscarCampo('codigo').habilitar();
+						if(maestro.forma.formulario.buscarCampo('rif').captarValor()){
+							maestro.forma.formulario.deshabilitar();
+							maestro.forma.formulario.buscarCampo('codigo').habilitar();
+						}else{
+							maestro.forma.formulario.buscarCampo('codigo').deshabilitar();
+						}
 				}
 			}]
 		},
