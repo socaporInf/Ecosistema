@@ -76,6 +76,24 @@ class cls_Nucleo extends cls_Conexion{
        }
        break;
 
+     case 'desacoplar':
+        $respuesta=$this->f_DesacoplarOrganizacion();
+        if($respuesta['success']==1){
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(14);
+        }else{
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(15);
+        }
+        break;
+
+     case 'acoplar':
+       $respuesta=$this->f_AcoplarOrganizacion();
+       if($respuesta['success']==1){
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(14);
+       }else{
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(15);
+       }
+       break;
+
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
        $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -91,7 +109,8 @@ class cls_Nucleo extends cls_Conexion{
    $x=0;
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%'";
    $la_respuesta=array();
-   $ls_SqlBase="SELECT * FROM agronomia.vnucleo $cadenaBusqueda";
+   $ls_SqlBase="SELECT * FROM agronomia.vnucleo $cadenaBusqueda ";
+   $orden=" order by codigo_nucleo";
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
 
    $this->f_Con();
@@ -213,11 +232,43 @@ class cls_Nucleo extends cls_Conexion{
       $la_Peticion = $this->aa_Atributos;
       $la_Peticion['operacion'] = 'buscar';
       $lobj_Entidad->setPeticion($la_Peticion);
-		  $respuesta = $lobj_Entidad->gestionar();
+		$respuesta = $lobj_Entidad->gestionar();
       //si lo consigue lo busco como productor
       if(count($respuesta['registro'])){
          $this->f_Buscar();
       }
+   }
+   private function f_DesacoplarOrganizacion(){
+      $lb_Hecho = false;
+      $ls_Sql = "UPDATE agronomia.vnucleo SET rif = null WHERE codigo_nucleo = ".$this->aa_Atributos['codigo'];
+      $this->f_Con();
+      $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+      $this->f_Des();
+
+      if($lb_Hecho){
+         $this->f_Buscar();
+         $respuesta['registro'] = $this->aa_Atributos['registro'];
+         $respuesta['success'] = 1;
+      }else{
+         $respuesta['success'] = 0;
+      }
+      return $respuesta;
+   }
+   private function f_AcoplarOrganizacion(){
+      $lb_Hecho = false;
+      $ls_Sql = "UPDATE agronomia.vnucleo SET rif = '".$this->aa_Atributos['rif']."' WHERE codigo_nucleo = ".$this->aa_Atributos['codigo'];
+      $this->f_Con();
+      $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+      $this->f_Des();
+
+      if($lb_Hecho){
+         $this->f_Buscar();
+         $respuesta['registro'] = $this->aa_Atributos['registro'];
+         $respuesta['success'] = 1;
+      }else{
+         $respuesta['success'] = 0;
+      }
+      return $respuesta;
    }
 }
 ?>

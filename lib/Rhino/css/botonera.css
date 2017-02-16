@@ -94,7 +94,7 @@ div[botonera] button[btnModificar]:hover:before{
     content: 'Modificar';
     color:white;
     background-color: inherit;
-    margin-left:-57px;
+    margin-left:-65px;
     border-radius:5px;
     padding:5px;
 }

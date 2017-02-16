@@ -80,6 +80,7 @@ class cls_Organizacion extends cls_Conexion{
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['rif'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
+     $la_respuesta[$x]['nombre']=$la_registros['nombre_completo'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);

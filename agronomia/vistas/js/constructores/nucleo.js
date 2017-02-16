@@ -50,5 +50,31 @@ nucleo= {
 				usaToolTip: true
 			}
 		}
-	]
+	],
+	botones:{
+		consulta:{
+			agregar:[
+				{
+					tipo:'Acoplar',
+					clases: ['btnAcoplar','mat-green500','white','md-18','material-icons'],
+					click:function(){
+							acoplar();
+					},
+					contenido: 'lock_outline'
+				},{
+					tipo:'cerrar',
+					clases: ['btnDesacoplar','mat-amber500','white','md-18','material-icons'],
+					click:function(){
+							desacoplar();
+					},
+					contenido: 'lock_open'
+				}
+			],
+			quitar:[]
+		},
+		nuevo:{
+			agregar:[],
+			quitar:['aperturar','cerrar','generar']
+		}
+	}
 };
