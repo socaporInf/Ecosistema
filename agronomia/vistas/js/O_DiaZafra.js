@@ -154,14 +154,16 @@ var Dia = function(atributos){
             cuerpo:'<pre style="overflow:auto">'+res.contenido+'</pre>'
           });
         }else{
-            UI.agregarToasts({
-              texto: res.mensaje,
-              tipo: 'web-arriba-derecha-alto'
-            });
+          UI.elementos.modalWindow.buscarUltimaCapaContenido().convertirEnMensaje({
+            nombre_tipo:'ERROR',
+            contenido:'ancho',
+            titulo:'Error al cargar listado de validacion',
+            cuerpo:res.mensaje
+          });
         }
         yo.reconstruirNodo();
       }else{
-        
+
           UI.agregarToasts({
             texto: 'Listado Cargado correctamente',
             tipo: 'web-arriba-derecha-alto'
