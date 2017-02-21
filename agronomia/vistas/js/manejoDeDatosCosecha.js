@@ -160,7 +160,7 @@ function sumatoria(padre,hijo,propiedades){
 round = function(number,places) {
   return +(Math.round(number + "e+" + places)  + "e-" + places);
 };
-/*----------------------------------------------------------- Reporte Luidaciones-------------------------------------------------------------------*/
+/*----------------------------------------------------------- Reporte liquidaciones-------------------------------------------------------------------*/
 function organizarLiquidaciones(datos){
   var liquidaciones = datos.liquidaciones;
   var detalle = datos.detalle;
@@ -169,6 +169,8 @@ function organizarLiquidaciones(datos){
     liquidacion.asignaciones=[];
     liquidacion.total=0;
     liquidacion.subtotal=0;
+    liquidacion.total_iva=0;
+    liquidacion.total_sin_iva=0;
     detalle.forEach(function(concepto){
       if(concepto.codigo_liquidacion===liquidacion.codigo_liquidacion){
         if(concepto.comportamiento==='A'){
@@ -178,6 +180,8 @@ function organizarLiquidaciones(datos){
           liquidacion.deducciones.push(concepto);
           liquidacion.total -= parseFloat(concepto.tot_con_iva);
           liquidacion.subtotal -= parseFloat(concepto.tot_con_iva);
+          liquidacion.total_iva += parseFloat(concepto.tot_con_iva) - parseFloat(concepto.subtotal);
+          liquidacion.total_sin_iva += parseFloat(concepto.subtotal);
         }
       }
     });
