@@ -258,9 +258,10 @@ private function f_Buscar(){
    }
    return $respuesta;
  }
- private function f_ActualizarTablones(){
+ private function f_ActualizarTablones($fecha = "''"){
    $lb_Hecho=false;
-   $ls_Sql="select agronomia.spcalc_actualizamaestrotablon()";
+   print('fecha es :'.$fecha);
+   $ls_Sql="select agronomia.spcalc_actualizamaestrotablon($fecha)";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();

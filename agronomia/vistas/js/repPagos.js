@@ -37,7 +37,6 @@ function ejecutar(){
         generearCuadroSecundario();
         //id de la plantilla del reporte dentro jsreport(servidor de reportes)
         var liquidaciones = organizarLiquidaciones(respuesta);
-        console.log(JSON.stringify(liquidaciones));
         var datos ={
           reporte:{"shortid":"SJ44SDLIe"},
           data: {
