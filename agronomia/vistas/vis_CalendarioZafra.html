@@ -47,7 +47,7 @@
 
 	});
 
-	/*sesion.obtenerSesion().then(*/
+	sesion.obtenerSesion().then(function(){
 	construirUI();
 	function construirUI(){
 	  var layOut = {};
@@ -72,6 +72,7 @@
 	  ventanaDia.pie =  UI.buscarVentana('ventanadia').buscarSector('pie');
 	  layOut.ventanadia = manejarDia(ventanaDia,function(){});
 	}
+});
 
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 </script>
