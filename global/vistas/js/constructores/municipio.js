@@ -1,4 +1,4 @@
-municipio= {
+var municipio= {
 	nombre: 'municipio',
  	modulo: 'global',
 	campo_nombre: 'nombre',

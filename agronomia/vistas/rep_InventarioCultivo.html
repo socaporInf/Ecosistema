@@ -35,9 +35,8 @@
 	var UI = new Arquitecto();
 	UI.configure({});
 
-	sesion.obtenerSesion();
+	sesion.obtenerSesion().then(construirUI);;
 
-	construirUI();
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 </script>
 </html>

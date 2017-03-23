@@ -1,7 +1,14 @@
 construirUI = function(){
-  armarListaOrganizaciones(document.querySelector('div[contenedor]'));
+  //PRIVILEGIO: productor; OPERACION: consultar
+  if(sesion.privilegioActivo.buscarOperacion('consultar')){
+    armarListaOrganizaciones(document.querySelector('div[contenedor]'));
+  }
   var btnNuevo = UI.elementos.botonera.buscarBoton('nuevo');
   btnNuevo.nodo.onclick = productorNuevo;
+  //PRIVILEGIO: productor; OPERACION: incluir
+  if(!sesion.privilegioActivo.buscarOperacion('incluir')){
+    UI.elementos.botonera.quitarBoton('nuevo');
+  }
 };
 var productorNuevo = function(){
   var nuevo = UI.crearVentanaModal({
@@ -138,7 +145,7 @@ var formEditarPro = function(nodoPro){
      modulo: "agronomia",
      entidad: "productor",
      operacion: "buscarRegistro",
-     codigo_productor: nodoPro.getAttribute('codigo')
+     codigo: nodoPro.getAttribute('codigo')
   };
   var cuadro = {
     contenedor: UI.buscarVentana('editarProductor').buscarSector('carga').nodo,

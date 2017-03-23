@@ -1,6 +1,7 @@
  <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
+include_once('cls_Acceso.php');
 class cls_Usuario extends cls_Conexion{
 
 	protected $aa_Atributos = array();
@@ -60,6 +61,15 @@ class cls_Usuario extends cls_Conexion{
 					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(18);
 				}else{
 					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(20);
+				}
+				break;
+
+			case 'cambiarClave':
+				$respuesta = $this->f_CambiarClave();
+				if($respuesta['success']==1){
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(23);
+				}else{
+					$respuesta['mensaje']= $lobj_Mensaje->buscarMensaje(24);
 				}
 				break;
 
@@ -126,7 +136,6 @@ class cls_Usuario extends cls_Conexion{
 
 	private function f_Guardar(){
 		//encripto la contraseña
-		include_once('cls_acceso.php');
 		$lobj_Acceso = new cls_acceso;
 		$this->aa_Atributos['clave'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['contrasena']);
 
@@ -198,14 +207,39 @@ class cls_Usuario extends cls_Conexion{
 			2.- se reiniciara los periodos de caducidad de clave
 			3.- se reiniciaran los intentos fallidos de inicio de sesion
 		*/
-		include_once('cls_acceso.php');
 		$lobj_Acceso = new cls_acceso;
+
 		$la_peticion = array('Pass' => $this->aa_Atributos['contrasena'],'Nombre' => $_SESSION['Usuario']['Nombre']);
+
 		$lobj_Acceso->setPeticion($la_peticion);
 		$lb_Enc = $lobj_Acceso->f_VerificarAcceso($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
 		if($lb_Enc){
 			$this->aa_Atributos['contrasena'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['codigo']);
+			$this->aa_Atributos['noncrypclave'] = $this->aa_Atributos['codigo'];
 			$this->f_ModificarPassLoginRol();
+			$respuesta = $this->f_ModificarPass();
+		}else{
+			$respuesta['success'] = 0;
+		}
+		return $respuesta;
+	}
+
+	private function f_CambiarClave(){
+		/*cuando exista la bitacora de acceso y el control de acceso full aqui estara el codigo de
+		donde :
+			1.- se registrara en la bitacora deacceso el cambio realizado
+			2.- se reiniciara los periodos de caducidad de clave
+			3.- se reiniciaran los intentos fallidos de inicio de sesion
+		*/
+		$lobj_Acceso = new cls_acceso;
+		$la_peticion = array('Pass' => $this->aa_Atributos['oldpass'],'Nombre' => $_SESSION['Usuario']['Nombre']);
+		$lobj_Acceso->setPeticion($la_peticion);
+		$lb_Enc = $lobj_Acceso->f_VerificarAcceso($_SESSION['Con']['Nombre'],$_SESSION['Con']['Pass']);
+		if($lb_Enc){
+			$this->aa_Atributos['contrasena'] = $lobj_Acceso->encriptarPass($this->aa_Atributos['newpass']);
+			$this->aa_Atributos['noncrypclave'] = $this->aa_Atributos['newpass'];
+			$this->f_ModificarPassLoginRol();
+			$_SESSION['Con']['Pass'] = $this->aa_Atributos['newpass'];
 			$respuesta = $this->f_ModificarPass();
 		}else{
 			$respuesta['success'] = 0;
@@ -230,7 +264,7 @@ class cls_Usuario extends cls_Conexion{
 	private function f_ModificarPassLoginRol(){
 		//encripto la contraseña
 		$lb_Hecho=false;
-		$ls_Sql="ALTER ROLE ".$this->aa_Atributos['codigo']." WITH ENCRYPTED PASSWORD '".$this->aa_Atributos['codigo']."'";
+		$ls_Sql="ALTER ROLE ".$this->aa_Atributos['codigo']." WITH ENCRYPTED PASSWORD '".$this->aa_Atributos['noncrypclave']."'";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();

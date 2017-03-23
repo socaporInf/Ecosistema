@@ -175,6 +175,9 @@ div[formElements] {
 div[area] {
     width: calc(100% - 24px);
 }
+div[dual] {
+    width: calc(50% - 12px);
+}
 .group {
     position: relative;
     margin-bottom: 45px;
@@ -203,7 +206,7 @@ div.group textarea {
     border: none;
     border-bottom: 1px solid #757575;
     opacity: 1;
-    height: 24px;
+    height: 48px;
     resize: none;
 }
 div.group input:focus {
@@ -326,7 +329,13 @@ input:focus~ .highlight, textarea:focus~ .highlight {
 }
 
 /*------------------------------Radio Box--------------------------------------*/
-
+div[formElements='radio']{
+  display: flex;
+  justify-content: space-around;
+}
+div.desahbilitado label.radio span.outer{
+    border: 2px solid  #757575;
+}
 .radio {
     display: inline-block;
     font-size: 14px;
@@ -352,7 +361,7 @@ input:focus~ .highlight, textarea:focus~ .highlight {
     opacity: 1;
 }
 .radio input:checked+ .outer {
-    border: 2px solid #f08b3b;
+    border: 2px solid #4CAF50;
 }
 .radio input:focus+ .outer .inner {
     -webkit-transform: scale(1);
@@ -367,7 +376,7 @@ input:focus~ .highlight, textarea:focus~ .highlight {
     display: block;
     float: left;
     margin: 12px -4px 0px 0px;
-    border: 2px solid #0c70b4;
+    border: 2px solid #4CAF50;
     border-radius: 50%;
     background-color: #fff;
 }
@@ -632,7 +641,13 @@ div[mat-window] section[titulo].inverso {
     background-color: white;
     border-bottom: 1px solid rgba(160, 160, 160, 0.5);
 }
-
+div[mat-window] section[titulo].liso,div[mat-window] section[titulo].liso-centrado {
+    color: #4CAF50;
+    background-color: white;
+}
+div[mat-window] section[titulo].liso-centrado {
+    text-align: center
+}
 /*-------------------------------Sector----------------------------------------*/
 
 div[mat-window] section[sector] {
@@ -689,7 +704,7 @@ section[botonera] button.icon,section.botonera button.icon{
 @media (max-width: 900px) {
     div[mat-window].formulario,div[mat-window].ventana {
         width: 85%;
-        margin-bottom: 10px;
+        margin-bottom: 80px;
         margin-left: 50px;
     }
 }

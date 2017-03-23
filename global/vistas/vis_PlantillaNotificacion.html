@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<!-- Estilos externos //google -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Estilos locales -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
+</head>
+<body>
+	<div contenedor></div>
+</body>
+<!-- scripts que construyen la interfaz y su funcionamiento -->
+<script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
+<!-- scripts PLUGINS-->
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_Maestro.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
+<!-- script con el constructores del formulario-->
+<script type="text/javascript" src='js/constructores/plantillaNotificacion.js'></script>
+<script type="text/javascript" src='../../seguridad/vistas/js/constructores/registroVirtual.js'></script>
+
+<script type="text/javascript">
+/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
+	//arranca la sesion
+	var sesion = new Sesion();
+
+	//arranca el motor de registros que se comunica con BD
+	var torque = new Motor('global','plantillaNotificacion');
+
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.agregarConstructor(registroVirtual);
+	UI.agregarConstructor(plantillaNotificacion);
+	UI.configure({
+		maestro:{
+			entidad: torque.entidadActiva,
+			dependiente:true,
+			padre_virtual: true,
+			padre: 'registroVirtual',
+			nombre_tabla: 'TIPO_NOTIFICACION'
+		},
+		botonera:{
+			botones:['buscar','nuevo','abrir']
+		}
+	});
+
+	sesion.obtenerSesion();
+/*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+
+
+</script>
+</html>

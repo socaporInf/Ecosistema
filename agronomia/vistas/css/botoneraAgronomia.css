@@ -1,0 +1,75 @@
+button.btnDash:hover:before{
+    color:white;
+    background-color: inherit;
+    border-radius:5px;
+    padding:5px;
+    font-size: 9px;
+    position:absolute;
+}
+button.btnDia:hover:before{
+    content: 'Buscar Dia';
+    margin-left:-75px;
+    font-family: "Open Sans";
+}
+button.btnFinca:hover:before{
+    content: 'Agregar Finca';
+    margin-left:-94px;
+}
+button.btnTablon:hover:before{
+    content: 'Agregar Tablon';
+    margin-left:-101px;
+}
+button.btnProductor:hover:before{
+    content: 'Agregar Productor';
+    margin-left:-114px;
+}
+button.btnFaltantes:hover:before{
+    content: 'Elementos Faltantes';
+    margin-left:-114px;
+    font-family: "Open Sans";
+}
+button.btnDash:hover:before{
+    content: 'Tablero de control Zafra';
+    margin-left:-132px;
+    font-family: "Open Sans";
+}
+button.btnLote:hover:before{
+    content: 'Agregar Lote';
+    margin-left:-89px;
+    font-family: "Open Sans";
+}
+button.btnSync:hover:before{
+    content: 'Actualizar Tablones';
+    margin-left:-114px;
+    font-family: "Open Sans";
+}
+button.btnReport:hover:before{
+    content: 'Ver Reportes Cosecha';
+    margin-left:-122px;
+    font-family: "Open Sans";
+}
+button.btnAperturar:hover:before{
+    content: 'Abrir Calculo';
+    margin-left:-88px;
+    font-family: "Open Sans";
+}
+button.btnCerrar:hover:before{
+    content: 'Cerrar Calculo';
+    margin-left:-88px;
+    font-family: "Open Sans";
+}
+button.btnGenerar:hover:before{
+    content: 'Generar Liquidaciones';
+    margin-left:-122px;
+    font-family: "Open Sans";
+}
+button.btnAcoplar:hover:before{
+    content: 'Acoplar RIF';
+    margin-left:-73px;
+    font-family: "Open Sans";
+}
+button.btnDesacoplar:hover:before{
+    content: 'Desacoplar RIF';
+    margin-left:-90px;
+    font-family: "Open Sans";
+}

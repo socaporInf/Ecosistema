@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<!-- Estilos externos //google -->
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- Estilos locales -->
+	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
+	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/widgetGraf.css">
+	<link rel="stylesheet" type="text/css" href="css/dashZafra.css">
+	<link rel="stylesheet" type="text/css" href="css/botoneraAgronomia.css">
+</head>
+<body>
+	<div contenedor>
+	</div>
+</body>
+<!-- scripts que construyen la interfaz y su funcionamiento -->
+<!-- JQUERY -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<!-- HighCharts -->
+<script src="../../lib/highcharts/highcharts.js"></script>
+<script src="../../lib/highcharts/modules/exporting.js"></script>
+<!-- ProgressBar -->
+<script type="text/javascript" src='../../lib/progressBar/progressbar.js'></script>
+<!-- RHINO -->
+<script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
+<!-- scripts de pluggins RHINO -->
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_WidGraf.js'></script>
+<!-- scripts propios del front -->
+<script type="text/javascript" src='js/O_DiaZafra.js'></script>
+<script type="text/javascript" src='js/dashboard.js'></script>
+<script type="text/javascript" src='js/tablon.js'></script>
+<!-- scripts de constructores involucrados -->
+<script type="text/javascript" src='js/constructores/zafra.js'></script>
+
+
+<script type="text/javascript">
+/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
+	//arranca la sesion
+	var sesion = new Sesion();
+
+	//arranca el motor de registros que se comunica con BD
+	var torque = new Motor();
+
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.agregarConstructor(zafra);
+	UI.configure({
+		botonera:{
+			botones:[{
+				tipo:'sync',
+				clases:['btnSync','mat-amber500','white','material-icons'],
+				contenido:'sync',
+				click:actualizarTablones
+			},{
+				tipo:'reporte',
+				clases:['btnReport','mat-teal500','white','material-icons'],
+				contenido:'show_chart',
+				click:function(){
+					location.href='rep_Cosecha.html';
+				}
+			},'abrir']
+		}
+	});
+	UI.contGeneral = document.body.querySelector('div[contenedor]');
+	sesion.obtenerSesion().then(construirUI);
+/*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+
+</script>

@@ -144,6 +144,7 @@ class cls_Componente extends cls_Conexion{
    if($this->aa_Atributos['enlace']=='null'){
       $this->aa_Atributos['enlace'] ='';
    }
+   $this->aa_Atributos['componente_padre'] =$this->aa_Atributos['padre'];
    $ls_Sql="UPDATE seguridad.vcomponente SET ";
 
    //arma la cadena sql en base a los campos pasados en la peticion

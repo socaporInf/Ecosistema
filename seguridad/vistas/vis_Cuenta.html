@@ -3,20 +3,22 @@
 <head>
 	<title></title>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<meta name="viewport" content="width=device-width, user-scalable=no, height=device-height">
+	<!-- Estilos externos //google -->
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" type="text/css" href="css/cuerpo.css">
-	<link rel="stylesheet" type="text/css" href="css/menu.css">
-	<link rel="stylesheet" type="text/css" href="css/formulario.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- Estilos locales -->
+	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
 	<link rel="stylesheet" type="text/css" href="css/miCuenta.css">
 </head>
 <body>
 	<div division-operaciones></div>
 	<div division-formulario></div>
 </body>
+</body>
 <!-- scripts que construyen la interfaz y su funcionamiento -->
-<script type="text/javascript" src='js/motorRegistros.js'></script>
-<script type="text/javascript" src='js/constructor.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
 <script type="text/javascript" src='js/miCuenta.js'></script>
 
 <script type="text/javascript">
@@ -29,9 +31,8 @@
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.configure();
+	UI.configure({});
 
-	sesion.obtenerSesion();
+	sesion.obtenerSesion().then(construirUI);
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
-construirUI();
 </script>

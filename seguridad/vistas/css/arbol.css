@@ -25,7 +25,7 @@ div[hoja] div[titulo-hoja]{
 	transition: all 0.3s linear;
 	width: calc(100% - 33px);
 	float: left;
-	padding: 4px 0px 4px 0px;
+	padding: 6px 0px 6px 0px;
 }
 div[hoja] div[peciolo].asignado button{
 	background-color: #4CAF50;
@@ -39,9 +39,10 @@ div[hoja] div[peciolo]{
 	width: 24px;
 	height: 27px;
 	border:none;
-	padding-top: 3px;
+	padding-top: 5px;
 	padding-left: 3px;
-	padding-right: 3px
+	padding-right: 3px;
+	padding-bottom: 2px;
 }
 
 button[little-mat-button-invisible]{
@@ -52,7 +53,7 @@ button[little-mat-button-invisible]{
 	height: 24px;
 	background-color: transparent;
 }
-button:after{	
+button:after{
     font-family: 'Material Icons';
     color:white;
     font-size: 24px;

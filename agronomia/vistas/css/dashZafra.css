@@ -1,0 +1,275 @@
+div[mat-window].completo,div[mat-window].lat-izq,div[mat-window].lat-der{
+  transition: all 0.5s ease-in-out;
+  margin-left: 1px;
+  margin-bottom: 1px;
+}
+div[mat-window].completo{
+  margin-top: 51px;
+  width: calc(100% - 2px);
+}
+div[mat-window].lat-izq{
+  margin-top: 1px;
+  width: calc(60% - 1px);
+}
+/******************************Lateral derecho*********************************/
+div[mat-window].lat-der{
+  margin-top: 1px;
+  width: calc(40% - 1px);
+  height: 250px;
+}
+section[sector].listado-dias,section[sector].formulario-dias{
+  height: 250px;
+  overflow-y: auto;
+}
+  /*--------------------------------efectos cambio----------------------------*/
+  div[mat-window].lat-izq.reducir{
+    width: calc(40% - 1px);
+  }
+  div[mat-window].lat-der.ampliar{
+    width: calc(60% - 1px);
+  }
+  div[mat-window].lat-der section[sector].listado-dias.subir{
+    margin-top: -250px;
+  }
+  section[sector].formulario-dias.comprimir{
+    height: 200px;
+  }
+  /*------------------------------ estilos lista------------------------------*/
+  section[estado]:after{
+  	font-family: 'Material Icons';
+  	font-size: 24px;
+  	position:absolute;
+  	top: 10px;
+  	right: 15px;
+  }
+  section[estado='A']{
+  	color: #8BC34A;
+  }
+  section[estado='A']:after{
+  	content: 'lock_open';
+  }
+  section[estado='C']{
+  	color: #f44336 ;
+  }
+  section[estado='C']:after{
+  	content: 'lock_outline';
+  }
+  /*------------------------------ estilos Display Dia------------------------*/
+  section[sector].formulario-dias{
+    position:relative;
+  }
+  section[sector].botonera{
+    overflow: visible;
+    height: 50px;
+  }
+  div[separador]{
+    float: right;
+    padding-left: 3px;
+    border-left:1px solid rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: visible;
+  }
+  div[separador] button:hover:before{
+    color: inherit;
+    background-color: inherit;
+    border-radius: 5px;
+    padding: 7px;
+    font-size: 10px;
+    position: absolute;
+    font-family: "Open Sans";
+    margin-top: -42px;
+    box-shadow: inherit
+
+  }
+  div[separador] button:hover:after{
+    content: '';
+    background-color: transparent;
+    position: absolute;
+    margin-top: -22px;
+    margin-left: -21px;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-left: 10px solid transparent;
+    z-index: 3;
+  }
+  /*----------------------------------Tooltip Botones-------------------------------------------*/
+  div[separador] button.mat-lightgreen500:hover:before{
+    content: 'Abrir Dia';
+    margin-left: -13px;
+  }
+  div[separador] button.mat-lightgreen500:hover:after{
+    border-top: 10px solid #8BC34A !important;
+  }
+  div[separador] button.mat-red500:hover:before{
+    content: 'Cerrar Dia';
+    margin-left: -22px;
+  }
+  div[separador] button.mat-red500:hover:after{
+    border-top: 10px solid #f44336 !important;
+  }
+  div[separador] button.mat-blue500:hover:before{
+    content: 'Arrimada Vs Campo';
+    margin-left: -42px;
+  }
+  div[separador] button.mat-blue500:hover:after{
+    border-top: 10px solid #2196F3 !important;
+  }
+  div[separador] button.mat-bluegrey500:hover:before{
+    content: 'Importar Datos';
+    margin-left: -29px;
+  }
+  div[separador] button.mat-bluegrey500:hover:after{
+    border-top: 10px solid #607D8B !important;
+  }
+  div[separador] button.mat-indigo500:hover:before{
+    content: 'Carga Manual';
+    margin-left: -22px;
+  }
+  div[separador] button.mat-indigo500:hover:after{
+    border-top: 10px solid #3F51B5 !important;
+  }
+  div[separador] button.mat-teal500:hover:before{
+    content: 'Cargar Listado';
+    margin-left: -25px;
+  }
+  div[separador] button.mat-teal500:hover:after{
+    border-top: 10px solid #009688 !important;
+  }
+  div[separador] button.mat-brown500:hover:before{
+    content: 'Graficos Dia';
+    margin-left: -20px;
+  }
+  div[separador] button.mat-brown500:hover:after{
+    border-top: 10px solid #795548 !important;
+  }
+  div[separador] button.mat-amber500:hover:before{
+    content: 'Lista Dias';
+    margin-left: -14px;
+  }
+  div[separador] button.mat-amber500:hover:after{
+    border-top: 10px solid #FFC107 !important;
+  }
+
+
+
+/*----------------------------------Tooltip Botones-------------------------------------------*/
+  section[sector].formulario-dias button.chev-izq,section[sector].formulario-dias button.chev-der{
+    position: absolute;
+    top: 80px;
+    background-color: transparent;
+    z-index: 3;
+    border: none;
+    border-radius:100px;
+    width: 50px;
+    height: 50px;
+    padding: 0px;
+  }
+  section[sector].formulario-dias button.chev-izq.invisible,section[sector].formulario-dias button.chev-der.invisible{
+    visibility: hidden;
+  }
+  section[sector].formulario-dias button.chev-der{
+    right: -10px;
+  }
+  section[sector].formulario-dias button.chev-izq{
+    left: -10px;
+  }
+  div[formDia]{
+    transition: all 0.5s ease-in-out;
+    height: calc(100% - 2px);
+    width: calc(100% - 2px);
+    position: absolute;
+    border:1px solid rgba(0,0,0,0.23);
+  }
+  section[cont-datos]{
+    text-transform: capitalize;
+    font-size: 12px;
+    height: calc(100% - 50px);
+  }
+  section[cont-datos] article[general],section[cont-datos] article[cont-graf]{
+    margin-left: 0px;
+    padding: 0px;
+    width: 50%;
+    height: calc(100%);
+    float: left;
+  }
+  section[cont-datos] article[datos]{
+    font-size: 15px;
+    width: 100%;
+    float: left;
+    margin: 0px;
+    padding-top: 10px;
+    padding-left: 30px;
+    overflow: visible;
+  }
+  section[cont-datos] article[general] span{
+    width: 50%;
+    font-size: 11px;
+    text-transform: capitalize;
+    margin-left: 5px;
+    color:white;
+    border-radius: 5px;
+    padding: 3px;
+  }
+  section[cont-datos] article[general] span[estado='C']{
+    background-color:#f44336;
+    color: white;
+    padding: 3px;
+    border-radius: 5px;
+  }
+  section[cont-datos] article[general] span[estado='A']{
+    background-color:#8BC34A ;
+    color: white;
+    padding: 3px;
+    border-radius: 5px;
+  }
+  section[cont-datos] article[cont-graf] div{
+    width: calc(90%);
+    margin-right: 10%;
+    float: right;
+  }
+  section[cont-datos] article[cont-graf] article[cont-graf-tex]{
+    position: absolute;
+    bottom: 5px;
+    text-transform: capitalize;
+    left:20px;
+  }
+  section[cont-datos] article[cont-graf] article[wid-graf]{
+    position: relative;
+    max-width: 320px;
+  }
+ /*------------------------------ estilos graficos------------------------*/
+div[mat-window] section.titulo.liso{
+  color: #212121;
+  background-color: white;
+  position: relative;
+  transition: all 0.5s ease-in-out;
+  padding: 10px 0px 0px 50px;
+  font-size: 21px;
+  min-height: 40px;
+  border-bottom: none !important;
+}
+div[mat-window] section.invisible{
+  min-height: 0px !important;
+  height: 0px;
+  border-bottom: none !important;
+}
+section[sector].contenedor-cards{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-around;
+  border-top: none;
+  text-transform: capitalize;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+/*------------------------------ media ------------------------*/
+@media only screen and (max-device-width: 480px) {
+  div[mat-window].lat-izq{
+    display: none;
+  }
+  div[mat-window].lat-der{
+    width: calc(100%) !important;
+  }
+}

@@ -1,0 +1,60 @@
+/*--------------------------------------Lista Validacion Correo----------------------------------------- */
+div[lista] section[slot] div[celda],div[lista] section[slot] div[cabeceraCelda]{
+  font-size: 10px;
+}
+div[lista] section[slot] div[celda='remesa'],
+div[lista] section[slot] div[cabeceraCelda='remesa']{
+  justify-content: center;
+  width: calc(10%);
+}
+div[lista] section[slot] div[celda='boleto'],
+div[lista] section[slot] div[cabeceraCelda='boleto']{
+  justify-content: center;
+  width: calc(10%);
+}
+div[lista] section[slot] div[celda='finca'],
+div[lista] section[slot] div[cabeceraCelda='finca']{
+  justify-content: center;
+  width: calc(22%);
+  font-size: 8px;
+}
+div[lista] section[slot] div[celda='tablon'],
+div[lista] section[slot] div[cabeceraCelda='tablon']{
+  justify-content: center;
+  width: calc(7%);
+}
+div[lista] section[slot] div[celda='fechadia'],
+div[lista] section[slot] div[cabeceraCelda='fechadia']{
+  width: calc(10%);
+}
+div[lista] section[slot] div[celda='pesoneto/ton'],
+div[lista] section[slot] div[cabeceraCelda='pesoneto/ton']{
+  justify-content: center;
+  width: calc(10%);
+}
+div[lista] section[slot] div[celda='azucar'],
+div[lista] section[slot] div[cabeceraCelda='azucar']{
+  justify-content: center;
+  width: calc(10%);
+}
+div[lista] section[slot] div[celda='rendimiento'],
+div[lista] section[slot] div[cabeceraCelda='rendimiento']{
+  justify-content: center;
+  width: calc(10%);
+}
+@media (min-width: 1000px) {
+  div[lista] section[slot] div{
+    font-size: 12px !important;
+  }
+  div[lista] section[slot] div[celda='finca']{
+    font-size: 14px !important;
+  }
+}
+@media (min-width: 1300px) {
+  div[lista] section[slot] div{
+    font-size: 12px !important;
+  }
+  div[lista] section[slot] div[celda='finca']{
+    font-size: 10px !important;
+  }
+}

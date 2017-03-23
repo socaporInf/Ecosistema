@@ -34,9 +34,12 @@
 	var UI = new Arquitecto();
 	UI.agregarConstructor(mensaje);
 	UI.configure({
-		formulario:{
+		//EJEMPLO: maestro con 2 columnas en la lista
+		maestro:{
 			entidad: torque.entidadActiva,
-			usoConstructor: true
+			lista:{
+				columnas: 2
+			}
 		},
 		botonera:{
 			botones:['buscar','nuevo','abrir']

@@ -10,8 +10,19 @@ finca = {
 	altura: 220,
 	campos:[
 		{
-		  tipo : 'campoDeTexto',
-		  parametros : {requerido:true,titulo:'Codigo Productor',nombre:'codigo_productor',tipo:'simple',eslabon:'simple',usaToolTip:true}
+	  	tipo : 'campoBusqueda',
+	    parametros : {
+	      titulo:'Codigo Productor',
+	      nombre:'codigo_productor',
+	      requerido:true,
+				eslabon:'simple',
+	      peticion:{
+		        entidad: 'productor',
+		        operacion: 'buscar',
+						modulo: 'agronomia'
+		      },
+	      cuadro: {nombre: 'listaProductores',mensaje: 'Cargando Productores'}
+	    }
 		},
 		{
 		  tipo : 'campoDeTexto',

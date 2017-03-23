@@ -11,6 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
 	<link rel="stylesheet" type="text/css" href="css/landing.css">
 	<link rel="stylesheet" type="text/css" href="css/listaNotificaciones.css">
+	<link rel="stylesheet" type="text/css" href="../../agronomia/vistas/css/arrimadaVsCampo.css">
 	<!-- Calendario -->
 	<link href='../../lib/fullcalendar/fullcalendar.css' rel='stylesheet' />
 	<link href='../../lib/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -29,6 +30,7 @@
 <!-- scripts que construyen la interfaz y su funcionamiento -->
 <script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_Card.js'></script>
 <script type="text/javascript" src='js/landing.js'></script>
 
 
@@ -43,10 +45,26 @@
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
 	UI.configure({
-
+		botonera:{
+			botones:[]
+		}
 	});
 
-	sesion.obtenerSesion();
+	sesion.obtenerSesion()
+		.then(function(){
+			if(sesion.buscarPrivilegio('TABLERO DE CONTROL ZAFRA')){
+					var boton =
+					{
+						tipo:'dash',
+						clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
+						click: function(){
+							location.href = '../../agronomia/vistas/vis_DashZafra.html?Dia='+UI.elementos.url.captarParametroPorNombre('Dia');
+						},
+						contenido: 'dashboard'
+					};
+					UI.elementos.botonera.agregarBoton(boton);
+			}
+		});
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 construirUI();
 </script>

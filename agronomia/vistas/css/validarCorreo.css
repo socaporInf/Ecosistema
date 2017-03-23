@@ -1,0 +1,36 @@
+
+@import url('botoneraAgronomia.css');
+div[mat-window].form-rep div[formelements],div[mat-window].form-rep div.group {
+    margin-bottom: 0px;
+}
+div[mat-window].completo{
+  margin-left: 1px;
+  width: calc(100% - 2px);
+}
+div[mat-window].form-rep {
+  margin-bottom: 10px;
+}
+div[mat-window].form-rep section.botonera{
+  float: right;
+  width: 60px;
+  margin-top: -10px;
+}
+section[estado]:after{
+	font-family: 'Material Icons';
+	font-size: 32px;
+	position:absolute;
+	top: 5px;
+	right: 15px;
+}
+section[estado='V']{
+	color: #3F51B5;
+}
+section[estado='V']:after{
+	content: 'check';
+}
+section[estado='R']{
+	color: #FFD54F;
+}
+section[estado='R']:after{
+	content: 'schedule';
+}

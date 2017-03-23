@@ -1,0 +1,8 @@
+button.btnTab:hover:before{
+  content: 'Nuevo Tabulador';
+  color: white;
+  background-color: inherit;
+  margin-left: -101px;
+  border-radius: 5px;
+  padding: 5px;
+}

@@ -1,7 +1,7 @@
  <?php
 include_once('cls_Conexion.php');
 class cls_Mensaje_Sistema extends cls_Conexion{
-	
+
 	protected $aa_Atributos = array();
 	private $aa_Campos = array('codigo','titulo','cuerpo','tipo','descripcion');
 
@@ -17,15 +17,14 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 	public function gestionar(){
 		switch ($this->aa_Atributos['operacion']) {
 			case 'buscar':
-				$registros=$this->f_Listar();
-				if(count($registros)!=0){
+			$lb_Enc=$this->f_Listar();
+				if($lb_Enc){
 					$success=1;
-					$respuesta['registros']=$registros;
+					$respuesta['registros']=$this->aa_Atributos['registros'];
+					$respuesta['paginas']=$this->aa_Atributos['paginas'];
 				}else{
 					$respuesta['success'] = 0;
-					$respuesta['mensaje'] = 'no hay registros';
-					$respuesta['tipo'] = 'advertencia';
-					$respuesta['titulo'] = 'advertencia';	
+					$respuesta['mensaje'] = $this->buscarMensaje(8);
 				}
 				break;
 
@@ -36,16 +35,16 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 					$success=1;
 				}
 				break;
-			
+
 			case 'guardar':
 				$lb_Hecho=$this->f_Guardar();
 				if($lb_Hecho){
-					$this->f_BuscarUltimo();
+					$this->f_Buscar();
 					$respuesta['registros'] = $this->aa_Atributos['registro'];
-					$respuesta['mensaje'] = 'Insercion realizada con exito';
+					$respuesta['mensaje'] = $this->buscarMensaje(9);
 					$success = 1;
 				}else{
-					$respuesta['mensaje'] = 'Error al ejecutar la insercion';
+				$respuesta['mensaje'] = $this->buscarMensaje(10);
 					$success = 0;
 				}
 				break;
@@ -53,7 +52,7 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 			case 'modificar':
 				$respuesta = $this->f_Modificar();
 				break;
-				
+
 			default:
 				$respuesta['mensaje'] = 'Operacion "'.strtoupper($this->aa_Atributos['operacion']).'" no existe para esta entidad';
 				$success = 0;
@@ -61,7 +60,7 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 		}
 		if(!isset($respuesta['success'])){
 			$respuesta['success']=$success;
-		}	
+		}
 		return $respuesta;
 	}
 	public function buscarMensaje($codigo){
@@ -81,17 +80,22 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 	private function f_Listar(){
 		$x=0;
 		$la_respuesta=array();
-		$ls_Sql="SELECT * FROM global.vmensaje_sistema ";
+		$cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where titulo like '%".$this->aa_Atributos['valor']."%'";
+		$ls_SqlBase="SELECT * FROM global.vmensaje_sistema $cadenaBusqueda";
+		$orden = " order by codigo";
+		$ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);
 		while($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta[$x]['codigo']=$la_registros['codigo'];
 			$la_respuesta[$x]['titulo']=$la_registros['titulo'];
+			$la_respuesta[$x]['codigo']=$la_registros['codigo'];
 			$x++;
 		}
 		$this->f_Cierra($lr_tabla);
 		$this->f_Des();
-		return $la_respuesta;
+		$this->aa_Atributos['registros'] = $la_respuesta;
+		$lb_Enc=($x == 0)?false:true;
+		return $lb_Enc;
 	}
 
 	private function f_Buscar(){
@@ -120,42 +124,17 @@ class cls_Mensaje_Sistema extends cls_Conexion{
 
 		return $lb_Enc;
 	}
-	
+
 	private function f_Guardar(){
 
 		$lb_Hecho=false;
-		$ls_Sql="INSERT INTO global.vmensaje_sistema (titulo,descripcion,cuerpo,tipo) values 
-				('".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['descripcion']."', 
-				'".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['tipo']."') ";
+		$ls_Sql="INSERT INTO global.vmensaje_sistema (titulo,descripcion,cuerpo,tipo,codigo) values
+				('".$this->aa_Atributos['titulo']."','".$this->aa_Atributos['descripcion']."',
+				'".$this->aa_Atributos['cuerpo']."','".$this->aa_Atributos['tipo']."','".$this->aa_Atributos['codigo']."') ";
 		$this->f_Con();
 		$lb_Hecho=$this->f_Ejecutar($ls_Sql);
 		$this->f_Des();
 		return $lb_Hecho;
-	}
-
-	private function f_BuscarUltimo(){
-		$lb_Enc=false;
-		//Busco El rol
-		$ls_Sql="SELECT * from global.vmensaje_sistema WHERE codigo = (SELECT MAX(codigo) from global.vmensaje_sistema) ";
-		$this->f_Con();
-		$lr_tabla=$this->f_Filtro($ls_Sql);
-		if($la_registros=$this->f_Arreglo($lr_tabla)){
-			$la_respuesta['codigo']=$la_registros['codigo'];
-			$la_respuesta['titulo']=$la_registros['titulo'];
-			$la_respuesta['cuerpo']=$la_registros['cuerpo'];
-			$la_respuesta['tipo']=$la_registros['tipo'];
-			$la_respuesta['descripcion']=$la_registros['descripcion'];
-			$lb_Enc=true;
-		}
-		$this->f_Cierra($lr_tabla);
-		$this->f_Des();
-
-		if($lb_Enc){
-			//guardo en atributo de la clase
-			$this->aa_Atributos['registro']=$la_respuesta;
-		}
-
-		return $lb_Enc;
 	}
 
 	private function f_Modificar(){

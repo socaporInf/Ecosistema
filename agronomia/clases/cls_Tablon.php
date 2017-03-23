@@ -41,6 +41,18 @@ class cls_Tablon extends cls_Conexion{
      }
      break;
 
+     case 'buscarValidado':
+     $lb_Enc=$this->f_BuscarTablonesPorLoteValidado();
+     if($lb_Enc){
+       $success=1;
+       $respuesta['registros']=$this->aa_Atributos['registros'];
+       $respuesta['paginas']=$this->aa_Atributos['paginas'];
+     }else{
+       $respuesta['success'] = 0;
+       $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+     }
+     break;
+
      case 'buscarRegistro':
        $lb_Enc=$this->f_buscar();
        if($lb_Enc){
@@ -63,6 +75,17 @@ class cls_Tablon extends cls_Conexion{
 
      case 'modificar':
        $respuesta = $this->f_Modificar();
+       break;
+
+     case "actualizarTablones":
+       $lb_Hecho=$this->f_ActualizarTablones();
+       if($lb_Hecho){
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(30);
+         $success = 1;
+       }else{
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(31);
+         $success = 0;
+       }
        break;
 
      default:
@@ -104,6 +127,7 @@ class cls_Tablon extends cls_Conexion{
      $la_respuesta[$x]['codigo']=$la_registros['id_tablon'];
      $la_respuesta[$x]['id_tablon']=$la_registros['id_tablon'];
      $la_respuesta[$x]['codigo_tablon']=$la_registros['codigo_tablon'];
+     $la_respuesta[$x]['nombre']=$la_registros['codigo_tablon'];
      $la_respuesta[$x]['id_lote']=$la_registros['id_lote'];
      $la_respuesta[$x]['codigo_lote']=$la_registros['codigo_lote'];
      $la_respuesta[$x]['nombre_lote']=$la_registros['nombre_lote'];
@@ -122,6 +146,26 @@ class cls_Tablon extends cls_Conexion{
      $la_respuesta[$x]['toneladas_estimadas_hectarea']=$la_registros['toneladas_estimadas_hectarea'];
      $la_respuesta[$x]['toneladas_real']=$la_registros['toneladas_real'];
      $la_respuesta[$x]['toneladas_azucar']=$la_registros['toneladas_azucar'];
+     $x++;
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return $lb_Enc;
+}
+private function f_BuscarTablonesPorLoteValidado(){
+   $x=0;
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_tablon like '%".$this->aa_Atributos['valor']."%'";
+   $ls_SqlBase="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda ";
+   $orden = ' order by codigo_tablon';
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
+   $la_respuesta=array();
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['codigo']=$la_registros['codigo_tablon'];
+     $la_respuesta[$x]['nombre']=$la_registros['codigo_tablon'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -180,14 +224,13 @@ private function f_Buscar(){
     $ls_Sql="INSERT INTO agronomia.vtablon
         (codigo_tablon,id_lote,codigo_clase,codigo_variedad,codigo_tipo_corte
        ,codigo_indicador_cana_diferida,area_cana,area_semilla,fecha_siembra_corte,fecha_ultimo_arrime,
-       toneladas_estimadas_hectarea,toneladas_real,toneladas_azucar) values
+       toneladas_estimadas_hectarea) values
        ('".$this->aa_Atributos['codigo_tablon']."','".$this->aa_Atributos['id_lote']."',
        '".$this->aa_Atributos['codigo_clase']."','".$this->aa_Atributos['codigo_variedad']."',
        '".$this->aa_Atributos['codigo_tipo_corte']."','".$this->aa_Atributos['codigo_indicador_cana_diferida']."',
        '".$this->aa_Atributos['area_cana']."','".$this->aa_Atributos['area_semilla']."',
        '".$this->aa_Atributos['fecha_siembra_corte']."','".$this->aa_Atributos['fecha_ultimo_arrime']."',
-       ".$this->aa_Atributos['toneladas_estimadas_hectarea'].",".$this->aa_Atributos['toneladas_real'].",
-       ".$this->aa_Atributos['toneladas_azucar'].")";
+       ".$this->aa_Atributos['toneladas_estimadas_hectarea'].")";
     $this->f_Con();
     $lb_Hecho=$this->f_Ejecutar($ls_Sql);
     $this->f_Des();
@@ -214,6 +257,15 @@ private function f_Buscar(){
      $respuesta['success'] = 1;
    }
    return $respuesta;
+ }
+ private function f_ActualizarTablones($fecha = "''"){
+   $lb_Hecho=false;
+   print('fecha es :'.$fecha);
+   $ls_Sql="select agronomia.spcalc_actualizamaestrotablon($fecha)";
+   $this->f_Con();
+   $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+   $this->f_Des();
+   return $lb_Hecho;
  }
 }
 ?>

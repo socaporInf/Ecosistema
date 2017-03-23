@@ -1,0 +1,7 @@
+div[capa='contenido'] section[pie].operaciones{
+  background-color: white;
+  border-top:1px solid rgba(0,0,0,0.25);
+}
+div[capa='contenido'] section[cabecera].verificacion{
+  background-color:#607D8B;
+}
