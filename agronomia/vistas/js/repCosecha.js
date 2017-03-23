@@ -80,11 +80,10 @@ function ejecutarMinisterio(){
          "zonas": data.zonas
         }
       };
-      console.log(JSON.stringify(datos.data));
-      //return datos;
-    });
-    //.then(torque.pedirReporte)
-    //.then(done,error);
+      return datos;
+    })
+    .then(torque.pedirReporte)
+    .then(done,error);
 }
 //-----------------------------------------------
 function ejecutar(){
