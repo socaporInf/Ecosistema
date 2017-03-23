@@ -199,13 +199,14 @@ class cls_ReportesCosecha extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['municipio'] =$la_registros['municipio'];
+     $la_respuesta[$x]['nombre'] =$la_registros['municipio'];
      $la_respuesta[$x]['nomestado'] =$la_registros['estado'];
      $la_respuesta[$x]['codestado'] =$la_registros['codigo_estado'];
-     $la_respuesta[$x]['cod_mun'] =$la_registros['cod_mun'];
+     $la_respuesta[$x]['codigo'] =$la_registros['cod_mun'];
      $la_respuesta[$x]['peso'] =$la_registros['peso'];
      $la_respuesta[$x]['azucar'] =$la_registros['azucar'];
      $la_respuesta[$x]['area'] =$la_registros['area'];
+     $la_respuesta[$x]['identificador'] =$la_registros['identificador'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);

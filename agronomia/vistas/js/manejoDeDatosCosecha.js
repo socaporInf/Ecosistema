@@ -1,4 +1,7 @@
 function organizarDatosMinisterio(municipios){
+  var datosLimpio = separarDatos(municipios);
+  municipios = datosLimpio.municipios;
+  var zonas = datosLimpio.zonas;
   var estados = extraerEstados(municipios);
   var calcularTotales = ['area','peso','azucar'];
   estados = agregarHijos(estados,municipios,'codestado',calcularTotales);
@@ -10,9 +13,29 @@ function organizarDatosMinisterio(municipios){
     estado.rdto = round((estado.azucar * 100 / estado.peso),2);
     estado.tch = round((estado.peso / estado.area),2);
   });
+  //----------zonasmunicipios.forEach(function(municipio){
 
-  return estados;
+  zonas.forEach(function(zona){
+    zona.rdto = round((zona.azucar * 100 / zona.peso),2);
+    zona.tch = round((zona.peso / zona.area),2);
+  });
+
+  return { "estados": estados,"zonas":zonas};
 }
+separarDatos = function(datos){
+  var newData = {
+    "municipios":[],
+    "zonas":[]
+  };
+  datos.forEach(function(data){
+    if(data.identificador == 'z'){
+      newData.zonas.push(data);
+    }else{
+      newData.municipios.push(data);
+    }
+  });
+  return newData;
+};
 function extraerEstados(datos){
   var estados = [];
   datos.forEach(function(registro){

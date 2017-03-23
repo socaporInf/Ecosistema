@@ -10,6 +10,7 @@
 	<!-- Estilos locales -->
 	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
 	<link rel="stylesheet" type="text/css" href="css/arrimadaVsCampo.css">
+	<link rel="stylesheet" type="text/css" href="css/calendarioZafra.css">
 	<link rel="stylesheet" type="text/css" href="css/listadoArrimadaVsCampo.css">
 	<link rel="stylesheet" type="text/css" href="css/nucleo.css">
 	<link rel="stylesheet" type="text/css" href="../../global/vistas/css/organizacion.css">
@@ -38,6 +39,7 @@
 <script type="text/javascript" src='js/constructores/tablon.js'></script>
 <!-- script con el funcionamiento de este formulario -->
 <script type="text/javascript" src='js/arrimadaVsCampo.js'></script>
+<script type="text/javascript" src='js/calendarioZafra.js'></script>
 
 
 <script type="text/javascript">
@@ -92,7 +94,44 @@
 				},{
 					tipo:'dia',
 					clases: ['btnDia','mat-deeppurple500','white','md-24','material-icons'],
-					click: manejarDia,
+					click: function(){
+						var modal = UI.crearVentanaModal({
+							cabecera:{
+								html:'Seleccione dia a visualizar'
+							},
+							cuerpo:{
+								clases:['cont-calendario'],
+								html:'<div id="calendar"></div>'
+							},
+							pie:{
+								clases:['leyenda'],
+								html:''
+							}
+						});
+						modal.cuerpo = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo;
+						modal.pie = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.pie;
+						manejarDia(modal,function(date){
+					      //funciomaniento cuando se hace click sobre un dia del calendario
+					      var diasZafra = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.dias;
+					      diasZafra.forEach(function(dia){
+					        if(dia.fecha_dia == date.format()){
+					          if(dia.secuencia_proceso_dia == 1){//registro virtual codigo =>31 ,nombre => en espera
+					            UI.agregarToasts({
+					              texto: 'Dia '+dia.fecha_dia+' en espera de recepcion de datos',
+					              tipo: 'web-arriba-derecha-alto'
+					            });
+					          }else if(dia.secuencia_proceso_dia == 2){//registro virtual codigo =>32 ,nombre => importacion de datos
+					            UI.agregarToasts({
+					              texto: 'Dia '+dia.fecha_dia+' validando datos para importacion',
+					              tipo: 'web-arriba-derecha-alto'
+					            });
+					          }else if(parseInt(dia.secuencia_proceso_dia) >= 3){//registro virtual codigo =>33 ,nombre => arrime vs campo
+					            armarListados(dia);
+					          }
+					        }
+					      });
+						});
+					},
 					contenido: 'date_range'
 				},{
 					tipo:'guardar',
