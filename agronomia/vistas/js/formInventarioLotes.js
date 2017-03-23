@@ -32,7 +32,7 @@ var agregarListado = function(ventana,peticion){
     }
   },contList.nodo);
 };
-function agregarNuevo(entidad) {
+function agregarNuevo(entidad){
   var cons = UI.buscarConstructor(entidad);
   var ventana = UI.buscarVentana("editarProductor");
   var secForm = ventana.buscarSector('form'+entidad);

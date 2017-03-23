@@ -47,6 +47,7 @@ function ejecutarTrans(){
     .then(torque.pedirReporte)
     .then(done,error);
 }
+//-----------------------------------------------
 function ejecutarMinisterio(){
   var ventanaCarga = UI.crearVentanaModal({
     cabecera:{
@@ -69,19 +70,23 @@ function ejecutarMinisterio(){
   torque.manejarOperacion(peticion,cuadro)
     .then(function(respuesta){
       generearCuadroSecundario();
+      var data = organizarDatosMinisterio(respuesta.registros);
       //id de la plantilla del reporte dentro jsreport(servidor de reportes)
       var datos = {
         reporte: {"shortid":"rkP2anaMe"},
         data: {
-         "estados" :organizarDatosMinisterio(respuesta.registros),
-         "zafra": respuesta.zafra
+         "estados" :data.estados,
+         "zafra": respuesta.zafra,
+         "zonas": data.zonas
         }
       };
-      return datos;
-    })
-    .then(torque.pedirReporte)
-    .then(done,error);
+      console.log(JSON.stringify(datos.data));
+      //return datos;
+    });
+    //.then(torque.pedirReporte)
+    //.then(done,error);
 }
+//-----------------------------------------------
 function ejecutar(){
   var form = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario;
   if(form.buscarCampo('presentacion').captarValor()==='E'){

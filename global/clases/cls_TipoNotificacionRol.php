@@ -107,7 +107,7 @@ class cls_TipoNotificacionRol extends cls_Conexion{
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo']=$la_registros['id_tipo_notificacion_rol'];
      $la_respuesta['nombre_tipo_notificacion']=$la_registros['codigo_tipo_notificacion'];
-     $la_respuesta['nombre']=$la_registros['codigo_tipo_notificacion'];
+     $la_respuesta['nombre']=$la_registros['nombre_rol'];
      $la_respuesta['nombre_rol']=$la_registros['nombre_rol'];
      $lb_Enc=true;
    }
