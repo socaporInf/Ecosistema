@@ -107,6 +107,7 @@ class cls_Productor extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['codigo_productor']=$la_registros['codigo_productor'];
      $la_respuesta[$x]['codigo']=$la_registros['codigo_productor'];
      $la_respuesta[$x]['nombre']=$la_registros['codigo_productor'].' '.$la_registros['nombre_completo'];
      $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
@@ -151,6 +152,7 @@ class cls_Productor extends cls_Conexion{
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta['codigo']=$la_registros['codigo_productor'];
      $la_respuesta['codigo_productor']=$la_registros['codigo_productor'];
      $la_respuesta['nombre_completo']=$la_registros['nombre_completo'];
      $la_respuesta['nombre']=$la_registros['codigo_productor'].' '.$la_registros['nombre_completo'];
