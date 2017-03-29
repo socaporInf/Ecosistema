@@ -175,6 +175,8 @@ class cls_ValidarCorreo extends cls_Conexion{
       $UID = $this->aa_Atributos['uid'];
       $ls_Sql = "UPDATE agronomia.vvalidacion_correo SET estado ='V' WHERE fechadia = '$fechadia' AND uid = $UID ";
       $lb_Hecho = $this->f_Ejecutar($ls_Sql);
+      $ls_Sql="SELECT agronomia.spcalc_actualizarestadodiaszafra();";
+      $this->f_Ejecutar($ls_Sql);
       return $lb_Hecho;
    }
    private function f_MostrarDias(){

@@ -135,7 +135,6 @@ class cls_Carga_Validacion extends cls_Conexion{
 				$lobj_Notificacion = new cls_Notificacion();
 				//dia zafra para cambia el estado segun sea el caso
 				$lobj_DiaZafra = new cls_DiaZafra();
-
 				$fechadia = $datos[1]['fechadia'];
 				$this->validarDia($fechadia,$UID);
 				$this->f_Con();

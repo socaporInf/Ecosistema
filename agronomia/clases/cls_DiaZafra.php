@@ -490,5 +490,29 @@ class cls_DiaZafra extends cls_Conexion{
     }
     return $datos;
   }
+  function actualizarDiferencias(){
+
+    $fecha_dia = $this->aa_Atributos['diaZafra']['fecha_dia'];
+    $lb_Enc=false;
+    $ls_Sql="SELECT
+              (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') -
+              (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia')
+              as diferencia;";
+    $this->f_Con();
+    $lr_tabla=$this->f_Filtro($ls_Sql);
+    if($la_registros=$this->f_Arreglo($lr_tabla)){
+      $la_respuesta['diferencia']=$la_registros['diferencia'];
+      $lb_Enc=true;
+    }
+    $this->f_Cierra($lr_tabla);
+    $this->f_Des();
+
+    if($lb_Enc){
+      //guardo en atributo de la zona
+      $this->aa_Atributos['diferencia']=$la_respuesta['diferencia'];
+    }
+
+    return $lb_Enc;
+  }
 }
 ?>
