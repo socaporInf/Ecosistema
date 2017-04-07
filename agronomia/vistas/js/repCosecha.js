@@ -88,13 +88,7 @@ function ejecutarMinisterio(){
 //-----------------------------------------------
 function ejecutar(){
   var form = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario;
-  if(form.buscarCampo('presentacion').captarValor()==='E'){
-    UI.crearMensaje({
-      titulo:'Presentacion no disponible',
-      cuerpo:'La presentacion de este reporte en Hoja de calculo(Excel) esta en estos momentos en construccion',
-      nombre_tipo:'ADVERTENCIA'
-    });
-  }else{  var ventanaCarga = UI.crearVentanaModal({
+  var ventanaCarga = UI.crearVentanaModal({
       cabecera:{
         html: 'Resumen Finca'
       },
@@ -153,15 +147,15 @@ function ejecutar(){
             }
             break;
             case 'E':
-
               datos.reporte = {"shortid":"HJmzQumMx"};
               datos.data = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+              datos.ruta = '/agronomia/clases/rep_CosechaExcel.php';
               datos.presentacion = 'E';
+              datos.agrupacion = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('agrupacion').captarValor();
               break;
         }
         return datos;
       })
       .then(torque.pedirReporte)
       .then(done,error);
-  }
 }

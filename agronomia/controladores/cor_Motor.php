@@ -159,6 +159,11 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_Zafra;
 			break;
 
+		case 'reportesExcel':
+			include_once('../clases/cls_ReportesCosech.php');
+			$lobj_Entidad = new cls_ReportesCosecha;
+			break;
+
 		default:
 			$lobj_Entidad = false;
 			break;
