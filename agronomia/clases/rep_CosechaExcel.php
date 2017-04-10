@@ -228,7 +228,7 @@
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea_sem'].'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzareacana'].'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztonestha'].'</td>
+              <td  align="center">'..round(floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'])+floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea']), 2)'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'].'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tacortada'].'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['taporcortar'].'</td>
