@@ -147,11 +147,11 @@ function ejecutar(){
             }
             break;
             case 'E':
+              datos.agrupacion = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('agrupacion').captarValor();
               datos.reporte = {"shortid":"HJmzQumMx"};
-              datos.data = { "zonas" :organizarDatosResumenFinca('R',respuesta.registros)};
+              datos.data = { "zonas" :organizarDatosResumenFinca(datos.agrupacion,respuesta.registros)};
               datos.ruta = '/agronomia/clases/rep_CosechaExcel.php';
               datos.presentacion = 'E';
-              datos.agrupacion = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('agrupacion').captarValor();
               break;
         }
         return datos;
