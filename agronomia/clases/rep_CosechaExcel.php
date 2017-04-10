@@ -2,8 +2,8 @@
   session_start();
   header("Content-Type: application/vnd.ms-excel; charset=iso-8859-1");
   header("Content-Disposition: attachment; filename=reportesCosecha.xls");
-  header("Pragma: no-cache");
-  header("Expires: 0");
+  //header("Pragma: no-cache");
+  //header("Expires: 0");
 
   // Request Handler*/
   if (count($_POST))
