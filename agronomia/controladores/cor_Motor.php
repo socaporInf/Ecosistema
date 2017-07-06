@@ -159,10 +159,28 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_Zafra;
 			break;
 
-		case 'reportesExcel':
-			include_once('../clases/cls_ReportesCosech.php');
+		case 'FechaCorte':
+			include_once('../clases/cls_ReportesCosecha.php');
 			$lobj_Entidad = new cls_ReportesCosecha;
 			break;
+
+		case 'crecanicultor':
+			include_once('../clases/cls_creditoCanicultorGarantia.php');
+			$lobj_Entidad = new cls_creditoCanicultorGarantia;
+			break;
+
+		//---------Modulo credito a añicultor-----------
+		
+		case 'm01componente':
+			include_once('../clases/cls_M01Componente.php');
+			$lobj_Entidad = new cls_M01Componente;
+			break;
+
+		case 'm01_detalle_componente':
+			include_once('../clases/cls_M01_Detalle_Componente.php');
+			$lobj_Entidad = new cls_M01_Detalle_Componente;
+			break;
+
 
 		default:
 			$lobj_Entidad = false;

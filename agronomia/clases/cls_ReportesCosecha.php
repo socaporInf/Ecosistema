@@ -62,6 +62,17 @@ class cls_ReportesCosecha extends cls_Conexion{
       }
       break;
 
+      case 'fechacorte':
+        $registros = $this->mostrarFechaCorte();
+        if(count($registros['registros'])>0){
+          $respuesta['success'] = 1;
+          $respuesta['registros'] = $registros['registros'];
+          $respuesta['zafra'] = $registros['zafra'];
+        }else{
+            $respuesta['success'] = 0;
+        }
+        break;
+
      default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
        $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -255,5 +266,34 @@ class cls_ReportesCosecha extends cls_Conexion{
    return $respuesta;
  }
 
+ private function mostrarFechaCorte(){
+   $x=0;
+   //$this->aa_Atributos['fecha_desde']=($this->aa_Atributos['fecha_desde']==null)?'':$this->fFechaPHP($this->aa_Atributos['fecha_desde']);
+   //$this->aa_Atributos['fecha_hasta']=($this->aa_Atributos['fecha_hasta']==null)?'':$this->fFechaPHP($this->aa_Atributos['fecha_hasta']);
+   $ls_Sql="SELECT * from agronomia.spcon_fecha_corte()";
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['finca_codigo'] =$la_registros['finca_codigo'];
+     $la_respuesta[$x]['nombre_finca'] =$la_registros['nombre_finca'];
+     $la_respuesta[$x]['tablon_codigo'] =$la_registros['tablon_codigo'];
+     $la_respuesta[$x]['codzona'] =$la_registros['codzona'];
+     $la_respuesta[$x]['nombre_zona'] =$la_registros['nombre_zona'];
+     $la_respuesta[$x]['area'] =$la_registros['area'];
+     $la_respuesta[$x]['max'] =$la_registros['max'];
+     $la_respuesta[$x]['min'] =$la_registros['min'];
+     $x++;
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+
+  // $la_zafra['desde']=($this->aa_Atributos['fecha_desde']=='')?$la_zafra['fechainicio']:$this->fFechaBD($this->aa_Atributos['fecha_desde']);
+  // $la_zafra['hasta']=($this->aa_Atributos['fecha_hasta']=='')?$la_zafra['feczafra']:$this->fFechaBD($this->aa_Atributos['fecha_hasta']);
+
+   //$la_data["zafra"] = $la_zafra;
+   $la_data['registros'] = $la_respuesta;
+   return $la_data;
+ }
+ 
 }
 ?>

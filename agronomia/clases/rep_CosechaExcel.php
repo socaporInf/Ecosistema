@@ -18,16 +18,17 @@
           echo "No se detecto ningun dato";
       }
   }
+  //print_r($arreglo);
   $agrupacion = $_POST['agrupacion'];
   $cabecera =  array('Finca Letra','Nombre Finca','Sem','Caña','Total','Ton/Ha','Total Est','Cortada','Por Cortar','Por Cosechar','Total/Ton','Ton/Ha','Total','Ton/Ha','%','Corte','Total/Ton','Ton/Ha','Rdto');
 
 
-  function armarCabeceras($cabecera){
+  function armarCabeceras($cabecera,$arreglo){
     echo '<tr>
-      <th align="left" colspan="2">Zafra: 20162017</th>
-      <th align="left" colspan="4">Fecha	Inicio: 15-12-2016</th>
-      <th align="left" colspan="4">Fecha	Final: 01-05-2017</th>
-      <th align="left" colspan="5">Fecha	Dia	Zafra: 04-04-2017</th>
+      <th align="left" colspan="2">Zafra: '.$arreglo['zafra']['nombrezafra'].'</th>
+      <th align="left" colspan="4">Fecha	Inicio: '.$arreglo['zafra']['fechainicio'].'</th>
+      <th align="left" colspan="4">Fecha	Final: '.$arreglo['zafra']['fechafinal'].'</th>
+      <th align="left" colspan="5">Fecha	Dia	Zafra: '.$arreglo['zafra']['feczafra'].'</th>
     </tr>
     <tr>
       <th colspan="2"></th>
@@ -228,7 +229,7 @@
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea_sem'].'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzareacana'].'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea'].'</td>
-              <td  align="center">'..round(floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'])+floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea']), 2)'</td>
+              <td  align="center">'.round(floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'])+floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea']), 2).'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'].'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tacortada'].'</td>
               <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['taporcortar'].'</td>
@@ -330,14 +331,14 @@
 
      <?php
      if($agrupacion == '"T"'){
-       armarCabeceras($cabecera);
+       armarCabeceras($cabecera,$arreglo);
        armarGeneral($arreglo);
      }
      else if($agrupacion == '"R"'){
-       armarCabeceras($cabecera);
+       armarCabeceras($cabecera,$arreglo);
        armarResumido($arreglo,$cabecera);
      }else if($agrupacion == '"D"'){
-       armarCabeceras($cabecera);
+       armarCabeceras($cabecera,$arreglo);
        armarDetalle($arreglo,$cabecera);
      }
      ?>

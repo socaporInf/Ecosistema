@@ -1,0 +1,76 @@
+/*article[capaSelect] {
+  position: relative;
+}*/
+
+div[mat-window]{
+  margin: 70px 10px 100px 10px;
+}
+
+div[mat-window] section[formulario]{
+  overflow: visible;
+}
+
+table{
+  border: 1px solid silver;
+  width: calc(100% - 20px);
+  margin:10px;
+  border-collapse: collapse;
+  z-index: 3;
+}
+
+table tr{
+  border: 1px solid silver;
+}
+
+table tr:nth-child(odd){
+  background: #e2e2e2;
+}
+
+table tr:first-child:hover{
+  background: #4CAF50;
+}
+
+table tr:first-child{
+  background: #4CAF50;
+  color: white;
+  padding: 5px;
+}
+
+table tr:hover{
+  background: silver;
+}
+
+table tr td{
+  text-indent: 10px;
+  font-size: 12px;
+}
+
+table tbody tr td.garantia-derecha{
+  text-align: right;
+  padding-right: 20px;
+}
+
+
+.botonCreCanicultor{
+  float: right;
+  margin: 10px 10px 10px 0;
+  padding: 10px 20px;
+  color: #4CAF50;
+  background: white;
+  border: 1px solid;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.botonCreCanicultor:hover{
+  background: #4CAF50;
+  color: white;
+}
+
+div[campoBusqueda] {
+  width: 50%;;
+}
+
+div[formElements] {
+  margin-bottom: 0px;
+}

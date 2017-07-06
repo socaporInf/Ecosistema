@@ -2,4 +2,4 @@
 .sass-cache/
 *.css.map
 #conexion
-nucleo/clases/
+nucleo/clases/cls_Conexion.php

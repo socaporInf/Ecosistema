@@ -13,6 +13,8 @@ function construirUI(){
   agregarForm(Ministerio,'Ministerio','Resumen Ministerio',ejecutarMinisterio);
   //form transporte
   agregarForm(Transporte,'Transporte','Transporte Caña',ejecutarTrans);
+  //nuevo reporte
+  agregarForm(FechaCorte,'FechaCorte','Fecha de Corte',ejecutarFechaCorte);
 }
 function ejecutarTrans(){
   var ventanaCarga = UI.crearVentanaModal({
@@ -35,13 +37,27 @@ function ejecutarTrans(){
     }
   };
   torque.manejarOperacion(peticion,cuadro)
+    .then(generearCuadroSecundario)
     .then(function(respuesta){
-      generearCuadroSecundario();
-      //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-      var datos = {
-        reporte:{"shortid":"H1KwwmTSl"},
-        "data":{"dias":organizarDatosTransporte(respuesta.registros)}
-      };
+      var datos = {};
+      switch (UI.buscarVentana('formTransporte').buscarSector('formTransporte').formulario.buscarCampo('presentacion').captarValor()) {
+        case 'P':
+          //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+          datos.reporte = {"shortid":"H1KwwmTSl"};
+          datos.data = {
+            "dias" :organizarDatosTransporte(respuesta.registros)
+          };
+        break;
+
+        case 'E':
+        datos.reporte = {"shortid":"H1KwwmTSl"};
+          datos.data = {
+            "dias" :organizarDatosTransporte(respuesta.registros)
+          };
+          datos.ruta = '/agronomia/clases/rep_TransporteCana.php';
+          datos.presentacion = 'E';
+        break;
+      }
       return datos;
     })
     .then(torque.pedirReporte)
@@ -68,23 +84,38 @@ function ejecutarMinisterio(){
     }
   };
   torque.manejarOperacion(peticion,cuadro)
+    .then(generearCuadroSecundario)
     .then(function(respuesta){
-      generearCuadroSecundario();
+      var datos = {};
       var data = organizarDatosMinisterio(respuesta.registros);
-      //id de la plantilla del reporte dentro jsreport(servidor de reportes)
-      var datos = {
-        reporte: {"shortid":"rkP2anaMe"},
-        data: {
-         "estados" :data.estados,
-         "zafra": respuesta.zafra,
-         "zonas": data.zonas
-        }
-      };
+      switch (UI.buscarVentana('formMinisterio').buscarSector('formMinisterio').formulario.buscarCampo('presentacion').captarValor()) {
+        case 'P':
+            //id de la plantilla del reporte dentro jsreport(servidor de reportes)
+            datos.reporte = {"shortid":"rkP2anaMe"};
+            datos.data = {
+             "estados" :data.estados,
+             "zafra": respuesta.zafra,
+             "zonas": data.zonas
+           };
+        break;
+
+        case 'E':
+          datos.data = {
+           "estados" :data.estados,
+           "zafra": respuesta.zafra,
+           "zonas": data.zonas
+          };
+          datos.reporte = {"shortid":"rkP2anaMe"};
+          datos.ruta = '/agronomia/clases/rep_ResumenMinisterio.php';
+          datos.presentacion = 'E';
+        break;
+      }
       return datos;
     })
     .then(torque.pedirReporte)
     .then(done,error);
 }
+
 //-----------------------------------------------
 function ejecutar(){
   var form = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario;
@@ -149,8 +180,59 @@ function ejecutar(){
             case 'E':
               datos.agrupacion = UI.buscarVentana('formResumenFinca').buscarSector('formResumenFinca').formulario.buscarCampo('agrupacion').captarValor();
               datos.reporte = {"shortid":"HJmzQumMx"};
-              datos.data = { "zonas" :organizarDatosResumenFinca(datos.agrupacion,respuesta.registros)};
+              datos.data = {
+                "zonas" :organizarDatosResumenFinca(datos.agrupacion,respuesta.registros),
+                "zafra": respuesta.zafra
+              };
               datos.ruta = '/agronomia/clases/rep_CosechaExcel.php';
+              datos.presentacion = 'E';
+              break;
+        }
+        return datos;
+      })
+      .then(torque.pedirReporte)
+      .then(done,error);
+}
+
+//-----------------------------------------------
+function ejecutarFechaCorte(){
+  var form = UI.buscarVentana('formFechaCorte').buscarSector('formFechaCorte').formulario;
+  var ventanaCarga = UI.crearVentanaModal({
+      cabecera:{
+        html: 'Fecha de Corte'
+      },
+      cuerpo:{html:''}
+    });
+    var peticion = {
+       modulo: "agronomia",
+       entidad: "reportesCosecha",
+       reporte: "fechacorte",
+       presentacion: form.buscarCampo('presentacion').captarValor(),
+    };
+    var cuadro={
+      contenedor: ventanaCarga.partes.cuerpo.nodo,
+      cuadro:{
+        nombre: 'carga reporte',
+        mensaje: 'Cargando Datos'
+      }
+    };
+    torque.manejarOperacion(peticion,cuadro)
+      .then(generearCuadroSecundario)
+      .then(function(respuesta){
+        var datos = {};
+        switch (UI.buscarVentana('formFechaCorte').buscarSector('formFechaCorte').formulario.buscarCampo('presentacion').captarValor()) {
+          case 'P':
+              datos.reporte = {"shortid":"HyP9xM2Ie"};
+              datos.data = {
+                "total" :organizarDatosResumenFinca('T',respuesta.registros),
+                "zafra": respuesta.zafra
+              };
+              break;
+
+            case 'E':
+              //datos.agrupacion = '';
+              datos.data = { "datos" :respuesta.registros};
+              datos.ruta = '/agronomia/clases/rep_Fecha_Corte.php';
               datos.presentacion = 'E';
               break;
         }
