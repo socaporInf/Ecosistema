@@ -38,7 +38,7 @@ function construirFormulario(tipo,slot){
         registro : slot.atributos
       },{
         nombre:'empresas',
-        html: 'aqui van las empresas'
+        html: ''
       }
     ];
   }else if(tipo === 'nuevo'){
@@ -107,7 +107,6 @@ function modificar(){
     ],
     quitar:['modificar']
   });
-
 }
 function guardarCambios(){
     var formulario = UI.buscarVentana('Formulario').buscarSector('formulario').formulario;
@@ -205,8 +204,11 @@ function agregarEmpresas(codigo){
     }
   };
   torque.manejarOperacion(peticion,cuadro,function(respuesta){
+    var html = '<div>Empresas</div><section contenedor id="contenedorPri">';
     var empresas = respuesta.registros || [];
-    var html = '<div>Empresas</div><section contenedor id="contenedorPri"><article add="empresa"></article>';
+    //PRIVILEGIO:operacion asignar
+    var htmlAdd =(sesion.privilegioActivo.buscarOperacion('asignar'))?'<article add="empresa"></article>':'';
+    html += htmlAdd;
     for (var i = 0; i < empresas.length; i++) {
       html+="<article rol='"+empresas[i].codigo_rol+
             "' empresa='"+empresas[i].codigo+
@@ -216,7 +218,10 @@ function agregarEmpresas(codigo){
     html += '</section>';
     var sector = UI.buscarVentana('Formulario').buscarSector('empresas').nodo;
     sector.innerHTML = html;
-    activarEmpresas();
+    //PRIVILEGIO: operacion modificar
+    if(sesion.privilegioActivo.buscarOperacion('modificar')){
+      activarEmpresas();
+    }
   });
 }
 function activarEmpresas(){
@@ -295,6 +300,8 @@ function asignarEmpresa(){
 }
 function abrirEdicionAsignacion(){
   var nodo = this;
+  //PRIVILEGIO: operacion desasignar
+  var htmlDesasignar =(sesion.privilegioActivo.buscarOperacion('desasignar'))?'<button type="button" class="icon icon-eliminar-rojo"> </button>':'';
   var ventanaOperaciones = UI.crearVentanaModal({
     cabecera: {
       html: nodo.textContent
@@ -304,7 +311,7 @@ function abrirEdicionAsignacion(){
     },
     pie:{
         html: '<section modalButtons>'+
-              '<button type="button" class="icon icon-eliminar-rojo"> </button>'+
+              htmlDesasignar+
               '<button type="button" class="icon icon-modificar-verde"> </button>'+
               '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
             '</section>'

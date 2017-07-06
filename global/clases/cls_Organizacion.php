@@ -19,10 +19,11 @@ class cls_Organizacion extends cls_Conexion{
    $lobj_Mensaje = new cls_Mensaje_Sistema;
    switch ($this->aa_Atributos['operacion']) {
      case 'buscar':
-       $registros=$this->f_Listar();
-       if(count($registros)!=0){
+       $lb_Enc=$this->f_Listar();
+       if($lb_Enc){
          $success=1;
-         $respuesta['registros']=$registros;
+         $respuesta['registros']=$this->aa_Atributos['registros'];
+         $respuesta['paginas']=$this->aa_Atributos['paginas'];
        }else{
          $respuesta['success'] = 0;
          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
@@ -34,6 +35,8 @@ class cls_Organizacion extends cls_Conexion{
        if($lb_Enc){
          $respuesta['registros']=$this->aa_Atributos['registro'];
          $success=1;
+       }else{
+         $success=0;
        }
        break;
 
@@ -67,18 +70,24 @@ class cls_Organizacion extends cls_Conexion{
  }
  private function f_Listar(){
    $x=0;
+   $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"where rif like '%".$this->aa_Atributos['valor']."%' or nombre_completo like '%".$this->aa_Atributos['valor']."%'";
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vorganizacion ";
+   $ls_SqlBase="SELECT * FROM global.vorganizacion $cadenaBusqueda";
+   $orden = 'order by nombre_completo';
+   $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta[$x]['codigo']=$la_registros['rif'];
-     $la_respuesta[$x]['nombre']=$la_registros['nombre'];
+     $la_respuesta[$x]['nombre_completo']=$la_registros['nombre_completo'];
+     $la_respuesta[$x]['nombre']=$la_registros['nombre_completo'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
    $this->f_Des();
-   return $la_respuesta;
+   $this->aa_Atributos['registros'] = $la_respuesta;
+   $lb_Enc=($x == 0)?false:true;
+   return $lb_Enc;
  }
 
  private function f_Buscar(){
@@ -108,7 +117,7 @@ class cls_Organizacion extends cls_Conexion{
 
  private function f_Guardar(){
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vorganizacion (rif,nombre_completo,codigo_tipo_persona) values
+   $ls_Sql="INSERT INTO global.vorganizacion (rif,nombre_completo,codigo_tipo_persona) values
        ('".$this->aa_Atributos['rif']."','".$this->aa_Atributos['nombre_completo']."',
        '".$this->aa_Atributos['codigo_tipo_persona']."')";
    $this->f_Con();
@@ -120,7 +129,7 @@ class cls_Organizacion extends cls_Conexion{
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
-   $ls_Sql="UPDATE agronomia.vorganizacion SET ";
+   $ls_Sql="UPDATE global.vorganizacion SET ";
 
    //arma la cadena sql en base a los campos pasados en la peticion
    $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);

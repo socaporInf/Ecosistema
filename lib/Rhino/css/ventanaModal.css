@@ -28,6 +28,10 @@ div[capa='contenido'].ancho{
     width: calc(90%);
     left: calc(5%) !important;
 }
+div[capa='contenido'].completo {
+    width: calc(100% - 2px);
+    left: 1px;
+}
 div[capa='contenido'] section[cabecera] {
     width: 100%;
     height: 20px;
@@ -67,6 +71,13 @@ div[capa='contenido'] section[cabecera].informacion {
 div[capa='contenido'] section[cabecera].advertencia {
     color: #FFC107;
     background-color: white;
+}
+div[capa='contenido'] section[cabecera] button.cerrar{
+  background-color: transparent;
+  border:none;
+  position: absolute;
+  top:5px;
+  right: 5px;
 }
 div[capa='contenido'] section[pie].error {
     background-color: #E57373;
@@ -114,6 +125,18 @@ div[capa='contenido'] section[cuerpo].lista {
     padding: 0px;
     margin-top: 0px;
 }
+div[capa='contenido'].iframe{
+  height: calc(100%);
+  margin-bottom: 0px;
+}
+div[capa='contenido'].top{
+  top:0px;
+}
+div[capa='contenido'].iframe section[cuerpo]{
+    padding: 0px;
+    margin: 0px;
+    height: calc(100% - 60px);
+}
 div[capa='contenido'] section[cuerpo] div[textoModal]{
     margin-top: 0px;
     margin-left: 45px;
@@ -159,10 +182,15 @@ div[capa='contenido'] div[lista]{
 div[capa='contenido'] div.ContenedorCarga{
     margin-top: 15px !important;
 }
+div[capa='contenido'] iframe{
+  border:none;
+  width: 100%;
+  height: 100%;
+}
 /*-----------------------------------Media screen-------------------------------*/
 @media only screen and (max-device-width: 480px) {
     div[capa='contenido'] {
-        width: 95%;
+        width: 100%;
         left: 0% !important;
     }
     div[capa='contenido'] section[pie]{

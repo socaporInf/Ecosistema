@@ -52,7 +52,7 @@
       nuevo:{
         quitar:['seguridad']
       },
-      modificar: {
+      consulta: {
         agregar:[
           {
             tipo:'seguridad',

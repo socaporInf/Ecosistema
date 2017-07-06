@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<!-- Estilos externos //google -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+    <link href="../../lib/material-icons/css/material-icons.css" rel="stylesheet">
+    <!-- Estilos locales -->
+		<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
+    <link rel="stylesheet" type="text/css" href="css/tabulador.css">
+</head>
+<body>
+	<div contenedor></div>
+</body>
+<!-- scripts que construyen la interfaz y su funcionamiento -->
+<script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
+<!-- scripts PLUGINS-->
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_Maestro.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
+<!-- script con el constructores del formulario-->
+<script type="text/javascript" src='js/constructores/detTabuladorLabor.js'></script>
+<script type="text/javascript" src='js/constructores/tabuladorLabor.js'></script>
+<!-- script con el funcionamiento de este formulario -->
+<script type="text/javascript" src='js/tabulador.js'></script>
+
+<script type="text/javascript">
+/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
+	//arranca la sesion
+	var sesion = new Sesion();
+
+	//arranca el motor de registros que se comunica con BD
+	var torque = new Motor('global','detTabuladorLabor');
+
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.agregarConstructor(tabuladorLabor);
+	UI.agregarConstructor(detTabuladorLabor);
+	UI.configure({
+		maestro:{
+			entidad: torque.entidadActiva,
+			dependiente:true,
+			padre: 'tabuladorLabor',
+			lista:{
+				columnas:3
+			},
+			botones:[{
+				tipo:'nuevo',
+				click:function(){
+					var maestro = UI.elementos.maestro;
+					var codigo = false;
+					if(maestro.listaPadre.obtenerSeleccionado()){
+							if(maestro.listaPadre.obtenerSeleccionado().atributos.codigo){
+								var codigo = maestro.listaPadre.obtenerSeleccionado().atributos.codigo;
+							}
+					}
+					if(codigo){
+						maestro.nuevo()
+							.then(function(){
+								maestro.forma.formulario.buscarCampo('codigo_tabulador').asignarValor(codigo);
+								maestro.forma.formulario.buscarCampo('codigo_tabulador').deshabilitar();
+							});						
+					}else{
+						  UI.agregarToasts({
+						    texto: 'Elija un tabulador antes de continuar',
+						    tipo: 'web-arriba-derecha-alto'
+						  });
+					}
+				}
+			}]
+		},
+		botonera:{
+			botones:[{
+				tipo:'nuevoTabulador',
+				clases: ['btnTab','mat-deeppurple500','white','md-24','material-icons'],
+				click:function(){
+					nuevoTabulador('tabuladorLabor');
+				},
+				contenido:'assignment'
+			},'nuevo','abrir']
+		}
+	});
+
+	sesion.obtenerSesion();
+/*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+
+
+</script>
+</html>

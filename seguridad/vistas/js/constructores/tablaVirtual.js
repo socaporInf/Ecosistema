@@ -20,12 +20,12 @@ tablaVirtual = {
     nuevo:{
       quitar:['detalle']
     },
-    modificar: {
+    consulta: {
       agregar:[
         {
           tipo:'detalle',
           click: function(boton){
-            abrirFormTabla();
+            abrirDetalle('registroVirtual');
           }
         }
       ],

@@ -1,0 +1,90 @@
+/****************+tolltip sencillo***************/
+.tooltip {
+    display: inline-block;
+    position: initial;
+  }
+  .tooltip:hover:after {
+    bottom: 35px;
+    content: attr(contenido); /* este es el texto que será mostrado */
+    margin-left: -85px;
+    position: absolute;
+    z-index: 9998;
+    /* el formato gráfico */
+    background: rgba(0,0,0, 0.8); /* el color de fondo */
+    border-radius: 5px;
+    color: #FFF; /* el color del texto */
+    font-family: Georgia;
+    font-size: 12px;
+    padding: 5px 15px;
+    text-align: center;
+    text-shadow: 1px 1px 1px #000;
+    width: 100px;
+  }
+  .tooltip:hover:before {
+    margin-bottom: 5px;
+    content: "";
+    margin-left: 35%;
+    z-index: 99;
+    /* el triángulo inferior */
+    border: solid;
+    border-color: rgba(0,0,0, 0.8) transparent;
+    border-width: 6px 6px 0 6px;
+  }
+/**********fin tooltip*************************************/
+
+div.fc-center h2{
+  text-transform: capitalize;
+  margin-top: 10px;
+  color: #607D8B;
+}
+
+section[titulo].inverso{
+  font-size: 30px !important;
+  padding-left: 50px;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  width: calc(50% - 50px);
+  float: left;
+}
+
+section.leyenda{
+  width: 50% !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  float: right;
+}
+
+section.leyenda article{
+  margin-right: 10px;
+  float: right;;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-around;
+  border-radius: 100px;
+  width: 40px;
+  height: 40px;
+  overflow: inherit;
+}
+
+div[capa='contenido'] section[pie] {
+  position: relative;
+  width: 100% !important;
+}
+
+section[pie].leyenda {
+  display: inline;
+}
+
+section.leyenda article:first-child{
+  margin-left: 0px;
+}
+
+@media only screen and (max-device-width: 480px) {
+  section[titulo].inverso, section.leyenda{
+    width: 100% !important;
+    float: none;
+  }
+}

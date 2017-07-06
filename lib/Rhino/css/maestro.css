@@ -1,6 +1,9 @@
 div[lista][mat-window].maestro{
-    width: calc( 40% - 50px);
-    float:left;
+  width: calc(40%);
+  float: left;
+}
+div[lista][mat-window].maestro.padre,div[lista][mat-window].maestro.hija{
+  margin-left: calc(20% / 3);
 }
 div[mat-window].maestro:not([lista]){
     transition: all 0.3s ease-in-out;
@@ -11,16 +14,42 @@ div[mat-window].maestro:not([lista]){
 div[mat-window].maestro.aparecer{
     opacity: 1;
 }
+div[lista] div.dos{
+    width: calc(50%) !important;
+}
+div[lista][mat-window].maestro.hija{
+    margin-top: 70px;
+    margin-bottom: 10px
+}
+div[lista][mat-window].maestro.padre{
+    margin-bottom: 10px
+}
+div[mat-window].maestro:not([lista]).dependiente{
+  margin-top: 10px;
+  width: calc(80% + 20% /3);
+  margin-left: calc(20% / 3);
+}
 @media (max-width: 1000px) {
     div[lista][mat-window].maestro{
         width: calc(40%);
         float:left;
         margin-left: 0px;
     }
+    div[lista][mat-window].maestro.hija{
+        width: calc(60% - 1px);
+    }
+    div[lista][mat-window].maestro.padre{
+        margin-bottom: 10px;
+    }
     div[mat-window].maestro:not([lista]){
         width: calc(60% - 1px);
         float: left;
         margin-left: 1px;
+    }
+    div[mat-window].maestro:not([lista]).dependiente{
+        margin-top: 10px;
+        margin-left: 0px;
+        width: calc(100%);
     }
 }
 @media (max-width: 800px) {
@@ -39,6 +68,14 @@ div[mat-window].maestro.aparecer{
         margin-bottom: 10px;
         min-height: 50px;
         margin-left: 50px;
+    }
+    div[lista][mat-window].maestro.hija {
+        width: 85% !important;
+        margin-top: 10px;
+    }
+    div[mat-window].maestro:not([lista]).dependiente {
+        width: 85%;
+        margin-left: 50px !important;
     }
     div[lista][mat-window].maestro section:not([busqueda]) button {
         display: inline-block;
@@ -69,6 +106,9 @@ div[mat-window].maestro.aparecer{
         margin-left: 0px;
         min-height: 50px;
     }
+    div[lista][mat-window].maestro.hija {
+        width: 100% !important;
+    }
     div[lista][mat-window].maestro section:not([busqueda]) button {
         display: inline-block;
         z-index: 1;
@@ -76,5 +116,9 @@ div[mat-window].maestro.aparecer{
     div[mat-window].maestro:not([lista]) {
         width: 100%;
         margin-left: 0px;
+    }
+    div[mat-window].maestro:not([lista]).dependiente {
+        width: 100% !important;
+        margin-left: 0px !important;
     }
 }

@@ -24,7 +24,7 @@ class cls_Acceso extends cls_Conexion{
 	public function f_VerificarAcceso($ps_Nombre,$ps_Pass){
 		$ls_PassBD = $this->encriptarPass($this->aa_Atributos['Pass']);
 		$lb_Enc=false;
-		$ls_Sql="SELECT * FROM seguridad.vusuario where nombre='".$ps_Nombre."'";
+		$ls_Sql="SELECT * FROM seguridad.vusuario where lower(nombre)='".strtolower($ps_Nombre)."'";
 		$this->setDatosConexion($ps_Nombre,$ps_Pass);
 		$this->f_Con();
 		$lr_tabla=$this->f_Filtro($ls_Sql);

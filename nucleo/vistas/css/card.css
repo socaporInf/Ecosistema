@@ -9,9 +9,42 @@ div[mat-card].cuadrada{
 	width: 150px;
 	height: 150px;
 }
+div[mat-card].larga{
+	width: 200px;
+	min-height: 150px;
+	overflow: auto;
+	padding-top: 15px
+}
+div[mat-card].larga div[card-titulo]{
+	position: absolute;
+	top: 0px;
+	border-bottom:1px solid rgba(230, 230, 230, 0.32);
+	border-top: none;
+	font-size: 20px;
+}
 div[mat-card].viewver{
   display:flex;
   flex-direction: row;
   align-items: flex-end;
-  margin-left: 0px; 
+  margin-left: 0px;
+}
+div[card-titulo]{
+	transition:all 0.5s ease-in-out;
+	width: calc(100% - 2px);
+  text-align: center;
+  font-size: 12px;
+  background-color:inherit;
+  padding-bottom: 6px;
+  margin-left: 1px;
+  color: #e6e6e6;
+  border-top:1px solid rgba(230, 230, 230, 0.32);
+  height: calc(10%);
+  z-index: 2;
+	position:absolute;
+}
+div[mat-card].cuadrada:hover div[card-titulo]{
+	padding-top: 24px;
+	height: calc(100% - 31px);
+  font-size: 20px;
+  color: #e6e6e6;
 }

@@ -1,0 +1,5 @@
+#Sass
+.sass-cache/
+*.css.map
+#conexion
+nucleo/clases/cls_Conexion.php

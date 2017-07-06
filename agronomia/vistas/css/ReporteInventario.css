@@ -1,6 +1,13 @@
 div[mat-window].form-rep div[formelements],div[mat-window].form-rep div.group {
     margin-bottom: 0px;
 }
+article[zafra]{
+  position: absolute;
+  right: 5px;
+  top: 10px;
+  color: white;
+  font-size: 25px;
+}
 /*--------------------------------------Lista inventario Fincas----------------------------------------- */
 div[lista].inventario-fincas section[slot] div[celda],div[lista].inventario-fincas section[slot] div[cabeceraCelda]{
   font-size: 10px;

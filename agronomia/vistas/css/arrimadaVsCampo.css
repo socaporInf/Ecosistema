@@ -1,0 +1,155 @@
+@import url('../../../nucleo/vistas/css/card.css');
+@import url('botoneraAgronomia.css');
+
+article[diaZafra]{
+  position: absolute;
+  right: 5px;
+  top: 10px;
+  color: white;
+  font-size: 25px;
+  background-color: #1B5E20;
+}
+
+div[mat-window].arrimada{
+  margin-left: 0px;
+  width: calc(100%);
+  margin-top: 50px;
+  margin-bottom: 0px;
+  position: fixed;
+  z-index: 3;
+}
+div[mat-window].lat-izq,div[mat-window].lat-der{
+  margin-left: 1px;
+  margin-top: 102px;
+  width: calc(50% - 1px);
+  margin-bottom: 70px;
+}
+div[lista] section[slot][cabecera][fija],
+div[lista] section[busqueda][fija]{
+  position: fixed !important;
+  width: calc(50% - 1px) !important;
+  z-index:3;
+}
+section[slot][cabecera][fija] + section[slot]{
+  margin-top: 105px;
+}
+div[lista].comprimida{
+  max-height: calc(100% - 200px);
+}
+div[lista] section[diferente]{
+  color: #f44336;
+}
+div[mat-window] article[valor],div[mat-window] article[total]{
+  float: left;
+  margin-left: 0px;
+}
+div[mat-window].pieArrimada section[sector]{
+  width: 50%;
+  float:left;
+}
+div[mat-window] article[total]{
+  width: calc(25% - 50px);
+}
+div[mat-window] article[der]{
+  margin-left:100px;
+}
+div[mat-window] article[valor]{
+    border-left: 1px solid #232323;
+    border-right:  1px solid #232323;
+    width: calc(25% - 22px);
+    height: 20px;
+    padding-right: 10px;
+    padding-left:  10px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+div[mat-window] article[diferencia]{
+  float:right;
+}
+div[mat-window].pieArrimada{
+  position: fixed;
+  width: calc(100% - 2px);
+  margin-left: 2px;
+  z-index: 3;
+  bottom: -10px;
+  color: #1B5E20;
+  border-top: 1px solid rgba(0, 0, 0, 0.16);
+}
+/*-----------------------------------------------botones----------------------*/
+button.btnNext,button.btnPrev{
+  border: none;
+  background-color: transparent;
+  color: #607D8B !important;
+  font-size: 48px !important;
+  height: 48px !important;
+}
+/*-----------------------------------------------calendario-------------------*/
+td.fc-day.rh-activo{
+
+}
+td.fc-day-number.rh-activo{
+  color: white;
+}
+
+td div[diaZafra]{
+  font-size: 28px;
+  margin-left: calc(50% - 22.5px);
+  color: white;
+  width: 45px;
+  height: 40px;
+  margin-top: calc(50% - 30px);
+  text-align: center;
+}
+section[cuerpo]{
+  padding: 0px !important;
+  text-transform: capitalize;
+}
+/*-----------------------------------------------leyenda----------------------*/
+section[pie].leyenda {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-around;
+  border-top: 1px solid rgba(0, 0, 0, 0.21);
+  text-transform: capitalize;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+section[pie] article{
+  margin-left: 0px;
+  float: left;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-around;
+  border-radius: 5px;
+}
+/*--------------------------------------Faltantes ----------------------------*/
+section.cont-card{
+   display: flex;
+   flex-direction: row;
+   align-items: flex-start;
+   flex-wrap: wrap;
+   align-content: center;
+   justify-content: space-around;
+}
+div[mat-card]{
+  position: relative;
+}
+table[faltantes]{
+  width: 100%;
+  float: left;
+  text-align: center;
+  position: absolute;
+  top: 0px;
+  color:white;
+}
+@media only screen and (max-device-width: 780px) {
+  div[selector]{
+    display:none !important;
+  }
+}

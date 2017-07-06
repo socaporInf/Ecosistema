@@ -24,8 +24,7 @@ class cls_Noticia extends cls_Conexion{
           $success=1;
           $respuesta['registros']=$registros;
        }else{
-          $respuesta['success'] = 0;
-          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+          $respuesta['success'] = 1;
        }
        break;
 

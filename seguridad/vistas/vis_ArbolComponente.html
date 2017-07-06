@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no">
 	<!-- Estilos externos //google -->
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="../../lib/material-icons/css/material-icons.css" rel="stylesheet">
 	<!-- Estilos locales -->
 	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
 	<link rel="stylesheet" type="text/css" href="css/asignarPrivilegios.css">
@@ -47,8 +47,7 @@
 		}
 	});
 
-	sesion.obtenerSesion();
+	sesion.obtenerSesion().then(construirUI);
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
-sesion.verificarArranque(construirUI);
 
 </script>

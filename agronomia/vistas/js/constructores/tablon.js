@@ -6,7 +6,7 @@ tablon = {
   entidad_padre:'lote',
   campo_padre: 'id_lote',
   titulo: 'Tablones',
-  altura: 400,
+  altura: 500,
   campos: [
     {
 	  	tipo : 'campoBusqueda',
@@ -160,27 +160,6 @@ tablon = {
           nombre: 'toneladas_azucar',
           requerido:false,
           titulo: 'Toneladas de Azucar',
-          tipo:'simple',
-          eslabon: 'simple',
-          usaToolTip: true
-      }
-    },
-		{
-      tipo: 'campoDeTexto',
-      parametros:{
-          nombre: 'fecha_ultimo_arrime',
-          requerido:false,
-          titulo: 'Fecha Ultimo Arrime',
-          tipo:'simple',
-          eslabon: 'simple',
-          usaToolTip: true
-      }
-    },{
-      tipo: 'campoDeTexto',
-      parametros:{
-          nombre: 'fecha_siembra_corte',
-          requerido:false,
-          titulo: 'Fecha Siembra/Corte',
           tipo:'simple',
           eslabon: 'simple',
           usaToolTip: true

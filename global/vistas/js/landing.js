@@ -5,7 +5,9 @@ function construirUI(){
 	//notificaciones
 	var notificaciones = UI.agregarLista({
 		titulo: 'Notificaciones',
+		nombre: 'notificaciones',
 		clases: ['notificaciones'],
+		registrosPorPagina: 5,
 		carga: {
 			uso:true,
 			peticion:{
@@ -19,20 +21,17 @@ function construirUI(){
 					mensaje: 'Cargando notificaciones'
 				}
 			},
-			respuesta: function gestionarNotificaciones() {
+			respuesta: function gestionarNotificaciones(lista) {
 				var slot = null;
-				var lista = UI.buscarVentana('notificaciones');
 				for(var x = 0; x < lista.Slots.length;x++){
 					slot = lista.Slots[x];
-					slot.nodo.setAttribute('prioridad',slot.atributos.prioridad);
-					slot.nodo.setAttribute('codigo_tipo',slot.atributos.codigo_tipo);
-					slot.nodo.setAttribute('nombre_tipo',slot.atributos.nombre_tipo);
-					slot.nodo.onclick = mostrarNoticia;
+					slot.nodo.setAttribute('id',slot.atributos.codigo);
+					slot.nodo.setAttribute('prioridad',slot.atributos.nombre_prioridad);
+					slot.nodo.setAttribute('codigo_tipo',slot.atributos.codigo_tipo_notificacion);
+					slot.nodo.setAttribute('nombre_tipo',slot.atributos.nombre_tipo_notificacion);
+					slot.nodo.onclick = mostrarNotificacion;
 				}
 			}
-		},
-		paginacion: {
-			uso:false
 		}
 	},secNot);
 	notificaciones.nodo.classList.add('not-margin');
@@ -73,26 +72,28 @@ function construirUI(){
 	cargarCalendario();
 }
 
-function mostrarNoticia(){
+function mostrarNotificacion(){
 	var codigo = this.id;
 	var slot = UI.buscarVentana('notificaciones').buscarSlot({codigo:codigo});
 	var tipo;
-	switch (slot.atributos.prioridad) {
-		case 'E':
+	switch (slot.atributos.nombre_prioridad) {
+		case 'ALTA':
 			tipo = 'error';
 			break;
-		case 'A':
+		case 'MEDIA':
 			tipo = 'advertencia';
 			break;
-		case 'B':
+		case 'BAJA':
 			tipo = 'informacion';
 			break;
 	}
+	var fecha = UI.voltearFecha(slot.atributos.fecha_hora.substr(0,10));
+	var hora = slot.atributos.fecha_hora.substr(10,9);
 	UI.crearVentanaModal({
 		tipo: tipo,
 		cabecera: slot.atributos.nombre,
 		cuerpo: '<div texto>'+slot.atributos.cuerpo+'</div>'+
-						'<div fecha_hora> <span separacion>Fecha: '+slot.atributos.fecha_hora.substr(0,10)+'</span><span> Hora:'+slot.atributos.fecha_hora.substr(10,9)+'</span></div>',
+						'<div fecha_hora> <span separacion>Fecha: '+fecha+'</span><span> Hora:'+hora+'</span></div>',
 	});
 }
 
@@ -112,7 +113,7 @@ function cargarNoticias(contenedor){
 	torque.manejarOperacion(peticion,cuadroEspera,function cargarNoticiasBD(respuesta){
 		var noticias = respuesta.registros;
 		for( var x = 0; x < noticias.length; x++){
-			var noticia = new NoticiaUI(noticias[x]);
+			var noticia = new Card(noticias[x]);
 			contenedor.appendChild(noticia.nodo);
 		}
 	});
@@ -141,44 +142,5 @@ function cargarCalendario(){
 	var contenedorfechas = document.querySelector('div.fc-day-grid-container,div.fc-scroller');
 	contenedorfechas.classList.remove('fc-scroller');
 	contenedorfechas.style.height='390px';
+	document.body.querySelector('div.fc-center h2').innerHTML = "Cumpleañeros del mes de "+document.body.querySelector('div.fc-center h2').innerHTML;
 }
-
-/*--------------------------- Noticia ----------------------------------*/
-var NoticiaUI = function(noticia){
-	var Titulo = function(titulo){
-		this.texto = titulo;
-		this.nodo = null;
-
-		this.construirNodo = function(){
-			var nodo = document.createElement('div');
-			nodo.setAttribute('not-titulo','');
-
-			nodo.textContent = this.texto;
-
-			this.nodo = nodo;
-		};
-		this.construirNodo();
-	};
-
-	this.atributos = noticia;
-	this.nodo = null;
-	this.titulo = null;
-
-	this.construirNodo = function(){
-		var nodo = document.createElement('div');
-		nodo.setAttribute('mat-card','');
-		nodo.classList.add('cuadrada');
-		nodo.classList.add('viewver');
-		nodo.style.backgroundColor='#'+this.atributos.color;
-
-		this.nodo = nodo;
-
-		this.agregarTitulo();
-	};
-	this.agregarTitulo = function(){
-		var titulo = new Titulo(this.atributos.titulo);
-		this.nodo.appendChild(titulo.nodo);
-		this.titulo = titulo;
-	};
-	this.construirNodo();
-};

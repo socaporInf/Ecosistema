@@ -1,12 +1,16 @@
 <?php
   class cls_Conexion { 												//Declarar clase Abstracta Modelo
-	protected  $db_host = '192.168.88.14';									//Nombre del Host local
+	//bd local
+	protected  $db_host = 'localhost';
+	private  $db_port="5432";
+
+	//protected  $db_host = '192.168.88.14';									//Nombre del Host local
 	//protected  $db_host = '200.35.72.145';									//Nombre del Host Remoto
 	private $db_usuario = 'soca';									//Nombre del Usuario
 	private  $db_password = '1234';											//Password de la BD.
 	private  $db_num_db	 ='';
 	protected $db_nombre= 'socaDB';										//Nombre de la Base de Datos.
-	private  $db_port="5433";
+	//private  $db_port="5433";
 	protected $query;													//Variable del Query
 	protected $rows = array();											//Variable arreglo de las filas de una busqueda
 	private $arCon;														//Variable de Conexion
@@ -118,10 +122,25 @@
 			$dia=substr($fecha,8,2);
 			$mes=substr($fecha,5,2);
 			$ano=substr($fecha,0,4);
-			$now=$dia."/".$mes."/".$ano;
+			$now=$dia."-".$mes."-".$ano;
 		}
 		return $now;
 	}
+	/*-----------------------------------
+	* Funcion Fecha Real (Convierte una fecha 'd/m/Y' a formato normal 'Y/m/d')
+	*-----------------------------------*/
+
+		protected function fFechaPHP($fecha){
+			$now="now()";
+			if(strlen($fecha)==10)
+			{
+				$dia=substr($fecha,0,2);
+				$mes=substr($fecha,3,2);
+				$ano=substr($fecha,6,4);
+				$now=$ano."-".$mes."-".$dia;
+			}
+			return $now;
+		}
 	/******************** Funcion Registros   *************************************/
 	/* esta funcion retorna cantidad de filas devueltas en un query			      */
 	/******************************************************************************/
@@ -171,18 +190,22 @@
 	/*-----------------------------------
 	* Funcion Arma los campos de paginacion y acomodala consulta para dicho proceso
 	*-----------------------------------*/
-	protected function f_ArmarPaginacion($ls_SqlBase,$orden){
+	protected function f_ArmarPaginacion($ls_SqlBase,$orden,$gruop = ''){
 			//varibles paginacion
-		 $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
-		 $paginaActual = $this->aa_Atributos['pagina'] - 1;
-		 $numero_registros = $this->f_ObtenerNumeroRegistros($ls_SqlBase);
-		 $paginas = $numero_registros / $registrosPorPagina;
-		 $paginas = ceil($paginas);
-		 $offset = $paginaActual * $registrosPorPagina;
+			if(isset($this->aa_Atributos['registrosporpagina'])){
+				 $registrosPorPagina = $this->aa_Atributos['registrosporpagina'];
+				 $paginaActual = $this->aa_Atributos['pagina'] - 1;
+				 $numero_registros = $this->f_ObtenerNumeroRegistros($ls_SqlBase);
+				 $paginas = $numero_registros / $registrosPorPagina;
+				 $paginas = ceil($paginas);
+				 $offset = $paginaActual * $registrosPorPagina;
 
-		 $ls_Sql= $ls_SqlBase.$orden." LIMIT $registrosPorPagina OFFSET $offset " ;
+				 $ls_Sql= $ls_SqlBase." ".$gruop." ".$orden." LIMIT $registrosPorPagina OFFSET $offset " ;
 
-		 $this->aa_Atributos['paginas'] = $paginas;
+				 $this->aa_Atributos['paginas'] = $paginas;
+			}else{
+				$ls_Sql= $ls_SqlBase." ".$gruop." ".$orden;
+			}
 
 		 return $ls_Sql;
 	 }

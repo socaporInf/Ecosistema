@@ -1,39 +1,39 @@
 var form = {
   campos:[
     {
-        tipo : 'campoBusqueda',
-        parametros : {
-          titulo:'Zona',
-          nombre: 'zona',
-          requerido:true,
-          eslabon:'simple',
-          peticion:{
-             modulo: "agronomia",
-             entidad: "zona",
-             operacion: "buscar"
-          },
-          onclickSlot:function(campo){
-            var campoDep = UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('finca');
-            campoDep.atributos.peticion.codigo_zona = campo.captarValor();
-            campoDep.habilitar();
-            campoDep.limpiar();
-          },
-          cuadro: {nombre: 'listaZonas',mensaje: 'Cargando Zonas'}
-        }
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'Zona',
+        nombre: 'zona',
+        requerido:true,
+        eslabon:'simple',
+        peticion:{
+           modulo: "agronomia",
+           entidad: "zona",
+           operacion: "buscar"
+        },
+        onclickSlot:function(campo){
+          var campoDep = UI.buscarVentana('formRep').buscarSector('form').formulario.buscarCampo('finca');
+          campoDep.atributos.peticion.codigo_zona = campo.captarValor();
+          campoDep.habilitar();
+          campoDep.limpiar();
+        },
+        cuadro: {nombre: 'listaZonas',mensaje: 'Cargando Zonas'}
+      }
     },
     {
-        tipo : 'campoBusqueda',
-        parametros : {
-          titulo:'Finca',
-          nombre: 'finca',
-          requerido:true,
-          eslabon:'simple',
-          peticion:{
-             modulo: "agronomia",
-             entidad: "finca",
-             operacion: "buscarPorZona"
-          },
-          cuadro: {nombre: 'listafinca',mensaje: 'Cargando fincas'}
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'Finca',
+        nombre: 'finca',
+        requerido:true,
+        eslabon:'simple',
+        peticion:{
+          modulo: "agronomia",
+          entidad: "finca",
+          operacion: "buscarPorZona"
+        },
+        cuadro: {nombre: 'listafinca',mensaje: 'Cargando fincas'}
         }
     },{
       tipo : 'campoDeTexto',
@@ -78,11 +78,14 @@ function construirUI(){
   },document.body.querySelector('div[contenedor]'));
   formRep.buscarSector('form').formulario.buscarCampo('finca').deshabilitar();
   var botonera = formRep.buscarSector('operaciones').nodo;
-  botonera.querySelector('button[ejecutar]').onclick= function(){
-    ejecutar();
-  };
+  //PRIVILEGIO: operacion ejecutar
+  if(sesion.privilegioActivo.buscarOperacion('ejecutar')){
+    botonera.querySelector('button[ejecutar]').onclick= function(){
+      ejecutar();
+    };
+  }
   botonera.querySelector('button[limpiar]').onclick= function(){
-     UI.buscarVentana('formRep').buscarSector('form').formulario.limpiar();     
+     UI.buscarVentana('formRep').buscarSector('form').formulario.limpiar();
      formRep.buscarSector('form').formulario.buscarCampo('finca').deshabilitar();
   };
 }

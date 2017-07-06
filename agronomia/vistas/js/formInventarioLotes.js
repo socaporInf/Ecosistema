@@ -32,7 +32,7 @@ var agregarListado = function(ventana,peticion){
     }
   },contList.nodo);
 };
-function agregarNuevo(entidad) {
+function agregarNuevo(entidad){
   var cons = UI.buscarConstructor(entidad);
   var ventana = UI.buscarVentana("editarProductor");
   var secForm = ventana.buscarSector('form'+entidad);
@@ -84,12 +84,21 @@ function modificar(registro,entidad){
       tipo: 'modificar',
       registro: registro,
     };
+    var htmlNuevo = '';
+    var htmlAgregar = '';
+    //PRIVILEGIO: productor; OPERACION: incluir
+    if(sesion.privilegioActivo.buscarOperacion('incluir')){
+      htmlNuevo = '<button type="button" class="icon icon-nuevo-blanco-32 mat-lightblue500"></button>';
+      htmlAgregar = '<button type="button" class="icon icon-green-add"></button>';
+    }
+    //PRIVILEGIO: productor; OPERACION: modificar
+    var htmlModificar = (sesion.privilegioActivo.buscarOperacion('modificar'))?'<button type="button" class="icon icon-editar-blanco-32 mat-green500"></button>':'';
     var htmlBot = '<section botonera>'+
-        '<button type="button" class="icon icon-editar-blanco-32 mat-green500"></button>'+
+        htmlModificar+
         '<button type="button" class="icon icon-cerrar-blanco-32 mat-red500"></button>'+
-        '<button type="button" class="icon icon-nuevo-blanco-32 mat-lightblue500"></button>';
+        htmlNuevo;
     if(UI.buscarConstructor(entidad).entidad_hijo){
-        htmlBot += '<button type="button" class="icon icon-green-add"></button>';
+        htmlBot += htmlAgregar;
     }
     htmlBot+='</section>';
     var secBotonera = {

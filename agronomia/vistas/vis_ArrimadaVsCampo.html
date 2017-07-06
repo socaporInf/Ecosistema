@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, height=device-height">
+	<!-- Estilos externos //google -->
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+	<link href="../../lib/material-icons/css/material-icons.css" rel="stylesheet">
+	<!-- Estilos locales -->
+	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
+	<link rel="stylesheet" type="text/css" href="css/arrimadaVsCampo.css">
+	<link rel="stylesheet" type="text/css" href="css/calendarioZafra.css">
+	<link rel="stylesheet" type="text/css" href="css/listadoArrimadaVsCampo.css">
+	<link rel="stylesheet" type="text/css" href="css/nucleo.css">
+	<link rel="stylesheet" type="text/css" href="../../global/vistas/css/organizacion.css">
+	<!-- Calendario -->
+	<link href='../../lib/fullcalendar/fullcalendar.css' rel='stylesheet' />
+	<link href='../../lib/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+	<script src='../../lib/fullcalendar/lib/moment.min.js'></script>
+	<script src='../../lib/fullcalendar/lib/jquery.min.js'></script>
+	<script src='../../lib/fullcalendar/fullcalendar.js'></script>
+	<script src='../../lib/fullcalendar/lang/es.js'></script>
+</head>
+<body>
+	<div contenedor></div>
+</body>
+<!-- scripts que construyen la interfaz y su funcionamiento -->
+<script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
+<!-- scripts PLUGINS-->
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoIdentificacion.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_Card.js'></script>
+<!-- script con el constructor del formulario-->
+<script type="text/javascript" src='js/constructores/productor.js'></script>
+<script type="text/javascript" src='js/constructores/finca.js'></script>
+<script type="text/javascript" src='js/constructores/lote.js'></script>
+<script type="text/javascript" src='js/constructores/tablon.js'></script>
+<!-- script con el funcionamiento de este formulario -->
+<script type="text/javascript" src='js/arrimadaVsCampo.js'></script>
+<script type="text/javascript" src='js/calendarioZafra.js'></script>
+
+
+<script type="text/javascript">
+/*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
+	//arranca la sesion
+	var sesion = new Sesion();
+
+	//arranca el motor de registros que se comunica con BD
+	var torque = new Motor();
+
+	//Inicialiazion de UI(Interfaz De Usuario)
+	var UI = new Arquitecto();
+	UI.agregarConstructor(productor);
+	UI.agregarConstructor(finca);
+	UI.agregarConstructor(lote);
+	UI.agregarConstructor(tablon);
+	UI.configure({
+		botonera:{
+			botones:[
+				'abrir',
+				{
+					tipo:'tablon',
+					clases: ['btnTablon','mat-bluegrey500','white','md-18'],
+					click:function(){
+						manejar('tablon');
+					},
+					contenido: 'T'
+				},{
+					tipo:'Lote',
+					clases: ['btnLote','mat-teal500','white','md-18'],
+					click:function(){
+						manejar('lote');
+					},
+					contenido: 'L'
+				},{
+					tipo:'finca',
+					clases: ['btnFinca','mat-lightgreen500','white','md-18'],
+					click:function(){
+						manejar('finca');
+					},
+					contenido: 'F'
+				},{
+					tipo:'productor',
+					clases: ['btnProductor','mat-green500','white','md-18'],
+					click: manejarProductor,
+					contenido: 'P'
+				},{
+					tipo:'faltantes',
+					clases: ['btnFaltantes','mat-red500','white','md-24','material-icons'],
+					click: buscarFaltantes,
+					contenido: 'youtube_searched_for'
+				},{
+					tipo:'dia',
+					clases: ['btnDia','mat-deeppurple500','white','md-24','material-icons'],
+					click: function(){
+						var modal = UI.crearVentanaModal({
+							cabecera:{
+								html:'Seleccione dia a visualizar'
+							},
+							cuerpo:{
+								clases:['cont-calendario'],
+								html:'<div id="calendar"></div>'
+							},
+							pie:{
+								clases:['leyenda'],
+								html:''
+							}
+						});
+						modal.cuerpo = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo;
+						modal.pie = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.pie;
+						manejarDia(modal,function(date){
+					      //funciomaniento cuando se hace click sobre un dia del calendario
+					      var diasZafra = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.dias;
+					      diasZafra.forEach(function(dia){
+					        if(dia.fecha_dia == date.format()){
+					          if(dia.secuencia_proceso_dia == 1){//registro virtual codigo =>31 ,nombre => en espera
+					            UI.agregarToasts({
+					              texto: 'Dia '+dia.fecha_dia+' en espera de recepcion de datos',
+					              tipo: 'web-arriba-derecha-alto'
+					            });
+					          }else if(dia.secuencia_proceso_dia == 2){//registro virtual codigo =>32 ,nombre => importacion de datos
+					            UI.agregarToasts({
+					              texto: 'Dia '+dia.fecha_dia+' validando datos para importacion',
+					              tipo: 'web-arriba-derecha-alto'
+					            });
+					          }else if(parseInt(dia.secuencia_proceso_dia) >= 3){//registro virtual codigo =>33 ,nombre => arrime vs campo
+					            armarListados(dia);
+					          }
+					        }
+					      });
+						});
+					},
+					contenido: 'date_range'
+				},{
+					tipo:'guardar',
+					click: function(){
+						guardarCambios();
+					}
+				},{
+					tipo:'dash',
+					clases: ['btnDash','mat-blue500','white','md-24','material-icons'],
+					click: function(){
+						location.href = 'vis_DashZafra.html?Dia='+UI.elementos.url.captarParametroPorNombre('Dia');
+					},
+					contenido: 'dashboard'
+				}
+			]
+		}
+	});
+
+	sesion.obtenerSesion().then(construirUI);;
+
+/*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
+</script>
+</html>
