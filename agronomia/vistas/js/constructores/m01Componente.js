@@ -2,7 +2,7 @@ var m01componente = {
 	nombre: 'm01componente',
  	modulo: 'agronomia',
 	campo_nombre: 'nombre',
-	titulo: 'Factor',
+	titulo: 'Componente',
 	altura: 220,
 	campos:[
 		{
@@ -10,7 +10,7 @@ var m01componente = {
 			parametros:{
 				nombre: 'nombre',
 				requerido:true,
-				titulo: 'Factor',
+				titulo: 'Nombre',
 				tipo:'simple',
 				eslabon: 'simple',
 				usaToolTip: true
@@ -37,7 +37,7 @@ var m01componente = {
         {
           tipo:'detalle',
           click: function(boton){
-            abrirDetalle('registroVirtual');
+            abrirDetalle('detalle_componente',4);
           }
         }
       ],

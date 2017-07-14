@@ -18,20 +18,21 @@
 <script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
 <!-- scripts PLUGINS-->
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_Maestro.js'></script>
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
 <!-- script con el constructor del formulario-->
-<script type="text/javascript" src='js/constructores/m01Componente.js'></script>
-
+<script type="text/javascript" src='js/constructores/m01_tipo_formula.js'></script>
+<!--- funcionamiento de formulario actual -->
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
 	//arranca la sesion
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('agronomia','m01componente');
+	var torque = new Motor('agronomia','m01_tipo_formula');
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.agregarConstructor(m01componente);
+	UI.agregarConstructor(m01_tipo_formula);
 	UI.configure({
 		maestro:{
 			entidad: torque.entidadActiva

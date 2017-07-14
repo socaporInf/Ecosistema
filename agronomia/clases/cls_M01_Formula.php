@@ -1,10 +1,9 @@
 <?php
 include_once('../../nucleo/clases/cls_Conexion.php');
 include_once('../../nucleo/clases/cls_Mensaje_Sistema.php');
-class cls_M01Componente extends cls_Conexion{
+class cls_M01_Formula extends cls_Conexion{
 
  protected $aa_Atributos = array();
- private $aa_Campos = array('codigo_componente','nombre','descripcion');
 
  public function setPeticion($pa_Peticion){
    $this->aa_Atributos=$pa_Peticion;
@@ -68,13 +67,14 @@ class cls_M01Componente extends cls_Conexion{
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vm01_componente ";
+   $ls_Sql="SELECT * FROM agronomia.vm01_formula ";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta[$x]['codigo']=$la_registros['codigo_componente'];
-     $la_respuesta[$x]['nombre']=$la_registros['nombre'];
-     $la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+     $la_respuesta[$x]['codigo']=$la_registros['codigo_formula'];
+     $la_respuesta[$x]['nombre']=$la_registros['fecha_inicio'];
+     $la_respuesta[$x]['fec_fin']=$la_registros['fecha_final'];
+     $la_respuesta[$x]['tip_for']=$la_registros['codigo_tipo_formula'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -85,13 +85,14 @@ class cls_M01Componente extends cls_Conexion{
  private function f_Buscar(){
    $lb_Enc=false;
    //Busco El rol
-   $ls_Sql="SELECT * FROM agronomia.vm01_componente where codigo_componente='".$this->aa_Atributos['codigo']."'";
+   $ls_Sql="SELECT * FROM agronomia.vm01_formula where codigo_formula='".$this->aa_Atributos['codigo']."'";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta['codigo']=$la_registros['codigo_componente'];
-     $la_respuesta['nombre']=$la_registros['nombre'];
-     $la_respuesta['descripcion']=$la_registros['descripcion'];
+     $la_respuesta['codigo']=$la_registros['codigo_formula'];
+     $la_respuesta['nombre']=$la_registros['fecha_inicio'];
+     $la_respuesta['fec_fin']=$la_registros['fecha_final'];
+     $la_respuesta['tip_for']=$la_registros['codigo_tipo_formula'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);
@@ -108,10 +109,10 @@ class cls_M01Componente extends cls_Conexion{
  private function f_Guardar(){
 
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vm01_componente (nombre,descripcion) values
-       ('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['descripcion']."')";
-   $this->f_Con();
-   $lb_Hecho=$this->f_Ejecutar($ls_Sql);
+   $ls_Sql="INSERT INTO agronomia.vm01_formula (fecha_inicio,fecha_final,codigo_tipo_formula) values
+       ('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['fec_fin']."','".$this->aa_Atributos['tip_for']."')";
+    $this->f_Con();
+    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
    return $lb_Hecho;
  }
@@ -119,13 +120,14 @@ class cls_M01Componente extends cls_Conexion{
  private function f_BuscarUltimo(){
    $lb_Enc=false;
    //Busco El rol
-   $ls_Sql="SELECT * from agronomia.vm01_componente WHERE codigo_componente = (SELECT MAX(codigo_componente) from agronomia.vm01_componente) ";
+   $ls_Sql="SELECT * from agronomia.vm01_formula WHERE codigo_formula = (SELECT MAX(codigo_formula) from agronomia.vm01_formula) ";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    if($la_registros=$this->f_Arreglo($lr_tabla)){
-     $la_respuesta['codigo']=$la_registros['codigo_componente'];
-     $la_respuesta['nombre']=$la_registros['nombre'];
-     $la_respuesta['descripcion']=$la_registros['descripcion'];
+     $la_respuesta['codigo']=$la_registros['codigo_formula'];
+     $la_respuesta['nombre']=$la_registros['fecha_inicio'];
+     $la_respuesta['fec_fin']=$la_registros['fecha_final'];
+     $la_respuesta['tip_for']=$la_registros['codigo_tipo_formula'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);
@@ -142,13 +144,13 @@ class cls_M01Componente extends cls_Conexion{
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
-   $ls_Sql="UPDATE agronomia.vm01_componente SET ";
-
-   //arma la cadena sql en base a los campos pasados en la peticion
-   $ls_Sql.=$this->armarCamposUpdate($this->aa_Campos,$this->aa_Atributos);
-
-   $ls_Sql.="WHERE codigo_componente ='".$this->aa_Atributos['codigo']."'";
+   $ls_Sql="UPDATE agronomia.vm01_formula SET ";
+    $ls_Sql.="fecha_inicio ='".$this->aa_Atributos['nombre']."', ";
+    $ls_Sql.="fecha_final ='".$this->aa_Atributos['fec_fin']."', ";
+    $ls_Sql.="codigo_tipo_formula ='".$this->aa_Atributos['tip_for']."' ";
+    $ls_Sql.="WHERE codigo_formula ='".$this->aa_Atributos['codigo']."' ";
    $this->f_Con();
+   print($ls_Sql);
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
 

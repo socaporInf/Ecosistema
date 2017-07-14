@@ -1,4 +1,5 @@
-function abrirDetalle(entidad){
+function abrirDetalle(entidad,clm){
+  clm = clm || 1;
   UI.buscarConstructor(entidad).titulo = UI.elementos.maestro.forma.formulario.registroAct.nombre;
   //monto venta modal
   var ventTabla = UI.crearVentanaModal({
@@ -23,6 +24,8 @@ function abrirDetalle(entidad){
     titulo: UI.buscarConstructor(entidad).titulo,
     nombre: UI.buscarConstructor(entidad).titulo,
     clase: 'lista',
+    columnas:clm,
+    selector: 'apagado',
     carga: {
       uso:true,
       peticion:{
@@ -38,13 +41,13 @@ function abrirDetalle(entidad){
       uso:false
     },
     onclickSlot: function(slot){
-      editarRegistro(slot,entidad);
+      editarRegistro(slot,entidad,clm);
     }
   },ventTabla.partes.cuerpo.nodo);
 }
 
 /*----------------------------------------Edicion Registro----------------------------------------------*/
-editarRegistro = function(slot,entidad){
+editarRegistro = function(slot,entidad,clm){
   UI.elementos.modalWindow.eliminarUltimaCapa();
   setTimeout(function motarFormularioNuevo(){
     var formTabla = UI.crearVentanaModal({
@@ -70,7 +73,7 @@ editarRegistro = function(slot,entidad){
     formTabla.partes.pie.nodo.querySelector('button.icon-cerrar-rojo-32').onclick = function(){
       UI.elementos.modalWindow.eliminarUltimaCapa();
       setTimeout(function(){
-        abrirDetalle(entidad);
+        abrirDetalle(entidad,clm);
       },1000);
     };
     formTabla.partes.pie.nodo.querySelector('button.icon-modificar-verde').onclick = function(){

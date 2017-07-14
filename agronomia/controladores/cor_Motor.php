@@ -176,11 +176,25 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_M01Componente;
 			break;
 
-		case 'm01_detalle_componente':
+		case 'detalle_componente':
 			include_once('../clases/cls_M01_Detalle_Componente.php');
 			$lobj_Entidad = new cls_M01_Detalle_Componente;
 			break;
 
+		case 'm01_tipo_formula':
+			include_once('../clases/cls_M01_Tipo_Formula.php');
+			$lobj_Entidad = new cls_M01_Tipo_Formula;
+			break;
+
+		case 'm01_formula':
+			include_once('../clases/cls_M01_Formula.php');
+			$lobj_Entidad = new cls_M01_Formula;
+			break;
+
+		case 'm01_detalle_formula':
+			include_once('../clases/cls_M01_Detalle_Formula.php');
+			$lobj_Entidad = new cls_M01_Detalle_Formula;
+			break;
 
 		default:
 			$lobj_Entidad = false;
