@@ -3,7 +3,7 @@ var m01_formula = {
  	modulo: 'agronomia',
 	campo_nombre: 'nombre',
 	titulo: 'Formula',
-	altura: 220,
+	altura: 240,
 	campos:[
 		{
 			tipo: 'campoDeTexto',
@@ -40,22 +40,17 @@ var m01_formula = {
 	        },
 	        cuadro: {nombre: 'listar Peticion',mensaje: 'Cargando Peticion'}
 	      }
-	    },
+	    },{
+			tipo: 'campoDeTexto',
+			parametros:{
+				nombre: 'tex_for',
+				requerido:true,
+				titulo: 'Texto Formula',
+				tipo:'area',
+				eslabon: 'area',
+				usaToolTip: true
+			}
+		}
 	],
-	botones:{
-    nuevo:{
-      quitar:['detalle']
-    },
-    consulta: {
-      agregar:[
-        {
-          tipo:'detalle',
-          click: function(boton){
-            abrirDetalle('m01_detalle_formula',4);
-          }
-        }
-      ],
-      quitar:[]
-    }
-  }
+
 };

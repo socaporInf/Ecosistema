@@ -27,7 +27,7 @@
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
 	//arranca la sesion
-	//var sesion = new Sesion();
+	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
 	var torque = new Motor('agronomia','creditoCanicultorGarantia');
@@ -46,7 +46,7 @@
 			}]
 		}
 	});
-	//sesion.obtenerSesion();
+	sesion.obtenerSesion();
 	construirUI();
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 </script>

@@ -17,13 +17,11 @@
 <script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
 <!-- scripts PLUGINS-->
-<script type="text/javascript" src='../../lib/Rhino/plugins/O_Maestro.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
 <!-- script con el constructor del formulario-->
+<script type="text/javascript" src='js/formula.js'></script>
 <script type="text/javascript" src='js/constructores/m01_formula.js'></script>
-<script type="text/javascript" src='js/constructores/m01_detalle_formula.js'></script>
 <!--- funcionamiento de formulario actual -->
-<script type="text/javascript" src='../../nucleo/vistas/js/detalle.js'></script>
 
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
@@ -36,16 +34,15 @@
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
 	UI.agregarConstructor(m01_formula);
-	UI.agregarConstructor(m01_detalle_formula);
 	UI.configure({
-		maestro:{
-			entidad: torque.entidadActiva
-		},
+		
 		botonera:{
 			botones:['nuevo','abrir']
 		}
 	});
 	sesion.obtenerSesion();
+  construirUI();
+
 	
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 </script>

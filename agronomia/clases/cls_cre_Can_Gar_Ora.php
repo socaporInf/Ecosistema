@@ -29,6 +29,18 @@ class clsConsultaOracle extends cls_ConexionOra{
         }
       break;
 
+      case 'buscarRegistro':
+        $lb_Enc=$this->f_Buscar();
+        if($lb_Enc){
+          $success=1;
+          $respuesta['registros']=$this->aa_Atributos['registros'];
+          $respuesta['paginas']=$this->aa_Atributos['paginas'];
+        }else{
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+        }
+      break;
+
       case 'buscar_organizaciones':
         $lb_Enc=$this->f_Buscar_Org();
         if($lb_Enc){
@@ -40,6 +52,7 @@ class clsConsultaOracle extends cls_ConexionOra{
           $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
         }
       break;
+
       default:
         $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
         $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -55,7 +68,17 @@ class clsConsultaOracle extends cls_ConexionOra{
   
   private function f_Listar(){
     $x=0;
-    $cadenaBusqueda= ($this->aa_Atributos['valor']=='')?"where TVR_NB_TABLA='TIPO_GARANTIA' AND EMP_ID_EMPRESA='6909119' AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'":"where TVR_NB_TABLA='TIPO_GARANTIA' AND EMP_ID_EMPRESA='6909119' AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%' AND DE_OCURRENCIA like '%".$this->aa_Atributos['valor']."%'";
+    $cadenaBusqueda= ($this->aa_Atributos['valor']=='')?"
+      where 
+        TVR_NB_TABLA='TIPO_GARANTIA' 
+        AND EMP_ID_EMPRESA='6909119' 
+        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'"
+      :
+      "where 
+        TVR_NB_TABLA='TIPO_GARANTIA'
+        AND EMP_ID_EMPRESA='6909119'
+        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%' 
+        AND DE_OCURRENCIA like '%".$this->aa_Atributos['valor']."%'";
     $la_respuesta=array();
     $ls_SqlBase="SELECT ID_REGISTRO, CO_OCURRENCIA, DE_OCURRENCIA from T00_CONTENIDO_TABLA_VIRTUAL $cadenaBusqueda";
     $orden = '';
@@ -79,6 +102,45 @@ class clsConsultaOracle extends cls_ConexionOra{
     $lb_Enc=($i == 0)?false:true;
     return $lb_Enc;
   }
+
+  private function f_Buscar(){
+   $x=0;
+    $cadenaBusqueda= ($this->aa_Atributos['valor']=='')?"
+      where 
+        TVR_NB_TABLA='TIPO_GARANTIA' 
+        AND EMP_ID_EMPRESA='6909119' 
+        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'
+        AND ID_REGISTRO = '".$this->aa_Atributos['codigo']."'
+        "
+      :
+      "where 
+        TVR_NB_TABLA='TIPO_GARANTIA'
+        AND EMP_ID_EMPRESA='6909119'
+        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%' 
+        AND DE_OCURRENCIA like '%".$this->aa_Atributos['valor']."%'";
+    $la_respuesta=array();
+    $ls_SqlBase="SELECT ID_REGISTRO, CO_OCURRENCIA, DE_OCURRENCIA from T00_CONTENIDO_TABLA_VIRTUAL $cadenaBusqueda";
+    $orden = '';
+
+    $this->f_Con_ora('6232098','6236396'); //conecto a la base de datos
+    $nre=$this->f_Filtro_ora(""); //seleccionamos todos los registros
+    $nr=count($nre->_array); // contamos todos los registros y optenemos el numero de registros
+
+    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden,$nr); //armo la paginacion
+
+    $this->f_Con_ora('6232098','6236396'); //conecto a la base de datos
+    $lr_tabla=$this->f_Filtro_ora($ls_Sql);
+    $lr_tabla=$lr_tabla->_array;
+
+    for ($i=0; $i < count($lr_tabla); $i++) { 
+      $la_respuesta['codigo']=$lr_tabla[$i]['ID_REGISTRO'];
+      $la_respuesta['nombre']=$lr_tabla[$i]['CO_OCURRENCIA']." - ".$lr_tabla[$i]['DE_OCURRENCIA'];
+    }
+
+    $this->aa_Atributos['registros'] = $la_respuesta;
+    $lb_Enc=($i == 0)?false:true;
+    return $lb_Enc;
+ }
 
 
 

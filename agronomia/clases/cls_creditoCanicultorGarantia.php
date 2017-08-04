@@ -40,6 +40,19 @@ class cls_creditoCanicultorGarantia {
         }
       break;
 
+      case 'buscarRegistro':
+        $lb_Enc=$this->consOra->gestionarOra();
+        if($lb_Enc){
+          $success=1;
+          //print($lb_Enc);
+          $respuesta['registros']=$lb_Enc['registros'];
+          $respuesta['paginas']=$lb_Enc['paginas'];
+        }else{
+          $respuesta['success'] = 0;
+          $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+        }
+      break;
+
       case 'buscar_organizaciones':
         $lb_Enc=$this->f_Juntar();
         if($lb_Enc!=0){

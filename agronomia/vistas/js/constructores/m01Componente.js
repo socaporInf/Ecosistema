@@ -37,7 +37,7 @@ var m01componente = {
         {
           tipo:'detalle',
           click: function(boton){
-            abrirDetalle('detalle_componente',4);
+            abrirDetalle('detalle_componente',5);
           }
         }
       ],

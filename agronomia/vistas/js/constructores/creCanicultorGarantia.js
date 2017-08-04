@@ -8,7 +8,7 @@ var creCanicultorGarantia = {
 		{
       tipo : 'campoBusqueda',
       parametros : {
-        titulo:'Organizacion',
+        titulo:'Tipo Garantia',
         nombre: 'organizacion',
         requerido:true,
         eslabon:'simple',

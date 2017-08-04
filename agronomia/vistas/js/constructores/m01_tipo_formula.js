@@ -6,16 +6,6 @@ var m01_tipo_formula = {
 	altura: 300,
 	campos:[
 		{
-			tipo: 'campoDeTexto',
-			parametros:{
-				nombre: 'nombre',
-				requerido:true,
-				titulo: 'Descripcion',
-				tipo:'area',
-				eslabon: 'area',
-				usaToolTip: true
-			}
-		},{
 	     	tipo : 'campoBusqueda',
 	      	parametros : {
 	        titulo:'Tipo de Garantia',
@@ -30,6 +20,16 @@ var m01_tipo_formula = {
 	        cuadro: {nombre: 'listar Peticion',mensaje: 'Cargando Peticion'}
 	      }
 	    },{
+			tipo: 'campoDeTexto',
+			parametros:{
+				nombre: 'nombre',
+				requerido:true,
+				titulo: 'Descripcion',
+				tipo:'area',
+				eslabon: 'area',
+				usaToolTip: true
+			}
+		},{
 	        tipo : 'Radio',
 	        parametros : {
 	          nombre : 'estatus',

@@ -74,6 +74,7 @@ class cls_M01_Formula extends cls_Conexion{
      $la_respuesta[$x]['codigo']=$la_registros['codigo_formula'];
      $la_respuesta[$x]['nombre']=$la_registros['fecha_inicio'];
      $la_respuesta[$x]['fec_fin']=$la_registros['fecha_final'];
+     $la_respuesta[$x]['tex_for']=$la_registros['texto_formula'];
      $la_respuesta[$x]['tip_for']=$la_registros['codigo_tipo_formula'];
      $x++;
    }
@@ -92,6 +93,7 @@ class cls_M01_Formula extends cls_Conexion{
      $la_respuesta['codigo']=$la_registros['codigo_formula'];
      $la_respuesta['nombre']=$la_registros['fecha_inicio'];
      $la_respuesta['fec_fin']=$la_registros['fecha_final'];
+     $la_respuesta['tex_for']=$la_registros['texto_formula'];
      $la_respuesta['tip_for']=$la_registros['codigo_tipo_formula'];
      $lb_Enc=true;
    }
@@ -109,8 +111,8 @@ class cls_M01_Formula extends cls_Conexion{
  private function f_Guardar(){
 
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vm01_formula (fecha_inicio,fecha_final,codigo_tipo_formula) values
-       ('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['fec_fin']."','".$this->aa_Atributos['tip_for']."')";
+   $ls_Sql="INSERT INTO agronomia.vm01_formula (fecha_inicio,fecha_final,codigo_tipo_formula,texto_formula) values
+       ('".$this->aa_Atributos['nombre']."','".$this->aa_Atributos['fec_fin']."','".$this->aa_Atributos['tip_for']."','".$this->aa_Atributos['tex_for']."')";
     $this->f_Con();
     $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
@@ -127,6 +129,7 @@ class cls_M01_Formula extends cls_Conexion{
      $la_respuesta['codigo']=$la_registros['codigo_formula'];
      $la_respuesta['nombre']=$la_registros['fecha_inicio'];
      $la_respuesta['fec_fin']=$la_registros['fecha_final'];
+     $la_respuesta['tex_for']=$la_registros['texto_formula'];
      $la_respuesta['tip_for']=$la_registros['codigo_tipo_formula'];
      $lb_Enc=true;
    }
@@ -147,10 +150,11 @@ class cls_M01_Formula extends cls_Conexion{
    $ls_Sql="UPDATE agronomia.vm01_formula SET ";
     $ls_Sql.="fecha_inicio ='".$this->aa_Atributos['nombre']."', ";
     $ls_Sql.="fecha_final ='".$this->aa_Atributos['fec_fin']."', ";
+    $ls_Sql.="texto_formula ='".$this->aa_Atributos['tex_for']."', ";
     $ls_Sql.="codigo_tipo_formula ='".$this->aa_Atributos['tip_for']."' ";
     $ls_Sql.="WHERE codigo_formula ='".$this->aa_Atributos['codigo']."' ";
    $this->f_Con();
-   print($ls_Sql);
+   //print($ls_Sql);
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
 

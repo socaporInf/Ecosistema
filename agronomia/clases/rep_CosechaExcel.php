@@ -47,7 +47,7 @@
       <th colspan="2" align="center">Estimado</th>
       <th colspan="2" align="center">Real</th>
       <th align="center">Desv</th>
-      <th align="center">Edad</th>
+      <th align="center">Fecha</th>
       <th colspan="3" align="center">Real</th>
     </tr>
    <tr>';
