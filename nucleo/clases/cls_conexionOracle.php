@@ -41,7 +41,7 @@ class cls_ConexionOra{
   }
 
   //----------------------------------------------------//
-  // 			Ejecuta las sentencias Sql    			//
+  // 			Ejecuta las sentencias Sql    			          //
   //----------------------------------------------------//
   function f_Filtro_ora($sql){
 	global $dboracle;
@@ -51,7 +51,7 @@ class cls_ConexionOra{
   }
 
   //----------------------------------------------------//
-  //  envia los datos para conectar con la empresa 		//
+  //  envia los datos para conectar con la empresa 	  	//
   //----------------------------------------------------//
   function f_setear_Contexto($ID_empresa,$ID_usuario){
     if(($ID_empresa!=null)||($ID_usuario!=null)){

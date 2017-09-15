@@ -1,23 +1,31 @@
+var arreglo={};
+var factor_agronomia=0;
+
 function construirUI(){
   var ventana = UI.agregarVentana({
       nombre: 'titulo',
       titulo:{
-        html: 'Credito Cañicultor por Garantia',
+        html: 'Credito Cañicultor por Garantia<br>'+
+        '<small class="smalll">si no encuentra el tipo de garantia dirijase a <a href="vis_M01_Tipo_Formula.html">Tipo de Formula</a> y lo asigna</small><br>'+
+        '<small class="smalll">luego dirijase a <a href="vis_M01_Formula.html">Formula</a> y crea una nueva</small>',
         tipo: 'inverso'// liso o basico
       },
-    sectores:[{
+    sectores:[
+    {
         nombre:'formulario',//el nombre que desees
         formulario: UI.buscarConstructor('creCanicultorGarantia'),
         //tambien se le puede agregar el founcionamiento
         //de modificar con las 2 condiciones
         tipo:'nuevo'
-      },{
+    },{
       nombre: 'grid', //puede ser lo que sea
       html:''
     },{
+      nombre:'carga',
+      html:''
+    },{
       nombre:'botonera',
-      html:'<button type="button" nombre = "exportar" class="botonCreCanicultor">Exportar SQLFigo</button>'
-            //'<button type="button" id="importar" nombre="importar" class="botonCreCanicultor">Importar SQLFigo</button>'
+      html:'<button type="button" nombre = "exportar" class="botonCreCanicultor" onclick="check();">Exportar SQLFigo</button>'
     }]
   },document.querySelector('div[contenedor]'));
   
@@ -29,22 +37,26 @@ function construirUI(){
 
 
 function actualizar(campo){
-  //alert(campo.captarValor());
-  peticion={
+  var peticion={
     modulo: "agronomia",
     entidad: "crecanicultor",
     operacion: "buscar_organizaciones",
     id_bus: campo.captarValor()
   }
-
-  torque.Operacion(peticion)
+  var cuadro = {
+      contenedor: UI.buscarVentana('titulo').buscarSector('carga').nodo,
+      cuadro : {
+        nombre: 'actualizando',
+        mensaje: 'Cargando Registros'
+      }
+    };
+  UI.buscarVentana('titulo').buscarSector('grid').grid.removerHijos();
+  torque.manejarOperacion(peticion,cuadro)
     .then(function(registro){
       console.log(registro);
-      //var arreglo = Object.keys(registro['registros']).map(x => registro['registros'][x]);
-      //var can=arreglo.length;
       var ventana = UI.buscarVentana('titulo');
-      ventana.buscarSector('grid').grid.removerHijos();
       ventana.buscarSector('grid').grid.agregarHijos(registro.registros);
+      arreglo=registro.registros;
   });
 }
 
@@ -58,11 +70,13 @@ var Grid = function(atributos){
       '<td>Organizacion</td>'+
       '<td>Peso (FIGO)</td>'+
       '<td>Factor (FIGO)</td>'+
-      '<td>Peso (Agr)</td>'+
-      '<td>Factor (Agr)</td>'+
+      '<td>Peso (Agronomia)</td>'+
+      '<td>Factor (Agronomia)</td>'+
       '<td>Toneladas (Estimadas)</td>'+
-      '<td>Monto (Bs)</td>'+
-      '<td>Seleccione</td>'+
+      '<td align="right">Monto Generado</td>'+
+      '<td align="right">Monto Deducible</td>'+
+      '<td align="right">Monto Limite</td>'+
+      '<td align="center">Seleccione</td>'+
     '</tr>';
   yo.hijos = [];
   yo.nodo=null;
@@ -133,16 +147,104 @@ var Hijo = function(objeto){
 Hijo.prototype.crear = function(){
   var yo = this;
   var tr = document.createElement('tr');
+
+  //asigno el valor correspondiente a la variable caña de la formula
+  var CAÑA =yo.atributos.peso_agro;
+  //convierto la formula en una cadena en estring
+  var factor=String(yo.atributos.des_formula);
+
+  //-------------------------------------------
+  //verifico que tenga una formula asignada
+  if (yo.atributos.formula!=null) {
+    var res_gen=eval(factor);
+    var resultado_calculado= (CAÑA*res_gen).toFixed(2);
+  }else{
+    var res_gen='';
+    yo.atributos.formula="Formula no asignada";
+  }
+  //--------------------------------------------
+  
+  //si no tiene un monto deducible o es null le digo que monto deducible sera 0
+  //--------------------------------------------
+  if (yo.atributos.monto_deducible==null) {
+    yo.atributos.monto_deducible=0;
+  }
+  //--------------------------------------------
+    
+  factor_agronomia=res_gen;
+
   tr.innerHTML = '<td>'+yo.atributos.numero+'</td>'+
   '<td>'+yo.atributos.rif+'</td>'+
   '<td>'+yo.atributos.nombre+'</td>'+
   '<td>'+yo.atributos.peso_figo+'</td>'+
-  '<td>'+yo.atributos.factor_figo+'</td>'+
+  '<td align="right">'+yo.atributos.factor_figo+'</td>'+
   '<td>'+yo.atributos.peso_agro+'</td>'+
-  '<td></td>'+
+  '<td >'+res_gen+'</td>'+//factor (resultado de la formula asignada)
   '<td>'+yo.atributos.ton_est+'</td>'+
-  '<td></td>'+
-  '<td><input type="checkbox" name="pasar"></td>';
+  '<td align="right">'+resultado_calculado+'</td>'+/*resultado caña agronomia por factor*/
+  '<td align="right">'+yo.atributos.monto_deducible+'</td>'+/*monto deducible biene de sqlFIGO*/
+  '<td align="right">'+(resultado_calculado-yo.atributos.monto_deducible)+'</td>'+/*monto limite para guardar en sqlFIGO*/
+  '<td align="center"><input type="checkbox" value="'+(yo.atributos.numero-1)+'" id="pasar'+(yo.atributos.numero-1)+'" name="pasar'+(yo.atributos.numero-1)+'" ></td>';
   yo.nodo = tr;
+  
 }
 
+var arreglo_enviartotal={};
+
+function check(){
+  //console.log(arreglo);
+  var arreglo_enviar={};
+  var cont_check=0;
+  
+  for (var i = 0; i < arreglo.length; i++) {
+    if(document.getElementById('pasar'+i).checked){
+      if (arreglo[i].formula!='Formula no asignada') {
+        arreglo_enviar[cont_check]=arreglo[i];
+        arreglo_enviar[cont_check]['monto_limite']=document.getElementById('pasar'+i).parentNode.previousSibling.textContent;
+        arreglo_enviar[cont_check]['factor_agronomia']=factor_agronomia;
+        arreglo_enviar[cont_check]['peso_agro']=(arreglo_enviar[cont_check]['peso_agro']>0)?arreglo_enviar[cont_check]['peso_agro']:arreglo_enviar[cont_check]['ton_est'];
+        cont_check++;
+      }else{
+        alert("Debe asignar una formula antes de exportar");
+      }
+    }
+  }
+  
+  if (cont_check!=0) {
+    arreglo_enviartotal=arreglo_enviar;
+    exportar();
+  }
+}
+
+function exportar(){
+
+  peticion={
+    modulo: "agronomia",
+    entidad: "crecanicultor",
+    operacion: "insertar_registros_figo",
+    datos_campos: JSON.stringify(arreglo_enviartotal) //envio todos los datos selecionados convertido en una cadena de texto
+  }
+  console.log(peticion);
+
+  torque.Operacion(peticion)
+    .then(function(registro){
+      console.log(registro);
+      if (registro['success']==1) {
+        UI.agregarToasts({
+          texto: 'Operacion realizada Exitosamente',
+          tipo: 'web-arriba-derecha-alto'
+        });
+        actualizar(UI.buscarVentana('titulo').buscarSector('formulario').formulario.campos[0]);
+      }else{
+        UI.agregarToasts({
+          texto: 'No se pudo realizar la operacion intente nuevamente',
+          tipo: 'web-arriba-derecha-alto'
+        });
+      }
+      
+      /*var ventana = UI.buscarVentana('titulo');
+      ventana.buscarSector('grid').grid.removerHijos();
+      ventana.buscarSector('grid').grid.agregarHijos(registro.registros);
+      arreglo=registro.registros;*/
+  });
+};

@@ -29,6 +29,17 @@ class cls_M01Componente extends cls_Conexion{
        }
        break;
 
+       case 'valor-componente':
+       $registros=$this->f_valor_componente();
+       if(count($registros)!=0){
+         $success=1;
+         $respuesta['registros']=$registros;
+       }else{
+         $respuesta['success'] = 0;
+         $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+       }
+       break;
+
      case 'buscarRegistro':
        $lb_Enc=$this->f_buscar();
        if($lb_Enc){
@@ -75,6 +86,25 @@ class cls_M01Componente extends cls_Conexion{
      $la_respuesta[$x]['codigo']=$la_registros['codigo_componente'];
      $la_respuesta[$x]['nombre']=$la_registros['nombre'];
      $la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+     $x++;
+   }
+   $this->f_Cierra($lr_tabla);
+   $this->f_Des();
+   return $la_respuesta;
+ }
+
+ private function f_valor_componente(){
+   $x=0;
+   $la_respuesta=array();
+   $ls_Sql="SELECT com.*, val.valor FROM agronomia.vm01_componente as com
+            JOIN agronomia.vm01_detalle_componente as val on(com.codigo_componente=val.codigo_componente)";
+   $this->f_Con();
+   $lr_tabla=$this->f_Filtro($ls_Sql);
+   while($la_registros=$this->f_Arreglo($lr_tabla)){
+     $la_respuesta[$x]['codigo']=$la_registros['codigo_componente'];
+     $la_respuesta[$x]['nombre']=$la_registros['nombre'];
+     $la_respuesta[$x]['descripcion']=$la_registros['descripcion'];
+     $la_respuesta[$x]['valor']=$la_registros['valor'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);

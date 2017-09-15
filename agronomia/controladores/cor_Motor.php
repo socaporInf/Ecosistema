@@ -164,12 +164,9 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_ReportesCosecha;
 			break;
 
-		case 'crecanicultor':
-			include_once('../clases/cls_creditoCanicultorGarantia.php');
-			$lobj_Entidad = new cls_creditoCanicultorGarantia;
-			break;
+		
 
-		//---------Modulo credito a añicultor-----------
+		//---------M01 Modulo credito a añicultor-----------
 		
 		case 'm01componente':
 			include_once('../clases/cls_M01Componente.php');
@@ -195,6 +192,17 @@ function obtenerEntidad($entidad){
 			include_once('../clases/cls_M01_Detalle_Formula.php');
 			$lobj_Entidad = new cls_M01_Detalle_Formula;
 			break;
+
+		case 'crecanicultor':
+			include_once('../clases/cls_creditoCanicultorGarantia.php');
+			$lobj_Entidad = new cls_creditoCanicultorGarantia;
+			break;
+
+		case 'm01_tipo_formula_tipo_garantia':
+			include_once('../clases/cls_M01_Tipo_Formula_Tipo_Garantia.php');
+			$lobj_Entidad = new cls_M01_Tipo_Formula_Tipo_Garantia;
+			break;
+
 
 		default:
 			$lobj_Entidad = false;

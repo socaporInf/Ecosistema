@@ -75,6 +75,8 @@ class cls_M01_Tipo_Formula extends cls_Conexion{
      $la_respuesta[$x]['nombre']=$la_registros['descripcion'];
      $la_respuesta[$x]['tip_gar']=$la_registros['codigo_tipo_garantia'];
      $la_respuesta[$x]['estatus']=$la_registros['estatus'];
+     $la_respuesta[$x]['fec_ini']=$la_registros['fecha_inicio_tipgar_pertie'];
+     $la_respuesta[$x]['fec_fin']=$la_registros['fecha_final_tipgar_pertie'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -93,6 +95,8 @@ class cls_M01_Tipo_Formula extends cls_Conexion{
      $la_respuesta['nombre']=$la_registros['descripcion'];
      $la_respuesta['tip_gar']=$la_registros['codigo_tipo_garantia'];
      $la_respuesta['estatus']=$la_registros['estatus'];
+     $la_respuesta['fec_ini']=$la_registros['fecha_inicio_tipgar_pertie'];
+     $la_respuesta['fec_fin']=$la_registros['fecha_final_tipgar_pertie'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);
@@ -109,9 +113,8 @@ class cls_M01_Tipo_Formula extends cls_Conexion{
  private function f_Guardar(){
 
    $lb_Hecho=false;
-   $ls_Sql="INSERT INTO agronomia.vm01_tipo_formula (descripcion,codigo_tipo_garantia,estatus) values
+   $ls_Sql="INSERT INTO agronomia.vm01_tipo_formula (descripcion,estatus) values
        ('".$this->aa_Atributos['nombre']."',
-       '".$this->aa_Atributos['tip_gar']."',
        '".$this->aa_Atributos['estatus']."'
        )";
    $this->f_Con();
@@ -129,7 +132,6 @@ class cls_M01_Tipo_Formula extends cls_Conexion{
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo']=$la_registros['codigo_tipo_formula'];
      $la_respuesta['nombre']=$la_registros['descripcion'];
-     $la_respuesta['tip_gar']=$la_registros['codigo_tipo_garantia'];
      $la_respuesta['estatus']=$la_registros['estatus'];
      $lb_Enc=true;
    }
@@ -147,14 +149,9 @@ class cls_M01_Tipo_Formula extends cls_Conexion{
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
-   if ($this->aa_Atributos['tip_gar']!='') {
-     $tip_gar="codigo_tipo_garantia='".$this->aa_Atributos['tip_gar']."', ";
-   }else{
-    $tip_gar='';
-   }
+
    $ls_Sql="UPDATE agronomia.vm01_tipo_formula SET 
     descripcion='".$this->aa_Atributos['nombre']."',
-    $tip_gar
     estatus='".$this->aa_Atributos['estatus']."'
     WHERE codigo_tipo_formula ='".$this->aa_Atributos['codigo']."'";
    //print($ls_Sql);
