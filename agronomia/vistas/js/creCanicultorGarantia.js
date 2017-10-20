@@ -28,7 +28,7 @@ function construirUI(){
       html:'<button type="button" nombre = "exportar" class="botonCreCanicultor" onclick="check();">Exportar SQLFigo</button>'
     }]
   },document.querySelector('div[contenedor]'));
-  
+
   var grid = new Grid();
   //UI.servidor = new Servidor();
   ventana.buscarSector('grid').nodo.appendChild(grid.nodo);
@@ -63,7 +63,7 @@ function actualizar(campo){
 var Grid = function(atributos){
   var yo = this;
   yo.atributos = atributos || {};
-  
+
   yo.cabecera =  '<tr>'+
       '<td>#</td>'+
       '<td>Rif</td>'+
@@ -140,7 +140,7 @@ var Hijo = function(objeto){
   var yo = this;
   yo.nodo = null;
   yo.atributos = objeto;
-  
+
   yo.crear();
 }
 
@@ -163,18 +163,18 @@ Hijo.prototype.crear = function(){
     yo.atributos.formula="Formula no asignada";
   }
   //--------------------------------------------
-  
+
   //si no tiene un monto deducible o es null le digo que monto deducible sera 0
   //--------------------------------------------
   if (yo.atributos.monto_deducible==null) {
     yo.atributos.monto_deducible=0;
   }
   //--------------------------------------------
-    
+
   factor_agronomia=res_gen;
 
   tr.innerHTML = '<td>'+yo.atributos.numero+'</td>'+
-  '<td>'+yo.atributos.rif+'</td>'+
+  '<td >'+yo.atributos.rif+'</td>'+
   '<td>'+yo.atributos.nombre+'</td>'+
   '<td>'+yo.atributos.peso_figo+'</td>'+
   '<td align="right">'+yo.atributos.factor_figo+'</td>'+
@@ -186,7 +186,27 @@ Hijo.prototype.crear = function(){
   '<td align="right">'+(resultado_calculado-yo.atributos.monto_deducible)+'</td>'+/*monto limite para guardar en sqlFIGO*/
   '<td align="center"><input type="checkbox" value="'+(yo.atributos.numero-1)+'" id="pasar'+(yo.atributos.numero-1)+'" name="pasar'+(yo.atributos.numero-1)+'" ></td>';
   yo.nodo = tr;
-  
+  console.log(tr);
+  yo.nodo.onclick = function(){
+    yo.atributos.factor = eval(String(yo.atributos.des_formula));
+    var modal = UI.crearVentanaModal({
+        contenido: 'ancho',
+        cabecera:{
+          html: UI.buscarConstructor('m01DetalleCreditoCanicultor').titulo
+        },
+        cuerpo:{
+          tipo:'modificar',
+          formulario: UI.buscarConstructor('m01DetalleCreditoCanicultor'),
+          registro : yo.atributos
+        },
+        pie:{
+            html:   '<section modalButtons>'+
+                    '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
+                    '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
+                    '</section>'
+        }
+      });
+  }
 }
 
 var arreglo_enviartotal={};
@@ -195,7 +215,7 @@ function check(){
   //console.log(arreglo);
   var arreglo_enviar={};
   var cont_check=0;
-  
+
   for (var i = 0; i < arreglo.length; i++) {
     if(document.getElementById('pasar'+i).checked){
       if (arreglo[i].formula!='Formula no asignada') {
@@ -209,7 +229,7 @@ function check(){
       }
     }
   }
-  
+
   if (cont_check!=0) {
     arreglo_enviartotal=arreglo_enviar;
     exportar();
@@ -241,7 +261,7 @@ function exportar(){
           tipo: 'web-arriba-derecha-alto'
         });
       }
-      
+
       /*var ventana = UI.buscarVentana('titulo');
       ventana.buscarSector('grid').grid.removerHijos();
       ventana.buscarSector('grid').grid.agregarHijos(registro.registros);

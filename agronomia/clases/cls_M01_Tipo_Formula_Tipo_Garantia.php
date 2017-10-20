@@ -75,6 +75,7 @@ class cls_M01_Tipo_Formula_Tipo_Garantia extends cls_Conexion{
      $la_respuesta[$x]['codigo']=$la_registros['codigo_tipo_formula_tipo_garantia'];
      $la_respuesta[$x]['tipo garantia']=$la_registros['codigo_tipo_garantia'];
      $la_respuesta[$x]['tipo formula']=$la_registros['codigo_tipo_formula'];
+     $la_respuesta[$x]['zafra']=$la_registros['codigo_zafra'];
      $x++;
    }
    $this->f_Cierra($lr_tabla);
@@ -92,6 +93,7 @@ class cls_M01_Tipo_Formula_Tipo_Garantia extends cls_Conexion{
      $la_respuesta['codigo']=$la_registros['codigo_tipo_formula_tipo_garantia'];
      $la_respuesta['tip_gar']=$la_registros['codigo_tipo_garantia'];
      $la_respuesta['tip_for']=$la_registros['codigo_tipo_formula'];
+     $la_respuesta['zafra']=$la_registros['codigo_zafra'];
      $lb_Enc=true;
    }
    $this->f_Cierra($lr_tabla);
@@ -127,6 +129,7 @@ class cls_M01_Tipo_Formula_Tipo_Garantia extends cls_Conexion{
    if($la_registros=$this->f_Arreglo($lr_tabla)){
      $la_respuesta['codigo']=$la_registros['codigo_tipo_formula_tipo_garantia'];
      $la_respuesta['tip_gar']=$la_registros['codigo_tipo_garantia'];
+     $la_respuesta['zafra']=$la_registros['codigo_zafra'];
      $la_respuesta['tip_for']=$la_registros['codigo_tipo_formula'];
      $lb_Enc=true;
    }
@@ -147,7 +150,8 @@ class cls_M01_Tipo_Formula_Tipo_Garantia extends cls_Conexion{
 
    $ls_Sql="UPDATE agronomia.vm01_tipo_formula_tipo_garantia SET 
     codigo_tipo_garantia='".$this->aa_Atributos['tip_gar']."',
-    codigo_tipo_formula='".$this->aa_Atributos['tip_for']."'
+    codigo_tipo_formula='".$this->aa_Atributos['tip_for']."',
+    codigo_zafra='".$this->aa_Atributos['zafra']."'
     WHERE codigo_tipo_formula_tipo_garantia ='".$this->aa_Atributos['codigo']."'";
    $this->f_Con();
    $lb_Hecho=$this->f_Ejecutar($ls_Sql);

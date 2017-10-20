@@ -22,6 +22,7 @@
 <!-- script con el constructor del formulario-->
 <script type="text/javascript" src='js/constructores/creCanicultorGarantia.js'></script>
 <!-- Srcips propios -->
+<script type="text/javascript" src='js/constructores/m01_detalle_credito_canicultor.js'></script>
 <script type="text/javascript" src='js/creCanicultorGarantia.js'></script>
 
 <script type="text/javascript">
@@ -34,6 +35,7 @@
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
+	UI.agregarConstructor(m01DetalleCreditoCanicultor);
 	UI.agregarConstructor(creCanicultorGarantia);
 	UI.configure({
 		

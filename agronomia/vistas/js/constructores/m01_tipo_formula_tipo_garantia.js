@@ -3,7 +3,7 @@ var m01_tipo_formula_tipo_garantia = {
  	modulo: 'agronomia',
 	campo_nombre: 'nombre',
 	titulo: 'Asignacion Formula a Tipo de Garantia',
-	altura: 200,
+	altura: 300,
 	campos:[
 	{
       tipo : 'campoBusqueda',
@@ -31,6 +31,20 @@ var m01_tipo_formula_tipo_garantia = {
   			   entidad: "m01_tipo_formula",
   			   operacion: "buscar"
 				 },
+        cuadro: {nombre: 'ListaTipoFormula',mensaje: 'Cargando Tipos de Formula'}
+      }
+    },{
+      tipo : 'campoBusqueda',
+      parametros : {
+        titulo:'Còdigo Zafra',
+        nombre:'zafra',
+        requerido:true,
+        eslabon:'area',
+        peticion: {
+           modulo: "agronomia",
+           entidad: "zafra",
+           operacion: "buscar"
+         },
         cuadro: {nombre: 'ListaTipoFormula',mensaje: 'Cargando Tipos de Formula'}
       }
     }

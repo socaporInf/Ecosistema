@@ -74,6 +74,11 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_DiaZafra;
 			break;
 
+		case 'FechaCorte':
+			include_once('../clases/cls_ReportesCosecha.php');
+			$lobj_Entidad = new cls_ReportesCosecha;
+			break;
+			
 		case 'finca':
 			include_once('../clases/cls_Finca.php');
 			$lobj_Entidad = new cls_Finca;
@@ -158,12 +163,6 @@ function obtenerEntidad($entidad){
 			include_once('../clases/cls_Zafra.php');
 			$lobj_Entidad = new cls_Zafra;
 			break;
-
-		case 'FechaCorte':
-			include_once('../clases/cls_ReportesCosecha.php');
-			$lobj_Entidad = new cls_ReportesCosecha;
-			break;
-
 		
 
 		//---------M01 Modulo credito a añicultor-----------

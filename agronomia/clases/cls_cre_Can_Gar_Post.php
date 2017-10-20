@@ -72,7 +72,9 @@ class clsConsultaPostgre extends cls_Conexion{
                 ton_est
               from agronomia.vvalidacion_soca vs
               inner join agronomia.vproductor p on(p.codigo_productor=vs.codcanicultor) 
-              where vs.codcanicultor=(
+              where 
+              vs.ejercicio = (select nombre from agronomia.vzafra where estado = 'A') and
+              vs.codcanicultor=(
                                       select codigo_productor 
                                       from agronomia.vproductor
                                       where vs.codcanicultor=codigo_productor and rif= '".$this->org[$i]['codigo']."'
