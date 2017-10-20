@@ -45,6 +45,17 @@ class clsConsultaPostgre extends cls_Conexion{
       }
     break;
 
+    case 'buscarFactoresDetalle':
+      $registros=$this->f_resolverFactores();
+      if(count($registros)!=0){
+       $success=1;
+       $respuesta['registros']=$registros;
+      }else{
+       $respuesta['success'] = 0;
+       $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+      }
+    break;
+
     default:
        $valores = array('{OPERACION}' => strtoupper($this->aa_Atributos['operacion']), '{ENTIDAD}' => strtoupper($this->aa_Atributos['entidad']));
        $respuesta['mensaje'] = $lobj_Mensaje->completarMensaje(11,$valores);
@@ -60,22 +71,22 @@ class clsConsultaPostgre extends cls_Conexion{
  private function f_buscar(){
    $lb_Enc=false;
    $res= array();
-    for ($i=0; $i < count($this->org); $i++) { 
-      $ls_Sql="SELECT 
+    for ($i=0; $i < count($this->org); $i++) {
+      $ls_Sql="SELECT
                 p.rif,
                 p.nombre_completo,
                 p.codigo_productor,
                 round(sum(vs.peso_kg)/1000,2) as peso,
                 (
                   select sum(toneladas_estimadas_hectarea*area_cana) from agronomia.vtablon_rep where codigo_productor = p.codigo_productor
-                ) as 
+                ) as
                 ton_est
               from agronomia.vvalidacion_soca vs
-              inner join agronomia.vproductor p on(p.codigo_productor=vs.codcanicultor) 
-              where 
+              inner join agronomia.vproductor p on(p.codigo_productor=vs.codcanicultor)
+              where
               vs.ejercicio = (select nombre from agronomia.vzafra where estado = 'A') and
               vs.codcanicultor=(
-                                      select codigo_productor 
+                                      select codigo_productor
                                       from agronomia.vproductor
                                       where vs.codcanicultor=codigo_productor and rif= '".$this->org[$i]['codigo']."'
                                       )
@@ -101,11 +112,11 @@ class clsConsultaPostgre extends cls_Conexion{
    $lb_Enc=false;
    //Busco El rol
    $ls_Sql="SELECT tftg.codigo_tipo_garantia, f.*
-            FROM 
+            FROM
               agronomia.vm01_tipo_formula_tipo_garantia AS tftg
-            INNER JOIN 
+            INNER JOIN
               agronomia.vm01_formula as f ON(f.codigo_tipo_formula=tftg.codigo_tipo_formula)
-            WHERE 
+            WHERE
               tftg.codigo_tipo_garantia='".$this->aa_Atributos['id_bus']."'";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -128,7 +139,7 @@ class clsConsultaPostgre extends cls_Conexion{
    $for=array_values($for);//reordeno el arreglo en forma ascendente
 
   //ordeno el arreglo descendente por la cantidad de letras
-  //para que a la hora de sustituir los valores no me reemplase alguna palabra que contenga 
+  //para que a la hora de sustituir los valores no me reemplase alguna palabra que contenga
   //una mas pequeña dentro de una cadena
     for($i=1;$i<count($for);$i++)
     {
@@ -144,7 +155,7 @@ class clsConsultaPostgre extends cls_Conexion{
     }
   //----------------------------------------------------
 
-    for ($i=0; $i < count($for); $i++) { 
+    for ($i=0; $i < count($for); $i++) {
      $lb_Enc=false;
      //Busco El valor del componente
      $ls_Sql="SELECT com.nombre, val.valor FROM agronomia.vm01_componente as com
@@ -153,7 +164,7 @@ class clsConsultaPostgre extends cls_Conexion{
              $this->f_Con();
              $lr_tabla=$this->f_Filtro($ls_Sql);
              if($la_registros=$this->f_Arreglo($lr_tabla)){
-               $la_respuesta['des_formula'] = str_replace($for[$i],$la_registros['valor'],$la_respuesta['des_formula']); // reemplazo los componentes por los valores asociados a cada componente 
+               $la_respuesta['des_formula'] = str_replace($for[$i],$la_registros['valor'],$la_respuesta['des_formula']); // reemplazo los componentes por los valores asociados a cada componente
                $lb_Enc=true;
              }
              $this->f_Cierra($lr_tabla);
@@ -166,9 +177,9 @@ class clsConsultaPostgre extends cls_Conexion{
    $x=0;
    $la_respuesta=array();
    $ls_Sql="SELECT tftg.*, tf.descripcion
-            FROM 
+            FROM
               agronomia.vm01_tipo_formula_tipo_garantia AS tftg
-            INNER JOIN 
+            INNER JOIN
               agronomia.vm01_tipo_formula AS tf ON(tf.codigo_tipo_formula=tftg.codigo_tipo_formula)";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -181,6 +192,19 @@ class clsConsultaPostgre extends cls_Conexion{
    $this->f_Des();
    return $la_respuesta;
   }
-
+  private function f_resolverFactores(){
+    $ls_Sql="SELECT valor_formula FROM agronomia.vm01_formula as f";
+    $ls_Sql.=" WHERE f.fecha_inicio >= to_date('".$this->aa_Atributos["fec_ini"]."','DD-mm-YYYY')";
+    $ls_Sql.= " and coalesce(f.fecha_final,cast(now() as date)) <=to_date('".$this->aa_Atributos["fec_fin"]."','DD-mm-YYYY') ";
+    $ls_Sql.= " and  f.codigo_tipo_formula = 3";
+    $this->f_Con();
+    $lr_tabla=$this->f_Filtro($ls_Sql);
+    if($la_registros=$this->f_Arreglo($lr_tabla)){
+      $la_respuesta['fac_com_peso']=$la_registros['valor_formula'];
+    }
+    $this->f_Cierra($lr_tabla);
+    $this->f_Des();
+    return $la_respuesta;
+  }
 }
 ?>

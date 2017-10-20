@@ -186,25 +186,42 @@ Hijo.prototype.crear = function(){
   '<td align="right">'+(resultado_calculado-yo.atributos.monto_deducible)+'</td>'+/*monto limite para guardar en sqlFIGO*/
   '<td align="center"><input type="checkbox" value="'+(yo.atributos.numero-1)+'" id="pasar'+(yo.atributos.numero-1)+'" name="pasar'+(yo.atributos.numero-1)+'" ></td>';
   yo.nodo = tr;
-  console.log(tr);
   yo.nodo.onclick = function(){
     yo.atributos.factor = eval(String(yo.atributos.des_formula));
-    var modal = UI.crearVentanaModal({
-        contenido: 'ancho',
-        cabecera:{
-          html: UI.buscarConstructor('m01DetalleCreditoCanicultor').titulo
-        },
-        cuerpo:{
-          tipo:'modificar',
-          formulario: UI.buscarConstructor('m01DetalleCreditoCanicultor'),
-          registro : yo.atributos
-        },
-        pie:{
-            html:   '<section modalButtons>'+
-                    '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
-                    '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
-                    '</section>'
+    torque
+      .Operacion({
+        modulo: "agronomia",
+        entidad: "crecanicultor",
+        operacion: "buscarFactoresDetalle",
+        fec_fin: yo.atributos.fec_fin_periodo,
+        fec_ini: yo.atributos.fec_ini_periodo,
+      })
+      .then(function(valores){
+        if (valores.success == 0){
+          yo.atributos.fac_com_peso = 0;
+        }else {
+          yo.atributos.fac_com_peso = valores.fac_com_peso;
         }
+        console.log(valores);
+
+
+        var modal = UI.crearVentanaModal({
+            contenido: 'ancho',
+            cabecera:{
+              html: UI.buscarConstructor('m01DetalleCreditoCanicultor').titulo
+            },
+            cuerpo:{
+              tipo:'modificar',
+              formulario: UI.buscarConstructor('m01DetalleCreditoCanicultor'),
+              registro : yo.atributos
+            },
+            pie:{
+                html:   '<section modalButtons>'+
+                        '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
+                        '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
+                        '</section>'
+            }
+          });
       });
   }
 }

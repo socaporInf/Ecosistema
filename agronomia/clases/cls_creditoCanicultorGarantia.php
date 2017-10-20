@@ -8,7 +8,7 @@ class cls_creditoCanicultorGarantia{
  protected $aa_Atributos = array();
  protected $consOra;
  protected $consPost;
- 
+
  //private $aa_Campos = array('rif','nombre','descripcion');
   function __construct() {
     $this->consOra = new clsConsultaOracle;
@@ -65,7 +65,7 @@ class cls_creditoCanicultorGarantia{
         }
       break;
 
-      case 'optener_fechas'://este es para m01_tipo_formula 
+      case 'optener_fechas'://este es para m01_tipo_formula
         $lb_Enc=$this->consOra->gestionarOra();
         if($lb_Enc){
           $success=1;
@@ -91,7 +91,7 @@ class cls_creditoCanicultorGarantia{
        break;
 
       case 'insertar_registros_figo':
-      
+
       //$data = json_decode($this->aa_Atributos['datos_campos'], true);
       //print_r($data);
 
@@ -104,6 +104,9 @@ class cls_creditoCanicultorGarantia{
           $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(10);
           $success = 0;
         }
+       break;
+      case "buscarFactoresDetalle":
+        $respuesta=$this->resolverFactores();
        break;
 
       default:
@@ -122,13 +125,13 @@ class cls_creditoCanicultorGarantia{
   private function f_Juntar_formula_nombre_tipo_garantia(){
     $encontrados=array();
     $this->consPost->setPeticionPost($this->aa_Atributos);
-    
+
     $res_Post=$this->consPost->gestionarPost();
     $this->consOra->setPeticionOra($this->aa_Atributos,$res_Post);
 
     $res_Ora=$this->consOra->gestionarOra($res_Post);
 
-    for ($i=0; $i < count($res_Ora['registros']); $i++) { 
+    for ($i=0; $i < count($res_Ora['registros']); $i++) {
       if ($res_Ora['registros'][$i]['codigo']==$res_Post['registros'][$i]['codigo']) {
         $encontrados['registros'][$i]['codigo']=$res_Ora['registros'][$i]['codigo'];
         $encontrados['registros'][$i]['nombre']=$res_Ora['registros'][$i]['nombre'].' - '.$res_Post['registros'][$i]['nombre'];
@@ -142,10 +145,10 @@ class cls_creditoCanicultorGarantia{
     $noencontrados=array();
     $res_Ora=$this->consOra->gestionarOra();
     $this->consPost->setPeticionPost($this->aa_Atributos,$res_Ora['registros']);
-    
+
     $res_Post=$this->consPost->gestionarPost();
 
-    //echo "<br>\nElementos que existen en figo y agronomia<br>\n"; 
+    //echo "<br>\nElementos que existen en figo y agronomia<br>\n";
     $x=0;
     foreach ($res_Ora['registros'] as $reg_ora) {
         foreach ($res_Post['registros'] as $value2) {
@@ -202,6 +205,11 @@ class cls_creditoCanicultorGarantia{
     //            echo "--->".$value2['codigo_rif']."<br>\n";
     //     }
     // }
+  }
+  private function resolverFactores(){
+    $this->consPost->setPeticionPost($this->aa_Atributos);
+    $res_Post=$this->consPost->gestionarPost();
+    return $res_Post;
   }
 }
 ?>

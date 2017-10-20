@@ -114,8 +114,9 @@ class cls_M01_Formula extends cls_Conexion{
  private function f_Guardar(){
 
    $lb_Hecho=false;
+   $this->aa_Atributos['fec_fin'] =($this->aa_Atributos['fec_fin']=="")?"NULL":"'".$this->aa_Atributos['fec_fin']."'";
    $ls_Sql="INSERT INTO agronomia.vm01_formula (fecha_inicio,fecha_final,codigo_tipo_formula,texto_formula,valor_formula) values
-       ('".$this->aa_Atributos['fec_ini']."','".$this->aa_Atributos['fec_fin']."','".$this->aa_Atributos['tip_for']."','".$this->aa_Atributos['tex_for']."','".$this->aa_Atributos['val_for']."')";
+       ('".$this->aa_Atributos['fec_ini']."',".$this->aa_Atributos['fec_fin'].",'".$this->aa_Atributos['tip_for']."','".$this->aa_Atributos['tex_for']."','".$this->aa_Atributos['val_for']."')";
     $this->f_Con();
     $lb_Hecho=$this->f_Ejecutar($ls_Sql);
    $this->f_Des();
