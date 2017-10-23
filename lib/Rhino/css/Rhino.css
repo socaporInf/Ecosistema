@@ -176,7 +176,7 @@ div[area] {
     width: calc(100% - 24px);
 }
 div[dual] {
-    width: calc(50% - 12px);
+    width: calc(50% - 0px);
 }
 .group {
     position: relative;

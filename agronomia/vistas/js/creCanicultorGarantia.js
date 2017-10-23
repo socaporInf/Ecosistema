@@ -206,7 +206,6 @@ Hijo.prototype.crear = function(){
 
 
         var modal = UI.crearVentanaModal({
-            contenido: 'ancho',
             cabecera:{
               html: UI.buscarConstructor('m01DetalleCreditoCanicultor').titulo
             },
@@ -222,6 +221,7 @@ Hijo.prototype.crear = function(){
                         '</section>'
             }
           });
+          modal.nodo.classList.add("mini");
       });
   }
 }
