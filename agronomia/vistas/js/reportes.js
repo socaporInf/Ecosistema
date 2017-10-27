@@ -15,7 +15,7 @@ var done = function(file){
   if(file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
     var vinculo = document.createElement('a');
     vinculo.href = window.URL.createObjectURL(file);
-    vinculo.download = 'reporte.xlsx';
+    vinculo.download = 'reporte.xls';
     vinculo.click();
     UI.elementos.modalWindow.eliminarUltimaCapa();
   }else if(file.type === 'application/pdf'){

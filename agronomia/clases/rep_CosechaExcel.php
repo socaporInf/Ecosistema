@@ -18,16 +18,17 @@
           echo "No se detecto ningun dato";
       }
   }
+  //print_r($arreglo);
   $agrupacion = $_POST['agrupacion'];
   $cabecera =  array('Finca Letra','Nombre Finca','Sem','Caña','Total','Ton/Ha','Total Est','Cortada','Por Cortar','Por Cosechar','Total/Ton','Ton/Ha','Total','Ton/Ha','%','Corte','Total/Ton','Ton/Ha','Rdto');
 
 
-  function armarCabeceras($cabecera){
+  function armarCabeceras($cabecera,$arreglo){
     echo '<tr>
-      <th align="left" colspan="2">Zafra: 20162017</th>
-      <th align="left" colspan="4">Fecha	Inicio: 15-12-2016</th>
-      <th align="left" colspan="4">Fecha	Final: 01-05-2017</th>
-      <th align="left" colspan="5">Fecha	Dia	Zafra: 04-04-2017</th>
+      <th align="left" colspan="2">Zafra: '.$arreglo['zafra']['nombrezafra'].'</th>
+      <th align="left" colspan="4">Fecha	Inicio: '.$arreglo['zafra']['fechainicio'].'</th>
+      <th align="left" colspan="4">Fecha	Final: '.$arreglo['zafra']['fechafinal'].'</th>
+      <th align="left" colspan="5">Fecha	Dia	Zafra: '.$arreglo['zafra']['feczafra'].'</th>
     </tr>
     <tr>
       <th colspan="2"></th>
@@ -46,7 +47,7 @@
       <th colspan="2" align="center">Estimado</th>
       <th colspan="2" align="center">Real</th>
       <th align="center">Desv</th>
-      <th align="center">Edad</th>
+      <th align="center">Fecha</th>
       <th colspan="3" align="center">Real</th>
     </tr>
    <tr>';
@@ -215,37 +216,70 @@
           for ($h=0; $h < count($arreglo['zonas']['zonas'][$x]['hijos']); $h++) {
             echo '
               <tr>
-                <td></td>
                 <td  align="center"><h4>'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['fincalet'].'</h4></td>
                 <td  colspan="6"><h4>'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['nomfinca'].'</h4></td>
                 <td align="center" colspan="12"></td>
               </tr>
             ';
-            for ($t=0; $t < count($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos']); $t++) {
+              $tthtr='0';
+              for ($t=0; $t < count($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos']); $t++) {
+
+                echo '
+                <tr>
+                  <td></td>
+                  <td   align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['codtablon'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea_sem'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzareacana'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea'].'</td>
+                  <td  align="center">'.round(floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'])+floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea']), 2).'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tacortada'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['taporcortar'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['ceporcosechar'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tcanacosesttotaltn'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tcanacosesttotaltnha'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tcanacosrealtotaltn'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tcanacosrealtotaltnha'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['porcentajedesv'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['edadcorte'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tartotalton'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tartotaltonha'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['rdto'].'</td>
+                </tr>
+                ';
+              }
             echo '
-            <tr>
-              <td  colspan = "2" align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['codtablon'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea_sem'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzareacana'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea'].'</td>
-              <td  align="center">'..round(floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'])+floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgzarea']), 2)'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tgztotalest'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tacortada'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['taporcortar'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['ceporcosechar'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tcanacosesttotaltn'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tcanacosesttotaltnha'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tcanacosrealtotaltn'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tcanacosrealtotaltnha'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['porcentajedesv'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['edadcorte'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tartotalton'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['tartotaltonha'].'</td>
-              <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['hijos'][$t]['rdto'].'</td>
-            </tr>
+              <tr>
+                <td  align="center"></td>
+                <td  align="center"><h4>Total</h4></td>
+
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tgzarea_sem'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tgzareacana'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tgzareacana'].'</td>
+                  <td  align="center">'.round(floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['tgztotalest'])+floatval($arreglo['zonas']['zonas'][$x]['hijos'][$h]['tgzarea']), 2).'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tgztotalest'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tacortada'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['taporcortar'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['ceporcosechar'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tcanacosesttotaltn'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tcanacosesttotaltnha'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tcanacosrealtotaltn'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tcanacosrealtotaltnha'].'</td>
+                  <td  align="center"></td>
+                  <td  align="center"></td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tartotalton'].'</td>
+                  <td  align="center">'.$arreglo['zonas']['zonas'][$x]['hijos'][$h]['tartotaltonha'].'</td>
+                  <td  align="center"></td>
+              </tr>
+              <tr>';
+                 for ($i=0; $i < count($cabecera) ; $i++) {
+                   echo '
+                     <th align="center">'.$cabecera[$i].'</th>
+                   ';
+                 }
+              echo'</tr>
             ';
           }
-        }
         echo '
         <tr>
           <th  align="center"></th>
@@ -330,14 +364,14 @@
 
      <?php
      if($agrupacion == '"T"'){
-       armarCabeceras($cabecera);
+       armarCabeceras($cabecera,$arreglo);
        armarGeneral($arreglo);
      }
      else if($agrupacion == '"R"'){
-       armarCabeceras($cabecera);
+       armarCabeceras($cabecera,$arreglo);
        armarResumido($arreglo,$cabecera);
      }else if($agrupacion == '"D"'){
-       armarCabeceras($cabecera);
+       armarCabeceras($cabecera,$arreglo);
        armarDetalle($arreglo,$cabecera);
      }
      ?>

@@ -74,6 +74,11 @@ function obtenerEntidad($entidad){
 			$lobj_Entidad = new cls_DiaZafra;
 			break;
 
+		case 'FechaCorte':
+			include_once('../clases/cls_ReportesCosecha.php');
+			$lobj_Entidad = new cls_ReportesCosecha;
+			break;
+			
 		case 'finca':
 			include_once('../clases/cls_Finca.php');
 			$lobj_Entidad = new cls_Finca;
@@ -158,11 +163,45 @@ function obtenerEntidad($entidad){
 			include_once('../clases/cls_Zafra.php');
 			$lobj_Entidad = new cls_Zafra;
 			break;
+		
 
-		case 'reportesExcel':
-			include_once('../clases/cls_ReportesCosech.php');
-			$lobj_Entidad = new cls_ReportesCosecha;
+		//---------M01 Modulo credito a añicultor-----------
+		
+		case 'm01componente':
+			include_once('../clases/cls_M01Componente.php');
+			$lobj_Entidad = new cls_M01Componente;
 			break;
+
+		case 'detalle_componente':
+			include_once('../clases/cls_M01_Detalle_Componente.php');
+			$lobj_Entidad = new cls_M01_Detalle_Componente;
+			break;
+
+		case 'm01_tipo_formula':
+			include_once('../clases/cls_M01_Tipo_Formula.php');
+			$lobj_Entidad = new cls_M01_Tipo_Formula;
+			break;
+
+		case 'm01_formula':
+			include_once('../clases/cls_M01_Formula.php');
+			$lobj_Entidad = new cls_M01_Formula;
+			break;
+
+		case 'm01_detalle_formula':
+			include_once('../clases/cls_M01_Detalle_Formula.php');
+			$lobj_Entidad = new cls_M01_Detalle_Formula;
+			break;
+
+		case 'crecanicultor':
+			include_once('../clases/cls_creditoCanicultorGarantia.php');
+			$lobj_Entidad = new cls_creditoCanicultorGarantia;
+			break;
+
+		case 'm01_tipo_formula_tipo_garantia':
+			include_once('../clases/cls_M01_Tipo_Formula_Tipo_Garantia.php');
+			$lobj_Entidad = new cls_M01_Tipo_Formula_Tipo_Garantia;
+			break;
+
 
 		default:
 			$lobj_Entidad = false;

@@ -128,6 +128,18 @@ var Ministerio = {
         eslabon:'simple',
         usaToolTip:true
       }
+    },{
+      tipo: 'radio',
+      parametros : {
+        nombre: 'presentacion',
+        titulo: 'Presentación',
+        eslabon : 'dual',
+        valor: 'P',
+        opciones:[
+          {nombre:'PDF',valor:'P'},
+          {nombre:'Excel',valor:'E'}
+        ]
+      }
     }
   ]
 };
@@ -166,6 +178,36 @@ var Transporte = {
         tipo:'simple',
         eslabon:'simple',
         usaToolTip:true
+      }
+    },{
+      tipo: 'radio',
+      parametros : {
+        nombre: 'presentacion',
+        titulo: 'Presentación',
+        eslabon : 'dual',
+        valor: 'P',
+        opciones:[
+          {nombre:'PDF',valor:'P'},
+          {nombre:'Excel',valor:'E'}
+        ]
+      }
+    }
+  ]
+};
+
+var FechaCorte = {
+  campos:[
+
+    {
+      tipo: 'radio',
+      parametros : {
+        nombre: 'presentacion',
+        titulo: 'Presentación',
+        eslabon : 'dual',
+        valor: 'P',
+        opciones:[
+          {nombre:'Excel',valor:'E'}
+        ]
       }
     }
   ]
