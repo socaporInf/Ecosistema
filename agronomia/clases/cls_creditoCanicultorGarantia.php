@@ -170,6 +170,19 @@ class cls_creditoCanicultorGarantia{
               $encontrados[$x]['formula']=$res_Post['formula']['formula'];
               $encontrados[$x]['des_formula']=$res_Post['formula']['des_formula'];
               $encontrados[$x]['valor_formula']=$res_Post['formula']['valor_formula'];
+
+              $encontrados[$x]['complemento_peso']=$reg_ora['complemento_peso'];
+              $encontrados[$x]['factor_complemento_peso']=$reg_ora['factor_complemento_peso'];
+              $encontrados[$x]['complemento_area']=$reg_ora['complemento_area'];
+              $encontrados[$x]['factor_complemento_area']=$reg_ora['factor_complemento_area'];
+              $encontrados[$x]['deduccion_peso']=$reg_ora['deduccion_peso'];
+              $encontrados[$x]['factor_deduccion_peso']=$reg_ora['factor_deduccion_peso'];
+              $encontrados[$x]['deduccion_area']=$reg_ora['deduccion_area'];
+              $encontrados[$x]['factor_deduccion_area']=$reg_ora['factor_deduccion_area'];
+
+              $encontrados[$x]['aporte_productor']=$reg_ora['aporte_productor'];
+              $encontrados[$x]['factor_aporte_productor']=$reg_ora['factor_aporte_productor'];
+
               $x++;
             }
         }

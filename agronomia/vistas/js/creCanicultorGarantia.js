@@ -68,14 +68,14 @@ var Grid = function(atributos){
       '<td>#</td>'+
       '<td>Rif</td>'+
       '<td>Organizacion</td>'+
-      '<td>Peso (FIGO)</td>'+
-      '<td>Factor (FIGO)</td>'+
-      '<td>Peso (Agronomia)</td>'+
-      '<td>Factor (Agronomia)</td>'+
-      '<td>Toneladas (Estimadas)</td>'+
-      '<td align="right">Monto Generado</td>'+
-      '<td align="right">Monto Deducible</td>'+
-      '<td align="right">Monto Limite</td>'+
+      '<td>Peso(FIGO)</td>'+
+      '<td>Factor(FIGO)</td>'+
+      '<td>Peso(Agr)</td>'+
+      '<td>Factor(Agr)</td>'+
+      '<td>Ton(Est)</td>'+
+      '<td align="right">Mn Generado</td>'+
+      '<td align="right">Mn Deducible</td>'+
+      '<td align="right">Mn Limite</td>'+
       '<td align="center">Seleccione</td>'+
     '</tr>';
   yo.hijos = [];
@@ -202,10 +202,9 @@ Hijo.prototype.crear = function(){
         }else {
           yo.atributos.fac_com_peso = valores.fac_com_peso;
         }
-        console.log(valores);
-
-
+        console.log(yo.atributos);
         var modal = UI.crearVentanaModal({
+            contenido:"ancho",
             cabecera:{
               html: UI.buscarConstructor('m01DetalleCreditoCanicultor').titulo
             },
@@ -221,7 +220,6 @@ Hijo.prototype.crear = function(){
                         '</section>'
             }
           });
-          modal.nodo.classList.add("mini");
       });
   }
 }

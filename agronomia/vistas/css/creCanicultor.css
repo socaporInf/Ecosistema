@@ -79,13 +79,8 @@ div[formElements] {
   font-size: 12px !important;
 }
 /* configuracion de estructura */
-td[td1] {
-     width: 5%;
- }
- td[nombre-finca] {
-     width: 10%;
-     font:10px;
- }
+ td[td1] { width: 5%; }
+ td[td2] { width: 5%; }
  td[td3] { width: 5%; }
  td[td4] { width: 5%; }
  td[td5] { width: 5%; }
@@ -103,17 +98,4 @@ td[td1] {
  td[td17] { width: 5%; }
  td[td18] { width: 5%; }
  td[td19] { width: 5%; }
- tr[total] td{
-      color:#1B5E20;
- }
- tr[total] td{
-     background-color:#263238;
-     color: white;
- }
- tr[par][zona] td{
-     background-color:#607D8B;
-     color:white;
- }
- tr[par] td{
-     background-color: #F5F5F5;
- }
+ 

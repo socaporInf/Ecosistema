@@ -12,7 +12,7 @@ var m01DetalleCreditoCanicultor = {
         requerido:true,
         titulo: 'Rif:',
         tipo:'simple',
-        eslabon : 'dual',
+        eslabon : 'mini',
         usaToolTip: true
       }
     },
@@ -23,24 +23,22 @@ var m01DetalleCreditoCanicultor = {
         requerido:true,
         titulo: 'Nombre:',
         tipo:'simple',
-        eslabon : 'dual',
+        eslabon : 'mini',
         usaToolTip: true
       }
-    },{
-      tipo:'saltodelinea'
     },
+		//---
 		{
       tipo: 'campoDeTexto',
       parametros:{
-        nombre: 'com_peso',
+        nombre: 'complemento_peso',
         requerido:true,
         titulo: 'Complemento Peso:',
         tipo:'simple',
-        eslabon : 'dual',
+        eslabon : 'mini',
         usaToolTip: true
       }
     },
-
 		{
       tipo: 'campoDeTexto',
       parametros:{
@@ -48,109 +46,103 @@ var m01DetalleCreditoCanicultor = {
         requerido:true,
         titulo: 'Factor Complemento Peso:',
         tipo:'simple',
-        eslabon : 'dual',
+        eslabon : 'mini',
         usaToolTip: true
       }
     },
-		{
-      tipo:'saltodelinea'
-    },
+		//-- deduccion peso agronomia
 		{
       tipo: 'campoDeTexto',
       parametros:{
-        nombre: 'com_area',
+        nombre: 'complemento_area',
         requerido:true,
         titulo: 'Complemento Area:',
         tipo:'simple',
-        eslabon : 'dual',
+        eslabon : 'mini',
         usaToolTip: true
       }
     },
 		{
 			tipo: 'campoDeTexto',
 			parametros:{
-				nombre: 'fac_com_area',
+				nombre: 'factor_complemento_area',
 				requerido:true,
 				titulo: 'Factor Complemento Area:',
 				tipo:'simple',
-				eslabon : 'dual',
+				eslabon : 'mini',
 				usaToolTip: true
 			}
 		},
-		{
-      tipo:'saltodelinea'
-    },
+		//-- complemento area agro
 		{
 			tipo: 'campoDeTexto',
 			parametros:{
-				nombre: 'ded_peso',
+				nombre: 'deduccion_peso',
 				requerido:true,
 				titulo: 'Deducción Peso:',
 				tipo:'simple',
-				eslabon : 'dual',
+				eslabon : 'mini',
 				usaToolTip: true
 			}
 		},
 		{
 			tipo: 'campoDeTexto',
 			parametros:{
-				nombre: 'fac_ded_peso',
+				nombre: 'factor_deduccion_peso',
 				requerido:true,
 				titulo: 'Factor Deducción Peso:',
 				tipo:'simple',
-				eslabon : 'dual',
+				eslabon : 'mini',
 				usaToolTip: true
 			}
 		},
-		{
-      tipo:'saltodelinea'
-    },
+		//-- deduccion peso agronomia
 		{
 			tipo: 'campoDeTexto',
 			parametros:{
-				nombre: 'ded_area',
+				nombre: 'deduccion_area',
 				requerido:true,
 				titulo: 'Deducción Area:',
 				tipo:'simple',
-				eslabon : 'dual',
+				eslabon : 'mini',
 				usaToolTip: true
 			}
 		},
 		{
 			tipo: 'campoDeTexto',
 			parametros:{
-				nombre: 'fac_ded_area',
+				nombre: 'factor_deduccion_area',
 				requerido:true,
 				titulo: 'Factor Deducción Area:',
 				tipo:'simple',
-				eslabon : 'dual',
+				eslabon : 'mini',
 				usaToolTip: true
 			}
 		},
-		{
-      tipo:'saltodelinea'
-    },
+		//--- deduccion area
+		/*{tipo:'saltodelinea'},*/
 		{
 			tipo: 'campoDeTexto',
 			parametros:{
-				nombre: 'apo_pro',
+				nombre: 'aporte_productor',
 				requerido:true,
 				titulo: 'Aporte Productor',
 				tipo:'simple',
-				eslabon : 'dual',
+				eslabon : 'mini',
 				usaToolTip: true
 			}
 		},
 		{
 			tipo: 'campoDeTexto',
 			parametros:{
-				nombre: 'fac_apo_pro',
+				nombre: 'factor_aporte_productor',
 				requerido:true,
 				titulo: 'Factor Aporte Productor:',
 				tipo:'simple',
-				eslabon : 'dual',
+				eslabon : 'mini',
 				usaToolTip: true
 			}
 		}
+		//-- aporte prod
 	]
 };

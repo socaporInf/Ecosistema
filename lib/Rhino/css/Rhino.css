@@ -178,6 +178,9 @@ div[area] {
 div[dual] {
     width: calc(50% - 0px);
 }
+div[mini] {
+    width: calc(25% - 0px);
+}
 .group {
     position: relative;
     margin-bottom: 45px;

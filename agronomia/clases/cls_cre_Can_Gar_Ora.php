@@ -79,7 +79,7 @@ class clsConsultaOracle extends cls_ConexionOra{
       break;
 
       case 'insertar_registros_figo':
-      
+
         $lb_Hecho=$this->f_Modificar();
         if($lb_Hecho){
           //$respuesta['registros'] = $this->aa_Atributos['registro'];
@@ -103,20 +103,20 @@ class clsConsultaOracle extends cls_ConexionOra{
       }
       return $respuesta;
   }
-  
+
   private function f_Listar(){
     $x=0;
     $la_respuesta=array();
     $cadenaBusqueda= ($this->aa_Atributos['valor']=='')?"
-      where 
-        TVR_NB_TABLA='TIPO_GARANTIA' 
-        AND EMP_ID_EMPRESA='6909119' 
-        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'"
-      :
-      "where 
+      where
         TVR_NB_TABLA='TIPO_GARANTIA'
         AND EMP_ID_EMPRESA='6909119'
-        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%' 
+        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'"
+      :
+      "where
+        TVR_NB_TABLA='TIPO_GARANTIA'
+        AND EMP_ID_EMPRESA='6909119'
+        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'
         AND DE_OCURRENCIA like '%".$this->aa_Atributos['valor']."%'";
     $ls_SqlBase="SELECT ID_REGISTRO, CO_OCURRENCIA, DE_OCURRENCIA from T00_CONTENIDO_TABLA_VIRTUAL $cadenaBusqueda";
     $orden = '';
@@ -131,7 +131,7 @@ class clsConsultaOracle extends cls_ConexionOra{
     $lr_tabla=$this->f_Filtro_ora($ls_Sql);
     $lr_tabla=$lr_tabla->_array;
 
-    for ($i=0; $i < count($lr_tabla); $i++) { 
+    for ($i=0; $i < count($lr_tabla); $i++) {
       $la_respuesta[$i]['codigo']=$lr_tabla[$i]['ID_REGISTRO'];
       $la_respuesta[$i]['nombre']=$lr_tabla[$i]['CO_OCURRENCIA']." - ".$lr_tabla[$i]['DE_OCURRENCIA'];
     }
@@ -144,17 +144,17 @@ class clsConsultaOracle extends cls_ConexionOra{
   private function f_Buscar(){
    $x=0;
     $cadenaBusqueda= ($this->aa_Atributos['valor']=='')?"
-      where 
-        TVR_NB_TABLA='TIPO_GARANTIA' 
-        AND EMP_ID_EMPRESA='6909119' 
+      where
+        TVR_NB_TABLA='TIPO_GARANTIA'
+        AND EMP_ID_EMPRESA='6909119'
         AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'
         AND ID_REGISTRO = '".$this->aa_Atributos['codigo']."'
         "
       :
-      "where 
+      "where
         TVR_NB_TABLA='TIPO_GARANTIA'
         AND EMP_ID_EMPRESA='6909119'
-        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%' 
+        AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'
         AND DE_OCURRENCIA like '%".$this->aa_Atributos['valor']."%'";
     $la_respuesta=array();
     $ls_SqlBase="SELECT ID_REGISTRO, CO_OCURRENCIA, DE_OCURRENCIA from T00_CONTENIDO_TABLA_VIRTUAL $cadenaBusqueda";
@@ -170,7 +170,7 @@ class clsConsultaOracle extends cls_ConexionOra{
     $lr_tabla=$this->f_Filtro_ora($ls_Sql);
     $lr_tabla=$lr_tabla->_array;
 
-    for ($i=0; $i < count($lr_tabla); $i++) { 
+    for ($i=0; $i < count($lr_tabla); $i++) {
       $la_respuesta['codigo']=$lr_tabla[$i]['ID_REGISTRO'];
       $la_respuesta['nombre']=$lr_tabla[$i]['CO_OCURRENCIA']." - ".$lr_tabla[$i]['DE_OCURRENCIA'];
     }
@@ -182,16 +182,16 @@ class clsConsultaOracle extends cls_ConexionOra{
 
  private function f_buscar_formula_asignada(){
     $la_respuesta=array();
-   for ($x=0; $x < count($this->aa_res_post['registros']); $x++) { 
+   for ($x=0; $x < count($this->aa_res_post['registros']); $x++) {
     $cadenaBusqueda= ($this->aa_Atributos['valor']=='')?"
-      where 
-        TVR_NB_TABLA='TIPO_GARANTIA' 
-        AND EMP_ID_EMPRESA='6909119' 
+      where
+        TVR_NB_TABLA='TIPO_GARANTIA'
+        AND EMP_ID_EMPRESA='6909119'
         AND DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'
         AND ID_REGISTRO = '".$this->aa_res_post['registros'][$x]['codigo']."'
         "
       :
-      "where 
+      "where
         ";
     $ls_SqlBase="SELECT ID_REGISTRO, CO_OCURRENCIA, DE_OCURRENCIA from T00_CONTENIDO_TABLA_VIRTUAL $cadenaBusqueda";
     $orden = '';
@@ -206,7 +206,7 @@ class clsConsultaOracle extends cls_ConexionOra{
     $lr_tabla=$this->f_Filtro_ora($ls_Sql);
     $lr_tabla=$lr_tabla->_array;
 
-    for ($i=0; $i < count($lr_tabla); $i++) { 
+    for ($i=0; $i < count($lr_tabla); $i++) {
       $la_respuesta[$x]['codigo']=$lr_tabla[$i]['ID_REGISTRO'];
       $la_respuesta[$x]['nombre']=$lr_tabla[$i]['DE_OCURRENCIA'];
     }
@@ -221,15 +221,15 @@ class clsConsultaOracle extends cls_ConexionOra{
     $cadenaBusqueda= ($this->aa_Atributos['id_busqueda']=='')?"
       "
       :
-      "WHERE CTV.TVR_NB_TABLA='TIPO_GARANTIA' 
-        AND CTV.EMP_ID_EMPRESA='6909119' 
+      "WHERE CTV.TVR_NB_TABLA='TIPO_GARANTIA'
+        AND CTV.EMP_ID_EMPRESA='6909119'
         AND CTV.DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'
         AND CTV.ID_REGISTRO='".$this->aa_Atributos['id_busqueda']."'
       ";
     $la_respuesta=array();
-    $ls_SqlBase="SELECT CTV.ID_REGISTRO, CTV.CO_OCURRENCIA, CTV.DE_OCURRENCIA, 
-    PERTIE.FH_INICIO_PERIODO, PERTIE.FH_FIN_PERIODO 
-    FROM T00_CONTENIDO_TABLA_VIRTUAL CTV INNER JOIN T00_PERIODO_TIEMPO PERTIE 
+    $ls_SqlBase="SELECT CTV.ID_REGISTRO, CTV.CO_OCURRENCIA, CTV.DE_OCURRENCIA,
+    PERTIE.FH_INICIO_PERIODO, PERTIE.FH_FIN_PERIODO
+    FROM T00_CONTENIDO_TABLA_VIRTUAL CTV INNER JOIN T00_PERIODO_TIEMPO PERTIE
     ON(PERTIE.ID_REFERENCIA=CTV.ID_REGISTRO) $cadenaBusqueda";
     $orden = '';
     $this->f_Con_ora('6232098','6236396'); //conecto a la base de datos
@@ -242,7 +242,7 @@ class clsConsultaOracle extends cls_ConexionOra{
     $lr_tabla=$this->f_Filtro_ora($ls_Sql);
     $lr_tabla=$lr_tabla->_array;
 
-    for ($i=0; $i < count($lr_tabla); $i++) { 
+    for ($i=0; $i < count($lr_tabla); $i++) {
       $la_respuesta['codigo']=$lr_tabla[$i]['ID_REGISTRO'];
       $la_respuesta['nombre']=$lr_tabla[$i]['CO_OCURRENCIA']." - ".$lr_tabla[$i]['DE_OCURRENCIA'];
       $la_respuesta['fec_ini_per']=$lr_tabla[$i]['FH_INICIO_PERIODO'];
@@ -255,25 +255,42 @@ class clsConsultaOracle extends cls_ConexionOra{
  }
 
 
-
   private function f_Buscar_Org(){
     $x=0;
     $cadenaBusqueda= ($this->aa_Atributos['valor']=='')?"
-        WHERE  
-        TIPGAR.TVR_NB_TABLA='TIPO_GARANTIA' 
-        AND TIPGAR.EMP_ID_EMPRESA='6909119' 
-        AND TIPGAR.DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%' 
+        WHERE
+        TIPGAR.TVR_NB_TABLA='TIPO_GARANTIA'
+        AND TIPGAR.EMP_ID_EMPRESA='6909119'
+        AND TIPGAR.DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%'
         AND PERTIE.ID_REFERENCIA='".$this->aa_Atributos['id_bus']."' "
       :"WHERE PERTIE.ID_REFERENCIA='".$this->aa_Atributos['id_bus']."' and TVR_NB_TABLA='TIPO_GARANTIA' AND TIPGAR.EMP_ID_EMPRESA='6909119' AND TIPGAR.DE_OCURRENCIA NOT LIKE '%NO UTILIZAR%' AND DE_OCURRENCIA like '%".$this->aa_Atributos['valor']."%'";
     $la_respuesta=array();
-    $ls_SqlBase="SELECT ORG.ID_REGISTRO AS ID_ORGANIZACION, ORG.CO_RIF, ORG.NB_ORGANIZACION, 
-      LIMCRE.CA_PESO_BASE, LIMCRE.MN_VALOR_PESO_BASE, LIMCRE.PET_ID_ETAPA_PRODUCTIVA, LIMCRE.MN_DEDUCIBLE, LIMCRE.ID_REGISTRO AS ID_LIMITE_CREDITO,
-      PERTIE.FH_INICIO_PERIODO, 
-      PERTIE.FH_FIN_PERIODO
-                  FROM T00_CONTENIDO_TABLA_VIRTUAL TIPGAR 
-                  INNER JOIN T00_PERIODO_TIEMPO PERTIE ON(PERTIE.ID_REFERENCIA=TIPGAR.ID_REGISTRO) 
-                  INNER JOIN T20_LIMITE_CREDITO LIMCRE ON(LIMCRE.PET_ID_ETAPA_PRODUCTIVA=PERTIE.ID_REGISTRO) 
-                  INNER JOIN T00_ORGANIZACION ORG ON(ORG.ID_REGISTRO=LIMCRE.ORG_ID_ORGANIZACION)    
+    $ls_SqlBase="SELECT ORG.ID_REGISTRO AS ID_ORGANIZACION,
+                        PERTIE.FH_INICIO_PERIODO,
+                        PERTIE.FH_FIN_PERIODO,
+                        ORG.CO_RIF,
+                        ORG.NB_ORGANIZACION,
+                        LIMCRE.PET_ID_ETAPA_PRODUCTIVA,
+                        LIMCRE.CA_PESO_BASE,
+                        LIMCRE.MN_VALOR_PESO_BASE,
+
+                        LIMCRE.CA_PESO_COMP_PESO AS COMPLEMENTO_PESO,
+                        LIMCRE.MN_VALOR_PESO_COMP_PESO AS FACTOR_COMPOLEMETO_PESO,
+                        LIMCRE.CA_PESO_COMP_AREA AS COMPLEMENTO_AREA,
+                        LIMCRE.MN_VALOR_PESO_COMP_AREA AS FACTOR_COMPOLEMETO_AREA,
+                        LIMCRE.CA_PESO_DED_PESO AS DEDUCCION_PESO,
+                        LIMCRE.MN_VALOR_PESO_DED_PESO AS FACTOR_DEDUCCION_PESO,
+                        LIMCRE.CA_PESO_DED_AREA AS DEDUCCION_AREA,
+                        LIMCRE.MN_VALOR_PESO_DED_AREA AS FACTOR_DEDUCCION_AREA,
+                        LIMCRE.CA_PESO_APORTE AS APORTE_PRODUCTOR,
+                        LIMCRE.MN_VALOR_PESO_APORTE AS FACTOR_APORTE_PRODUCTOR,
+
+                        LIMCRE.MN_DEDUCIBLE,
+                        LIMCRE.ID_REGISTRO AS ID_LIMITE_CREDITO
+                  FROM T00_CONTENIDO_TABLA_VIRTUAL TIPGAR
+                  INNER JOIN T00_PERIODO_TIEMPO PERTIE ON(PERTIE.ID_REFERENCIA=TIPGAR.ID_REGISTRO)
+                  INNER JOIN T20_LIMITE_CREDITO LIMCRE ON(LIMCRE.PET_ID_ETAPA_PRODUCTIVA=PERTIE.ID_REGISTRO)
+                  INNER JOIN T00_ORGANIZACION ORG ON(ORG.ID_REGISTRO=LIMCRE.ORG_ID_ORGANIZACION)
                   $cadenaBusqueda";
     $orden = '';
 
@@ -287,19 +304,31 @@ class clsConsultaOracle extends cls_ConexionOra{
     $lr_tabla=$this->f_Filtro_ora($ls_Sql);
     $lr_tabla=$lr_tabla->_array;
 
-    for ($i=0; $i < count($lr_tabla); $i++) { 
-      $la_respuesta[$i]['codigo']=$lr_tabla[$i]['CO_RIF'];
-      $la_respuesta[$i]['nombre']=$lr_tabla[$i]['NB_ORGANIZACION'];
-      $la_respuesta[$i]['peso_figo']=$lr_tabla[$i]['CA_PESO_BASE'];
-      $la_respuesta[$i]['factor_figo']=$lr_tabla[$i]['MN_VALOR_PESO_BASE'];
-      $la_respuesta[$i]['pet_id_etapa_productiva']=$lr_tabla[$i]['PET_ID_ETAPA_PRODUCTIVA'];
+    for ($i=0; $i < count($lr_tabla); $i++) {
+      //-----------------------
       $la_respuesta[$i]['id_organizacion']=$lr_tabla[$i]['ID_ORGANIZACION'];
       $la_respuesta[$i]['fec_ini_periodo']=$lr_tabla[$i]['FH_INICIO_PERIODO'];
       $la_respuesta[$i]['fec_fin_periodo']=$lr_tabla[$i]['FH_FIN_PERIODO'];
+      $la_respuesta[$i]['codigo']=$lr_tabla[$i]['CO_RIF'];
+      $la_respuesta[$i]['nombre']=$lr_tabla[$i]['NB_ORGANIZACION'];
+      $la_respuesta[$i]['pet_id_etapa_productiva']=$lr_tabla[$i]['PET_ID_ETAPA_PRODUCTIVA'];
+      //-----------------------
+      $la_respuesta[$i]['peso_figo']=$lr_tabla[$i]['CA_PESO_BASE'];
+      $la_respuesta[$i]['factor_figo']=$lr_tabla[$i]['MN_VALOR_PESO_BASE'];
+      $la_respuesta[$i]['complemento_peso']=$lr_tabla[$i]['COMPLEMENTO_PESO'];
+      $la_respuesta[$i]['factor_complemento_peso']=$lr_tabla[$i]['FACTOR_COMPOLEMETO_PESO'];
+      $la_respuesta[$i]['complemento_area']=$lr_tabla[$i]['COMPLEMENTO_AREA'];
+      $la_respuesta[$i]['factor_complemento_area']=$lr_tabla[$i]['FACTOR_COMPOLEMETO_AREA'];
+      $la_respuesta[$i]['deduccion_peso']=$lr_tabla[$i]['DEDUCCION_PESO'];
+      $la_respuesta[$i]['factor_deduccion_peso']=$lr_tabla[$i]['FACTOR_DEDUCCION_PESO'];
+      $la_respuesta[$i]['deduccion_area']=$lr_tabla[$i]['DEDUCCION_AREA'];
+      $la_respuesta[$i]['factor_deduccion_area']=$lr_tabla[$i]['FACTOR_DEDUCCION_AREA'];
+      $la_respuesta[$i]['aporte_productor']=$lr_tabla[$i]['APORTE_PRODUCTOR'];
+      $la_respuesta[$i]['factor_aporte_productor']=$lr_tabla[$i]['FACTOR_APORTE_PRODUCTOR'];
+      //----------------------
       $la_respuesta[$i]['monto_deducible']=$lr_tabla[$i]['MN_DEDUCIBLE'];
       $la_respuesta[$i]['id_limite_credito']=$lr_tabla[$i]['ID_LIMITE_CREDITO'];
     }
-
     $this->aa_Atributos['registros'] = $la_respuesta;
     $lb_Enc=($i == 0)?false:true;
     return $lb_Enc;
@@ -311,13 +340,13 @@ class clsConsultaOracle extends cls_ConexionOra{
       $data = json_decode($this->aa_Atributos['datos_campos'], true);
       //print_r($data);
 
-    for ($i=0; $i < count($data); $i++) { 
+    for ($i=0; $i < count($data); $i++) {
       $ls_Sql="UPDATE T20_LIMITE_CREDITO SET MN_LIMITE_CREDITO='".$data[$i]['monto_limite']."', CA_PESO_BASE='".$data[$i]['peso_agro']."', MN_VALOR_PESO_BASE='".$data[$i]['factor_agronomia']."' WHERE ID_REGISTRO='".$data[$i]['id_limite_credito']."'";
       $this->f_Con_ora('6232098','6236396'); //conecto a la base de datos
       $lb_Hecho=$this->f_Filtro_ora($ls_Sql);
     }
 
-    
+
     return $lb_Hecho;
   }
 }
