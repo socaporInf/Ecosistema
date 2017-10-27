@@ -20,6 +20,10 @@ div[capa='contenido'] {
     margin-bottom: 50px;
     opacity: 0;
 }
+div[capa='contenido'].mini{
+  width: 500px !important;
+  left: calc(50% - 250px) !important;
+}
 div[capa='contenido'].aparecer{
     top:calc(50% - 150px);
     opacity:1;

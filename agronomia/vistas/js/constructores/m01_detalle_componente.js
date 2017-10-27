@@ -1,47 +1,51 @@
-var detalle_componente = {
-	nombre: 'detalle_componente',
- 	modulo: 'agronomia',
-	campo_nombre: 'nombre',
-	titulo: 'Factor',
-	altura: 220,
-	campos:[
-		{
-			tipo: 'campoDeTexto',
-			parametros:{
-				nombre: 'nombre',
-				requerido:true,
-				titulo: 'Factor',
-				tipo:'simple',
-				eslabon: 'simple',
-				usaToolTip: true
-			}
-		},
-		{
-			tipo: 'campoDeTexto',
-			parametros:{
-				nombre: 'descripcion',
-				requerido:false,
-				titulo: 'Descripción',
-				tipo:'simple',
-				eslabon: 'area',
-				usaToolTip: true
-			}
-		}
-	],
-	botones:{
-    nuevo:{
-      quitar:['detalle']
-    },
-    consulta: {
-      agregar:[
-        {
-          tipo:'detalle',
-          click: function(boton){
-            abrirDetalle('registroVirtual');
-          }
-        }
-      ],
-      quitar:[]
+detalle_componente = {
+  nombre:'detalle_componente',
+  modulo: 'agronomia',
+  campo_nombre: 'nombre',
+  codigo_padre : 'codigo_componente',
+  titulo: '',
+  altura: 200,
+  campos:[
+    {
+     	tipo : 'campoDeTexto',
+     	parametros : {
+      		requerido:true,
+      		titulo:'Descripcion',
+      		nombre:'nombre',
+      		tipo:'area',
+      		eslabon:'area',
+      		usaToolTip:true
+      	}
+    },{
+      tipo : 'campoDeTexto',
+      	parametros : {
+      	requerido:true,
+      		titulo:'Valor',
+      		nombre:'valor',
+      		tipo:'simple',
+      		eslabon:'simple',
+      		usaToolTip:false
+      	}
+    },{
+      tipo : 'campoDeTexto',
+      	parametros : {
+      	requerido:true,
+      		titulo:'Fecha Inicio',
+      		nombre:'fec_ini',
+      		tipo:'simple',
+      		eslabon:'simple',
+      		usaToolTip:false
+      	}
+    },{
+      tipo : 'campoDeTexto',
+      	parametros : {
+      	requerido:true,
+      		titulo:'Fecha Fin',
+      		nombre:'fec_fin',
+      		tipo:'simple',
+      		eslabon:'simple',
+      		usaToolTip:false
+      	}
     }
-  }
+  ]
 };

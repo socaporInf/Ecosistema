@@ -5,11 +5,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no">
 	<!-- Estilos externos //google -->
-	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
-	<link href="../../lib/material-icons/css/material-icons.css" rel="stylesheet">
-	<!-- Estilos locales -->
-	<link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
-	<link rel="stylesheet" type="text/css" href="css/creCanicultor.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+    <link href="../../lib/material-icons/css/material-icons.css" rel="stylesheet">
+    <!-- Estilos locales -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Rhino/css/Rhino.css">
 </head>
 <body>
 	<div contenedor></div>
@@ -18,30 +17,35 @@
 <script type="text/javascript" src='../../lib/Rhino/motorRegistros.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/Rhino.js'></script>
 <!-- scripts PLUGINS-->
+<script type="text/javascript" src='../../lib/Rhino/plugins/O_Maestro.js'></script>
 <script type="text/javascript" src='../../lib/Rhino/plugins/O_CampoBusqueda.js'></script>
 <!-- script con el constructor del formulario-->
-<script type="text/javascript" src='js/constructores/creCanicultorGarantia.js'></script>
-<script type="text/javascript" src='js/constructores/m01_detalle_credito_canicultor.js'></script>
-<!-- Srcips propios -->
-<script type="text/javascript" src='js/creCanicultorGarantia.js'></script>
-
+<script type="text/javascript" src='js/constructores/m01_tipo_formula_tipo_garantia.js'></script>
+<!--- funcionamiento de formulario actual -->
 <script type="text/javascript">
 /*-----------------------------Inicialiazacion de formulario--------------------------------------------------*/
 	//arranca la sesion
 	var sesion = new Sesion();
 
 	//arranca el motor de registros que se comunica con BD
-	var torque = new Motor('agronomia','creditoCanicultorGarantia');
+	var torque = new Motor('agronomia','m01_tipo_formula_tipo_garantia');
 
 	//Inicialiazion de UI(Interfaz De Usuario)
 	var UI = new Arquitecto();
-	UI.agregarConstructor(creCanicultorGarantia);
-	UI.agregarConstructor(m01DetalleCreditoCanicultor);
+	UI.agregarConstructor(m01_tipo_formula_tipo_garantia);
 	UI.configure({
-
+		maestro:{
+			entidad: torque.entidadActiva,
+			lista:{
+		      columnas:3
+		    }
+		},
+		botonera:{
+			botones:['nuevo','abrir']
+		}
 	});
 	sesion.obtenerSesion();
-	construirUI();
+	
 /*-------------------------Fin Inicialiazacion de formulario--------------------------------------------------*/
 </script>
 </html>

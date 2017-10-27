@@ -1,0 +1,55 @@
+.columna-50{
+	width: calc(50% - 7px);
+	float: left;
+	border: 1px solid silver;
+	margin-right: 5px; 
+}
+
+select#formula{
+	width: 100%;
+	height: 135px;
+}
+
+select#componentes{
+	width: 100%;
+	height: auto;
+}
+
+select#componentes option{
+	border: 1px solid silver;
+    font-size: 12px;
+    width: 43%;
+    float: left;
+    margin: 2px;
+    text-align: center;
+    padding: 5px;
+    cursor: pointer;
+	transition: all 0.5s;
+    font-size: 9px;
+    text-transform: lowercase;
+}
+
+select#componentes option:hover{
+	background: silver;
+}
+
+select#formula option{
+	width: calc(100% / 6);
+	float: left;
+	text-align: center;
+	border:1px solid silver;
+	cursor: pointer;
+	transition: all 0.5s;
+}
+
+select#formula option:hover{
+	background: silver;
+}
+
+h6{
+	margin: 5px 0 0 10px;
+}
+
+.smalll{
+	font-size: 12px !important;
+}
