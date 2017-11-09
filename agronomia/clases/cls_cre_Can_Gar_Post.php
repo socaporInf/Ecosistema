@@ -52,7 +52,8 @@ class clsConsultaPostgre extends cls_Conexion{
        $respuesta['registros']=$registros;
       }else{
        $respuesta['success'] = 0;
-       $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+       // Se quito esa linea de codigo para quitar el mensaje de validacion que estaba en la vis_CreCanicultorGarantia.html
+       //$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
       }
     break;
 
