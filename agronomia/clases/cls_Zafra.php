@@ -68,7 +68,11 @@ class cls_Zafra extends cls_Conexion{
        $respuesta = $this->f_Modificar();
        break;
 
-    case 'estadoDia':
+    case 'actualizarZafra':
+      $_SESSION['Usuario']['Zafra']['codigo'] = $this->aa_Atributos['codigo'];
+      $_SESSION['Usuario']['Zafra']['nombre'] = $this->aa_Atributos['nombre'];
+      $success = 1;
+      $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(32);
 
       break;
 
@@ -146,6 +150,9 @@ class cls_Zafra extends cls_Conexion{
    }
    return $respuesta;
  }
+
+ //AQUIII REVISAR MAS A FONDO
+
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();

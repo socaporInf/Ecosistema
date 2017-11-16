@@ -24,12 +24,26 @@ div[cabecera] button[menuBtn]{
 	background-color: transparent;
 	float:left;
 }
-div[cabecera] div[titulo]{
+div[cabecera] div[titulo],div[cabecera] div.titulo-der{
 	color:white;
 	font-size:25px;
 	text-align: left;
 	padding: 10px 20px;
 }
+/*INICIO DE LOS ESTILOS A LA MUESTRA DE LA ZAFRA ACTUAL EN LA CABECERA*/
+div[cabecera] div.titulo-der{
+	transition: all 0.3s ease-in-out;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	padding: 0px !important;
+	cursor: pointer;
+}
+div[cabecera] div.titulo-der:hover{
+		transform:scale(1.1);
+		/*FIN DE LOS ESTILOS A LA MUESTRA DE LA ZAFRA ACTUAL EN LA CABECERA*/
+}
+
 /*---------------------------------------Cuadro Cargar-----------------------------------*/
 .ContenedorCarga{
   height: 120px;
@@ -86,6 +100,9 @@ div[cabecera] div[titulo]{
 .pathAdvertencia{
   stroke:#FFC107;
 }
+.pointer{
+	cursor: pointer;
+}
 @keyframes rotate{
  100%{
   transform: rotate(360deg);
@@ -104,4 +121,20 @@ div[cabecera] div[titulo]{
   stroke-dasharray: 89,200;
   stroke-dashoffset: -124px;
  }
+}
+/*estilo de cambio de zafra*/
+.cambiozafra{
+	border: 0px;
+    background-color: white;
+    width: 100px;
+    height: 100px;
+    color: #4CAF50;
+    font-size: 14px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    float:left;
+    margin: 5px;
+    transition: all 0.3s ease-in-out;
+}
+.cambiozafra:hover{
+	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }

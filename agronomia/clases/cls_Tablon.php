@@ -178,7 +178,8 @@ private function f_BuscarTablonesPorLoteValidado(){
 private function f_Buscar(){
   $lb_Enc = false;
   $la_respuesta=array();
-  $ls_Sql="SELECT * FROM agronomia.vfinca where id_finca = '".$this->aa_Atributos['codigo']."'";
+  //$ls_Sql="SELECT * FROM agronomia.vfinca where id_finca = '".$this->aa_Atributos['codigo']."'";
+  $ls_Sql="SELECT * FROM agronomia.vfinca where id_finca = '".$this->aa_Atributos['codigo']."' and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'";
   $this->f_Con();
   $lr_tabla=$this->f_Filtro($ls_Sql);
   if($la_registros=$this->f_Arreglo($lr_tabla)){
