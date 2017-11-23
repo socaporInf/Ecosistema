@@ -99,10 +99,11 @@ class cls_Tablon extends cls_Conexion{
    }
    return $respuesta;
  }
+
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
-   $ls_Sql="SELECT * FROM agronomia.vtablon ";
+   $ls_Sql="SELECT * FROM agronomia.vtablon where codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'";
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
    while($la_registros=$this->f_Arreglo($lr_tabla)){
@@ -114,10 +115,11 @@ class cls_Tablon extends cls_Conexion{
    $this->f_Des();
    return $la_respuesta;
  }
+
  private function f_BuscarTablonesPorLote(){
    $x=0;
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_tablon like '%".$this->aa_Atributos['valor']."%'";
-   $ls_SqlBase="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda ";
+   $ls_SqlBase="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'";
    $orden = ' order by codigo_tablon';
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $la_respuesta=array();
@@ -154,10 +156,11 @@ class cls_Tablon extends cls_Conexion{
    $lb_Enc=($x == 0)?false:true;
    return $lb_Enc;
 }
+
 private function f_BuscarTablonesPorLoteValidado(){
    $x=0;
    $cadenaBusqueda = ($this->aa_Atributos['valor']=='')?'':"and codigo_tablon like '%".$this->aa_Atributos['valor']."%'";
-   $ls_SqlBase="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda ";
+   $ls_SqlBase="SELECT * FROM agronomia.vtablon  WHERE id_lote = ".$this->aa_Atributos['id_lote']."$cadenaBusqueda and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'";
    $orden = ' order by codigo_tablon';
    $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
    $la_respuesta=array();
@@ -214,6 +217,7 @@ private function f_Buscar(){
   }
   return $lb_Enc;
 }
+
  private function f_Guardar(){
     $lb_Hecho=false;
     if($this->aa_Atributos['fecha_ultimo_arrime']=='null'){
@@ -237,6 +241,7 @@ private function f_Buscar(){
     $this->f_Des();
     return $lb_Hecho;
  }
+
  private function f_Modificar(){
    $lb_Hecho=false;
    $contCampos = 0;
@@ -259,6 +264,7 @@ private function f_Buscar(){
    }
    return $respuesta;
  }
+
  private function f_ActualizarTablones($fecha = "''"){
    $lb_Hecho=false;
    print('fecha es :'.$fecha);
@@ -269,4 +275,5 @@ private function f_Buscar(){
    return $lb_Hecho;
  }
 }
+
 ?>

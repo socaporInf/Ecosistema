@@ -54,7 +54,7 @@ class cls_Inventario extends cls_Conexion{
    }
    private function f_MostrarInventario(){
       $cadenaBusqueda = $this->f_obtenerCadenaBusqueda('inventario');
-      $ls_SqlBase = "SELECT * FROM agronomia.vinventario_cultivo $cadenaBusqueda";
+      $ls_SqlBase = "SELECT * FROM agronomia.vinventario_cultivo WHERE codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."' $cadenaBusqueda ";
       $orden = "order by codigo_zona,codigo_productor,finca_letra,codigo_lote,codigo_tablon";
       $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
 
@@ -98,9 +98,10 @@ class cls_Inventario extends cls_Conexion{
         $la_respuesta['Variedad']=$la_registros['nombre_variedad'];
      return $la_respuesta;
    }
+   // Visualizar esta consulta en la vista Cañicultor, a ver si la esta filtrando  bien...
    private function f_MostrarFincas(){
       $cadenaBusqueda = $this->f_obtenerCadenaBusqueda('fincas');
-      $ls_SqlBase = "SELECT * FROM agronomia.vinventario_fincas $cadenaBusqueda";
+      $ls_SqlBase = "SELECT * FROM agronomia.vinventario_fincas WHERE codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."' $cadenaBusqueda";
       $orden = "order by codigo_zona,id_finca";
       $ls_Sql = $this->f_ArmarPaginacion($ls_SqlBase,$orden);
 
@@ -118,6 +119,7 @@ class cls_Inventario extends cls_Conexion{
       $lb_Enc=($x == 0)?false:true;
       return true;
    }
+
    private function f_RecolectarFincas($la_registros){
       //organizacion
          $la_respuesta['Cañicultor']=$la_registros['nombre_productor'];
