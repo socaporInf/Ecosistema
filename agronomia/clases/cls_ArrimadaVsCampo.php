@@ -131,9 +131,9 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
    $la_respuesta=array();
    $cadenaBusqueda = $this->armarBusqueda();
    if($tipo == 'relacionada'){
-     $ls_Sql="SELECT * FROM agronomia.vvalidacion_soca_relacionado $cadenaBusqueda order by codcanicultor, letrafinca, codigotablon, boletoromana ";
+     $ls_Sql="SELECT * FROM agronomia.vvalidacion_soca_relacionado $cadenaBusqueda WHERE codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."' order by codcanicultor, letrafinca, codigotablon, boletoromana ";
    }else if($tipo ==  'validacion'){
-     $ls_Sql="SELECT * FROM agronomia.vvalidacion_soca $cadenaBusqueda order by codcanicultor, letrafinca, codigotablon, boletoromana ";
+     $ls_Sql="SELECT * FROM agronomia.vvalidacion_soca $cadenaBusqueda WHERE codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."' order by codcanicultor, letrafinca, codigotablon, boletoromana ";
    }
    $this->f_Con();
    $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -160,8 +160,8 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
   $fecha_dia = $this->aa_Atributos['diaZafra']['fecha_dia'];
   $lb_Enc=false;
   $ls_Sql="SELECT
-            (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') -
-            (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia')
+            (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia' and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."') -
+            (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia' and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."')
             as diferencia;";
   $this->f_Con();
   $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -193,22 +193,26 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
  private function f_BuscarElementosFaltantes(){
   $x=0;
   //productores
-  $ls_SqlPro="SELECT codcanicultor from agronomia.vvalidacion_soca where codcanicultor not in(
-            	SELECT codigo_productor from agronomia.vproductor
-            )
-            group by codcanicultor order by codcanicultor";
+  $ls_SqlPro="SELECT codcanicultor from agronomia.vvalidacion_soca where codcanicultor not in
+              (
+            	   SELECT codigo_productor from agronomia.vproductor
+              )
+              and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'
+              group by codcanicultor order by codcanicultor";
 
   //fincas
   $ls_SqlFin="SELECT codcanicultor||letrafinca as finca
-              from agronomia.vvalidacion_soca where codcanicultor||letrafinca not in(
+              from agronomia.vvalidacion_soca where codcanicultor||letrafinca not in
+              (
               	select codigo_productor||letra from agronomia.vfinca
               )
+              and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'
               group by codcanicultor,letrafinca";
 
   //tablones
   $ls_SqlTab ="SELECT codcanicultor||letrafinca as finca, codigotablon
                from agronomia.vvalidacion_soca_relacionado
-               where pesoneto = 0 group by codcanicultor,letrafinca, codigotablon order by codcanicultor,letrafinca, codigotablon ";
+               where pesoneto = 0 and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."' group by codcanicultor,letrafinca, codigotablon order by codcanicultor,letrafinca, codigotablon ";
 
   $this->f_Con();
   //productores
@@ -310,7 +314,7 @@ class cls_ArrimadaVsCampo extends cls_Conexion{
       $lb_Hecho = false;
       $ls_Sql = "SELECT * from agronomia.vtablon_rep where codigo_tablon = '".$datos[$x]->tablon."'
                   and codigo_productor='".$datos[$x]->codigo_productor."'
-                  and letra_finca='".$datos[$x]->letra."'";
+                  and letra_finca='".$datos[$x]->letra."' and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'";
       $lr_tabla=$this->f_Filtro($ls_Sql);
       if($la_registros=$this->f_Arreglo($lr_tabla)){
         $ls_Sql = "update agronomia.vvalidacion_soca set codigotablon ='".$datos[$x]->tablon."' where boletoromana='".$datos[$x]->boleto."'";

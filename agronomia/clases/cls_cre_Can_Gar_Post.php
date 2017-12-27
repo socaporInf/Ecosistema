@@ -52,7 +52,8 @@ class clsConsultaPostgre extends cls_Conexion{
        $respuesta['registros']=$registros;
       }else{
        $respuesta['success'] = 0;
-       $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
+       // Se quito esa linea de codigo para quitar el mensaje de validacion que estaba en la vis_CreCanicultorGarantia.html
+       //$respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(8);
       }
     break;
 
@@ -72,7 +73,25 @@ class clsConsultaPostgre extends cls_Conexion{
    $lb_Enc=false;
    $res= array();
     for ($i=0; $i < count($this->org); $i++) {
-      $ls_Sql="SELECT
+      $ls_Sql="SELECT p.rif, p.nombre_completo, p.codigo_productor, round(sum(vs.toneladas_estimadas_hectarea)) as peso,
+                (
+                  select sum(toneladas_estimadas_hectarea*area_cana)
+                  from agronomia.vtablon_rep
+                  where codigo_productor = p.codigo_productor
+                ) as ton_est
+
+        from agronomia.vtablon_rep vs
+        inner join agronomia.vproductor p on(p.codigo_productor=vs.codigo_productor)
+          where vs.codigo_productor=(
+            select codigo_productor from agronomia.vproductor
+            where vs.codigo_productor=codigo_productor
+            and rif= '".$this->org[$i]['codigo']."')
+        and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'
+        and vs.toneladas_estimadas_hectarea >0
+        and p.rif is not null
+        group by p.rif,p.nombre_completo,p.codigo_productor";
+      /*
+              SELECT
                 p.rif,
                 p.nombre_completo,
                 p.codigo_productor,
@@ -84,13 +103,15 @@ class clsConsultaPostgre extends cls_Conexion{
               from agronomia.vvalidacion_soca vs
               inner join agronomia.vproductor p on(p.codigo_productor=vs.codcanicultor)
               where
-              vs.ejercicio = (select nombre from agronomia.vzafra where estado = 'A') and
+              codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."' and
               vs.codcanicultor=(
                                       select codigo_productor
                                       from agronomia.vproductor
                                       where vs.codcanicultor=codigo_productor and rif= '".$this->org[$i]['codigo']."'
                                       )
-              group by p.rif,p.nombre_completo,p.codigo_productor";
+              group by p.rif,p.nombre_completo,p.codigo_productor
+
+      */
 
       $this->f_Con();
       $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -192,6 +213,7 @@ class clsConsultaPostgre extends cls_Conexion{
    $this->f_Des();
    return $la_respuesta;
   }
+
   private function f_resolverFactores(){
     $ls_Sql="SELECT valor_formula FROM agronomia.vm01_formula as f";
     $ls_Sql.=" WHERE f.fecha_inicio >= to_date('".$this->aa_Atributos["fec_ini"]."','DD-mm-YYYY')";

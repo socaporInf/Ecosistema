@@ -136,6 +136,7 @@ div[capamenu] section[pie] article:hover i:after{
     left: calc(100% - 40px);
     position: absolute;
     top:10px;
+    cursor: pointer;
 }
 @media only screen and (max-device-width: 480px) {
     div[capaMenu]{

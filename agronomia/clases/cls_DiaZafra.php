@@ -252,8 +252,8 @@ class cls_DiaZafra extends cls_Conexion{
     //proceso_dia_zafra => secuencia > 3, nombre > arrime vs campo
     if($dia['secuencia_proceso_dia'] == 3){
       $ls_Sql="SELECT
-                (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') -
-                (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia')
+                (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia' and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."') -
+                (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia' and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."')
                 as diferencia;";
       $this->f_Con();
       $lr_tabla=$this->f_Filtro($ls_Sql);
@@ -443,21 +443,21 @@ class cls_DiaZafra extends cls_Conexion{
     $ls_Sql = "SELECT sum(pesoneto) AS peso, vr.codigo_zona, z.nombre,z.color
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
-                WHERE fechadia = (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia) AND  z.codigo_zona IS NOT NULL
+                WHERE fechadia = (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia) AND codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."' AND  z.codigo_zona IS NOT NULL
                 GROUP BY vr.codigo_zona, z.nombre,z.color
                 ORDER BY vr.codigo_zona ";
   }else if($tipo == 'AzucarPorZona'){
      $ls_Sql = "SELECT coalesce(sum(azucarprobable),0) AS azucar, vr.codigo_zona, z.nombre,z.color
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
-                WHERE fechadia = (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia) AND z.codigo_zona IS NOT NULL
+                WHERE fechadia = (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia) AND codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."' AND z.codigo_zona IS NOT NULL
                 GROUP BY vr.codigo_zona, z.nombre,z.color
                ";
   }else if($tipo == 'TimeLineZafra'){
     $ls_Sql = "SELECT sum(pesoneto) as peso, max(dz.numero) as numero, vr.fechadia
               FROM agronomia.vvalidacion_soca_relacionado vr
               join agronomia.vdia_zafra dz on vr.fechadia = dz.fecha_dia
-              where vr.fechadia <= (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia)
+              where vr.fechadia <= (SELECT fecha_dia FROM agronomia.vdia_zafra WHERE codigo_dia_zafra=$dia and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."')
               group by vr.fechadia
               order by numero";
   }
@@ -495,8 +495,8 @@ class cls_DiaZafra extends cls_Conexion{
     $fecha_dia = $this->aa_Atributos['diaZafra']['fecha_dia'];
     $lb_Enc=false;
     $ls_Sql="SELECT
-              (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia') -
-              (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia')
+              (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca where fechadia = '$fecha_dia' and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."') -
+              (SELECT sum(pesoneto) peso  from agronomia.vvalidacion_soca_relacionado where fechadia = '$fecha_dia' and codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."')
               as diferencia;";
     $this->f_Con();
     $lr_tabla=$this->f_Filtro($ls_Sql);

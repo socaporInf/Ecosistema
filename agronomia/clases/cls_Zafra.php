@@ -68,7 +68,11 @@ class cls_Zafra extends cls_Conexion{
        $respuesta = $this->f_Modificar();
        break;
 
-    case 'estadoDia':
+    case 'actualizarZafra':
+      $_SESSION['Usuario']['Zafra']['codigo'] = $this->aa_Atributos['codigo'];
+      $_SESSION['Usuario']['Zafra']['nombre'] = $this->aa_Atributos['nombre'];
+      $success = 1;
+      $respuesta['mensaje'] = $lobj_Mensaje->buscarMensaje(32);
 
       break;
 
@@ -146,6 +150,9 @@ class cls_Zafra extends cls_Conexion{
    }
    return $respuesta;
  }
+
+ //AQUIII REVISAR MAS A FONDO
+
  private function f_Listar(){
    $x=0;
    $la_respuesta=array();
@@ -272,7 +279,7 @@ class cls_Zafra extends cls_Conexion{
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
                 WHERE fechadia between
-                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
+                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) AND codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'
                 AND
                 (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND  z.codigo_zona IS NOT NULL
@@ -283,7 +290,7 @@ class cls_Zafra extends cls_Conexion{
                 FROM agronomia.vvalidacion_soca_relacionado vr
                 JOIN agronomia.vzona z ON vr.codigo_zona = z.codigo_zona
                 WHERE fechadia between
-                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
+                (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) AND codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'
                 AND
                 (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
                 AND  z.codigo_zona IS NOT NULL
@@ -295,7 +302,7 @@ class cls_Zafra extends cls_Conexion{
               join agronomia.vdia_zafra dz on vr.fechadia = dz.fecha_dia
               join agronomia.vzona z on vr.codigo_zona = z.codigo_zona
               WHERE fechadia between
-              (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
+              (SELECT fecha_inicio FROM agronomia.vzafra WHERE codigo_zafra=$zafra) AND codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'
               AND
               (SELECT fecha_final FROM agronomia.vzafra WHERE codigo_zafra=$zafra)
               group by vr.fechadia,vr.codigo_zona
@@ -303,7 +310,7 @@ class cls_Zafra extends cls_Conexion{
   }else if($tipo == 'AreasPorZona'){
     $ls_Sql = "SELECT * FROM agronomia.vareas_zonas";
   }else if($tipo == 'ToneladasEstimadasPorZona'){
-    $ls_Sql = "SELECT * FROM agronomia.vtoneladas_estimada_zona";
+    $ls_Sql = "SELECT * FROM agronomia.vtoneladas_estimada_zona WHERE codigo_zafra = '".$_SESSION['Usuario']['Zafra']['codigo']."'";
   }
 
   $x = 0;

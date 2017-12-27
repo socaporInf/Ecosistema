@@ -172,21 +172,25 @@ Hijo.prototype.crear = function(){
   //--------------------------------------------
 
   factor_agronomia=res_gen;
+  tr.innerHTML = '<td class="checkbien">'+yo.atributos.numero+'</td>'+
+  '<td class="checkbien">'+yo.atributos.rif+'</td>'+
+  '<td class="checkbien">'+yo.atributos.nombre+'</td>'+
+  '<td class="checkbien">'+yo.atributos.peso_figo+'</td>'+
+  '<td class="checkbien" align="right">'+yo.atributos.factor_figo+'</td>'+
+  '<td class="checkbien">'+yo.atributos.peso_agro+'</td>'+
+  '<td class="checkbien">'+res_gen+'</td>'+//factor (resultado de la formula asignada)
+  '<td class="checkbien">'+yo.atributos.ton_est+'</td>'+
+  '<td class="checkbien" align="right">'+resultado_calculado+'</td>'+/*resultado caña agronomia por factor*/
+  '<td class="checkbien" align="right">'+yo.atributos.monto_deducible+'</td>'+/*monto deducible biene de sqlFIGO*/
+  '<td class="checkbien" align="right">'+(resultado_calculado-yo.atributos.monto_deducible)+'</td>'+/*monto limite para guardar en sqlFIGO*/
+  '<td align="center"><input type="checkbox" class="girar" value="'+(yo.atributos.numero-1)+'" id="pasar'+(yo.atributos.numero-1)+'" name="pasar'+(yo.atributos.numero-1)+'" ></td>';
 
-  tr.innerHTML = '<td>'+yo.atributos.numero+'</td>'+
-  '<td >'+yo.atributos.rif+'</td>'+
-  '<td>'+yo.atributos.nombre+'</td>'+
-  '<td>'+yo.atributos.peso_figo+'</td>'+
-  '<td align="right">'+yo.atributos.factor_figo+'</td>'+
-  '<td>'+yo.atributos.peso_agro+'</td>'+
-  '<td >'+res_gen+'</td>'+//factor (resultado de la formula asignada)
-  '<td>'+yo.atributos.ton_est+'</td>'+
-  '<td align="right">'+resultado_calculado+'</td>'+/*resultado caña agronomia por factor*/
-  '<td align="right">'+yo.atributos.monto_deducible+'</td>'+/*monto deducible biene de sqlFIGO*/
-  '<td align="right">'+(resultado_calculado-yo.atributos.monto_deducible)+'</td>'+/*monto limite para guardar en sqlFIGO*/
-  '<td align="center"><input type="checkbox" value="'+(yo.atributos.numero-1)+'" id="pasar'+(yo.atributos.numero-1)+'" name="pasar'+(yo.atributos.numero-1)+'" ></td>';
   yo.nodo = tr;
-  yo.nodo.onclick = function(){
+  // Creamos la variable CELDAS y le asignamos la consulta de cada campo con la clase CHECKBIEN
+  var celdas = yo.nodo.querySelectorAll('.checkbien');
+
+  // Creamos unavariable y la igualamos a la funcion que levanta la modal con los regisstros para modificar
+  var levantarmodal = function(){
     yo.atributos.factor = eval(String(yo.atributos.des_formula));
     torque
       .Operacion({
@@ -209,19 +213,51 @@ Hijo.prototype.crear = function(){
               html: UI.buscarConstructor('m01DetalleCreditoCanicultor').titulo
             },
             cuerpo:{
-              tipo:'modificar',
               formulario: UI.buscarConstructor('m01DetalleCreditoCanicultor'),
-              registro : yo.atributos
+              tipo:'modificar',
+              registro: yo.atributos,
             },
             pie:{
+              /*
+                 clases:['botonera'],
                 html:   '<section modalButtons>'+
-                        '<button type="button" class="icon icon-guardar-indigo-32"> </button>'+
-                        '<button type="button" class="icon icon-cerrar-rojo-32"> </button>'+
+                        '<button type="button" class="icon icon-guardar-indigo-32 mat-blue500"> </button>'+
+                        '<button type="button" class="icon icon-editar-blanco-32 mat-green500"> </button>'+
                         '</section>'
+              */
             }
           });
+          //Detectar capas de una modal tambien se puede usar en la copnsola del navegador
+          //UI.elementos.modalWindow.capas[0].nodo.click();
+          /*----------------------------------------------------*/
+          //Seleccionamos el objeto de la modal tal y como vemos en la linea 206
+          //Seleccionamos el boton que está en el pie de pagina de la modal y le asignamos un CLICK
+
+          /*
+          modal.partes.pie.nodo.querySelector('.mat-green500').onclick = function(){
+            //habilitamos todo el formulario
+            modal.partes.cuerpo.formulario.habilitar();
+            // Deshabilitamos los campos NOMBRE Y RIF
+            modal.partes.cuerpo.formulario.buscarCampo('nombre').deshabilitar();
+            modal.partes.cuerpo.formulario.buscarCampo('rif').deshabilitar();
+          }
+          // Le asignamos al otro boton de la modal un onclick para que deshabilite todo el formulario
+          modal.partes.pie.nodo.querySelector('.mat-blue500').onclick = function(){
+            modal.partes.cuerpo.formulario.deshabilitar();
+            console.log(modal.partes.cuerpo.formulario.captarValores());
+
+          }
+
+          */
       });
   }
+
+  //hacemnos un foreach para recorrer todo el arreglo CELDAS y lo metemos en CELDA QUE ES CUANDO LE DAMOS CLICK A CADA CELDA QUE TENGA
+  celdas.forEach( function(celda) {
+    celda.onclick = levantarmodal;
+  });
+
+
 }
 
 var arreglo_enviartotal={};

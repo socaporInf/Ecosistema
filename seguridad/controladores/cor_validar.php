@@ -1,5 +1,8 @@
 <?php
 session_start();
+include_once('../clases/cls_Permisos.php');
+include_once('../clases/cls_Acceso.php');
+include_once('../../agronomia/clases/cls_Zafra.php');
 if(isset($_POST['Operacion'])){
 	$la_Form=$_POST;
 } else {
@@ -7,7 +10,6 @@ if(isset($_POST['Operacion'])){
 }
 if($la_Form['Operacion']=='acceso'){
 
-	include_once('../clases/cls_Acceso.php');
 	$lobj_Acceso = new cls_Acceso;
 	$lobj_Acceso->setPeticion($la_Form);
 	$lb_Enc=$lobj_Acceso->f_Accesar();
@@ -35,8 +37,8 @@ if($la_Form['Operacion']=='acceso'){
 
 }else if(($la_Form['Operacion']=="iniciarSession")||($la_Form['Operacion']=="buscarEmpresasDisponibles")){
 
-	include_once('../clases/cls_Permisos.php');
 	$lobj_Permisos = new cls_Permisos;
+	$lobj_Zafra = new cls_Zafra;
 	$lobj_Permisos->setPeticion($la_Form);
 	if($la_Form['Operacion']=="iniciarSession"){
 		$privilegios=$lobj_Permisos->f_ObtenerPrivilegios();
@@ -50,6 +52,10 @@ if($la_Form['Operacion']=='acceso'){
 			$_SESSION['Usuario']['privilegios']=array($privilegios);
 			$_SESSION['Usuario']['llaves_acceso']=$llaves;
 			$_SESSION['Usuario']['Empresa'] = $lobj_Permisos->obtenerEmpresa();
+			$pet = array('operacion' => "buscarActivo" );
+			$lobj_Zafra->setPeticion($pet);
+			$resultado = $lobj_Zafra->gestionar();
+			$_SESSION['Usuario']['Zafra'] = $resultado['registro'];
 			$respuesta=array(
 					'mensaje'=>'Sesion Iniciada con exito',
 					'privilegios'=>$_SESSION['Usuario']['privilegios'],

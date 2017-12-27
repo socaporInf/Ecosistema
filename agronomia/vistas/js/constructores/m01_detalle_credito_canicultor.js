@@ -13,7 +13,8 @@ var m01DetalleCreditoCanicultor = {
         titulo: 'Rif:',
         tipo:'simple',
         eslabon : 'mini',
-        usaToolTip: true
+        usaToolTip: true,
+				desabilitado: false,
       }
     },
 		{

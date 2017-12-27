@@ -51,6 +51,12 @@ function agregarNuevo(entidad){
   if(listado){
     listado.nodo.classList.add('desaparecer');
   }
+  // INICIO DE DESACTIVAR LOS CAMPOS DEL TABLON
+  secForm.formulario.buscarCampo('fecha_ultimo_arrime').deshabilitar();
+  secForm.formulario.buscarCampo('fecha_siembra_corte').deshabilitar();
+  secForm.formulario.buscarCampo('toneladas_real').deshabilitar();
+  secForm.formulario.buscarCampo('toneladas_azucar').deshabilitar();
+  // FIN DE DESACTIVAR LOS CAMPOS DEL TABLON
 
   //botonera
   botonera.nodo.classList.add('desaparecer');
